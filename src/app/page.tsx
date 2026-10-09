@@ -1,32 +1,34 @@
-import Link from "next/link";
+import Navbar from "@/components/landing/Navbar";
+import HeroSection from "@/components/landing/HeroSection";
+import ProblemSection from "@/components/landing/ProblemSection";
+import SolutionSection from "@/components/landing/SolutionSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import ComparisonSection from "@/components/landing/ComparisonSection";
+import PricingSection from "@/components/landing/PricingSection";
+import CtaBanner from "@/components/landing/CtaBanner";
+import Footer from "@/components/landing/Footer";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center sm:p-10">
-      <div className="max-w-xl">
-        <h1 className="font-heading text-4xl font-bold text-brand-dark sm:text-5xl">
-          Professional Email Signatures In Minutes
-        </h1>
-        <p className="font-body mt-4 text-base text-slate-600 sm:text-lg">
-          Create, manage, and distribute sleek email signatures that impress clients and elevate your personal brand.
-        </p>
+    <div className="flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
+      {/* Sticky Navbar that moves along when scrolled */}
+      <Navbar />
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href="/signup"
-            className="bg-brand-gradient flex h-14 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-sm transition hover:opacity-90 sm:w-52"
-          >
-            Get Started Free
-          </Link>
+      {/* Main Page Flow */}
+      <main className="flex-1">
+        <HeroSection />
+        <ProblemSection />
+        <SolutionSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <ComparisonSection />
+        <PricingSection />
+        <CtaBanner />
+      </main>
 
-          <Link
-            href="/login"
-            className="flex h-14 w-full items-center justify-center rounded-xl border border-line bg-white font-body text-base font-semibold text-brand-dark transition hover:bg-slate-50 sm:w-52"
-          >
-            Log In
-          </Link>
-        </div>
-      </div>
-    </main>
+      {/* Separate Footer Component */}
+      <Footer />
+    </div>
   );
 }

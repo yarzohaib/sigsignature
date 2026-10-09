@@ -22,7 +22,28 @@
   color: transparent;
 }
 
-body {
+@utility bg-pricing-free {
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(196, 223, 251, 0.5) 50%, #FFFFFF 100%);
+}
+
+@utility bg-pricing-premium {
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(138, 149, 242, 0.15) 50%, #FFFFFF 100%);
+}
+
+@utility shadow-pricing-premium {
+  box-shadow: 0 0 14.3px 0 rgba(138, 149, 242, 0.35);
+}
+
+@utility bg-comparison-gradient {
+  background: linear-gradient(180deg, #245FD4 0%, #0D3287 100%);
+}
+
+html, body {
+  font-family: var(--font-commissioner), sans-serif;
   background: var(--color-surface);
   color: #0f172a;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-montserrat), sans-serif;
 }
