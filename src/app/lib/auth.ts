@@ -1,0 +1,106 @@
+import { AuthTokens, UserProfile } from "./api";
+
+export const AUTH_TOKEN_KEY = "sig_access_token";
+export const REFRESH_TOKEN_KEY = "sig_refresh_token";
+export const AUTH_USER_KEY = "sig_user";
+export const AUTH_COOKIE_NAME = "sig_token";
+
+/**
+ * Stores tokens and user profile into localStorage and cookies.
+ */
+export function setAuthSession(tokens: AuthTokens, user: UserProfile) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(AUTH_TOKEN_KEY, tokens.accessToken);
+    if (tokens.refreshToken) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
+    }
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+
+    // Also persist in cookie for Next.js middleware and SSR
+    const maxAge = 7 * 24 * 60 * 60; // 7 days
+    document.cookie = `${AUTH_COOKIE_NAME}=${encodeURIComponent(
+      tokens.accessToken
+    )}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  } catch (err) {
+    console.error("Failed to store auth session:", err);
+  }
+}
+
+/**
+ * Clears stored authentication session and cookies.
+ */
+export function clearAuthSession() {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(AUTH_USER_KEY);
+
+    // Clear cookie
+    document.cookie = `${AUTH_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
+  } catch (err) {
+    console.error("Failed to clear auth session:", err);
+  }
+}
+
+/**
+ * Retrieves stored access token from localStorage or cookie.
+ */
+export function getStoredToken(): string | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const local = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (local) return local;
+
+    // Fallback: parse from document.cookie
+    const match = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(`${AUTH_COOKIE_NAME}=`));
+    if (match) {
+      return decodeURIComponent(match.split("=")[1]);
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+/**
+ * Retrieves stored refresh token from localStorage.
+ */
+export function getStoredRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Retrieves parsed user profile from localStorage.
+ */
+export function getStoredUser(): UserProfile | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = localStorage.getItem(AUTH_USER_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as UserProfile;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns whether an authenticated user session is active.
+ */
+export function isAuthenticated(): boolean {
+  return Boolean(getStoredToken());
+}
