@@ -19,13 +19,12 @@ export default function Footer() {
               Sig Signature
             </span>
           </Link>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#878787]">
-            Professional email signatures ensure every email reflects a
-            consistent and professional brand identity.
+          <p className="mt-3 max-w-none text-center font-body text-[14px] leading-normal text-[#878787] sm:whitespace-nowrap">
+            Professional email signatures ensure every email reflects a consistent and professional brand identity.
           </p>
         </div>
 
-        {/* 3 Horizontal Navigation Groups Matching Figma (Commissioner 500 24px headings, 400 18px #353A3E links) */}
+        {/* 3 Horizontal Navigation Groups Matching Figma (Commissioner 500 24px headings, 400 14px #353A3E links) */}
         <div className="mt-12 flex flex-col items-center justify-center gap-10 md:flex-row md:items-start md:justify-around lg:gap-14">
           {/* Products Group */}
           <div className="flex flex-col items-center text-center">
@@ -35,25 +34,25 @@ export default function Footer() {
             <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-7">
               <Link
                 href="#features"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Features
               </Link>
               <Link
                 href="#pricing"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Pricing
               </Link>
               <Link
                 href="/login"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Sign Up
               </Link>
@@ -68,25 +67,25 @@ export default function Footer() {
             <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-7">
               <Link
                 href="#about"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 About
               </Link>
               <Link
                 href="#careers"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Careers
               </Link>
               <Link
                 href="#contact"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Contact Us
               </Link>
               <Link
                 href="#updates"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Updates
               </Link>
@@ -101,19 +100,19 @@ export default function Footer() {
             <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-7">
               <Link
                 href="#features"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Email Signature
               </Link>
               <Link
                 href="/templates"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Templates
               </Link>
               <Link
                 href="/signup"
-                className="font-body text-[18px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
               >
                 Free Signature
               </Link>
