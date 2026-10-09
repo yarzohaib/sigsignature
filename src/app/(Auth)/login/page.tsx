@@ -162,7 +162,7 @@ function LoginForm() {
           label="Email"
           name="email"
           type="email"
-          placeholder="eg.annafrans@gmail.com"
+          placeholder="Enter your email address"
           value={email}
           error={errors.email}
           disabled={isLoading}

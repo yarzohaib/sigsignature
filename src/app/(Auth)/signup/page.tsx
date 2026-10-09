@@ -216,7 +216,7 @@ export default function SignupPage() {
           <TextField
             label="First Name"
             name="firstName"
-            placeholder="eg. Anna"
+            placeholder="Enter first name"
             value={form.firstName}
             error={errors.firstName}
             disabled={isLoading}
@@ -225,7 +225,7 @@ export default function SignupPage() {
           <TextField
             label="Last Name"
             name="lastName"
-            placeholder="eg. Francisco"
+            placeholder="Enter last name"
             value={form.lastName}
             error={errors.lastName}
             disabled={isLoading}
@@ -237,22 +237,27 @@ export default function SignupPage() {
           label="Email"
           name="email"
           type="email"
-          placeholder="eg.annafrans@gmail.com"
+          placeholder="Enter your email address"
           value={form.email}
           error={errors.email}
           disabled={isLoading}
           onChange={(e) => updateField("email", e.target.value)}
         />
 
-        <PasswordField
-          label="Password"
-          name="password"
-          placeholder="Enter your password"
-          value={form.password}
-          error={errors.password}
-          disabled={isLoading}
-          onChange={(e) => updateField("password", e.target.value)}
-        />
+        <div>
+          <PasswordField
+            label="Password"
+            name="password"
+            placeholder="Enter your password"
+            value={form.password}
+            error={errors.password}
+            disabled={isLoading}
+            onChange={(e) => updateField("password", e.target.value)}
+          />
+          <p className="mt-1.5 text-xs text-slate-500">
+            Must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character.
+          </p>
+        </div>
 
         <div className="flex flex-col gap-1">
           <label className="flex items-center gap-2 text-sm text-slate-800">

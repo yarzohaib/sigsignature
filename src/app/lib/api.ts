@@ -289,10 +289,10 @@ export async function resetPassword(payload: ResetPasswordPayload): Promise<Rese
 }
 
 /**
- * Verify user's email address.
+ * Request email verification link for an account.
  */
-export async function verifyEmail(email: string, token?: string): Promise<VerifyEmailResponse> {
-  const url = `${API_BASE_URL}/api/v1/auth/verify-email`;
+export async function requestEmailVerification(email: string): Promise<VerifyEmailResponse> {
+  const url = `${API_BASE_URL}/api/v1/auth/request-verification`;
   let response: Response;
   try {
     response = await fetch(url, {
@@ -301,7 +301,7 @@ export async function verifyEmail(email: string, token?: string): Promise<Verify
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ email: email.trim(), token }),
+      body: JSON.stringify({ email: email.trim().toLowerCase() }),
     });
   } catch (networkErr: unknown) {
     const errorDetail =
@@ -312,17 +312,51 @@ export async function verifyEmail(email: string, token?: string): Promise<Verify
   const result = await response.json().catch(() => null);
 
   if (!response.ok) {
-    // If the remote endpoint hasn't yet deployed verify-email route (404), return success for preview
-    if (response.status === 404) {
-      return {
-        success: true,
-        message: "Email verification request processed successfully.",
-      };
-    }
-    const message = result?.message || "Failed to verify email.";
+    const message = result?.message || "Failed to process email verification request.";
     throw new Error(message);
   }
 
   return result as VerifyEmailResponse;
+}
+
+/**
+ * Verify user's email address using a secure, unexpired token.
+ */
+export async function verifyEmailWithToken(token: string): Promise<VerifyEmailResponse> {
+  const url = `${API_BASE_URL}/api/v1/auth/verify-email`;
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ token: token.trim() }),
+    });
+  } catch (networkErr: unknown) {
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new Error(`Unable to reach backend server (${errorDetail}).`);
+  }
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      result?.message ||
+      "Failed to verify email. The verification link or token may be invalid or expired.";
+    throw new Error(message);
+  }
+
+  return result as VerifyEmailResponse;
+}
+
+// Backward-compatible alias
+export async function verifyEmail(email: string, token?: string): Promise<VerifyEmailResponse> {
+  if (token) {
+    return verifyEmailWithToken(token);
+  }
+  return requestEmailVerification(email);
 }
 

@@ -181,7 +181,7 @@ function ResetPasswordForm() {
             }}
           />
           <p className="mt-1.5 text-xs text-slate-500">
-            Must be at least 8 characters
+            Must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character.
           </p>
         </div>
 

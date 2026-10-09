@@ -4,36 +4,41 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
-import { verifyEmail } from "@/app/lib/api";
+import { requestEmailVerification, verifyEmailWithToken } from "@/app/lib/api";
 
 function VerifyEmailForm() {
   const searchParams = useSearchParams();
   const initialEmail = searchParams.get("email") || "";
-  const token = searchParams.get("token") || "";
+  const initialToken = searchParams.get("token") || "";
 
   const [email, setEmail] = useState(initialEmail);
-  const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState(initialToken);
+  const [hasTokenMode, setHasTokenMode] = useState(Boolean(initialToken));
+  const [errors, setErrors] = useState<{ email?: string; token?: string }>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverSuccess, setServerSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  function handleEmailChange(val: string) {
-    setEmail(val);
-    if (error) setError(null);
-    if (serverError) setServerError(null);
-  }
-
   function validate(): boolean {
-    if (!email.trim()) {
-      setError("Email is required");
-      return false;
+    const nextErrors: typeof errors = {};
+
+    if (hasTokenMode) {
+      if (!token.trim()) {
+        nextErrors.token = "Verification token is required";
+      }
+    } else {
+      if (!email.trim()) {
+        nextErrors.email = "Email is required";
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+          nextErrors.email = "Please enter a valid email address";
+        }
+      }
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-    return true;
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -48,16 +53,26 @@ function VerifyEmailForm() {
     setIsLoading(true);
 
     try {
-      const response = await verifyEmail(email.trim(), token || undefined);
-      setServerSuccess(
-        response.message ||
-          "Your email has been verified successfully! You can now log in to your account."
-      );
+      if (hasTokenMode) {
+        // Verify with secure token
+        const response = await verifyEmailWithToken(token.trim());
+        setServerSuccess(
+          response.message ||
+            "Your email has been successfully verified! You can now log in."
+        );
+      } else {
+        // Request a new verification link
+        const response = await requestEmailVerification(email.trim().toLowerCase());
+        setServerSuccess(
+          response.message ||
+            "If an account exists for this email, a verification link has been generated."
+        );
+      }
     } catch (err: unknown) {
       const message =
         err instanceof Error
           ? err.message
-          : "Failed to verify email. Please check your email address and try again.";
+          : "Failed to verify email. Please try again.";
       setServerError(message);
     } finally {
       setIsLoading(false);
@@ -72,7 +87,9 @@ function VerifyEmailForm() {
           Verify Your Email
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Enter your email to verify and activate your Sig Signature account.
+          {hasTokenMode
+            ? "Submit your secure verification token to activate your account."
+            : "Enter your email to receive a secure 24-hour verification link."}
         </p>
       </div>
 
@@ -109,7 +126,7 @@ function VerifyEmailForm() {
               href="/templates/email-verification"
               className="inline-flex items-center gap-1 font-semibold text-emerald-900 underline hover:text-emerald-700"
             >
-              Preview Verification Email Template
+              Preview Email Template
             </Link>
           </div>
         </div>
@@ -139,27 +156,65 @@ function VerifyEmailForm() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5" noValidate>
-        <div>
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="eg.annafrans@gmail.com"
-            value={email}
-            error={error || undefined}
-            disabled={isLoading}
-            onChange={(e) => handleEmailChange(e.target.value)}
-          />
-
-          <div className="mt-2 text-right">
-            <span className="text-xs text-slate-500">
-              Didn&apos;t get?{" "}
-              <Link href="/login" className="font-semibold text-brand underline">
+        {hasTokenMode ? (
+          <div>
+            <TextField
+              label="Verification Token"
+              name="token"
+              placeholder="Paste your verification token"
+              value={token}
+              error={errors.token}
+              disabled={isLoading}
+              onChange={(e) => {
+                setToken(e.target.value);
+                if (errors.token) setErrors((prev) => ({ ...prev, token: undefined }));
+              }}
+            />
+            <div className="mt-2 flex justify-between text-xs">
+              <button
+                type="button"
+                onClick={() => setHasTokenMode(false)}
+                className="font-semibold text-brand underline"
+              >
+                Need a new verification link?
+              </button>
+              <Link href="/login" className="text-slate-500 hover:text-slate-800">
                 Log In
               </Link>
-            </span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              placeholder="Enter your email address"
+              value={email}
+              error={errors.email}
+              disabled={isLoading}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+              }}
+            />
+            <div className="mt-2 flex justify-between text-xs">
+              <button
+                type="button"
+                onClick={() => setHasTokenMode(true)}
+                className="font-semibold text-brand underline"
+              >
+                Already have a token?
+              </button>
+              <span className="text-slate-500">
+                Didn&apos;t get?{" "}
+                <Link href="/login" className="font-semibold text-brand underline">
+                  Log In
+                </Link>
+              </span>
+            </div>
+          </div>
+        )}
 
         <button
           type="submit"
@@ -189,10 +244,12 @@ function VerifyEmailForm() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <span>Verifying...</span>
+              <span>{hasTokenMode ? "Verifying Token..." : "Sending Link..."}</span>
             </>
+          ) : hasTokenMode ? (
+            "Verify with Token"
           ) : (
-            "Verify your Email"
+            "Send Verification Link"
           )}
         </button>
       </form>

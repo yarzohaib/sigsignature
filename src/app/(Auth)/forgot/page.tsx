@@ -138,7 +138,7 @@ export default function ForgotPasswordPage() {
           label="Email"
           name="email"
           type="email"
-          placeholder="eg.annafrans@gmail.com"
+          placeholder="Enter your email address"
           value={email}
           error={error || undefined}
           disabled={isLoading}
