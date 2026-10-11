@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
-import { GoogleIcon } from "@/components/auth/icons";
+import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
 import { loginUser } from "@/app/lib/api";
 import { setAuthSession } from "@/app/lib/auth";
 
@@ -112,52 +112,76 @@ function LoginForm() {
         </p>
       </div>
 
-      {/* Registration notice or success alert */}
-      {serverSuccess && (
-        <div
-          role="status"
-          className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+      {/* Social login buttons (side by side matching signup page) */}
+      <div className="mx-auto grid w-full max-w-[432px] grid-cols-2 gap-3">
+        <button
+          type="button"
+          disabled={isLoading}
+          className="flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
         >
-          <svg
-            className="h-5 w-5 shrink-0 text-emerald-600"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>{serverSuccess}</span>
-        </div>
-      )}
+          <GoogleIcon /> Google
+        </button>
+        <button
+          type="button"
+          disabled={isLoading}
+          className="flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
+        >
+          <GithubIcon /> Github
+        </button>
+      </div>
 
-      {/* Server error alert */}
-      {serverError && (
-        <div
-          role="alert"
-          className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
-        >
-          <svg
-            className="h-5 w-5 shrink-0 text-red-600"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>{serverError}</span>
-        </div>
-      )}
+      <div className="flex items-center gap-4 text-sm text-slate-800">
+        <span className="h-px flex-1 bg-line" />
+        Or
+        <span className="h-px flex-1 bg-line" />
+      </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5" noValidate>
+        {/* Registration notice or success alert */}
+        {serverSuccess && (
+          <div
+            role="status"
+            className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
+          >
+            <svg
+              className="h-5 w-5 shrink-0 text-emerald-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>{serverSuccess}</span>
+          </div>
+        )}
+
+        {/* Server error alert */}
+        {serverError && (
+          <div
+            role="alert"
+            className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+          >
+            <svg
+              className="h-5 w-5 shrink-0 text-red-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>{serverError}</span>
+          </div>
+        )}
+
         <TextField
           label="Email"
           name="email"
@@ -193,51 +217,41 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Buttons Row: Log In and Google */}
-        <div className="grid grid-cols-2 gap-3 pt-1">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="bg-brand-gradient flex h-12 w-full items-center justify-center gap-2 rounded-xl font-body text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70 sm:h-14"
-          >
-            {isLoading ? (
-              <>
-                <svg
-                  className="h-5 w-5 animate-spin text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                <span>Logging In...</span>
-              </>
-            ) : (
-              "Log In"
-            )}
-          </button>
-
-          <button
-            type="button"
-            disabled={isLoading}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
-          >
-            <GoogleIcon /> Google
-          </button>
-        </div>
+        {/* Full length Log In button matching Get Started styling */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="bg-brand-gradient flex h-12 w-full items-center justify-center gap-2 rounded-xl font-body text-base font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70 sm:h-[58px] sm:text-lg"
+        >
+          {isLoading ? (
+            <>
+              <svg
+                className="h-5 w-5 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              <span>Logging In...</span>
+            </>
+          ) : (
+            "Log In"
+          )}
+        </button>
       </form>
 
       {/* Footer link to Sign Up */}
