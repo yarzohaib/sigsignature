@@ -206,9 +206,9 @@ function VerifyEmailForm() {
               >
                 Already have a token?
               </button>
-              <span className="text-slate-500">
+              <span className="text-slate-500 text-[#6889C9]" >
                 Didn&apos;t get?{" "}
-                <Link href="/login" className="font-semibold text-brand underline">
+                <Link href="/login" className="font-semibold text-brand-dark ">
                   Log In
                 </Link>
               </span>

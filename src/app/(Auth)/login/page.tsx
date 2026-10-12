@@ -6,8 +6,24 @@ import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
-import { loginUser } from "@/app/lib/api";
+import { loginUser, startOAuth, type OAuthProvider } from "@/app/lib/api";
 import { setAuthSession } from "@/app/lib/auth";
+
+function getOAuthErrorMessage(code: string | null): string | null {
+  if (!code) return null;
+  switch (code) {
+    case "oauth_cancelled":
+      return "Sign in was cancelled. Please try again.";
+    case "oauth_failed":
+      return "Something went wrong while signing in. Please try again.";
+    case "email_not_verified":
+      return "Your account does not have a verified email address, so we cannot sign you in with it.";
+    case "account_inactive":
+      return "Your account is inactive. Please contact support.";
+    default:
+      return "Something went wrong while signing in. Please try again.";
+  }
+}
 
 type LoginFormErrors = {
   email?: string;
@@ -17,17 +33,36 @@ type LoginFormErrors = {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const registered = searchParams.get("registered") === "true";
+  const errorCode = searchParams.get("error");
   const redirectTarget = searchParams.get("redirect") || "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginFormErrors>({});
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [serverSuccess, setServerSuccess] = useState<string | null>(
-    registered ? "Account created successfully! Please log in." : null
+  const [serverError, setServerError] = useState<string | null>(() =>
+    getOAuthErrorMessage(errorCode)
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
+
+  function handleOAuth(provider: OAuthProvider) {
+    setOauthLoading(provider);
+
+    try {
+      const rawRedirect = searchParams.get("redirect");
+      if (
+        rawRedirect &&
+        rawRedirect.startsWith("/") &&
+        !rawRedirect.startsWith("//")
+      ) {
+        sessionStorage.setItem("sig_oauth_redirect", rawRedirect);
+      }
+    } catch {
+      // Ignore sessionStorage access errors
+    }
+
+    startOAuth(provider);
+  }
 
   function handleEmailChange(val: string) {
     setEmail(val);
@@ -79,13 +114,8 @@ function LoginForm() {
 
       if (response.data?.tokens && response.data?.user) {
         setAuthSession(response.data.tokens, response.data.user);
-        setServerSuccess("Login successful! Redirecting to dashboard...");
-
-        // Smooth redirect to protected dashboard
-        setTimeout(() => {
-          router.push(redirectTarget);
-          router.refresh();
-        }, 800);
+        router.push(redirectTarget);
+        router.refresh();
       } else {
         throw new Error("Invalid response received from server.");
       }
@@ -116,17 +146,67 @@ function LoginForm() {
       <div className="mx-auto grid w-full max-w-[432px] grid-cols-2 gap-3">
         <button
           type="button"
-          disabled={isLoading}
+          onClick={() => handleOAuth("google")}
+          disabled={isLoading || oauthLoading !== null}
           className="flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
         >
-          <GoogleIcon /> Google
+          {oauthLoading === "google" ? (
+            <svg
+              className="h-4 w-4 animate-spin text-brand"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <GoogleIcon />
+          )}
+          <span>Google</span>
         </button>
         <button
           type="button"
-          disabled={isLoading}
+          onClick={() => handleOAuth("github")}
+          disabled={isLoading || oauthLoading !== null}
           className="flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
         >
-          <GithubIcon /> Github
+          {oauthLoading === "github" ? (
+            <svg
+              className="h-4 w-4 animate-spin text-brand"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <GithubIcon />
+          )}
+          <span>Github</span>
         </button>
       </div>
 
@@ -138,28 +218,6 @@ function LoginForm() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5" noValidate>
-        {/* Registration notice or success alert */}
-        {serverSuccess && (
-          <div
-            role="status"
-            className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
-          >
-            <svg
-              className="h-5 w-5 shrink-0 text-emerald-600"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{serverSuccess}</span>
-          </div>
-        )}
-
         {/* Server error alert */}
         {serverError && (
           <div
@@ -206,12 +264,11 @@ function LoginForm() {
 
           <div className="mt-2 text-left">
             <span className="text-sm text-slate-600">
-              Forgot your password?{" "}
               <Link
                 href="/forgot"
-                className="font-semibold text-brand underline transition hover:text-brand-dark"
+                className="font-normal text-[#022977] underline transition hover:text-brand-dark"
               >
-                Reset it
+                 Forgot your password?Reset it
               </Link>
             </span>
           </div>
@@ -255,9 +312,9 @@ function LoginForm() {
       </form>
 
       {/* Footer link to Sign Up */}
-      <p className="text-center text-sm text-brand">
+      <p className="text-center text-sm text-[#6889C9]">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="font-bold underline hover:text-brand-dark">
+        <Link href="/signup" className="font-bold text-brand-dark">
           Sign Up Free
         </Link>
       </p>

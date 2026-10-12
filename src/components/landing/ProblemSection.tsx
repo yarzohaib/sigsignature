@@ -32,9 +32,10 @@ export default function ProblemSection() {
         {/* Section Header */}
         <div className="text-center">
           <SectionBadge label="PROBLEM" className="mb-4" />
-          <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[54px] lg:leading-[1.12]">
-            Email signature are quietly{" "}
-            <span className="text-brand">Broken</span>
+          <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[54px] lg:leading-[1.15]">
+            Email signature are quietly
+            <br />
+            <span className="text-[#1243A3]">Broken</span>
           </h2>
         </div>
 
@@ -45,8 +46,14 @@ export default function ProblemSection() {
               key={problem.title}
               className="flex flex-col rounded-[20px] border border-[#C1C1C1]/80 bg-white p-7 shadow-none transition-all duration-200 hover:border-blue-300 sm:p-8"
             >
-              {/* Blue icon container */}
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand shadow-sm">
+              {/* Blue icon container circle matching How It Works gradient */}
+              <div
+                style={{
+                  background:
+                    "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
+                }}
+                className="flex h-14 w-14 items-center justify-center rounded-full border border-[#C1C1C1] shadow-xs"
+              >
                 <Image
                   src={problem.icon}
                   alt={problem.iconAlt}

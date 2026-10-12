@@ -237,9 +237,9 @@ function ResetPasswordForm() {
       </form>
 
       {/* Footer */}
-      <p className="text-center text-sm text-slate-600">
+      <p className="text-center text-sm text-slate-600 text-[#6889C9]">
         Already have an account?{" "}
-        <Link href="/login" className="font-bold text-brand hover:underline">
+        <Link href="/login" className="font-bold text-brand-dark ">
           Log In
         </Link>
       </p>

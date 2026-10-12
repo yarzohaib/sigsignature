@@ -7,7 +7,10 @@ export default function Footer() {
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
-          <Link href="/" className="inline-flex items-center gap-2.5 transition hover:opacity-90">
+          <Link
+            href="#"
+            className="inline-flex items-center gap-2.5 transition hover:opacity-90"
+          >
             <Image
               src="/logo.svg"
               alt="Sig Signature logo"
@@ -24,35 +27,35 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* 3 Horizontal Navigation Groups Matching Figma (Commissioner 500 24px headings, 400 14px #353A3E links) */}
+        {/* 3 Horizontal Navigation Groups Matching Figma */}
         <div className="mt-12 flex flex-col items-center justify-center gap-10 md:flex-row md:items-start md:justify-around lg:gap-14">
           {/* Products Group */}
           <div className="flex flex-col items-center text-center">
-            <h4 className="font-body text-[24px] font-medium leading-none text-black">
+            <h4 className="font-body text-xl sm:text-2xl lg:text-[24px] font-medium leading-[100%] tracking-normal text-black">
               Products
             </h4>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-7">
+            <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-7">
               <Link
                 href="#features"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Features
               </Link>
               <Link
                 href="#pricing"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Pricing
               </Link>
               <Link
                 href="/login"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Sign Up
               </Link>
@@ -61,31 +64,31 @@ export default function Footer() {
 
           {/* Company Group */}
           <div className="flex flex-col items-center text-center">
-            <h4 className="font-body text-[24px] font-medium leading-none text-black">
+            <h4 className="font-body text-xl sm:text-2xl lg:text-[24px] font-medium leading-[100%] tracking-normal text-black">
               Company
             </h4>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-7">
+            <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-7">
               <Link
                 href="#about"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 About
               </Link>
               <Link
                 href="#careers"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Careers
               </Link>
               <Link
                 href="#contact"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Contact Us
               </Link>
               <Link
                 href="#updates"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Updates
               </Link>
@@ -94,25 +97,25 @@ export default function Footer() {
 
           {/* Resources Group */}
           <div className="flex flex-col items-center text-center">
-            <h4 className="font-body text-[24px] font-medium leading-none text-black">
+            <h4 className="font-body text-xl sm:text-2xl lg:text-[24px] font-medium leading-[100%] tracking-normal text-black">
               Resources
             </h4>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-5 sm:gap-7">
+            <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-7">
               <Link
                 href="#features"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Email Signature
               </Link>
               <Link
                 href="/templates"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Templates
               </Link>
               <Link
                 href="/signup"
-                className="font-body text-[14px] font-normal leading-none text-[#353A3E] transition hover:text-brand"
+                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Free Signature
               </Link>

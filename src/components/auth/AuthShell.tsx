@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SignaturePreview from "./SignaturePreview";
 import Logo from "./Logo";
 
@@ -9,22 +10,25 @@ export default function AuthShell({ children }: AuthShellProps) {
   return (
     <main className="flex min-h-screen flex-col lg:grid lg:grid-cols-[54fr_46fr]">
       {/* Header for phones and tablets */}
-      <header className="bg-brand-gradient px-5 py-4 sm:px-8 sm:py-5 lg:hidden">
-        <Logo />
+      <header className="bg-brand-gradient px-5 py-3 sm:px-8 sm:py-3.5 lg:hidden">
+        <Link href="/" className="inline-block transition hover:opacity-90">
+          <Logo />
+        </Link>
       </header>
 
       {/* Left panel, large screens only */}
       <section className="relative hidden overflow-hidden bg-[#F4F4F3] lg:flex">
-        {/* Glow circles sized in percentages so they scale with the panel */}
-        <div className="pointer-events-none absolute -left-[33%] -top-[31%] h-[107%] w-[135%] rounded-full bg-brand blur-[150px]" />
-        <div className="pointer-events-none absolute left-0 top-[24%] h-[58%] w-[72%] rounded-full bg-brand-light blur-[150px]" />
-        <div className="pointer-events-none absolute -bottom-[17%] left-[13%] h-[47%] w-[90%] rounded-full bg-white blur-[150px]" />
-
+        {/* Glow circles from Figma: Ellipse 179 (bottom), 178 (middle), 177 (top). Figma blur 300 = 150px in CSS */}
+<div className="pointer-events-none absolute -left-[33.46%] -top-[278px] h-[945px] w-[135.94%] rounded-full bg-brand blur-[150px]" />
+<div className="pointer-events-none absolute left-0 top-[210px] h-[512px] w-[72.53%] rounded-full bg-brand-light blur-[150px]" />
+<div className="pointer-events-none absolute -left-[13.15%] top-[302px] h-[452px] w-[75.52%] rounded-full bg-white blur-[150px]" />
         {/* Content: three separate blocks spread across the full height */}
-        <div className="relative z-10 flex flex-1 flex-col justify-between gap-10 px-8 py-10 xl:px-[76px] xl:py-16">
+        <div className="relative z-10 flex flex-1 flex-col justify-between gap-10 px-8 pt-7 pb-10 xl:px-[76px] xl:pt-10 xl:pb-16">
           {/* 1. Logo */}
           <div>
-            <Logo />
+            <Link href="/" className="inline-block transition hover:opacity-90">
+              <Logo />
+            </Link>
           </div>
 
           {/* 2. Signature preview */}

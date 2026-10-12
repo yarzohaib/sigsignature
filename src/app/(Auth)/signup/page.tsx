@@ -1,14 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
-import { signupUser } from "@/app/lib/api";
+import { signupUser, startOAuth, type OAuthProvider } from "@/app/lib/api";
 
-type SignupForm = {
+function getOAuthErrorMessage(code: string | null): string | null {
+  if (!code) return null;
+  switch (code) {
+    case "oauth_cancelled":
+      return "Sign in was cancelled. Please try again.";
+    case "oauth_failed":
+      return "Something went wrong while signing in. Please try again.";
+    case "email_not_verified":
+      return "Your account does not have a verified email address, so we cannot sign you in with it.";
+    case "account_inactive":
+      return "Your account is inactive. Please contact support.";
+    default:
+      return "Something went wrong while signing in. Please try again.";
+  }
+}
+
+type SignupFormState = {
   firstName: string;
   lastName: string;
   email: string;
@@ -24,7 +40,7 @@ type FormErrors = {
   agree?: string;
 };
 
-const initialForm: SignupForm = {
+const initialForm: SignupFormState = {
   firstName: "",
   lastName: "",
   email: "",
@@ -32,15 +48,39 @@ const initialForm: SignupForm = {
   agree: false,
 };
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
-  const [form, setForm] = useState<SignupForm>(initialForm);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const errorCode = searchParams.get("error");
 
-  function updateField<K extends keyof SignupForm>(key: K, value: SignupForm[K]) {
+  const [form, setForm] = useState<SignupFormState>(initialForm);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [serverError, setServerError] = useState<string | null>(() =>
+    getOAuthErrorMessage(errorCode)
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
+
+  function handleOAuth(provider: OAuthProvider) {
+    setOauthLoading(provider);
+
+    try {
+      const rawRedirect = searchParams.get("redirect");
+      if (
+        rawRedirect &&
+        rawRedirect.startsWith("/") &&
+        !rawRedirect.startsWith("//")
+      ) {
+        sessionStorage.setItem("sig_oauth_redirect", rawRedirect);
+      }
+    } catch {
+      // Ignore sessionStorage access errors
+    }
+
+    startOAuth(provider);
+  }
+
+  function updateField<K extends keyof SignupFormState>(key: K, value: SignupFormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
     if (errors[key]) {
       setErrors((prev) => ({ ...prev, [key]: undefined }));
@@ -92,7 +132,6 @@ export default function SignupPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError(null);
-    setServerSuccess(null);
 
     if (!validate()) {
       return;
@@ -101,21 +140,14 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const response = await signupUser({
+      await signupUser({
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim() || undefined,
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
 
-      setServerSuccess(
-        response.message || "Account created successfully! Redirecting to login..."
-      );
-
-      // Brief delay to allow user to see success message before navigating
-      setTimeout(() => {
-        router.push("/login?registered=true");
-      }, 1500);
+      router.push("/login");
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -145,21 +177,71 @@ export default function SignupPage() {
         </p>
       </div>
 
-      {/* Social login buttons (placeholder as requested, no Google/GitHub OAuth yet) */}
+      {/* Social login buttons */}
       <div className="mx-auto grid w-full max-w-[432px] grid-cols-2 gap-3">
         <button
           type="button"
-          disabled={isLoading}
+          onClick={() => handleOAuth("google")}
+          disabled={isLoading || oauthLoading !== null}
           className="flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
         >
-          <GoogleIcon /> Google
+          {oauthLoading === "google" ? (
+            <svg
+              className="h-4 w-4 animate-spin text-brand"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <GoogleIcon />
+          )}
+          <span>Google</span>
         </button>
         <button
           type="button"
-          disabled={isLoading}
+          onClick={() => handleOAuth("github")}
+          disabled={isLoading || oauthLoading !== null}
           className="flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white text-sm font-semibold text-brand-dark transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-base"
         >
-          <GithubIcon /> Github
+          {oauthLoading === "github" ? (
+            <svg
+              className="h-4 w-4 animate-spin text-brand"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <GithubIcon />
+          )}
+          <span>Github</span>
         </button>
       </div>
 
@@ -170,27 +252,6 @@ export default function SignupPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5" noValidate>
-        {serverSuccess && (
-          <div
-            role="status"
-            className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
-          >
-            <svg
-              className="h-5 w-5 shrink-0 text-emerald-600"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{serverSuccess}</span>
-          </div>
-        )}
-
         {serverError && (
           <div
             role="alert"
@@ -311,10 +372,24 @@ export default function SignupPage() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-brand">
+      <p className="text-center text-sm text-[#6889C9]">
         Already have an account?{" "}
-        <Link href="/login" className="font-bold">Log In</Link>
+        <Link href="/login" className="font-bold text-brand-dark">Log In</Link>
       </p>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-64 items-center justify-center text-slate-500">
+          Loading signup...
+        </div>
+      }
+    >
+      <SignupForm />
+    </Suspense>
   );
 }

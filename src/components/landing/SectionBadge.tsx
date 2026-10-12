@@ -6,10 +6,12 @@ type SectionBadgeProps = {
 export default function SectionBadge({ label, className = "" }: SectionBadgeProps) {
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold tracking-wider text-brand uppercase shadow-2xs backdrop-blur-xs ${className}`}
+      className={`inline-flex h-[37px] w-[166px] items-center justify-center gap-3 rounded-full border border-[#C1C1C1] bg-transparent px-4 font-body text-[14px] font-medium uppercase leading-[100%] tracking-normal text-slate-900 ${className}`}
+      style={{ backgroundColor: "transparent" }}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+      <span className="h-2 w-2 shrink-0 rounded-full bg-[#245FD4]" />
       <span>{label}</span>
     </div>
   );
 }
+

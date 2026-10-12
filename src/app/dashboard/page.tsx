@@ -96,8 +96,8 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-30 border-b border-line/60 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
-            <Link href="/dashboard" className="transition hover:opacity-90">
-              <Logo />
+            <Link href="/" className="transition hover:opacity-90">
+              <Logo variant="blue" />
             </Link>
             <nav className="hidden items-center gap-1 md:flex">
               <span className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-semibold text-brand-dark">

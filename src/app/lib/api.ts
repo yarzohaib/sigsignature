@@ -148,6 +148,68 @@ export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
   return result as LoginResponse;
 }
 
+export type OAuthProvider = "google" | "github";
+
+/**
+ * Initiates OAuth login by redirecting the browser to the backend OAuth provider endpoint.
+ */
+export function startOAuth(provider: OAuthProvider): void {
+  if (typeof window !== "undefined") {
+    const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}`;
+    try {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign(targetUrl);
+    } catch {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = targetUrl;
+    }
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.href = targetUrl;
+  }
+}
+
+/**
+ * Exchange one-time OAuth authorization code for session tokens and user profile.
+ */
+export async function exchangeOAuthCode(code: string): Promise<LoginResponse> {
+  const url = `${API_BASE_URL}/api/v1/auth/oauth/exchange`;
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        code: code.trim(),
+      }),
+    });
+  } catch (networkErr: unknown) {
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new Error(
+      `Unable to reach backend server (${errorDetail}). Please check your network connection or server status.`
+    );
+  }
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      result?.message ||
+      (response.status === 401
+        ? "Invalid or expired code"
+        : response.status === 400
+        ? "Authorization code is required"
+        : "Failed to exchange authorization code. Please try again.");
+    throw new Error(message);
+  }
+
+  return result as LoginResponse;
+}
+
 /**
  * Fetch current authenticated user's profile using access token.
  */

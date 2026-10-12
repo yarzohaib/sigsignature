@@ -11,8 +11,15 @@ import Footer from "@/components/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
-      {/* Sticky Navbar that moves along when scrolled */}
+    <div className="relative isolate flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
+  {/* Hero glows from Figma: Ellipse 68 (below) and Ellipse 67 (on top) */}
+  <div
+    aria-hidden
+    className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[1000px] overflow-hidden"
+  >
+    <div className="absolute -right-[200px] -top-[240px] h-[480px] w-[560px] rounded-full bg-[#C4DFFB] opacity-50 blur-[80px] lg:-right-[372px] lg:-top-[475px] lg:h-[946px] lg:w-[1103px] lg:blur-[162px]" />
+    <div className="absolute -right-[100px] -top-[170px] h-[300px] w-[320px] rounded-full bg-[#F0F8F5] opacity-50 blur-[80px] lg:-right-[216px] lg:-top-[350px] lg:h-[598px] lg:w-[616px] lg:blur-[162px]" />
+  </div>
       <Navbar />
 
       {/* Main Page Flow */}

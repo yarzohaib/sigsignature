@@ -10,7 +10,7 @@ export default function FeaturesSection() {
           <SectionBadge label="FEATURES" className="mb-4" />
           <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[54px] lg:leading-[1.12]">
             Everything You Need to Build the{" "}
-            <span className="text-brand">Perfect Signature.</span>
+            <span className="text-[#1243A3]">Perfect Signature.</span>
           </h2>
         </div>
 
