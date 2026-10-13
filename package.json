@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js"
   },
   "dependencies": {
     "next": "16.4.0",

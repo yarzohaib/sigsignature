@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import TextField from "@/components/ui/TextField";
+import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { requestForgotPassword } from "@/app/lib/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
-  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   function handleEmailChange(val: string) {
@@ -34,7 +35,6 @@ export default function ForgotPasswordPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError(null);
-    setServerSuccess(null);
 
     if (!validate()) {
       return;
@@ -43,11 +43,8 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      const response = await requestForgotPassword(email.trim().toLowerCase());
-      setServerSuccess(
-        response.message ||
-          "If an account exists for this email, a password reset link has been generated."
-      );
+      await requestForgotPassword(email.trim().toLowerCase());
+      setIsModalOpen(true);
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -61,6 +58,30 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="flex w-full max-w-[496px] flex-col gap-5 sm:gap-6">
+      {/* Feedback Modal */}
+      <AuthFeedbackModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        icon="mail"
+        badge="RESET LINK SENT"
+        title="Check Your Inbox"
+        description={
+          <>
+            We&apos;ve sent password reset instructions to{" "}
+            <span className="font-semibold text-brand-dark">{email}</span>. Please click
+            the link in the email to set a new password. The link expires in 30 minutes.
+          </>
+        }
+        primaryAction={{
+          label: "Proceed to Log In",
+          href: "/login",
+        }}
+        secondaryAction={{
+          label: "Enter Reset Token Manually",
+          href: `/reset?email=${encodeURIComponent(email)}`,
+        }}
+      />
+
       {/* Heading */}
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
@@ -70,45 +91,6 @@ export default function ForgotPasswordPage() {
           Enter your email address, and we&apos;ll send you a password reset link
         </p>
       </div>
-
-      {/* Success banner */}
-      {serverSuccess && (
-        <div
-          role="status"
-          className="flex flex-col gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-800"
-        >
-          <div className="flex items-center gap-3">
-            <svg
-              className="h-5 w-5 shrink-0 text-emerald-600"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{serverSuccess}</span>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2 text-xs">
-            <Link
-              href={`/reset?email=${encodeURIComponent(email)}`}
-              className="inline-flex items-center gap-1 font-semibold text-emerald-900 underline hover:text-emerald-700"
-            >
-              Go to Set New Password &rarr;
-            </Link>
-            <span className="text-emerald-400">|</span>
-            <Link
-              href="/templates/password-reset"
-              className="inline-flex items-center gap-1 font-semibold text-emerald-900 underline hover:text-emerald-700"
-            >
-              Preview Reset Email Template
-            </Link>
-          </div>
-        </div>
-      )}
 
       {/* Error banner */}
       {serverError && (

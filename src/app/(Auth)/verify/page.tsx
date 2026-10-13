@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
+import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { requestEmailVerification, verifyEmailWithToken } from "@/app/lib/api";
 
 function VerifyEmailForm() {
@@ -16,7 +17,14 @@ function VerifyEmailForm() {
   const [hasTokenMode, setHasTokenMode] = useState(Boolean(initialToken));
   const [errors, setErrors] = useState<{ email?: string; token?: string }>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+  const [modalConfig, setModalConfig] = useState<{
+    icon: "mail" | "check";
+    badge: string;
+    title: string;
+    description: React.ReactNode;
+    primaryAction: { label: string; href?: string; onClick?: () => void };
+    secondaryAction?: { label: string; onClick?: () => void };
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   function validate(): boolean {
@@ -44,7 +52,6 @@ function VerifyEmailForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError(null);
-    setServerSuccess(null);
 
     if (!validate()) {
       return;
@@ -55,18 +62,45 @@ function VerifyEmailForm() {
     try {
       if (hasTokenMode) {
         // Verify with secure token
-        const response = await verifyEmailWithToken(token.trim());
-        setServerSuccess(
-          response.message ||
-            "Your email has been successfully verified! You can now log in."
-        );
+        await verifyEmailWithToken(token.trim());
+        setModalConfig({
+          icon: "check",
+          badge: "EMAIL VERIFIED",
+          title: "Email Verified Successfully!",
+          description:
+            "Your email address has been successfully verified. You can now log in and begin creating professional email signatures.",
+          primaryAction: {
+            label: "Proceed to Log In",
+            href: "/login",
+          },
+        });
       } else {
         // Request a new verification link
-        const response = await requestEmailVerification(email.trim().toLowerCase());
-        setServerSuccess(
-          response.message ||
-            "If an account exists for this email, a verification link has been generated."
-        );
+        await requestEmailVerification(email.trim().toLowerCase());
+        setModalConfig({
+          icon: "mail",
+          badge: "VERIFICATION LINK SENT",
+          title: "Check Your Inbox",
+          description: (
+            <>
+              A fresh verification link has been sent to{" "}
+              <span className="font-semibold text-brand-dark">{email}</span>. Please
+              check your inbox (and spam folder) and click the link to activate your
+              account. The link expires in 24 hours.
+            </>
+          ),
+          primaryAction: {
+            label: "Proceed to Log In",
+            href: "/login",
+          },
+          secondaryAction: {
+            label: "I have a token to enter manually",
+            onClick: () => {
+              setHasTokenMode(true);
+              setModalConfig(null);
+            },
+          },
+        });
       }
     } catch (err: unknown) {
       const message =
@@ -81,6 +115,20 @@ function VerifyEmailForm() {
 
   return (
     <div className="flex w-full max-w-[496px] flex-col gap-5 sm:gap-6">
+      {/* Feedback Modal */}
+      {modalConfig && (
+        <AuthFeedbackModal
+          isOpen={Boolean(modalConfig)}
+          onClose={() => setModalConfig(null)}
+          icon={modalConfig.icon}
+          badge={modalConfig.badge}
+          title={modalConfig.title}
+          description={modalConfig.description}
+          primaryAction={modalConfig.primaryAction}
+          secondaryAction={modalConfig.secondaryAction}
+        />
+      )}
+
       {/* Heading */}
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
@@ -92,45 +140,6 @@ function VerifyEmailForm() {
             : "Enter your email to receive a secure 24-hour verification link."}
         </p>
       </div>
-
-      {/* Success banner */}
-      {serverSuccess && (
-        <div
-          role="status"
-          className="flex flex-col gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-800"
-        >
-          <div className="flex items-center gap-3">
-            <svg
-              className="h-5 w-5 shrink-0 text-emerald-600"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{serverSuccess}</span>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2 text-xs">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1 font-semibold text-emerald-900 underline hover:text-emerald-700"
-            >
-              Proceed to Log In &rarr;
-            </Link>
-            <span className="text-emerald-400">|</span>
-            <Link
-              href="/templates/email-verification"
-              className="inline-flex items-center gap-1 font-semibold text-emerald-900 underline hover:text-emerald-700"
-            >
-              Preview Email Template
-            </Link>
-          </div>
-        </div>
-      )}
 
       {/* Error banner */}
       {serverError && (

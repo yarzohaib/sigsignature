@@ -222,10 +222,10 @@ function LoginForm() {
         {serverError && (
           <div
             role="alert"
-            className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+            className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800"
           >
             <svg
-              className="h-5 w-5 shrink-0 text-red-600"
+              className="mt-0.5 h-5 w-5 shrink-0 text-red-600"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
@@ -236,7 +236,17 @@ function LoginForm() {
                 clipRule="evenodd"
               />
             </svg>
-            <span>{serverError}</span>
+            <div className="flex flex-col gap-1">
+              <span>{serverError}</span>
+              {serverError.toLowerCase().includes("verify") && (
+                <Link
+                  href={`/verify?email=${encodeURIComponent(email)}`}
+                  className="inline-flex items-center gap-1 font-semibold text-brand underline hover:text-brand-dark"
+                >
+                  Resend verification email &rarr;
+                </Link>
+              )}
+            </div>
           </div>
         )}
 

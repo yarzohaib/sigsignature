@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
+import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { resetPassword } from "@/app/lib/api";
 
 function ResetPasswordForm() {
@@ -21,7 +22,7 @@ function ResetPasswordForm() {
     confirmPassword?: string;
   }>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   function validate(): boolean {
@@ -59,7 +60,6 @@ function ResetPasswordForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setServerError(null);
-    setServerSuccess(null);
 
     if (!validate()) {
       return;
@@ -68,18 +68,12 @@ function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      const response = await resetPassword({
+      await resetPassword({
         token: token.trim(),
         newPassword,
       });
 
-      setServerSuccess(
-        response.message || "Password reset successfully! Redirecting to login..."
-      );
-
-      setTimeout(() => {
-        router.push("/login");
-      }, 1500);
+      setIsSuccessModalOpen(true);
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -93,6 +87,20 @@ function ResetPasswordForm() {
 
   return (
     <div className="flex w-full max-w-[496px] flex-col gap-5 sm:gap-6">
+      {/* Feedback Modal */}
+      <AuthFeedbackModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => router.push("/login")}
+        icon="check"
+        badge="SUCCESS"
+        title="Password Reset Complete!"
+        description="Your password has been successfully updated. You can now securely log in to your account with your new credentials."
+        primaryAction={{
+          label: "Proceed to Log In",
+          onClick: () => router.push("/login"),
+        }}
+      />
+
       {/* Heading */}
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
@@ -102,28 +110,6 @@ function ResetPasswordForm() {
           Create a new password to securely access your SIG Signature account.
         </p>
       </div>
-
-      {/* Success banner */}
-      {serverSuccess && (
-        <div
-          role="status"
-          className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"
-        >
-          <svg
-            className="h-5 w-5 shrink-0 text-emerald-600"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>{serverSuccess}</span>
-        </div>
-      )}
 
       {/* Error banner */}
       {serverError && (

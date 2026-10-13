@@ -6,6 +6,7 @@ import { Suspense, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
+import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { signupUser, startOAuth, type OAuthProvider } from "@/app/lib/api";
 
 function getOAuthErrorMessage(code: string | null): string | null {
@@ -58,6 +59,8 @@ function SignupForm() {
   const [serverError, setServerError] = useState<string | null>(() =>
     getOAuthErrorMessage(errorCode)
   );
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
 
@@ -140,14 +143,16 @@ function SignupForm() {
     setIsLoading(true);
 
     try {
+      const targetEmail = form.email.trim().toLowerCase();
       await signupUser({
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim() || undefined,
-        email: form.email.trim().toLowerCase(),
+        email: targetEmail,
         password: form.password,
       });
 
-      router.push("/login");
+      setRegisteredEmail(targetEmail);
+      setShowSuccessModal(true);
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -168,6 +173,31 @@ function SignupForm() {
 
   return (
     <div className="flex w-full max-w-[496px] flex-col gap-5 sm:gap-6">
+      {/* Verification Email Sent Modal */}
+      <AuthFeedbackModal
+        isOpen={showSuccessModal}
+        onClose={() => router.push("/login")}
+        icon="mail"
+        badge="VERIFICATION EMAIL SENT"
+        title="Check Your Inbox"
+        description={
+          <>
+            We&apos;ve sent a verification link to{" "}
+            <span className="font-semibold text-brand-dark">{registeredEmail}</span>.
+            Please verify your email address to complete your registration. The link is
+            valid for 24 hours.
+          </>
+        }
+        primaryAction={{
+          label: "Proceed to Log In",
+          onClick: () => router.push("/login"),
+        }}
+        secondaryAction={{
+          label: "Didn't receive it? Verify or Resend",
+          href: `/verify?email=${encodeURIComponent(registeredEmail)}`,
+        }}
+      />
+
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
           Create Your Account
