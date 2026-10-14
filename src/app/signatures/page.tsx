@@ -14,6 +14,12 @@ import {
   getStoredRefreshToken,
   getStoredUser,
 } from "@/app/lib/auth";
+import {
+  getStoredSignatures,
+  deleteStoredSignature,
+  duplicateStoredSignature,
+} from "@/lib/signatureStorage";
+import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
 
 export default function MySignaturesPage() {
   const router = useRouter();
@@ -22,12 +28,21 @@ export default function MySignaturesPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Signatures state: empty by default so "No signatures yet" screen displays
+  // Signatures state: initialized from localStorage so saved templates display
   const [signatures, setSignatures] = useState<SignatureItem[]>([]);
   const [deletingSignature, setDeletingSignature] = useState<SignatureItem | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    function syncSignatures() {
+      setSignatures(getStoredSignatures());
+    }
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("sig_storage_updated", syncSignatures);
+      window.addEventListener("storage", syncSignatures);
+    }
+
     async function verifyAuth() {
       const cachedUser = getStoredUser();
       if (cachedUser) {
@@ -43,11 +58,19 @@ export default function MySignaturesPage() {
         router.replace("/login?redirect=/signatures");
         return;
       } finally {
+        setSignatures(getStoredSignatures());
         setIsLoading(false);
       }
     }
 
     verifyAuth();
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("sig_storage_updated", syncSignatures);
+        window.removeEventListener("storage", syncSignatures);
+      }
+    };
   }, [router]);
 
   function showToast(msg: string) {
@@ -76,77 +99,63 @@ export default function MySignaturesPage() {
   function handleConfirmDelete() {
     if (!deletingSignature) return;
     const deletedName = deletingSignature.name;
-    setSignatures((prev) => prev.filter((s) => s.id !== deletingSignature.id));
+    deleteStoredSignature(deletingSignature.id);
+    setSignatures(getStoredSignatures());
     setDeletingSignature(null);
     showToast(`"${deletedName}" was deleted.`);
   }
 
   function handleDuplicate(id: string) {
-    const target = signatures.find((s) => s.id === id);
-    if (!target) return;
-    const duplicated: SignatureItem = {
-      ...target,
-      id: `sig-${Date.now()}`,
-      name: `${target.name} (Copy)`,
-      updatedAt: "Updated just now",
-    };
-    setSignatures((prev) => [duplicated, ...prev]);
-    showToast(`Duplicated "${target.name}".`);
+    const duplicated = duplicateStoredSignature(id);
+    if (duplicated) {
+      setSignatures(getStoredSignatures());
+      showToast(`Duplicated "${duplicated.name}".`);
+    }
   }
 
-  function handleExport(id: string) {
+  async function handleExport(id: string) {
     const target = signatures.find((s) => s.id === id);
-    showToast(`Exported "${target?.name || "signature"}" HTML code.`);
+    if (!target) return;
+
+    const html = target.rawTemplateData
+      ? generateSignatureHtml(target.rawTemplateData)
+      : generateSignatureHtml({
+          fullName: target.name,
+          jobTitle: target.role,
+          companyName: target.company,
+          email: target.email,
+          phone: target.phone,
+          website: target.website || "",
+          avatarUrl: target.avatarUrl || "/daniel-wilson.png",
+          themeColor: target.themeColor || "#245FD4",
+          fontFamily: target.fontFamily || "Inter",
+          layout: "two-column",
+          socialIconsStyle: "filled",
+          socials: {
+            linkedin: "https://linkedin.com",
+            twitter: "https://twitter.com",
+            facebook: "https://facebook.com",
+          },
+          optional: {
+            tagline: target.tagline,
+            address: target.address,
+          },
+        });
+
+    try {
+      await navigator.clipboard.writeText(html);
+      showToast(`Copied "${target.name}" HTML code to clipboard!`);
+    } catch {
+      showToast(`Exported "${target.name}" HTML code.`);
+    }
   }
 
   function handleEdit(id: string) {
-    const target = signatures.find((s) => s.id === id);
-    showToast(`Opening editor for "${target?.name || "signature"}".`);
+    router.push(`/templates?edit=${id}`);
   }
 
   function handleCreateNew() {
-    const templates = [
-      {
-        name: "Sophia Clark",
-        role: "HR Manager",
-        email: user?.email || "sophia@company.com",
-        phone: "+1 (555) 222-3344",
-        company: "Company",
-        tagline: "Tagline goes here",
-        templateType: "sophia" as const,
-        avatarUrl: "/sophia-clark.png",
-      },
-      {
-        name: "John Doe",
-        role: "Marketing Manager",
-        email: user?.email || "john@company.com",
-        phone: "+1 (555) 987-6543",
-        company: "Company",
-        tagline: "Tagline goes here",
-        address: "123 Business Ave, New York, NY 10001",
-        website: "www.company.com",
-        templateType: "john" as const,
-        avatarUrl: "/john-doe.png",
-      },
-      {
-        name: "Support Team",
-        role: "Customer Support",
-        email: user?.email || "support@company.com",
-        phone: "+1 (555) 654-3210",
-        company: "Company",
-        tagline: "Tagline goes here",
-        templateType: "support" as const,
-      },
-    ];
-
-    const template = templates[signatures.length % templates.length];
-    const newSig: SignatureItem = {
-      ...template,
-      id: `sig-${Date.now()}`,
-      updatedAt: "Updated just now",
-    };
-    setSignatures((prev) => [...prev, newSig]);
-    showToast(`Created signature "${newSig.name}".`);
+    router.push("/templates");
   }
 
   const displayName = user?.firstName

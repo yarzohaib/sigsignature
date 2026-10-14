@@ -10,8 +10,12 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Protect /dashboard, /signatures, and nested routes
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/signatures")) {
+  // Protect /dashboard, /signatures, /templates, and nested routes
+  if (
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/signatures") ||
+    pathname.startsWith("/templates")
+  ) {
     if (!hasSession) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
@@ -28,5 +32,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/signatures/:path*", "/login", "/signup"],
+  matcher: [
+    "/dashboard/:path*",
+    "/signatures/:path*",
+    "/templates/:path*",
+    "/login",
+    "/signup",
+  ],
 };

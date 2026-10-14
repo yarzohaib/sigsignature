@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 interface SignaturesHeaderProps {
-  onCreateClick: () => void;
+  onCreateClick?: () => void;
 }
 
 export default function SignaturesHeader({ onCreateClick }: SignaturesHeaderProps) {
@@ -24,14 +26,14 @@ export default function SignaturesHeader({ onCreateClick }: SignaturesHeaderProp
       </div>
 
       {/* Create New Signature Button (275px x 46px with landing page gradient per Figma) */}
-      <button
-        type="button"
+      <Link
+        href="/templates"
         onClick={onCreateClick}
         className="flex h-[46px] w-full sm:w-[275px] items-center justify-center rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-[15px] font-medium text-white shadow-xs transition hover:opacity-95 active:scale-98 shrink-0"
         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
       >
         Create New Signature
-      </button>
+      </Link>
     </div>
   );
 }

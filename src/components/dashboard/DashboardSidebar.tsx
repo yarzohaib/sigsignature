@@ -37,7 +37,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
     },
     {
       name: "Templates",
-      href: "#templates",
+      href: "/templates",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -166,7 +166,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href === "/signatures" && pathname.startsWith("/signatures"));
+                (item.href === "/signatures" && pathname.startsWith("/signatures")) ||
+                (item.href === "/templates" && pathname.startsWith("/templates"));
               return (
                 <Link
                   key={item.name}

@@ -71,7 +71,7 @@ export default function ActionCards() {
         {/* Browse Templates Button with landing page gradient */}
         <div className="mt-4 sm:mt-5 2xl:mt-6">
           <Link
-            href="#browse-templates"
+            href="/templates"
             className="flex h-[44px] sm:h-[46px] 2xl:h-[48px] w-full items-center justify-center gap-2 rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-white shadow-xs transition hover:opacity-95"
             style={{
               fontFamily: "var(--font-commissioner), Commissioner, sans-serif",

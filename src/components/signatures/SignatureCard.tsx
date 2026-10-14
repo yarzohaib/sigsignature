@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { TemplateSignatureData } from "@/types/template";
+
 export interface SignatureItem {
   id: string;
   name: string;
@@ -11,10 +13,14 @@ export interface SignatureItem {
   company: string;
   tagline: string;
   updatedAt: string;
-  templateType: "sophia" | "john" | "support" | "custom";
+  templateType: "sophia" | "john" | "support" | "custom" | "minimal";
   avatarUrl?: string;
   address?: string;
   website?: string;
+  themeColor?: string;
+  fontFamily?: string;
+  templateId?: string;
+  rawTemplateData?: TemplateSignatureData;
 }
 
 interface SignatureCardProps {
@@ -32,6 +38,8 @@ export default function SignatureCard({
   onExport,
   onDelete,
 }: SignatureCardProps) {
+  const themeColor = signature.themeColor || "#245FD4";
+
   return (
     <div className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-white shadow-xs transition-all hover:shadow-md hover:border-slate-300">
       {/* Top Preview Section */}
@@ -49,6 +57,7 @@ export default function SignatureCard({
                     width={44}
                     height={44}
                     className="h-full w-full object-cover"
+                    unoptimized={signature.avatarUrl?.startsWith("data:")}
                   />
                 </div>
                 <div className="min-w-0 space-y-0.5">
@@ -100,6 +109,7 @@ export default function SignatureCard({
                     width={40}
                     height={40}
                     className="h-full w-full object-cover"
+                    unoptimized={signature.avatarUrl?.startsWith("data:")}
                   />
                 </div>
                 <div className="min-w-0 space-y-0.5">
@@ -191,12 +201,85 @@ export default function SignatureCard({
           </div>
         )}
 
-        {/* Custom generic fallback */}
-        {signature.templateType === "custom" && (
+        {/* Custom / Minimal template preview */}
+        {(signature.templateType === "custom" || signature.templateType === "minimal") && (
           <div className="w-full rounded-lg bg-white p-3 border border-slate-100 shadow-2xs">
-            <h5 className="text-[13px] font-bold text-[#1E293B]">{signature.name}</h5>
-            <p className="text-[11px] text-[#64748B]">{signature.role}</p>
-            <p className="text-[10px] text-[#94A3B8]">{signature.email}</p>
+            <div className="flex items-center justify-between gap-3">
+              {/* Left: Avatar + Socials */}
+              <div className="flex flex-col items-center gap-1 shrink-0">
+                <div className="relative h-11 w-11 overflow-hidden rounded-lg bg-slate-100 border border-slate-200 shadow-2xs">
+                  {signature.avatarUrl ? (
+                    <Image
+                      src={signature.avatarUrl}
+                      alt={signature.name}
+                      width={44}
+                      height={44}
+                      className="h-full w-full object-cover"
+                      unoptimized={signature.avatarUrl.startsWith("data:")}
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-blue-50 text-[11px] font-bold text-[#245FD4]">
+                      {signature.name.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                {/* Social icons */}
+                <div className="flex items-center gap-0.5">
+                  <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#0077B5] text-[6px] font-bold text-white">in</span>
+                  <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#000000] text-[6px] font-bold text-white">𝕏</span>
+                  <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#1877F2] text-[6px] font-bold text-white">f</span>
+                </div>
+              </div>
+
+              {/* Middle: Details */}
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <h5 className="text-[12px] font-bold text-[#1E293B] leading-tight truncate">
+                  {signature.name}
+                </h5>
+                <p className="text-[10px] font-medium text-[#64748B] leading-tight truncate">
+                  {signature.role}
+                </p>
+                <div className="pt-0.5 space-y-0.5 text-[8.5px] text-[#64748B]">
+                  {signature.phone && (
+                    <div className="flex items-center gap-1 truncate">
+                      <span style={{ color: themeColor }} className="font-bold">&#9742;</span>
+                      <span className="truncate">{signature.phone}</span>
+                    </div>
+                  )}
+                  {signature.email && (
+                    <div className="flex items-center gap-1 truncate">
+                      <span style={{ color: themeColor }} className="font-bold">&#9993;</span>
+                      <span className="truncate">{signature.email}</span>
+                    </div>
+                  )}
+                  {signature.website && (
+                    <div className="flex items-center gap-1 truncate">
+                      <span style={{ color: themeColor }} className="font-bold">&#9873;</span>
+                      <span className="truncate">{signature.website}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Vertical divider */}
+              <div className="h-12 w-px bg-slate-200 shrink-0" />
+
+              {/* Right: Company */}
+              <div className="flex flex-col items-center justify-center text-center shrink-0 w-[72px]">
+                <svg width="22" height="22" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 8H26C28.2091 8 30 9.79086 30 12V20C30 22.2091 28.2091 24 26 24H22" stroke={themeColor} strokeWidth="4" strokeLinecap="round" />
+                  <path d="M26 30H12C9.79086 30 8 28.2091 8 26V18C8 15.7909 9.79086 14 12 14H16" stroke={themeColor} strokeWidth="4" strokeLinecap="round" />
+                </svg>
+                <span className="mt-1 text-[8.5px] font-bold text-[#1E293B] leading-tight truncate max-w-full">
+                  {signature.company || "Company"}
+                </span>
+                {signature.tagline && (
+                  <span className="text-[7.5px] text-[#94A3B8] leading-tight truncate max-w-full">
+                    {signature.tagline}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
