@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import ProblemSection from "@/components/landing/ProblemSection";
@@ -8,6 +9,12 @@ import ComparisonSection from "@/components/landing/ComparisonSection";
 import PricingSection from "@/components/landing/PricingSection";
 import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
+
+export const metadata: Metadata = {
+  title: "Free Email Signature Generator | SigSignature",
+  description:
+    "Create up to 3 professional signatures with SigSignature’s free email signature generator. Customize templates, preview live, and export HTML or images.",
+};
 
 export default function LandingPage() {
   return (

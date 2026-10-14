@@ -360,7 +360,7 @@ function SignupForm() {
               className="h-4 w-4 rounded border-line accent-brand disabled:cursor-not-allowed"
             />
             <span>
-              I agree with the <Link href="#" className="underline">Terms &amp; Policy</Link>
+              I agree with the <span className="font-medium text-slate-900">Terms &amp; Policy</span>
             </span>
           </label>
           {errors.agree && <p className="text-sm text-red-600">{errors.agree}</p>}

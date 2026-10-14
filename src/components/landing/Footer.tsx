@@ -27,8 +27,8 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* 3 Horizontal Navigation Groups Matching Figma */}
-        <div className="mt-12 flex flex-col items-center justify-center gap-10 md:flex-row md:items-start md:justify-around lg:gap-14">
+        {/* Horizontal Navigation Groups */}
+        <div className="mt-12 flex flex-col items-center justify-center gap-10 sm:gap-14 md:flex-row md:items-start md:justify-center md:gap-20 lg:gap-28">
           {/* Products Group */}
           <div className="flex flex-col items-center text-center">
             <h4 className="font-body text-xl sm:text-2xl lg:text-[24px] font-medium leading-[100%] tracking-normal text-black">
@@ -58,39 +58,6 @@ export default function Footer() {
                 className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
                 Sign Up
-              </Link>
-            </div>
-          </div>
-
-          {/* Company Group */}
-          <div className="flex flex-col items-center text-center">
-            <h4 className="font-body text-xl sm:text-2xl lg:text-[24px] font-medium leading-[100%] tracking-normal text-black">
-              Company
-            </h4>
-            <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-7">
-              <Link
-                href="#about"
-                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
-              >
-                About
-              </Link>
-              <Link
-                href="#careers"
-                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
-              >
-                Careers
-              </Link>
-              <Link
-                href="#contact"
-                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
-              >
-                Contact Us
-              </Link>
-              <Link
-                href="#updates"
-                className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
-              >
-                Updates
               </Link>
             </div>
           </div>
@@ -175,17 +142,8 @@ export default function Footer() {
 
       {/* Bottom Legal & Copyright Bar */}
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6">
-        <div className="flex flex-col items-center justify-between gap-4 text-xs sm:text-sm text-[#878787] sm:flex-row">
+        <div className="flex flex-col items-center justify-center text-center text-xs sm:text-sm text-[#878787]">
           <p>© 2026 Sig Signature. All rights reserved.</p>
-
-          <div className="flex items-center gap-6">
-            <Link href="#privacy" className="transition hover:text-brand">
-              Privacy Policy
-            </Link>
-            <Link href="#terms" className="transition hover:text-brand">
-              Terms of Service
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

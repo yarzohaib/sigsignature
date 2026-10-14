@@ -33,7 +33,7 @@ export default function ProblemSection() {
         <div className="text-center">
           <SectionBadge label="PROBLEM" className="mb-4" />
           <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[54px] lg:leading-[1.15]">
-            Email signature are quietly
+            Email Signatures Are Quietly
             <br />
             <span className="text-[#1243A3]">Broken</span>
           </h2>

@@ -15,18 +15,15 @@ export default function HeroSection() {
             </p>
 
             <h1 className="font-heading text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-[48px] xl:text-[54px] lg:leading-[1.12]">
-              Create a Professional{" "}
+              Free{" "}
               <span className="text-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] bg-clip-text text-transparent">
-                Email Signature
+                Email Signature Generator
               </span>{" "}
-              in Minutes.
+              – Create Professional Signatures in Minutes
             </h1>
 
             <p className="font-body mt-4 sm:mt-5 text-base leading-relaxed text-[#878787] sm:text-lg">
-              Stop paying $100+ every time you need an email signature. Start
-              from a template, or build one completely from scratch. Design,
-              preview, and export production ready HTML signatures yourself in
-              minutes.
+              Create up to 3 professional email signatures with our free email signature generator. Start with a template or build from scratch, customize your design, preview changes live, and export HTML or images.
             </p>
 
             <div className="mt-6 sm:mt-7 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
@@ -61,10 +58,10 @@ export default function HeroSection() {
             <div className="relative flex w-full max-w-[640px] justify-center sm:max-w-[720px] lg:max-w-none lg:justify-end">
               <div className="relative inline-block w-full">
                 <Image
-                  src="/LivePreview.png"
+                  src="/Preview.svg"
                   alt="Live signature builder preview"
-                  width={754}
-                  height={575}
+                  width={671}
+                  height={512}
                   priority
                   className="h-auto w-full rounded-2xl object-contain drop-shadow-md"
                 />
