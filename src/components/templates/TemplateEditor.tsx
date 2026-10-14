@@ -5,9 +5,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
 import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
-import { SignatureItem } from "@/components/signatures/SignatureCard";
-import { saveStoredSignature } from "@/lib/signatureStorage";
-import { compressImageFile } from "@/lib/imageUtils";
+import { getSignatureRepository } from "@/lib/signatures/repository";
+import { compressImageToBlob } from "@/lib/imageUtils";
+import { uploadSignatureImage } from "@/lib/uploads";
 
 interface TemplateEditorProps {
   template: TemplateItem;
@@ -38,14 +38,23 @@ export default function TemplateEditor({
     optional: false,
   });
 
-  // Toast feedback state
-  const [toastMessage, setToastMessage] = useState<{ title: string; subtitle: string } | null>(null);
+  // Saving state
+  const [isSaving, setIsSaving] = useState(false);
+  // Photo uploading state
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
-  function showToast(title: string, subtitle: string) {
-    setToastMessage({ title, subtitle });
+  // Toast feedback state
+  const [toastMessage, setToastMessage] = useState<{
+    title: string;
+    subtitle: string;
+    isError?: boolean;
+  } | null>(null);
+
+  function showToast(title: string, subtitle: string, isError = false) {
+    setToastMessage({ title, subtitle, isError });
     setTimeout(() => {
       setToastMessage(null);
-    }, 3500);
+    }, 4000);
   }
 
   // Toggle accordion section
@@ -86,26 +95,64 @@ export default function TemplateEditor({
     }));
   }
 
-  // User Photo Upload Handler with automatic compression to prevent QuotaExceededError
+  // User Photo Upload Handler with automatic compression and direct S3 presigned upload
   async function handlePhotoUpload(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      showToast("Invalid file", "Please upload an image file (PNG, JPG, etc).");
+    // Validate the file type (jpeg, png, webp only) and show an error toast otherwise
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      showToast("Invalid file", "Please upload a JPEG, PNG, or WebP image.", true);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       return;
     }
 
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("File too large", "Please upload an image smaller than 10MB.", true);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    const previousAvatar = formData.avatarUrl;
+    // Show an immediate local preview using URL.createObjectURL while uploading, and revoke it afterward
+    const objectUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({
+      ...prev,
+      avatarUrl: objectUrl,
+    }));
+    setIsUploadingPhoto(true);
+
     try {
-      const compressedDataUrl = await compressImageFile(file, 256, 0.82);
+      // Compress to blob (max 400px, quality 0.85, kind: "avatar")
+      const compressedBlob = await compressImageToBlob(file, 400, 0.85, "avatar");
+      // Upload to S3 via backend presign endpoint
+      const publicUrl = await uploadSignatureImage(compressedBlob, "avatar");
+
       setFormData((prev) => ({
         ...prev,
-        avatarUrl: compressedDataUrl,
+        avatarUrl: publicUrl,
       }));
-      showToast("Photo uploaded!", "Your custom photo was optimized and applied.");
-    } catch (err) {
-      console.error("Image processing error:", err);
-      showToast("Upload failed", "Could not process image file. Please try another image.");
+      showToast("Photo uploaded!", "Your profile photo was uploaded successfully.");
+    } catch (err: unknown) {
+      console.error("Image upload error:", err);
+      // On failure, restore the previous avatar and show an error toast with the message. Do not lose other form data.
+      setFormData((prev) => ({
+        ...prev,
+        avatarUrl: previousAvatar,
+      }));
+      const message = err instanceof Error ? err.message : "Failed to upload image. Please try again.";
+      showToast("Upload failed", message, true);
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+      setIsUploadingPhoto(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   }
 
@@ -148,31 +195,24 @@ export default function TemplateEditor({
 
   // Save the signature to user's signatures list
   async function handleSaveSignature() {
-    const signatureId = editingSignatureId || `sig-${Date.now()}`;
-    const newSignature: SignatureItem = {
-      id: signatureId,
-      name: formData.fullName || "My Signature",
-      role: formData.jobTitle || "",
-      email: formData.email || "",
-      phone: formData.phone || "",
-      company: formData.companyName || "",
-      tagline: formData.optional?.tagline || "",
-      updatedAt: "Updated just now",
-      templateType: "custom",
-      avatarUrl: formData.avatarUrl,
-      address: formData.optional?.address,
-      website: formData.website,
-      themeColor: formData.themeColor,
-      fontFamily: formData.fontFamily,
-      templateId: template.id,
-      rawTemplateData: formData,
-    };
-
-    await saveStoredSignature(newSignature);
-    showToast("Saved!", "Signature saved to My Signatures.");
-    setTimeout(() => {
-      router.push("/signatures");
-    }, 600);
+    try {
+      setIsSaving(true);
+      await getSignatureRepository().save({
+        id: editingSignatureId,
+        templateId: template.id,
+        name: formData.fullName || "My Signature",
+        data: formData,
+      });
+      showToast("Saved!", "Signature saved to My Signatures.");
+      setTimeout(() => {
+        router.push("/signatures");
+      }, 600);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to save signature.";
+      showToast("Save failed", message, true);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   const colorSwatches = ["#0F172A", "#245FD4", "#022977", "#8B5CF6", "#059669"];
@@ -398,6 +438,7 @@ export default function TemplateEditor({
                         width={56}
                         height={56}
                         className="h-full w-full object-cover"
+                        unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -406,16 +447,18 @@ export default function TemplateEditor({
                       <div className="mt-2 flex items-center gap-2">
                         <button
                           type="button"
+                          disabled={isUploadingPhoto}
                           onClick={() => fileInputRef.current?.click()}
-                          className="rounded-lg bg-[#245FD4] px-3 py-1 text-[11px] font-medium text-white shadow-2xs transition hover:bg-[#1D4ED8]"
+                          className="rounded-lg bg-[#245FD4] px-3 py-1 text-[11px] font-medium text-white shadow-2xs transition hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                          Upload Custom Photo
+                          {isUploadingPhoto ? "Uploading..." : "Upload Custom Photo"}
                         </button>
                         {formData.avatarUrl !== template.defaultData.avatarUrl && (
                           <button
                             type="button"
+                            disabled={isUploadingPhoto}
                             onClick={handleResetPhoto}
-                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50"
+                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
                           >
                             Reset
                           </button>
@@ -423,7 +466,7 @@ export default function TemplateEditor({
                         <input
                           ref={fileInputRef}
                           type="file"
-                          accept="image/*"
+                          accept="image/jpeg,image/png,image/webp"
                           onChange={handlePhotoUpload}
                           className="hidden"
                         />
@@ -720,7 +763,7 @@ export default function TemplateEditor({
                           width={64}
                           height={64}
                           className="h-full w-full object-cover"
-                          unoptimized={formData.avatarUrl?.startsWith("data:")}
+                          unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
                         />
                       </div>
                       {/* Social links row */}
@@ -797,7 +840,7 @@ export default function TemplateEditor({
                           width={56}
                           height={56}
                           className="h-full w-full object-cover"
-                          unoptimized={formData.avatarUrl?.startsWith("data:")}
+                          unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
                         />
                       </div>
                       {/* Details & Branding */}
@@ -865,7 +908,7 @@ export default function TemplateEditor({
                             width={44}
                             height={44}
                             className="h-full w-full object-cover"
-                            unoptimized={formData.avatarUrl?.startsWith("data:")}
+                            unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
                           />
                         </div>
                         <div className="min-w-0">
@@ -949,24 +992,46 @@ export default function TemplateEditor({
 
           <button
             type="button"
+            disabled={isSaving || isUploadingPhoto}
             onClick={handleSaveSignature}
-            className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-lg bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95"
+            className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-lg bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <span>Save the Signature</span>
-            <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+            {isSaving && (
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            )}
+            <span>{isSaving ? "Saving..." : "Save the Signature"}</span>
+            {!isSaving && (
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
 
-      {/* Success Toast matching Figma */}
+      {/* Toast Feedback */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-start gap-3 rounded-xl border border-emerald-100 bg-white p-4 shadow-xl animate-in slide-in-from-bottom-5 duration-200">
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+        <div
+          className={`fixed bottom-6 right-6 z-50 flex items-start gap-3 rounded-xl border bg-white p-4 shadow-xl animate-in slide-in-from-bottom-5 duration-200 ${
+            toastMessage.isError ? "border-red-200" : "border-emerald-100"
+          }`}
+        >
+          <div
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+              toastMessage.isError ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+            }`}
+          >
+            {toastMessage.isError ? (
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            ) : (
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
           </div>
           <div>
             <h5 className="text-xs font-bold text-[#1E293B]">{toastMessage.title}</h5>

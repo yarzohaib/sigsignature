@@ -95,14 +95,14 @@ export default function FeaturesSection() {
             <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
               <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
-                  SN
+                  MN
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-slate-900 sm:text-sm">
-                    Satya Nadella
+                    Muhammad Nadir
                   </p>
                   <p className="truncate text-[11px] text-[#878787]">
-                    satya@microsoft.com
+                    nadir@thenevon.com
                   </p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function FeaturesSection() {
                   <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-brand-dark to-brand" />
                   <div>
                     <p className="text-xs font-bold text-slate-900 sm:text-sm">
-                      Satya Nadella
+                      Muhammad Nadir
                     </p>
                     <p className="text-[11px] text-[#878787]">PNG / JPEG (2x Retina)</p>
                   </div>

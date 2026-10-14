@@ -14,8 +14,8 @@ export default function SignaturePreview({ className = "" }: SignaturePreviewPro
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#245FD4] to-[#022977]" />
             <div>
-              <p className="text-[15px] font-semibold text-slate-900">Satya Nadella</p>
-              <p className="text-[11px] text-slate-600">Head of Microsoft • CEO</p>
+              <p className="text-[15px] font-semibold text-slate-900">Muhammad Nadir</p>
+              <p className="text-[11px] text-slate-600">Head of TheNevon • CEO</p>
             </div>
           </div>
           <span className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-0.5 text-[10px] text-slate-700">
@@ -26,9 +26,9 @@ export default function SignaturePreview({ className = "" }: SignaturePreviewPro
 
         <div className="mt-10 text-[10px] text-slate-700">
           <p>
-            satya@gmail.com <span className="mx-2 text-line">|</span> +655 863 1279
+            nadir@thenevon.com <span className="mx-2 text-line">|</span> +655 863 1279
           </p>
-          <p className="mt-2">www.microsoft.com</p>
+          <p className="mt-2">www.thenevon.com</p>
         </div>
 
         <div className="mt-5 flex items-center gap-3">

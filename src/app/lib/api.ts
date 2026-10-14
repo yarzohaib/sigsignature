@@ -541,3 +541,68 @@ export async function verifyEmail(email: string, token?: string): Promise<Verify
   return requestEmailVerification(email);
 }
 
+export type UploadKind = "avatar" | "logo";
+export type UploadContentType = "image/jpeg" | "image/png" | "image/webp";
+
+export interface PresignUploadPayload {
+  kind: UploadKind;
+  contentType: UploadContentType;
+  size: number;
+}
+
+export interface PresignUploadData {
+  uploadUrl: string;
+  publicUrl: string;
+  key: string;
+}
+
+export interface PresignUploadResponse {
+  success: boolean;
+  message?: string;
+  data?: PresignUploadData;
+}
+
+/**
+ * Request a presigned S3 upload URL for avatar or logo image uploads.
+ * Uses authenticated apiFetch with automatic token refresh on 401.
+ */
+export async function requestUploadUrl(payload: PresignUploadPayload): Promise<PresignUploadData> {
+  const url = `${API_BASE_URL}/api/v1/uploads/presign`;
+
+  let response: Response;
+  try {
+    response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        kind: payload.kind,
+        contentType: payload.contentType,
+        size: payload.size,
+      }),
+    });
+  } catch (networkErr: unknown) {
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new Error(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`
+    );
+  }
+
+  const result: PresignUploadResponse | null = await response.json().catch(() => null);
+
+  if (!response.ok || !result?.success || !result?.data) {
+    const message =
+      result?.message ||
+      (response.status === 401
+        ? "Please log in to upload images."
+        : `Failed to request upload URL (HTTP ${response.status}).`);
+    throw new Error(message);
+  }
+
+  return result.data;
+}
+
+

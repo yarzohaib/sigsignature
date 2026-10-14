@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import SignaturesHeader from "@/components/signatures/SignaturesHeader";
-import SignatureCard, { SignatureItem } from "@/components/signatures/SignatureCard";
+import SignatureCard from "@/components/signatures/SignatureCard";
 import DeleteSignatureModal from "@/components/signatures/DeleteSignatureModal";
 import EmptySignaturesState from "@/components/signatures/EmptySignaturesState";
 import { UserProfile, getCurrentUser, logoutUser } from "@/app/lib/api";
@@ -14,35 +14,37 @@ import {
   getStoredRefreshToken,
   getStoredUser,
 } from "@/app/lib/auth";
-import {
-  getStoredSignatures,
-  deleteStoredSignature,
-  duplicateStoredSignature,
-} from "@/lib/signatureStorage";
+import { getSignatureRepository } from "@/lib/signatures/repository";
+import { SavedSignature } from "@/types/signature";
 import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
 
 export default function MySignaturesPage() {
   const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Signatures state: initialized from localStorage so saved templates display
-  const [signatures, setSignatures] = useState<SignatureItem[]>([]);
-  const [deletingSignature, setDeletingSignature] = useState<SignatureItem | null>(null);
+  // Signatures state: initialized from repository so saved templates display
+  const [signatures, setSignatures] = useState<SavedSignature[]>([]);
+  const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const loadSignatures = useCallback(async () => {
+    try {
+      setLoadError(null);
+      const repo = getSignatureRepository();
+      const list = await repo.list();
+      setSignatures(list);
+    } catch (err: unknown) {
+      console.error("Failed to load signatures:", err);
+      const msg = err instanceof Error ? err.message : "Failed to load signatures.";
+      setLoadError(msg);
+    }
+  }, []);
+
   useEffect(() => {
-    function syncSignatures() {
-      setSignatures(getStoredSignatures());
-    }
-
-    if (typeof window !== "undefined") {
-      window.addEventListener("sig_storage_updated", syncSignatures);
-      window.addEventListener("storage", syncSignatures);
-    }
-
     async function verifyAuth() {
       const cachedUser = getStoredUser();
       if (cachedUser) {
@@ -57,21 +59,17 @@ export default function MySignaturesPage() {
         clearAuthSession();
         router.replace("/login?redirect=/signatures");
         return;
+      }
+
+      try {
+        await loadSignatures();
       } finally {
-        setSignatures(getStoredSignatures());
         setIsLoading(false);
       }
     }
 
     verifyAuth();
-
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("sig_storage_updated", syncSignatures);
-        window.removeEventListener("storage", syncSignatures);
-      }
-    };
-  }, [router]);
+  }, [router, loadSignatures]);
 
   function showToast(msg: string) {
     setToastMessage(msg);
@@ -92,24 +90,34 @@ export default function MySignaturesPage() {
     }
   }
 
-  function handleStartDelete(signature: SignatureItem) {
+  function handleStartDelete(signature: SavedSignature) {
     setDeletingSignature(signature);
   }
 
-  function handleConfirmDelete() {
+  async function handleConfirmDelete() {
     if (!deletingSignature) return;
     const deletedName = deletingSignature.name;
-    deleteStoredSignature(deletingSignature.id);
-    setSignatures(getStoredSignatures());
-    setDeletingSignature(null);
-    showToast(`"${deletedName}" was deleted.`);
+    try {
+      const repo = getSignatureRepository();
+      await repo.remove(deletingSignature.id);
+      await loadSignatures();
+      setDeletingSignature(null);
+      showToast(`"${deletedName}" was deleted.`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to delete signature.";
+      showToast(msg);
+    }
   }
 
-  function handleDuplicate(id: string) {
-    const duplicated = duplicateStoredSignature(id);
-    if (duplicated) {
-      setSignatures(getStoredSignatures());
+  async function handleDuplicate(id: string) {
+    try {
+      const repo = getSignatureRepository();
+      const duplicated = await repo.duplicate(id);
+      await loadSignatures();
       showToast(`Duplicated "${duplicated.name}".`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to duplicate signature.";
+      showToast(msg);
     }
   }
 
@@ -117,30 +125,7 @@ export default function MySignaturesPage() {
     const target = signatures.find((s) => s.id === id);
     if (!target) return;
 
-    const html = target.rawTemplateData
-      ? generateSignatureHtml(target.rawTemplateData)
-      : generateSignatureHtml({
-          fullName: target.name,
-          jobTitle: target.role,
-          companyName: target.company,
-          email: target.email,
-          phone: target.phone,
-          website: target.website || "",
-          avatarUrl: target.avatarUrl || "/daniel-wilson.png",
-          themeColor: target.themeColor || "#245FD4",
-          fontFamily: target.fontFamily || "Inter",
-          layout: "two-column",
-          socialIconsStyle: "filled",
-          socials: {
-            linkedin: "https://linkedin.com",
-            twitter: "https://twitter.com",
-            facebook: "https://facebook.com",
-          },
-          optional: {
-            tagline: target.tagline,
-            address: target.address,
-          },
-        });
+    const html = generateSignatureHtml(target.data);
 
     try {
       await navigator.clipboard.writeText(html);
@@ -203,8 +188,38 @@ export default function MySignaturesPage() {
             {/* Page Header with Title and Create New Signature Button */}
             <SignaturesHeader onCreateClick={handleCreateNew} />
 
-            {/* Content: 3 per row on large screens OR Empty State */}
-            {signatures.length > 0 ? (
+            {/* Content: Error state with retry OR 3 per row on large screens OR Empty State */}
+            {loadError ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50/50 p-10 text-center">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 text-red-600">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+                <h3
+                  className="text-base font-bold text-[#1E293B]"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Could not load your signatures
+                </h3>
+                <p
+                  className="mt-1 text-sm text-[#64748B] max-w-md"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  {loadError}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => loadSignatures()}
+                  className="mt-4 rounded-xl bg-[#245FD4] px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-blue-700 active:scale-95"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : signatures.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 2xl:gap-6">
                 {signatures.map((signature) => (
                   <SignatureCard

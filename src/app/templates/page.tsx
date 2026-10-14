@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
@@ -15,13 +15,9 @@ import {
   getStoredRefreshToken,
   getStoredUser,
 } from "@/app/lib/auth";
-import {
-  getStoredSignatureById,
-  getStoredSignatures,
-  deleteStoredSignature,
-  duplicateStoredSignature,
-} from "@/lib/signatureStorage";
-import SignatureCard, { SignatureItem } from "@/components/signatures/SignatureCard";
+import { getSignatureRepository } from "@/lib/signatures/repository";
+import { SavedSignature } from "@/types/signature";
+import SignatureCard from "@/components/signatures/SignatureCard";
 import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
 
 const CATEGORIES = ["All", "My Saved", "Minimal", "Corporate", "Creative", "Bold"] as const;
@@ -42,7 +38,7 @@ export default function TemplatesPage() {
   const [editingTemplate, setEditingTemplate] = useState<TemplateItem | null>(null);
   const [editingSignatureData, setEditingSignatureData] = useState<TemplateSignatureData | undefined>(undefined);
   const [editingSignatureId, setEditingSignatureId] = useState<string | undefined>(undefined);
-  const [savedSignatures, setSavedSignatures] = useState<SignatureItem[]>([]);
+  const [savedSignatures, setSavedSignatures] = useState<SavedSignature[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   function showToast(msg: string) {
@@ -52,53 +48,34 @@ export default function TemplatesPage() {
     }, 3000);
   }
 
+  const loadSavedSignatures = useCallback(async () => {
+    try {
+      const repo = getSignatureRepository();
+      const list = await repo.list();
+      setSavedSignatures(list);
+    } catch (err) {
+      console.error("Failed to load saved signatures:", err);
+    }
+  }, []);
+
   useEffect(() => {
-    function syncSaved() {
-      setSavedSignatures(getStoredSignatures());
-    }
-
-    if (typeof window !== "undefined") {
-      window.addEventListener("sig_storage_updated", syncSaved);
-      window.addEventListener("storage", syncSaved);
-    }
-
     async function verifyAuth() {
       // Check if an existing signature is requested for editing via ?edit=id
       if (typeof window !== "undefined") {
         const params = new URLSearchParams(window.location.search);
         const editId = params.get("edit");
         if (editId) {
-          const stored = getStoredSignatureById(editId);
-          if (stored) {
-            setEditingSignatureId(stored.id);
-            const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === stored.templateId) || AVAILABLE_TEMPLATES[0];
-            setEditingTemplate(tpl);
-            if (stored.rawTemplateData) {
-              setEditingSignatureData(stored.rawTemplateData);
-            } else {
-              setEditingSignatureData({
-                fullName: stored.name,
-                jobTitle: stored.role,
-                companyName: stored.company,
-                email: stored.email,
-                phone: stored.phone,
-                website: stored.website || "",
-                avatarUrl: stored.avatarUrl || tpl.defaultData.avatarUrl,
-                themeColor: stored.themeColor || tpl.defaultData.themeColor,
-                fontFamily: stored.fontFamily || "Inter",
-                layout: "two-column",
-                socialIconsStyle: "filled",
-                socials: {
-                  linkedin: "https://linkedin.com",
-                  twitter: "https://twitter.com",
-                  facebook: "https://facebook.com",
-                },
-                optional: {
-                  address: stored.address,
-                  tagline: stored.tagline,
-                },
-              });
+          try {
+            const repo = getSignatureRepository();
+            const stored = await repo.get(editId);
+            if (stored) {
+              setEditingSignatureId(stored.id);
+              const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === stored.templateId) || AVAILABLE_TEMPLATES[0];
+              setEditingTemplate(tpl);
+              setEditingSignatureData(stored.data);
             }
+          } catch (err) {
+            console.error("Failed to load signature for editing:", err);
           }
         }
       }
@@ -117,20 +94,13 @@ export default function TemplatesPage() {
         router.replace("/login?redirect=/templates");
         return;
       } finally {
-        setSavedSignatures(getStoredSignatures());
+        await loadSavedSignatures();
         setIsLoading(false);
       }
     }
 
     verifyAuth();
-
-    return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("sig_storage_updated", syncSaved);
-        window.removeEventListener("storage", syncSaved);
-      }
-    };
-  }, [router]);
+  }, [router, loadSavedSignatures]);
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -171,43 +141,36 @@ export default function TemplatesPage() {
     );
   }
 
-  function handleEditSavedSignature(id: string) {
-    const target = savedSignatures.find((s) => s.id === id);
-    if (!target) return;
-    setEditingSignatureId(target.id);
-    const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === target.templateId) || AVAILABLE_TEMPLATES[0];
-    setEditingTemplate(tpl);
-    setEditingSignatureData(target.rawTemplateData);
+  async function handleEditSavedSignature(id: string) {
+    try {
+      const repo = getSignatureRepository();
+      const target = await repo.get(id);
+      if (!target) return;
+      setEditingSignatureId(target.id);
+      const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === target.templateId) || AVAILABLE_TEMPLATES[0];
+      setEditingTemplate(tpl);
+      setEditingSignatureData(target.data);
+    } catch (err) {
+      console.error("Failed to load signature to edit:", err);
+    }
   }
 
-  function handleDuplicateSavedSignature(id: string) {
-    const dup = duplicateStoredSignature(id);
-    if (dup) {
-      setSavedSignatures(getStoredSignatures());
+  async function handleDuplicateSavedSignature(id: string) {
+    try {
+      const repo = getSignatureRepository();
+      const dup = await repo.duplicate(id);
+      await loadSavedSignatures();
       showToast(`Duplicated "${dup.name}".`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to duplicate signature.";
+      showToast(msg);
     }
   }
 
   async function handleExportSavedSignature(id: string) {
     const target = savedSignatures.find((s) => s.id === id);
     if (!target) return;
-    const html = target.rawTemplateData
-      ? generateSignatureHtml(target.rawTemplateData)
-      : generateSignatureHtml({
-          fullName: target.name,
-          jobTitle: target.role,
-          companyName: target.company,
-          email: target.email,
-          phone: target.phone,
-          website: target.website || "",
-          avatarUrl: target.avatarUrl || "/daniel-wilson.png",
-          themeColor: target.themeColor || "#245FD4",
-          fontFamily: target.fontFamily || "Inter",
-          layout: "two-column",
-          socialIconsStyle: "filled",
-          socials: { linkedin: "", twitter: "", facebook: "" },
-          optional: { tagline: target.tagline, address: target.address },
-        });
+    const html = generateSignatureHtml(target.data);
     try {
       await navigator.clipboard.writeText(html);
       showToast(`Copied "${target.name}" HTML code to clipboard!`);
@@ -216,10 +179,16 @@ export default function TemplatesPage() {
     }
   }
 
-  function handleDeleteSavedSignature(sig: SignatureItem) {
-    deleteStoredSignature(sig.id);
-    setSavedSignatures(getStoredSignatures());
-    showToast(`"${sig.name}" was deleted.`);
+  async function handleDeleteSavedSignature(sig: SavedSignature) {
+    try {
+      const repo = getSignatureRepository();
+      await repo.remove(sig.id);
+      await loadSavedSignatures();
+      showToast(`"${sig.name}" was deleted.`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to delete signature.";
+      showToast(msg);
+    }
   }
 
   return (
@@ -257,6 +226,8 @@ export default function TemplatesPage() {
                   if (typeof window !== "undefined" && window.location.search) {
                     window.history.replaceState({}, "", "/templates");
                   }
+                  // Refresh saved signatures in case changes were saved
+                  loadSavedSignatures();
                 }}
               />
             ) : (
