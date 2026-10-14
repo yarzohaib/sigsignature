@@ -27,7 +27,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
     },
     {
       name: "My Signatures",
-      href: "/dashboard/signatures",
+      href: "/signatures",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 20h9" />
@@ -164,7 +164,9 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
           {/* Navigation Links */}
           <nav className="mt-2 flex flex-col space-y-1.5" aria-label="Sidebar Navigation">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                pathname === item.href ||
+                (item.href === "/signatures" && pathname.startsWith("/signatures"));
               return (
                 <Link
                   key={item.name}
