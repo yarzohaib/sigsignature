@@ -4,6 +4,12 @@ import { SignatureRepository } from "./repository";
 
 const LEGACY_STORAGE_KEY = "sig_user_signatures";
 
+/**
+ * @deprecated LEGACY LOCALSTORAGE REPOSITORY
+ * This repository is maintained strictly for one-time migration/import of
+ * old client-side signatures to the backend database.
+ * Do not use for new features or standard storage; use ApiSignatureRepository instead.
+ */
 export class LocalSignatureRepository implements SignatureRepository {
   private getStorageKey(): string {
     const user = getStoredUser();

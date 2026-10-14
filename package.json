@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "icons:generate": "node scripts/generate-email-icons.mjs",
     "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js"
   },
   "dependencies": {
@@ -21,6 +22,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "sharp": "^0.35.5",
+    "simple-icons": "^16.35.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

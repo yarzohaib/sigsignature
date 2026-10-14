@@ -10,8 +10,9 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
 /**
  * Resizes and compresses an image file to an optimized Blob.
- * - Longest side is at most maxDimension, never upscaled.
- * - Outputs image/jpeg for photos. If PNG with transparency and kind is "logo", outputs image/png.
+ * - For kind "avatar": crops to a centered square before resizing so photos are always 1:1 (max maxDimension).
+ * - For kind "logo": keeps original aspect ratio (max maxDimension wide, default 400px) and preserves PNG transparency.
+ * - Never upscales.
  * - Rejects files > 10MB and unsupported formats.
  */
 export function compressImageToBlob(
@@ -48,20 +49,40 @@ export function compressImageToBlob(
         return reject(new Error("Unable to read image dimensions."));
       }
 
-      let targetWidth = originalWidth;
-      let targetHeight = originalHeight;
+      let canvasWidth: number;
+      let canvasHeight: number;
+      let sx = 0;
+      let sy = 0;
+      let sWidth = originalWidth;
+      let sHeight = originalHeight;
 
-      // Never upscale. Resize so longest side is at most maxDimension
-      const longestSide = Math.max(originalWidth, originalHeight);
-      if (longestSide > maxDimension) {
-        const scale = maxDimension / longestSide;
-        targetWidth = Math.round(originalWidth * scale);
-        targetHeight = Math.round(originalHeight * scale);
+      if (kind === "avatar") {
+        // Crop to centered square (1:1)
+        const minSide = Math.min(originalWidth, originalHeight);
+        sx = Math.floor((originalWidth - minSide) / 2);
+        sy = Math.floor((originalHeight - minSide) / 2);
+        sWidth = minSide;
+        sHeight = minSide;
+
+        // Never upscale: max dimension capped at maxDimension
+        const targetSize = Math.min(minSide, maxDimension);
+        canvasWidth = targetSize;
+        canvasHeight = targetSize;
+      } else {
+        // kind === "logo": keep original aspect ratio, max maxDimension wide
+        if (originalWidth > maxDimension) {
+          const scale = maxDimension / originalWidth;
+          canvasWidth = maxDimension;
+          canvasHeight = Math.round(originalHeight * scale);
+        } else {
+          canvasWidth = originalWidth;
+          canvasHeight = originalHeight;
+        }
       }
 
       const canvas = document.createElement("canvas");
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
       const ctx = canvas.getContext("2d");
       if (!ctx) {
@@ -73,19 +94,19 @@ export function compressImageToBlob(
       ctx.imageSmoothingQuality = "high";
 
       // Output format:
-      // Output image/jpeg for photos. If the input is a PNG with transparency and kind is "logo", output image/png.
+      // For logo: keep PNG transparency (use image/png if input is png or webp)
       let outputType: "image/jpeg" | "image/png" = "image/jpeg";
-      if (kind === "logo" && file.type === "image/png") {
+      if (kind === "logo" && (file.type === "image/png" || file.type === "image/webp")) {
         outputType = "image/png";
       }
 
-      // If output is jpeg, fill background with white in case there were transparent areas
+      // Fill white background only for JPEG to prevent transparent areas turning black
       if (outputType === "image/jpeg") {
         ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, targetWidth, targetHeight);
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       }
 
-      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvasWidth, canvasHeight);
 
       canvas.toBlob(
         (blob) => {

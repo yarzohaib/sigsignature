@@ -1,13 +1,20 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
-import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
+import { SavedSignature } from "@/types/signature";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
+import { isSignatureLimitError } from "@/app/lib/api";
+import { SIGNATURE_COLOR_SWATCHES } from "@/lib/signatureConstants";
+import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
+import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
+import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
+
+const EMAIL_SAFE_FONTS = ["Arial", "Georgia", "Verdana", "Trebuchet MS", "Tahoma"] as const;
+type EmailSafeFont = (typeof EMAIL_SAFE_FONTS)[number];
 
 interface TemplateEditorProps {
   template: TemplateItem;
@@ -22,13 +29,24 @@ export default function TemplateEditor({
   editingSignatureId,
   onBack,
 }: TemplateEditorProps) {
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Form data state
-  const [formData, setFormData] = useState<TemplateSignatureData>(
-    initialData || template.defaultData
-  );
+  // Current signature ID being edited (persisted after first save)
+  const [currentSignatureId, setCurrentSignatureId] = useState<string | undefined>(editingSignatureId);
+
+  // Form data state: map legacy/unrecognized fonts to Arial
+  const [formData, setFormData] = useState<TemplateSignatureData>(() => {
+    const base = initialData || template.defaultData;
+    const font = EMAIL_SAFE_FONTS.includes(base.fontFamily as EmailSafeFont)
+      ? base.fontFamily
+      : "Arial";
+    return {
+      ...base,
+      fontFamily: font,
+    };
+  });
 
   // Collapsible accordion states
   const [openSections, setOpenSections] = useState({
@@ -40,8 +58,14 @@ export default function TemplateEditor({
 
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
+  // Limit overwrite modal state
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+  const [existingSignaturesForLimit, setExistingSignaturesForLimit] = useState<SavedSignature[]>([]);
   // Photo uploading state
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  // Logo uploading state
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
   // Toast feedback state
   const [toastMessage, setToastMessage] = useState<{
@@ -167,102 +191,161 @@ export default function TemplateEditor({
     }
   }
 
-  // Copy HTML to clipboard
-  async function handleCopyHtml() {
-    const html = generateSignatureHtml(formData);
-    try {
-      await navigator.clipboard.writeText(html);
-      showToast("HTML copied!", "Paste it into your email client settings.");
-    } catch {
-      showToast("Copy error", "Could not copy automatically. Please try again.");
-    }
-  }
-
-  // Download HTML file
-  function handleDownloadHtml() {
-    const html = generateSignatureHtml(formData);
-    const blob = new Blob([html], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${formData.fullName.replace(/\s+/g, "_")}_signature.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast("Downloaded!", "Your HTML signature file was saved to your downloads.");
-  }
-
   // Save the signature to user's signatures list
   async function handleSaveSignature() {
     try {
       setIsSaving(true);
-      await getSignatureRepository().save({
-        id: editingSignatureId,
+      const saved = await getSignatureRepository().save({
+        id: currentSignatureId,
         templateId: template.id,
-        name: formData.fullName || "My Signature",
+        name: formData.fullName || template.name || "My Signature",
         data: formData,
       });
-      showToast("Saved!", "Signature saved to My Signatures.");
-      setTimeout(() => {
-        router.push("/signatures");
-      }, 600);
+      setCurrentSignatureId(saved.id);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("sig_count_update"));
+      }
+      setIsSavedModalOpen(true);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to save signature.";
-      showToast("Save failed", message, true);
+      if (isSignatureLimitError(err)) {
+        try {
+          const list = await getSignatureRepository().list();
+          setExistingSignaturesForLimit(list);
+          setIsLimitModalOpen(true);
+        } catch {
+          showToast(
+            "Limit reached",
+            "You have reached the limit of 3 signatures on the Free plan.",
+            true
+          );
+        }
+      } else {
+        const message = err instanceof Error ? err.message : "Failed to save signature.";
+        showToast("Save failed", message, true);
+      }
     } finally {
       setIsSaving(false);
     }
   }
 
-  const colorSwatches = ["#0F172A", "#245FD4", "#022977", "#8B5CF6", "#059669"];
+  // Handle overwrite choice when user is at 3-signature limit
+  async function handleSelectOverwrite(target: SavedSignature) {
+    const saved = await getSignatureRepository().save({
+      id: target.id,
+      templateId: template.id,
+      name: formData.fullName || target.name || template.name || "My Signature",
+      data: formData,
+    });
+    setCurrentSignatureId(saved.id);
+    setIsLimitModalOpen(false);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("sig_count_update"));
+    }
+    setIsSavedModalOpen(true);
+    showToast("Signature updated!", `Replaced "${target.name}" with your new signature.`);
+  }
 
-  const fontFamilies: Record<string, string> = {
-    Inter: "var(--font-inter), Inter, sans-serif",
-    Montserrat: "var(--font-montserrat), Montserrat, sans-serif",
-    Commissioner: "var(--font-commissioner), Commissioner, sans-serif",
-    Roboto: "Roboto, sans-serif",
-    Arial: "Arial, Helvetica, sans-serif",
-  };
+  // User Company Logo Upload Handler
+  async function handleLogoUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  function renderSocialIcon(platform: "linkedin" | "twitter" | "facebook") {
-    const isCircle = formData.socialIconsStyle === "circle";
-    const isOutline = formData.socialIconsStyle === "outline";
-    const label = platform === "linkedin" ? "in" : platform === "twitter" ? "𝕏" : "f";
-
-    const baseClasses = `flex h-4 w-4 items-center justify-center text-[8px] font-bold transition-all shadow-2xs ${
-      isCircle ? "rounded-full" : "rounded-xs"
-    }`;
-
-    if (isOutline) {
-      return (
-        <span
-          className={baseClasses}
-          style={{
-            borderWidth: "1.5px",
-            borderStyle: "solid",
-            borderColor: formData.themeColor,
-            color: formData.themeColor,
-            backgroundColor: "transparent",
-          }}
-        >
-          {label}
-        </span>
-      );
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      showToast("Invalid file", "Please upload a JPEG, PNG, or WebP image.", true);
+      if (logoInputRef.current) {
+        logoInputRef.current.value = "";
+      }
+      return;
     }
 
-    return (
-      <span
-        className={baseClasses}
-        style={{
-          backgroundColor: formData.themeColor,
-          color: "#ffffff",
-        }}
-      >
-        {label}
-      </span>
-    );
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("File too large", "Please upload an image smaller than 10MB.", true);
+      if (logoInputRef.current) {
+        logoInputRef.current.value = "";
+      }
+      return;
+    }
+
+    const previousLogo = formData.companyLogoUrl;
+    const objectUrl = URL.createObjectURL(file);
+    setFormData((prev) => ({
+      ...prev,
+      companyLogoUrl: objectUrl,
+    }));
+    setIsUploadingLogo(true);
+
+    try {
+      const compressedBlob = await compressImageToBlob(file, 400, 0.85, "logo");
+      const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
+      setFormData((prev) => ({
+        ...prev,
+        companyLogoUrl: publicUrl,
+      }));
+      showToast("Logo uploaded!", "Your company logo was uploaded successfully.");
+    } catch (err: unknown) {
+      console.error("Logo upload error:", err);
+      setFormData((prev) => ({
+        ...prev,
+        companyLogoUrl: previousLogo,
+      }));
+      const message = err instanceof Error ? err.message : "Failed to upload logo. Please try again.";
+      showToast("Upload failed", message, true);
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+      setIsUploadingLogo(false);
+      if (logoInputRef.current) {
+        logoInputRef.current.value = "";
+      }
+    }
   }
+
+  function handleRemoveLogo() {
+    setFormData((prev) => ({
+      ...prev,
+      companyLogoUrl: "",
+    }));
+    if (logoInputRef.current) {
+      logoInputRef.current.value = "";
+    }
+  }
+
+  // Pre-generate HTML and minimal srcDoc for iframe preview
+  const generatedHtml = useMemo(() => generateSignatureHtml(formData), [formData]);
+
+  const previewSrcDoc = useMemo(() => {
+    return `<!DOCTYPE html><html><head><meta charset="utf-8" /><style>html, body { margin: 0; padding: 16px; background-color: #ffffff; box-sizing: border-box; } * { box-sizing: border-box; }</style></head><body>${generatedHtml}</body></html>`;
+  }, [generatedHtml]);
+
+  // Auto-size iframe height from content on load and whenever form data changes
+  const updateIframeHeight = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    try {
+      const doc = iframe.contentDocument;
+      if (doc) {
+        const height = Math.max(
+          doc.body?.scrollHeight || 0,
+          doc.documentElement?.scrollHeight || 0
+        );
+        if (height > 0) {
+          iframe.style.height = `${height}px`;
+        }
+      }
+    } catch {
+      // Ignore cross-origin error if any
+    }
+  }, []);
+
+  useEffect(() => {
+    updateIframeHeight();
+    const t1 = setTimeout(updateIframeHeight, 50);
+    const t2 = setTimeout(updateIframeHeight, 200);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [generatedHtml, updateIframeHeight]);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 pb-12">
@@ -330,15 +413,15 @@ export default function TemplateEditor({
         <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3.5">
           <span className="text-[12px] font-medium text-[#64748B]">Font</span>
           <select
-            value={formData.fontFamily}
+            value={EMAIL_SAFE_FONTS.includes(formData.fontFamily as EmailSafeFont) ? formData.fontFamily : "Arial"}
             onChange={(e) => handleInputChange("fontFamily", e.target.value)}
             className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
           >
-            <option value="Inter">Inter</option>
-            <option value="Montserrat">Montserrat</option>
-            <option value="Commissioner">Commissioner</option>
-            <option value="Roboto">Roboto</option>
             <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+            <option value="Tahoma">Tahoma</option>
           </select>
         </div>
 
@@ -346,7 +429,7 @@ export default function TemplateEditor({
         <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3.5">
           <span className="text-[12px] font-medium text-[#64748B]">Colors</span>
           <div className="flex items-center gap-1.5">
-            {colorSwatches.map((color) => (
+            {SIGNATURE_COLOR_SWATCHES.map((color) => (
               <button
                 key={color}
                 type="button"
@@ -473,6 +556,17 @@ export default function TemplateEditor({
                       </div>
                     </div>
                   </div>
+
+                  {(!formData.avatarUrl || formData.avatarUrl.startsWith("/")) && (
+                    <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200/90 bg-amber-50/90 p-2.5 text-[11px] text-amber-800 leading-snug">
+                      <svg className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      <span>This is a sample photo. Upload your own photo, otherwise your signature will be exported without a photo.</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Text input fields (2-column grid matching Figma) */}
@@ -593,7 +687,65 @@ export default function TemplateEditor({
             </button>
 
             {openSections.branding && (
-              <div className="mt-4 pt-3 border-t border-slate-100 space-y-3">
+              <div className="mt-4 pt-3 border-t border-slate-100 space-y-4">
+                {/* Company Logo Upload Row */}
+                <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center">
+                      {formData.companyLogoUrl ? (
+                        <Image
+                          src={formData.companyLogoUrl}
+                          alt="Company logo"
+                          width={56}
+                          height={56}
+                          className="h-full w-full object-contain p-1"
+                          unoptimized={Boolean(
+                            formData.companyLogoUrl.startsWith("data:") ||
+                              formData.companyLogoUrl.startsWith("blob:")
+                          )}
+                        />
+                      ) : (
+                        <svg className="h-6 w-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-[#1E293B]">Company Logo</p>
+                      <p className="text-[11px] text-[#64748B] mt-0.5">Upload a square or wide logo (PNG, JPG, max 10MB).</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={isUploadingLogo}
+                          onClick={() => logoInputRef.current?.click()}
+                          className="rounded-lg bg-[#245FD4] px-3 py-1 text-[11px] font-medium text-white shadow-2xs transition hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          {isUploadingLogo ? "Uploading..." : formData.companyLogoUrl ? "Change Logo" : "Upload Logo"}
+                        </button>
+                        {Boolean(formData.companyLogoUrl) && (
+                          <button
+                            type="button"
+                            disabled={isUploadingLogo}
+                            onClick={handleRemoveLogo}
+                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 hover:border-red-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            Remove
+                          </button>
+                        )}
+                        <input
+                          ref={logoInputRef}
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={handleLogoUpload}
+                          className="hidden"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-[11px] font-semibold text-[#64748B]">Tagline</label>
                   <input
@@ -742,216 +894,22 @@ export default function TemplateEditor({
 
             {/* Email Body / Live Signature Canvas */}
             <div className="p-6 sm:p-7 min-h-[220px] flex items-center justify-center bg-white">
-              <div
-                className="w-full rounded-xl border border-slate-100 bg-white p-5 shadow-xs transition-all"
-                style={{
-                  fontFamily: fontFamilies[formData.fontFamily] || formData.fontFamily,
-                }}
-              >
-                {/* Layout 1: Two Column */}
-                {formData.layout === "two-column" && (
-                  <div className="flex items-center justify-between gap-5">
-                    {/* Avatar + Socials */}
-                    <div className="flex flex-col items-center gap-2 shrink-0">
-                      <div
-                        className="relative h-16 w-16 overflow-hidden rounded-xl bg-slate-100 shadow-2xs border-2"
-                        style={{ borderColor: formData.themeColor }}
-                      >
-                        <Image
-                          src={formData.avatarUrl || "/placeholder-avatar.svg"}
-                          alt={formData.fullName}
-                          width={64}
-                          height={64}
-                          className="h-full w-full object-cover"
-                          unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
-                        />
-                      </div>
-                      {/* Social links row */}
-                      <div className="flex items-center gap-1.5">
-                        {formData.socials.linkedin && renderSocialIcon("linkedin")}
-                        {formData.socials.twitter && renderSocialIcon("twitter")}
-                        {formData.socials.facebook && renderSocialIcon("facebook")}
-                      </div>
-                    </div>
-
-                    {/* Personal details column */}
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <h4 className="text-[15px] font-bold text-[#1E293B] leading-tight truncate">
-                        {formData.fullName || "Your Full Name"}
-                      </h4>
-                      <p className="text-[12px] font-medium text-[#64748B] leading-tight">
-                        {formData.jobTitle || "Your Job Title"}
-                      </p>
-                      <div className="pt-1.5 space-y-1 text-[11px] text-[#64748B]">
-                        {formData.phone && (
-                          <div className="flex items-center gap-1.5 truncate">
-                            <span style={{ color: formData.themeColor }} className="font-bold">&#9742;</span>
-                            <span>{formData.phone}</span>
-                          </div>
-                        )}
-                        {formData.email && (
-                          <div className="flex items-center gap-1.5 truncate">
-                            <span style={{ color: formData.themeColor }} className="font-bold">&#9993;</span>
-                            <span className="truncate">{formData.email}</span>
-                          </div>
-                        )}
-                        {formData.website && (
-                          <div className="flex items-center gap-1.5 truncate">
-                            <span style={{ color: formData.themeColor }} className="font-bold">&#9873;</span>
-                            <span className="truncate">{formData.website}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Vertical Divider */}
-                    <div className="h-16 w-px bg-slate-200" />
-
-                    {/* Company Logo and Tagline */}
-                    <div className="flex flex-col items-center justify-center text-center shrink-0 w-[95px]">
-                      <svg width="34" height="34" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 8H26C28.2091 8 30 9.79086 30 12V20C30 22.2091 28.2091 24 26 24H22" stroke={formData.themeColor} strokeWidth="4" strokeLinecap="round" />
-                        <path d="M26 30H12C9.79086 30 8 28.2091 8 26V18C8 15.7909 9.79086 14 12 14H16" stroke={formData.themeColor} strokeWidth="4" strokeLinecap="round" />
-                      </svg>
-                      <span className="mt-1.5 text-[11px] font-bold text-[#1E293B] leading-tight">
-                        {formData.companyName || "Company Name"}
-                      </span>
-                      {formData.optional?.tagline && (
-                        <span className="text-[9px] text-[#94A3B8] leading-tight mt-0.5">
-                          {formData.optional.tagline}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Layout 2: Horizontal */}
-                {formData.layout === "horizontal" && (
-                  <div className="flex flex-col gap-3.5">
-                    <div className="flex items-center gap-4">
-                      {/* Avatar */}
-                      <div
-                        className="relative h-14 w-14 overflow-hidden rounded-full bg-slate-100 shadow-2xs border-2 shrink-0"
-                        style={{ borderColor: formData.themeColor }}
-                      >
-                        <Image
-                          src={formData.avatarUrl || "/placeholder-avatar.svg"}
-                          alt={formData.fullName}
-                          width={56}
-                          height={56}
-                          className="h-full w-full object-cover"
-                          unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
-                        />
-                      </div>
-                      {/* Details & Branding */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-[15px] font-bold text-[#1E293B] leading-tight truncate">
-                              {formData.fullName || "Your Full Name"}
-                            </h4>
-                            <p className="text-[11.5px] font-medium text-[#64748B] leading-tight">
-                              {formData.jobTitle || "Your Job Title"} &bull; <span className="font-semibold text-[#1E293B]">{formData.companyName || "Company"}</span>
-                            </p>
-                          </div>
-                          {/* Social links row */}
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            {formData.socials.linkedin && renderSocialIcon("linkedin")}
-                            {formData.socials.twitter && renderSocialIcon("twitter")}
-                            {formData.socials.facebook && renderSocialIcon("facebook")}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Bottom row: contact items & tagline */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-2 text-[10.5px] text-[#64748B]">
-                      <div className="flex flex-wrap items-center gap-3">
-                        {formData.phone && (
-                          <div className="flex items-center gap-1">
-                            <span style={{ color: formData.themeColor }} className="font-bold">&#9742;</span>
-                            <span>{formData.phone}</span>
-                          </div>
-                        )}
-                        {formData.email && (
-                          <div className="flex items-center gap-1">
-                            <span style={{ color: formData.themeColor }} className="font-bold">&#9993;</span>
-                            <span>{formData.email}</span>
-                          </div>
-                        )}
-                        {formData.website && (
-                          <div className="flex items-center gap-1">
-                            <span style={{ color: formData.themeColor }} className="font-bold">&#9873;</span>
-                            <span>{formData.website}</span>
-                          </div>
-                        )}
-                      </div>
-                      {formData.optional?.tagline && (
-                        <span className="text-[9.5px] text-[#94A3B8] italic">{formData.optional.tagline}</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Layout 3: Compact */}
-                {formData.layout === "compact" && (
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div
-                          className="relative h-11 w-11 overflow-hidden rounded-lg bg-slate-100 shadow-2xs border shrink-0"
-                          style={{ borderColor: formData.themeColor }}
-                        >
-                          <Image
-                            src={formData.avatarUrl || "/placeholder-avatar.svg"}
-                            alt={formData.fullName}
-                            width={44}
-                            height={44}
-                            className="h-full w-full object-cover"
-                            unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
-                          />
-                        </div>
-                        <div className="min-w-0">
-                          <h4 className="text-[14px] font-bold text-[#1E293B] leading-tight truncate">
-                            {formData.fullName || "Your Full Name"}
-                          </h4>
-                          <p className="text-[11px] text-[#64748B] leading-tight truncate">
-                            {formData.jobTitle} &bull; {formData.companyName}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Social icons */}
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {formData.socials.linkedin && renderSocialIcon("linkedin")}
-                        {formData.socials.twitter && renderSocialIcon("twitter")}
-                        {formData.socials.facebook && renderSocialIcon("facebook")}
-                      </div>
-                    </div>
-
-                    {/* Single inline contact row */}
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg bg-slate-50 px-3 py-1.5 text-[10px] text-[#64748B]">
-                      {formData.phone && (
-                        <div className="flex items-center gap-1">
-                          <span style={{ color: formData.themeColor }} className="font-bold">&#9742;</span>
-                          <span>{formData.phone}</span>
-                        </div>
-                      )}
-                      {formData.email && (
-                        <div className="flex items-center gap-1">
-                          <span style={{ color: formData.themeColor }} className="font-bold">&#9993;</span>
-                          <span>{formData.email}</span>
-                        </div>
-                      )}
-                      {formData.website && (
-                        <div className="flex items-center gap-1">
-                          <span style={{ color: formData.themeColor }} className="font-bold">&#9873;</span>
-                          <span>{formData.website}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+              <div className="w-full rounded-xl border border-slate-100 bg-white shadow-xs overflow-hidden transition-all">
+                <iframe
+                  ref={iframeRef}
+                  sandbox="allow-same-origin"
+                  srcDoc={previewSrcDoc}
+                  onLoad={updateIframeHeight}
+                  title="Signature Preview"
+                  className="w-full border-0 block"
+                  style={{
+                    width: "100%",
+                    border: "none",
+                    minHeight: "140px",
+                    overflow: "hidden",
+                    backgroundColor: "#ffffff",
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -968,31 +926,10 @@ export default function TemplateEditor({
           Continue Without Saving
         </button>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
-            onClick={handleCopyHtml}
-            className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 active:scale-95"
-          >
-            <span>&lt;/&gt; Copy To HTML Code</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleDownloadHtml}
-            className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 active:scale-95"
-          >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            <span>Download</span>
-          </button>
-
-          <button
-            type="button"
-            disabled={isSaving || isUploadingPhoto}
+            disabled={isSaving || isUploadingPhoto || isUploadingLogo}
             onClick={handleSaveSignature}
             className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-lg bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
           >
@@ -1049,6 +986,22 @@ export default function TemplateEditor({
           </button>
         </div>
       )}
+
+      {/* Save Success Popup Modal */}
+      <SaveSuccessModal
+        isOpen={isSavedModalOpen}
+        onClose={() => setIsSavedModalOpen(false)}
+        signatureData={formData}
+        signatureName={formData.fullName || template.name}
+      />
+
+      {/* Signature Plan Limit Overwrite Modal */}
+      <LimitOverwriteModal
+        isOpen={isLimitModalOpen}
+        onClose={() => setIsLimitModalOpen(false)}
+        signatures={existingSignaturesForLimit}
+        onSelectOverwrite={handleSelectOverwrite}
+      />
     </div>
   );
 }

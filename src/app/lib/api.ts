@@ -15,6 +15,8 @@ import {
   setAuthSession,
   clearAuthSession,
 } from "./auth";
+import type { TemplateSignatureData } from "@/types/template";
+import type { SavedSignature } from "@/types/signature";
 
 export interface AuthTokens {
   accessToken: string;
@@ -605,4 +607,263 @@ export async function requestUploadUrl(payload: PresignUploadPayload): Promise<P
   return result.data;
 }
 
+/**
+ * Custom API Error carrying HTTP status code and backend error code (e.g. SIGNATURE_LIMIT_REACHED).
+ */
+export class ApiError extends Error {
+  statusCode: number;
+  code?: string;
 
+  constructor(message: string, statusCode: number, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.statusCode = statusCode;
+    this.code = code;
+  }
+}
+
+/**
+ * Helper to identify whether an error indicates the signature plan limit has been reached.
+ */
+export function isSignatureLimitError(err: unknown): boolean {
+  if (err instanceof ApiError && err.code === "SIGNATURE_LIMIT_REACHED") {
+    return true;
+  }
+  if (
+    typeof err === "object" &&
+    err !== null &&
+    "code" in err &&
+    (err as { code: unknown }).code === "SIGNATURE_LIMIT_REACHED"
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export interface CreateSignaturePayload {
+  name: string;
+  templateId: string;
+  templateVersion?: number;
+  data: TemplateSignatureData;
+}
+
+export interface UpdateSignaturePayload {
+  name?: string;
+  templateId?: string;
+  templateVersion?: number;
+  data?: TemplateSignatureData;
+}
+
+interface GenericApiResponse<T> {
+  success: boolean;
+  message?: string;
+  code?: string;
+  data?: T;
+}
+
+async function handleSignatureApiResponse<T>(
+  response: Response,
+  defaultErrorMessage: string
+): Promise<T> {
+  const result: GenericApiResponse<T> | null = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = result?.message || `${defaultErrorMessage} (HTTP ${response.status})`;
+    const code = result?.code;
+    throw new ApiError(message, response.status, code);
+  }
+
+  return (result?.data ?? null) as T;
+}
+
+/**
+ * Fetch all saved signatures for the authenticated user.
+ */
+export async function fetchSignatures(): Promise<SavedSignature[]> {
+  const url = `${API_BASE_URL}/api/v1/signatures`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    return await handleSignatureApiResponse<SavedSignature[]>(
+      response,
+      "Failed to load signatures"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Fetch a single saved signature by ID.
+ */
+export async function fetchSignatureById(id: string): Promise<SavedSignature> {
+  const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    return await handleSignatureApiResponse<SavedSignature>(
+      response,
+      "Failed to load signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Create a new signature record in the backend.
+ */
+export async function createSignature(
+  payload: CreateSignaturePayload
+): Promise<SavedSignature> {
+  const url = `${API_BASE_URL}/api/v1/signatures`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        name: payload.name.trim(),
+        templateId: payload.templateId,
+        templateVersion: payload.templateVersion ?? 1,
+        data: payload.data,
+      }),
+    });
+
+    return await handleSignatureApiResponse<SavedSignature>(
+      response,
+      "Failed to save signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Update an existing signature record.
+ */
+export async function updateSignature(
+  id: string,
+  payload: UpdateSignaturePayload
+): Promise<SavedSignature> {
+  const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        ...(payload.name !== undefined ? { name: payload.name.trim() } : {}),
+        ...(payload.templateId !== undefined ? { templateId: payload.templateId } : {}),
+        ...(payload.templateVersion !== undefined
+          ? { templateVersion: payload.templateVersion }
+          : {}),
+        ...(payload.data !== undefined ? { data: payload.data } : {}),
+      }),
+    });
+
+    return await handleSignatureApiResponse<SavedSignature>(
+      response,
+      "Failed to update signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Delete a signature record by ID.
+ */
+export async function deleteSignature(id: string): Promise<void> {
+  const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    await handleSignatureApiResponse<void>(response, "Failed to delete signature");
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Duplicate an existing signature by ID.
+ */
+export async function duplicateSignature(id: string): Promise<SavedSignature> {
+  const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}/duplicate`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    return await handleSignatureApiResponse<SavedSignature>(
+      response,
+      "Failed to duplicate signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}

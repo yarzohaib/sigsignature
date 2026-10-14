@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { getSignatureRepository } from "@/lib/signatures/repository";
 
 type SidebarProps = {
   mobileOpen?: boolean;
@@ -11,6 +13,34 @@ type SidebarProps = {
 
 export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
   const pathname = usePathname();
+  const [signatureCount, setSignatureCount] = useState<number>(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadCount() {
+      try {
+        const repo = getSignatureRepository();
+        const list = await repo.list();
+        if (isMounted) {
+          setSignatureCount(list.length);
+        }
+      } catch {
+        // Silently keep default 0 on error / unauthenticated
+      }
+    }
+
+    loadCount();
+
+    function handleUpdate() {
+      loadCount();
+    }
+
+    window.addEventListener("sig_count_update", handleUpdate);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("sig_count_update", handleUpdate);
+    };
+  }, [pathname]);
 
   const navItems = [
     {
@@ -252,7 +282,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                   className="text-[12px] font-bold text-[#1E293B]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  0 / 3 Signatures
+                  {signatureCount} / 3 Signatures
                 </span>
               </div>
             </div>

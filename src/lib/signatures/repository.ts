@@ -1,5 +1,5 @@
 import { SavedSignature, SaveSignatureInput } from "@/types/signature";
-import { LocalSignatureRepository } from "./localRepository";
+import { ApiSignatureRepository } from "./apiRepository";
 
 export interface SignatureRepository {
   list(): Promise<SavedSignature[]>;
@@ -13,7 +13,7 @@ let repositoryInstance: SignatureRepository | null = null;
 
 export function getSignatureRepository(): SignatureRepository {
   if (!repositoryInstance) {
-    repositoryInstance = new LocalSignatureRepository();
+    repositoryInstance = new ApiSignatureRepository();
   }
   return repositoryInstance;
 }

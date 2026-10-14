@@ -8,7 +8,7 @@ import SignaturesHeader from "@/components/signatures/SignaturesHeader";
 import SignatureCard from "@/components/signatures/SignatureCard";
 import DeleteSignatureModal from "@/components/signatures/DeleteSignatureModal";
 import EmptySignaturesState from "@/components/signatures/EmptySignaturesState";
-import { UserProfile, getCurrentUser, logoutUser } from "@/app/lib/api";
+import { UserProfile, getCurrentUser, logoutUser, isSignatureLimitError } from "@/app/lib/api";
 import {
   clearAuthSession,
   getStoredRefreshToken,
@@ -16,7 +16,9 @@ import {
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { SavedSignature } from "@/types/signature";
-import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
+import { generateSignatureHtml, generateSignaturePlainText } from "@/lib/generateSignatureHtml";
+import { copySignatureRich } from "@/lib/clipboard";
+import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 
 export default function MySignaturesPage() {
   const router = useRouter();
@@ -29,6 +31,7 @@ export default function MySignaturesPage() {
   // Signatures state: initialized from repository so saved templates display
   const [signatures, setSignatures] = useState<SavedSignature[]>([]);
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
+  const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const loadSignatures = useCallback(async () => {
@@ -71,6 +74,20 @@ export default function MySignaturesPage() {
     verifyAuth();
   }, [router, loadSignatures]);
 
+  useEffect(() => {
+    function handleCustomToast(event: Event) {
+      const customEvent = event as CustomEvent<string>;
+      if (customEvent.detail) {
+        showToast(customEvent.detail);
+      }
+    }
+
+    window.addEventListener("sig_toast", handleCustomToast);
+    return () => {
+      window.removeEventListener("sig_toast", handleCustomToast);
+    };
+  }, []);
+
   function showToast(msg: string) {
     setToastMessage(msg);
     setTimeout(() => {
@@ -103,6 +120,9 @@ export default function MySignaturesPage() {
       await loadSignatures();
       setDeletingSignature(null);
       showToast(`"${deletedName}" was deleted.`);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("sig_count_update"));
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to delete signature.";
       showToast(msg);
@@ -115,9 +135,16 @@ export default function MySignaturesPage() {
       const duplicated = await repo.duplicate(id);
       await loadSignatures();
       showToast(`Duplicated "${duplicated.name}".`);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("sig_count_update"));
+      }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to duplicate signature.";
-      showToast(msg);
+      if (isSignatureLimitError(err)) {
+        showToast("You have reached the limit of 3 signatures on the Free plan.");
+      } else {
+        const msg = err instanceof Error ? err.message : "Failed to duplicate signature.";
+        showToast(msg);
+      }
     }
   }
 
@@ -126,12 +153,13 @@ export default function MySignaturesPage() {
     if (!target) return;
 
     const html = generateSignatureHtml(target.data);
+    const plainText = generateSignaturePlainText(target.data);
 
     try {
-      await navigator.clipboard.writeText(html);
-      showToast(`Copied "${target.name}" HTML code to clipboard!`);
+      await copySignatureRich(html, plainText);
+      setShowCopiedAlert(true);
     } catch {
-      showToast(`Exported "${target.name}" HTML code.`);
+      showToast(`Failed to copy "${target.name}". Please try again.`);
     }
   }
 
@@ -256,6 +284,13 @@ export default function MySignaturesPage() {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* Small Copied Alert matching Image 2 */}
+      <SignatureCopiedAlert
+        isOpen={showCopiedAlert}
+        onClose={() => setShowCopiedAlert(false)}
+        className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] shadow-2xl animate-in slide-in-from-bottom-5 duration-200"
+      />
     </div>
   );
 }
