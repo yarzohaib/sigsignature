@@ -52,7 +52,7 @@ export default function HeroSection() {
             </div>
 
             <p className="mt-6 sm:mt-7 font-body text-xs text-[#878787] sm:text-sm">
-              Free forever · No credit card required · Ready in under 60 seconds
+              {/* Free forever · No credit card required · Ready in under 60 seconds */}
             </p>
           </div>
 

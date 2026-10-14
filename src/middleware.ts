@@ -2,12 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("sig_token")?.value;
+  // Support both legacy client cookie (sig_token) and secure server-set HttpOnly cookies (access_token, refresh_token)
+  const hasSession =
+    Boolean(request.cookies.get("sig_token")?.value) ||
+    Boolean(request.cookies.get("access_token")?.value) ||
+    Boolean(request.cookies.get("refresh_token")?.value);
+
   const { pathname } = request.nextUrl;
 
   // Protect /dashboard and nested routes
   if (pathname.startsWith("/dashboard")) {
-    if (!token) {
+    if (!hasSession) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
@@ -15,7 +20,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages to dashboard
-  if ((pathname === "/login" || pathname === "/signup") && token) {
+  if ((pathname === "/login" || pathname === "/signup") && hasSession) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

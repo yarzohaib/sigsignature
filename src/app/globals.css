@@ -11,6 +11,14 @@
   --font-body: var(--font-commissioner), sans-serif;
 }
 
+@utility font-montserrat {
+  font-family: var(--font-montserrat), "Montserrat", sans-serif;
+}
+
+@utility font-commissioner {
+  font-family: var(--font-commissioner), "Commissioner", sans-serif;
+}
+
 @utility bg-brand-gradient {
   background-image: linear-gradient(90deg, #022977, #245FD4);
 }

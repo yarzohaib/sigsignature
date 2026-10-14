@@ -8,6 +8,14 @@ export const API_BASE_URL = (
   "http://13.55.213.189"
 ).replace(/\/$/, "");
 
+import {
+  getStoredToken,
+  getStoredRefreshToken,
+  getStoredUser,
+  setAuthSession,
+  clearAuthSession,
+} from "./auth";
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
@@ -74,6 +82,7 @@ export async function signupUser(payload: SignupPayload): Promise<SignupResponse
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         firstName: payload.firstName.trim(),
         lastName: payload.lastName ? payload.lastName.trim() : undefined,
@@ -119,6 +128,7 @@ export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         email: payload.email.trim(),
         password: payload.password,
@@ -182,6 +192,7 @@ export async function exchangeOAuthCode(code: string): Promise<LoginResponse> {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         code: code.trim(),
       }),
@@ -210,21 +221,128 @@ export async function exchangeOAuthCode(code: string): Promise<LoginResponse> {
   return result as LoginResponse;
 }
 
+// Mutex / promise deduplicator for concurrent token refresh calls
+let refreshPromise: Promise<string | null> | null = null;
+
+/**
+ * Refreshes auth tokens using server HttpOnly cookie or stored refresh token.
+ * Deduplicates concurrent calls so multiple parallel 401s trigger only one refresh request.
+ */
+export async function refreshAuthTokens(): Promise<string | null> {
+  if (typeof window === "undefined") return null;
+
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      const storedRefreshToken = getStoredRefreshToken();
+      const url = `${API_BASE_URL}/api/v1/auth/refresh`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include", // Sends HttpOnly refresh_token cookie
+        body: JSON.stringify(storedRefreshToken ? { refreshToken: storedRefreshToken } : {}),
+      });
+
+      if (!response.ok) {
+        clearAuthSession();
+        return null;
+      }
+
+      const result = await response.json();
+      const tokens: AuthTokens = result.data;
+      const user = result.data?.user || getStoredUser();
+
+      if (tokens?.accessToken && user) {
+        setAuthSession(tokens, user);
+        return tokens.accessToken;
+      }
+
+      return null;
+    } catch (err) {
+      console.warn("[API] Automatic token refresh failed:", err);
+      return null;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+/**
+ * Fetch wrapper that automatically handles 401 Unauthorized by refreshing tokens and retrying.
+ */
+export async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  const headers = new Headers(options.headers || {});
+  const token = getStoredToken();
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const fetchOptions: RequestInit = {
+    ...options,
+    headers,
+    credentials: "include",
+  };
+
+  let response = await fetch(url, fetchOptions);
+
+  if (response.status === 401) {
+    const freshToken = await refreshAuthTokens();
+    if (freshToken) {
+      headers.set("Authorization", `Bearer ${freshToken}`);
+      response = await fetch(url, {
+        ...fetchOptions,
+        headers,
+      });
+    }
+  }
+
+  return response;
+}
+
 /**
  * Fetch current authenticated user's profile using access token.
+ * Automatically refreshes the session if the token has expired.
  */
-export async function getCurrentUser(accessToken: string): Promise<UserProfile> {
+export async function getCurrentUser(accessToken?: string): Promise<UserProfile> {
   const url = `${API_BASE_URL}/api/v1/auth/me`;
+  const token = accessToken || getStoredToken();
+
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   let response: Response;
   try {
     response = await fetch(url, {
       method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers,
+      credentials: "include",
     });
+
+    // If access token expired (401), automatically refresh and retry!
+    if (response.status === 401) {
+      const freshToken = await refreshAuthTokens();
+      if (freshToken) {
+        headers["Authorization"] = `Bearer ${freshToken}`;
+        response = await fetch(url, {
+          method: "GET",
+          headers,
+          credentials: "include",
+        });
+      }
+    }
   } catch (networkErr: unknown) {
     const errorDetail =
       networkErr instanceof Error ? networkErr.message : "Network request failed";
@@ -245,7 +363,7 @@ export async function getCurrentUser(accessToken: string): Promise<UserProfile> 
  * Revoke session on backend logout.
  */
 export async function logoutUser(refreshToken?: string): Promise<void> {
-  if (!refreshToken) return;
+  const token = refreshToken || getStoredRefreshToken();
   const url = `${API_BASE_URL}/api/v1/auth/logout`;
 
   try {
@@ -255,7 +373,8 @@ export async function logoutUser(refreshToken?: string): Promise<void> {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ refreshToken }),
+      credentials: "include",
+      body: JSON.stringify(token ? { refreshToken: token } : {}),
     });
   } catch {
     // Ignore network error on logout cleanup
