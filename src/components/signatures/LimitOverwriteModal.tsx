@@ -54,7 +54,7 @@ export default function LimitOverwriteModal({
       }}
     >
       <div
-        className="w-full max-w-[480px] rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 transition-all transform scale-100 animate-in zoom-in-95 duration-150"
+        className="w-full max-w-[480px] max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 transition-all transform scale-100 animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
         style={{
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",

@@ -101,3 +101,18 @@ h1, h2, h3, h4, h5, h6 {
   animation: float-badge-2 3s ease-in-out infinite;
   animation-delay: 1.5s;
 }
+
+/* Custom Design Studio 8px scrollbar with #022977 thumb */
+.studio-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.studio-scrollbar::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+.studio-scrollbar::-webkit-scrollbar-thumb {
+  background: #022977;
+  border-radius: 9999px;
+}
+.studio-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #011d57;
+}

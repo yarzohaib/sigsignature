@@ -6,6 +6,17 @@ export const SIGNATURE_COLOR_SWATCHES = [
   "#059669",
 ] as const;
 
+export const STUDIO_SOLID_COLORS = [
+  "#245FD4",
+  "#64748B",
+  "#FFFFFF",
+  "#F59E0B",
+  "#22A869",
+  "#8B5CF6",
+  "#EC4899",
+  "#449AFA",
+] as const;
+
 export const SOCIAL_NETWORKS = [
   "linkedin",
   "twitter",
@@ -13,9 +24,10 @@ export const SOCIAL_NETWORKS = [
   "instagram",
 ] as const;
 
-export const ICON_STYLES = ["filled", "outline", "circle"] as const;
+export const ICON_STYLES = ["filled", "outline", "circle", "minimal"] as const;
 
 export type SignatureColorSwatch = (typeof SIGNATURE_COLOR_SWATCHES)[number];
+export type StudioSolidColor = (typeof STUDIO_SOLID_COLORS)[number];
 export type SocialNetwork = (typeof SOCIAL_NETWORKS)[number];
 export type IconStyle = (typeof ICON_STYLES)[number];
 

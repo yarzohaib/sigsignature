@@ -88,7 +88,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
     },
     {
       name: "Design Studio",
-      href: "#studio",
+      href: "/design-studio",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="3" />
@@ -198,7 +198,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                 pathname === item.href ||
                 (item.href === "/signatures" && pathname.startsWith("/signatures")) ||
                 (item.href === "/templates" && pathname.startsWith("/templates")) ||
-                (item.href === "/pricing" && pathname.startsWith("/pricing"));
+                (item.href === "/pricing" && pathname.startsWith("/pricing")) ||
+                (item.href === "/design-studio" && pathname.startsWith("/design-studio"));
               return (
                 <Link
                   key={item.name}

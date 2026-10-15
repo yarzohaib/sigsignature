@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Commissioner } from "next/font/google";
+import { fontInter, fontRoboto, fontDmSans } from "./design-studio/fonts";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -26,7 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`scroll-smooth ${montserrat.variable} ${commissioner.variable}`}>
+    <html
+      lang="en"
+      className={`scroll-smooth ${montserrat.variable} ${commissioner.variable} ${fontInter.variable} ${fontRoboto.variable} ${fontDmSans.variable}`}
+    >
       <body className="font-body antialiased">{children}</body>
     </html>
   );

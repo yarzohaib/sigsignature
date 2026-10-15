@@ -10,12 +10,13 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Protect /dashboard, /signatures, /templates, /pricing and nested routes
+  // Protect /dashboard, /signatures, /templates, /pricing, /design-studio and nested routes
   if (
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/signatures") ||
     pathname.startsWith("/templates") ||
-    pathname.startsWith("/pricing")
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/design-studio")
   ) {
     if (!hasSession) {
       const loginUrl = new URL("/login", request.url);
@@ -38,6 +39,7 @@ export const config = {
     "/signatures/:path*",
     "/templates/:path*",
     "/pricing/:path*",
+    "/design-studio/:path*",
     "/login",
     "/signup",
   ],
