@@ -47,19 +47,19 @@ export default function Navbar() {
         {/* Desktop Navigation Links (Lighter shade matching Figma) */}
         <nav className="hidden items-center gap-10 md:flex">
           <Link
-            href="#features"
+            href="/#features"
             className="font-body text-[15px] font-normal text-[#2D2D2D] transition hover:text-brand"
           >
             Features
           </Link>
           <Link
-            href="#how-it-works"
+            href="/#how-it-works"
             className="font-body text-[15px] font-normal text-[#2D2D2D] transition hover:text-brand"
           >
             How It Works
           </Link>
           <Link
-            href="#pricing"
+            href="/#pricing"
             className="font-body text-[15px] font-normal text-[#2D2D2D] transition hover:text-brand"
           >
             Pricing
@@ -118,21 +118,21 @@ export default function Navbar() {
         <div className="border-b border-[#C1C1C1] bg-[#FCFCFC] px-4 pt-3 pb-6 shadow-md md:hidden">
           <nav className="flex flex-col gap-3">
             <Link
-              href="#features"
+              href="/#features"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-md px-3 py-2 font-body text-base font-normal text-[#5A5A5A] hover:bg-slate-50 hover:text-brand"
             >
               Features
             </Link>
             <Link
-              href="#how-it-works"
+              href="/#how-it-works"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-md px-3 py-2 font-body text-base font-normal text-[#5A5A5A] hover:bg-slate-50 hover:text-brand"
             >
               How It Works
             </Link>
             <Link
-              href="#pricing"
+              href="/#pricing"
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-md px-3 py-2 font-body text-base font-normal text-[#5A5A5A] hover:bg-slate-50 hover:text-brand"
             >

@@ -9,11 +9,12 @@ export default function CtaBanner() {
         boxShadow: "inset 13px 12px 35.1px 0 rgba(0, 0, 0, 0.24)",
       }}
     >
-      <div className="mx-auto max-w-4xl px-4">
-        {/* Slightly reduced headline size matching Figma */}
-        <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl lg:text-[36px] xl:text-[38px] leading-tight sm:leading-[1.2]">
-          Your Email Signature Is the Last Thing People See,
-          <br className="hidden sm:inline" /> Make It Count.
+      <div className="mx-auto max-w-5xl px-4">
+        <h2 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl lg:text-[36px] xl:text-[38px] leading-tight sm:leading-[1.2]">
+          <span className="block whitespace-normal sm:whitespace-nowrap">
+            Your Email Signature Is the Last Thing People See,
+          </span>
+          <span className="block mt-1 sm:mt-1.5">Make It Count.</span>
         </h2>
 
         <p className="font-body mt-4 text-sm text-blue-100 sm:text-base">

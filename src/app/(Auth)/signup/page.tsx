@@ -360,7 +360,14 @@ function SignupForm() {
               className="h-4 w-4 rounded border-line accent-brand disabled:cursor-not-allowed"
             />
             <span>
-              I agree with the <span className="font-medium text-slate-900">Terms &amp; Policy</span>
+              I agree with the{" "}
+              <Link href="/terms" target="_blank" className="font-semibold text-brand hover:underline">
+                Terms of Service
+              </Link>{" "}
+              &amp;{" "}
+              <Link href="/privacy" target="_blank" className="font-semibold text-brand hover:underline">
+                Privacy Policy
+              </Link>
             </span>
           </label>
           {errors.agree && <p className="text-sm text-red-600">{errors.agree}</p>}
