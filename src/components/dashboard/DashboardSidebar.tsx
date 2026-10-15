@@ -98,7 +98,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
     },
     {
       name: "Pricing & Billing",
-      href: "#pricing",
+      href: "/pricing",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -197,7 +197,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               const isActive =
                 pathname === item.href ||
                 (item.href === "/signatures" && pathname.startsWith("/signatures")) ||
-                (item.href === "/templates" && pathname.startsWith("/templates"));
+                (item.href === "/templates" && pathname.startsWith("/templates")) ||
+                (item.href === "/pricing" && pathname.startsWith("/pricing"));
               return (
                 <Link
                   key={item.name}
@@ -248,9 +249,10 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
             >
               Upgrade to premium and access powerful features and advanced customization.
             </p>
-            <button
-              type="button"
-              className="mt-3.5 w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2.5 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
+            <Link
+              href="/pricing"
+              onClick={onCloseMobile}
+              className="mt-3.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2.5 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
               style={{
                 fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 fontWeight: 500,
@@ -260,7 +262,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               }}
             >
               Upgrade Now
-            </button>
+            </Link>
           </div>
 
           {/* Card 2: Free Plan 0/3 Signatures */}
@@ -289,7 +291,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
 
             <div className="mt-2.5 flex items-center justify-between">
               <Link
-                href="#pricing"
+                href="/pricing"
+                onClick={onCloseMobile}
                 className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#245FD4] transition hover:underline"
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
