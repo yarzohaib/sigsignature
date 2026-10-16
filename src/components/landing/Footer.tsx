@@ -75,10 +75,10 @@ export default function Footer() {
                 About
               </Link>
               <Link
-                href="/careers"
+                href="/team"
                 className="font-body text-sm sm:text-base lg:text-[18px] font-normal leading-[100%] tracking-normal text-center text-[#353A3E] transition hover:text-brand"
               >
-                Careers
+                Team
               </Link>
               <Link
                 href="/contact"

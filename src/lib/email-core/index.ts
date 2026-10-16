@@ -114,17 +114,14 @@ export function emailIconUrl(
   color: string,
   network: SocialNetwork | string
 ): string {
-  const net = (network || "").toLowerCase() as SocialNetwork;
-  if (EMAIL_SAFE_ICONS[net]) {
-    return EMAIL_SAFE_ICONS[net];
-  }
   const baseUrl = process.env.NEXT_PUBLIC_ASSET_BASE_URL;
-  if (!baseUrl) {
-    return "";
+  if (baseUrl) {
+    const cleanColor = color.replace(/^#/, "").toLowerCase();
+    const normalizedBase = baseUrl.replace(/\/$/, "");
+    return `${normalizedBase}/static/${style}-${cleanColor}-${network}.png`;
   }
-  const cleanColor = color.replace(/^#/, "").toLowerCase();
-  const normalizedBase = baseUrl.replace(/\/$/, "");
-  return `${normalizedBase}/static/${style}-${cleanColor}-${network}.png`;
+  const net = (network || "").toLowerCase() as SocialNetwork;
+  return EMAIL_SAFE_ICONS[net] || "";
 }
 
 /**

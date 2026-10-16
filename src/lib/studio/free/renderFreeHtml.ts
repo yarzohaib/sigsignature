@@ -278,17 +278,42 @@ export function generateFreeHtml(
           ${content}
         </td>`);
       } else {
-        // Multiple vertically stacked elements inside this column
-        const firstEl = col.elements[0];
-        const colPadTop = Math.max(0, firstEl.y - band.top);
+        // Group column elements into sub-rows by vertical interval overlap so side-by-side elements stay on the same line
+        const sortedColEls = [...col.elements].sort((a, b) => {
+          if (a.y !== b.y) return a.y - b.y;
+          return a.x - b.x;
+        });
+
+        interface SubRow {
+          top: number;
+          bottom: number;
+          elements: FreeElement[];
+        }
+
+        const subRows: SubRow[] = [];
+        for (const el of sortedColEls) {
+          const lastSubRow = subRows[subRows.length - 1];
+          if (!lastSubRow || el.y >= lastSubRow.bottom) {
+            subRows.push({
+              top: el.y,
+              bottom: el.y + el.h,
+              elements: [el],
+            });
+          } else {
+            lastSubRow.elements.push(el);
+            lastSubRow.bottom = Math.max(lastSubRow.bottom, el.y + el.h);
+          }
+        }
+
+        const colPadTop = Math.max(0, subRows[0].top - band.top);
         const colPadTopStr = colPadTop > 0 ? `padding-top:${colPadTop}px;` : "";
 
         const nestedRows: string[] = [];
-        for (let j = 0; j < col.elements.length; j++) {
-          const el = col.elements[j];
-          if (j > 0) {
-            const prevEl = col.elements[j - 1];
-            const gapY = Math.max(0, el.y - (prevEl.y + prevEl.h));
+        for (let s = 0; s < subRows.length; s++) {
+          const subRow = subRows[s];
+          if (s > 0) {
+            const prevSubRow = subRows[s - 1];
+            const gapY = Math.max(0, subRow.top - prevSubRow.bottom);
             if (gapY > 0) {
               nestedRows.push(`            <tr>
               <td height="${gapY}" style="height:${gapY}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
@@ -296,15 +321,50 @@ export function generateFreeHtml(
             }
           }
 
-          const padLeft = Math.max(0, el.x - col.x);
-          const padLeftStr = padLeft > 0 ? `padding-left:${padLeft}px;` : "";
-          const content = renderElementHtml(el);
+          // Sort elements in this sub-row by x ascending
+          subRow.elements.sort((a, b) => a.x - b.x);
 
-          nestedRows.push(`            <tr>
+          if (subRow.elements.length === 1) {
+            const el = subRow.elements[0];
+            const padLeft = Math.max(0, el.x - col.x);
+            const padLeftStr = padLeft > 0 ? `padding-left:${padLeft}px;` : "";
+            const content = renderElementHtml(el);
+            nestedRows.push(`            <tr>
               <td valign="top" style="vertical-align:top;${padLeftStr}padding-top:0;padding-bottom:0;padding-right:0;margin:0;">
                 ${content}
               </td>
             </tr>`);
+          } else {
+            // Multiple elements side-by-side in this sub-row
+            let rowX = col.x;
+            const subCells: string[] = [];
+            for (const el of subRow.elements) {
+              if (el.x > rowX) {
+                const gapW = el.x - rowX;
+                subCells.push(`                <td width="${gapW}" style="width:${gapW}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>`);
+                rowX = el.x;
+              }
+              const content = renderElementHtml(el);
+              subCells.push(`                <td width="${el.w}" valign="middle" style="width:${el.w}px;vertical-align:middle;padding:0;margin:0;">
+                  ${content}
+                </td>`);
+              rowX = el.x + el.w;
+            }
+            if (rowX < col.x + col.w) {
+              const trailW = (col.x + col.w) - rowX;
+              subCells.push(`                <td width="${trailW}" style="width:${trailW}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>`);
+            }
+
+            nestedRows.push(`            <tr>
+              <td valign="top" style="vertical-align:top;padding:0;margin:0;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${col.w}" style="width:${col.w}px;border-collapse:collapse;">
+                  <tr>
+${subCells.join("\n")}
+                  </tr>
+                </table>
+              </td>
+            </tr>`);
+          }
         }
 
         bandCells.push(`        <td width="${col.w}" valign="top" style="width:${col.w}px;vertical-align:top;${colPadTopStr}padding-bottom:0;padding-left:0;padding-right:0;margin:0;">
