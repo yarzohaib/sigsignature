@@ -5,7 +5,7 @@ import SectionBadge from "@/components/landing/SectionBadge";
 import ContactForm from "@/components/contact/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Sig Signature",
+  title: "Contact Us | SigSignature",
   description:
     "Get in touch with the Sig Signature team for technical support, business partnerships, or product inquiries.",
 };

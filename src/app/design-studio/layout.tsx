@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   fontInter,
   fontRoboto,
@@ -7,6 +8,12 @@ import {
   fontPlayfair,
   fontDuruSans,
 } from "./fonts";
+
+export const metadata: Metadata = {
+  title: "Design Studio | SigSignature",
+  description:
+    "Design, customize, and preview your professional HTML email signature with real-time editing and multi-client compilation.",
+};
 
 export default function DesignStudioLayout({
   children,

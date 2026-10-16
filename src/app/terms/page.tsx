@@ -4,7 +4,7 @@ import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Sig Signature",
+  title: "Terms of Service | SigSignature",
   description:
     "Terms of Service governing the use of Sig Signature web application and services provided by The Nevon.",
 };

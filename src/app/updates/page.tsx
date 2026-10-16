@@ -4,7 +4,7 @@ import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
 
 export const metadata: Metadata = {
-  title: "Changelog & Product Updates | Sig Signature",
+  title: "Changelog & Product Updates | SigSignature",
   description:
     "Track the latest features, engine updates, bug fixes, and client compatibility improvements in Sig Signature.",
 };

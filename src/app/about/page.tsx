@@ -4,7 +4,7 @@ import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
 
 export const metadata: Metadata = {
-  title: "About Sig Signature | Professional Email Signature Builder",
+  title: "About Us | SigSignature",
   description:
     "Sig Signature by The Nevon is a lightweight, deliverability-focused HTML email signature generator built for modern professionals and teams.",
 };

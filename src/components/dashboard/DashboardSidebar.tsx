@@ -77,8 +77,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
       ),
     },
     {
-      name: "Brand Assets",
-      href: "#assets",
+      name: "Team Signatures",
+      href: "/team-signatures",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="7" width="20" height="14" rx="2" />

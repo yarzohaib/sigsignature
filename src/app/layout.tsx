@@ -16,9 +16,12 @@ const commissioner = Commissioner({
 });
 
 export const metadata: Metadata = {
-  title: "Free Email Signature Generator | SigSignature",
+  title: {
+    template: "%s",
+    default: "SigSignature | Professional Email Signature Generator",
+  },
   description:
-    "Create up to 3 professional signatures with SigSignature’s free email signature generator. Customize templates, preview live, and export HTML or images.",
+    "SigSignature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
 };
 
 export default function RootLayout({

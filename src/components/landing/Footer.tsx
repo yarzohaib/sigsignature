@@ -127,7 +127,7 @@ export default function Footer() {
         <div className="mt-10 flex justify-center gap-4">
           {/* Facebook */}
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/profile.php?id=61595216736684"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
@@ -138,7 +138,7 @@ export default function Footer() {
 
           {/* Instagram */}
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/sigsignature_com/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -159,7 +159,7 @@ export default function Footer() {
 
           {/* LinkedIn */}
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/showcase/sig-signature"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"

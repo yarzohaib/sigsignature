@@ -4,7 +4,7 @@ import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
 
 export const metadata: Metadata = {
-  title: "Meet the Team | Sig Signature by The Nevon",
+  title: "Meet the Team | SigSignature",
   description:
     "The builders, designers, and problem solvers behind Sig Signature and The Nevon.",
 };

@@ -4,7 +4,7 @@ import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Sig Signature",
+  title: "Privacy Policy | SigSignature",
   description:
     "Learn how Sig Signature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
 };
