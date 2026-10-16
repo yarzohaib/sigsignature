@@ -1,6 +1,7 @@
 import {
   StudioSignatureData,
   SignatureExtraItem,
+  FreeElement,
   StudioShape,
   StudioTheme,
   StudioButtonStyle,
@@ -8,6 +9,8 @@ import {
   StudioSocialIconsStyle,
 } from "@/types/studio";
 import { PREMIUM_ENABLED } from "@/lib/premium";
+import { clampToCanvas, rectsOverlap, findFreeSpot, snap } from "./free/geometry";
+import { arrangeElements } from "./free/arrange";
 
 export type {
   StudioShape,
@@ -86,6 +89,8 @@ export const INITIAL_STUDIO_DATA: StudioSignatureData = {
     disclaimer: "",
   },
   extras: [],
+  canvas: { width: 600, height: 200 },
+  elements: [],
 };
 
 export type StudioAction =
@@ -111,7 +116,15 @@ export type StudioAction =
   | { type: "DUPLICATE_EXTRA"; payload: { id: string; newId?: string } }
   | { type: "MOVE_EXTRA_UP"; payload: { id: string } }
   | { type: "MOVE_EXTRA_DOWN"; payload: { id: string } }
-  | { type: "SET_EXTRAS"; payload: SignatureExtraItem[] };
+  | { type: "SET_EXTRAS"; payload: SignatureExtraItem[] }
+  | { type: "ADD_ELEMENT"; payload: FreeElement }
+  | { type: "UPDATE_ELEMENT"; payload: { id: string; item?: Partial<FreeElement>; updates?: Partial<FreeElement> } }
+  | { type: "MOVE_ELEMENT"; payload: { id: string; x: number; y: number } }
+  | { type: "RESIZE_ELEMENT"; payload: { id: string; x: number; y: number; w: number; h: number } }
+  | { type: "REMOVE_ELEMENT"; payload: { id: string } }
+  | { type: "DUPLICATE_ELEMENT"; payload: { id: string; newId?: string } }
+  | { type: "SET_CANVAS_HEIGHT"; payload: { height: number } }
+  | { type: "ARRANGE_PRESET"; payload: { preset: "single" | "two-column" | "compact" } };
 
 export function studioReducer(
   state: StudioSignatureData,
@@ -227,9 +240,7 @@ export function studioReducer(
       return {
         ...state,
         extras: currentExtras.map((item) =>
-          item.id === action.payload.id
-            ? ({ ...item, ...action.payload.item } as SignatureExtraItem)
-            : item
+          item.id === action.payload.id ? ({ ...item, ...action.payload.item } as SignatureExtraItem) : item
         ),
       };
     }
@@ -245,23 +256,18 @@ export function studioReducer(
     case "DUPLICATE_EXTRA": {
       const currentExtras = state.extras || [];
       if (currentExtras.length >= 20) return state;
-      const index = currentExtras.findIndex((item) => item.id === action.payload.id);
-      if (index === -1) return state;
-      const original = currentExtras[index];
-      const newId =
-        action.payload.newId ||
-        (typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `extra_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`);
-      const duplicated: SignatureExtraItem = {
-        ...original,
-        id: newId,
+      const target = currentExtras.find((item) => item.id === action.payload.id);
+      if (!target) return state;
+      const duplicatedItem = {
+        ...target,
+        id: action.payload.newId || `extra_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       };
-      const updated = [...currentExtras];
-      updated.splice(index + 1, 0, duplicated);
+      const index = currentExtras.findIndex((item) => item.id === action.payload.id);
+      const nextExtras = [...currentExtras];
+      nextExtras.splice(index + 1, 0, duplicatedItem);
       return {
         ...state,
-        extras: updated,
+        extras: nextExtras,
       };
     }
 
@@ -295,6 +301,197 @@ export function studioReducer(
       return {
         ...state,
         extras: action.payload.slice(0, 20),
+      };
+    }
+
+    // ==========================================
+    // FREE CANVAS ACTIONS
+    // ==========================================
+
+    case "ADD_ELEMENT": {
+      const currentElements = state.elements || [];
+      if (currentElements.length >= 40) return state;
+
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const clamped = clampToCanvas(action.payload, canvas);
+      const newEl = { ...action.payload, ...clamped };
+
+      if (currentElements.some((other) => rectsOverlap(newEl, other))) {
+        return state;
+      }
+
+      const nextElements = [...currentElements, newEl];
+      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
+
+      return {
+        ...state,
+        canvas: { width: 600, height: nextHeight },
+        elements: nextElements,
+      };
+    }
+
+    case "UPDATE_ELEMENT": {
+      const currentElements = state.elements || [];
+      const target = currentElements.find((el) => el.id === action.payload.id);
+      if (!target) return state;
+
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const patch = action.payload.updates ?? action.payload.item ?? {};
+      const updatedCandidate = { ...target, ...patch } as FreeElement;
+      const clamped = clampToCanvas(updatedCandidate, canvas);
+      const finalEl = { ...updatedCandidate, ...clamped };
+
+      const others = currentElements.filter((el) => el.id !== action.payload.id);
+      if (others.some((other) => rectsOverlap(finalEl, other))) {
+        return state;
+      }
+
+      const nextElements = currentElements.map((el) =>
+        el.id === action.payload.id ? finalEl : el
+      );
+      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
+
+      return {
+        ...state,
+        canvas: { width: 600, height: nextHeight },
+        elements: nextElements,
+      };
+    }
+
+    case "MOVE_ELEMENT": {
+      const currentElements = state.elements || [];
+      const target = currentElements.find((el) => el.id === action.payload.id);
+      if (!target || target.locked) return state;
+
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const candidate = {
+        ...target,
+        x: snap(action.payload.x, 4),
+        y: snap(action.payload.y, 4),
+      };
+      const clamped = clampToCanvas(candidate, canvas);
+      const finalEl = { ...candidate, ...clamped };
+
+      const others = currentElements.filter((el) => el.id !== action.payload.id);
+      if (others.some((other) => rectsOverlap(finalEl, other))) {
+        return state;
+      }
+
+      const nextElements = currentElements.map((el) =>
+        el.id === action.payload.id ? finalEl : el
+      );
+      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
+
+      return {
+        ...state,
+        canvas: { width: 600, height: nextHeight },
+        elements: nextElements,
+      };
+    }
+
+    case "RESIZE_ELEMENT": {
+      const currentElements = state.elements || [];
+      const target = currentElements.find((el) => el.id === action.payload.id);
+      if (!target || target.locked) return state;
+
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const candidate = {
+        ...target,
+        x: snap(action.payload.x, 4),
+        y: snap(action.payload.y, 4),
+        w: Math.max(8, snap(action.payload.w, 4)),
+        h: Math.max(8, snap(action.payload.h, 4)),
+      };
+      const clamped = clampToCanvas(candidate, canvas);
+      const finalEl = { ...candidate, ...clamped };
+
+      const others = currentElements.filter((el) => el.id !== action.payload.id);
+      if (others.some((other) => rectsOverlap(finalEl, other))) {
+        return state;
+      }
+
+      const nextElements = currentElements.map((el) =>
+        el.id === action.payload.id ? finalEl : el
+      );
+      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
+
+      return {
+        ...state,
+        canvas: { width: 600, height: nextHeight },
+        elements: nextElements,
+      };
+    }
+
+    case "REMOVE_ELEMENT": {
+      const currentElements = state.elements || [];
+      return {
+        ...state,
+        elements: currentElements.filter((el) => el.id !== action.payload.id),
+      };
+    }
+
+    case "DUPLICATE_ELEMENT": {
+      const currentElements = state.elements || [];
+      if (currentElements.length >= 40) return state;
+
+      const target = currentElements.find((el) => el.id === action.payload.id);
+      if (!target) return state;
+
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const spot = findFreeSpot({ w: target.w, h: target.h }, currentElements, canvas);
+
+      const newEl: FreeElement = {
+        ...target,
+        id:
+          action.payload.newId ||
+          `el_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        x: spot.x,
+        y: spot.y,
+        locked: false,
+      };
+
+      const nextElements = [...currentElements, newEl];
+      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
+
+      return {
+        ...state,
+        canvas: { width: 600, height: nextHeight },
+        elements: nextElements,
+      };
+    }
+
+    case "SET_CANVAS_HEIGHT": {
+      const currentElements = state.elements || [];
+      const minFromElements = currentElements.reduce(
+        (max, el) => Math.max(max, el.y + el.h),
+        120
+      );
+      const height = Math.max(
+        120,
+        Math.min(480, Math.max(minFromElements, snap(action.payload.height, 8)))
+      );
+
+      return {
+        ...state,
+        canvas: { width: 600, height },
+      };
+    }
+
+    case "ARRANGE_PRESET": {
+      const currentElements = state.elements || [];
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const result = arrangeElements(action.payload.preset, currentElements, canvas.width);
+
+      return {
+        ...state,
+        layout: action.payload.preset,
+        canvas: { width: 600, height: result.canvasHeight },
+        elements: result.elements,
       };
     }
 

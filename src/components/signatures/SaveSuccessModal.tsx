@@ -18,6 +18,10 @@ import {
   generateStudioHtml,
   generateStudioPlainText,
 } from "@/lib/studio/renderStudioHtml";
+import {
+  generateFreeHtml,
+  generateFreePlainText,
+} from "@/lib/studio/free/renderFreeHtml";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 
 interface SaveSuccessModalProps {
@@ -71,6 +75,13 @@ export default function SaveSuccessModal({
         (signatureData.layout as string) === "single"
       ) {
         const studioData = signatureData as StudioSignatureData;
+        if (studioData.elements && Array.isArray(studioData.elements)) {
+          return {
+            html: generateFreeHtml(studioData),
+            previewHtml: generateFreeHtml(studioData, { preview: true }),
+            plainText: generateFreePlainText(studioData),
+          };
+        }
         return {
           html: generateStudioHtml(studioData),
           previewHtml: generateStudioHtml(studioData, { preview: true }),

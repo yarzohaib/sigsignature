@@ -28,38 +28,38 @@ import { getEditHref } from "@/lib/signatures/kind";
 import { SavedSignature } from "@/types/signature";
 import {
   StudioSignatureData,
-  ExtraTextItem,
-  ExtraImageItem,
-  ExtraDividerItem,
-  ExtraCtaItem,
-  ExtraBannerItem,
-  SignatureExtraItem,
+  FreeElement,
+  FreeTextElement,
+  FreeImageElement,
 } from "@/types/studio";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
-import { resolveEmailFont } from "@/lib/email-core";
-import { generateStudioHtml } from "@/lib/studio/renderStudioHtml";
+import { generateFreeHtml } from "@/lib/studio/free/renderFreeHtml";
 import { useIsPremium } from "@/lib/premium";
+import { studioHistoryReducer } from "@/lib/studio/free/history";
+import { migrateFlowToFree } from "@/lib/studio/free/migrate";
 import {
-  studioReducer,
+  findFreeSpot,
+  rectsOverlap,
+  resolveOverlap,
+  snap,
+} from "@/lib/studio/free/geometry";
+import {
   INITIAL_STUDIO_DATA,
   StudioShape,
   StudioSocialStyle,
   StudioTheme,
-  StudioLayout,
   StudioButtonStyle,
   ALLOWED_STUDIO_FONTS,
 } from "@/lib/studio/types";
 import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
 import PremiumLockedModal from "@/components/studio/PremiumLockedModal";
-import SignaturePreviewFrame, {
-  SignaturePreviewFrameHandle,
-} from "@/components/studio/SignaturePreviewFrame";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
-import FloatingToolbar from "@/components/studio/FloatingToolbar";
+import FloatingToolbar, { CanvasAlignment } from "@/components/studio/FloatingToolbar";
 import EditDetailsModal from "@/components/studio/EditDetailsModal";
+import FreeCanvas from "@/components/studio/FreeCanvas";
 
 function DesignStudioContent() {
   const router = useRouter();
@@ -80,8 +80,13 @@ function DesignStudioContent() {
   // Responsive Segmented Control for < lg screens
   const [mobileTab, setMobileTab] = useState<"canvas" | "tools">("canvas");
 
-  // Studio Store
-  const [state, dispatch] = useReducer(studioReducer, INITIAL_STUDIO_DATA);
+  // History Store (Undo / Redo 50 steps)
+  const [historyState, dispatch] = useReducer(studioHistoryReducer, {
+    past: [],
+    present: INITIAL_STUDIO_DATA,
+    future: [],
+  });
+  const state = historyState.present;
 
   // Canvas Zoom State
   const [zoom, setZoom] = useState(100);
@@ -101,25 +106,17 @@ function DesignStudioContent() {
   const [allSignatures, setAllSignatures] = useState<SavedSignature[]>([]);
 
   // Canvas Selection & Details Popover
-  const [selectedId, setSelectedId] = useState<"main" | string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isEditDetailsOpen, setIsEditDetailsOpen] = useState(false);
   const [editDetailsSection, setEditDetailsSection] = useState<"all" | "socials">("all");
-  const [autoOpenLinkId, setAutoOpenLinkId] = useState<string | null>(null);
-  const activeNewIdRef = useRef<string | null>(null);
-
-  // Drag-and-drop & Resizing State for Canvas Extras
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [dropIndicator, setDropIndicator] = useState<{ id: string; position: "before" | "after" } | null>(null);
-  const [resizingInfo, setResizingInfo] = useState<{ id: string; width: number } | null>(null);
 
   // File Upload Refs
   const logoUploadInputRef = useRef<HTMLInputElement>(null);
   const imageUploadInputRef = useRef<HTMLInputElement>(null);
   const bannerUploadInputRef = useRef<HTMLInputElement>(null);
 
-  // Canvas container & Preview Iframe Refs
+  // Canvas container ref
   const canvasAreaRef = useRef<HTMLDivElement>(null);
-  const previewFrameRef = useRef<SignaturePreviewFrameHandle>(null);
 
   // Collapsible Tool Sections (all open by default)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -143,33 +140,35 @@ function DesignStudioContent() {
     setTimeout(() => setToastMessage(null), 3000);
   }, []);
 
-  // Keyboard Navigation: Escape clears selection, Delete removes selected extra
+  // Global Undo / Redo Shortcuts (Cmd/Ctrl + Z, Cmd/Ctrl + Shift + Z)
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+    function handleHistoryShortcuts(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null;
       if (
-        document.activeElement &&
-        (document.activeElement.tagName === "INPUT" ||
-          document.activeElement.tagName === "TEXTAREA" ||
-          (document.activeElement as HTMLElement).isContentEditable)
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
       ) {
         return;
       }
 
-      if (e.key === "Escape") {
-        setSelectedId(null);
-      } else if (e.key === "Delete" || e.key === "Backspace") {
-        if (selectedId && selectedId !== "main") {
-          e.preventDefault();
-          dispatch({ type: "REMOVE_EXTRA", payload: { id: selectedId } });
-          setSelectedId("main");
-          showToast("Element deleted");
+      if ((e.metaKey || e.ctrlKey) && (e.key === "z" || e.key === "Z")) {
+        e.preventDefault();
+        if (e.shiftKey) {
+          dispatch({ type: "REDO" });
+        } else {
+          dispatch({ type: "UNDO" });
         }
+      } else if ((e.metaKey || e.ctrlKey) && (e.key === "y" || e.key === "Y")) {
+        e.preventDefault();
+        dispatch({ type: "REDO" });
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedId, showToast]);
+    window.addEventListener("keydown", handleHistoryShortcuts);
+    return () => window.removeEventListener("keydown", handleHistoryShortcuts);
+  }, []);
 
   // Load Signature for Edit or Restore Draft
   useEffect(() => {
@@ -236,6 +235,11 @@ function DesignStudioContent() {
             // ignore
           }
 
+          // Migrate legacy flow designs if elements is missing
+          if (!loadedData.elements) {
+            loadedData = migrateFlowToFree(loadedData);
+          }
+
           dispatch({ type: "SET_FULL_STATE", payload: loadedData });
         } catch (loadErr) {
           console.error("Failed to load signature for editing:", loadErr);
@@ -255,14 +259,12 @@ function DesignStudioContent() {
         try {
           const savedDraft = localStorage.getItem(draftKey);
           if (savedDraft) {
-            const parsed = JSON.parse(savedDraft);
+            let parsed = JSON.parse(savedDraft);
             if (parsed && typeof parsed === "object") {
-              // Clear legacy default Daniel Wilson profile preset so users start with blank canvas
-              if (parsed.fullName === "Daniel Wilson" && parsed.email === "daniel@company.com") {
-                localStorage.removeItem(draftKey);
-              } else {
-                loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
+              if (!parsed.elements) {
+                parsed = migrateFlowToFree(parsed);
               }
+              loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
             }
           }
         } catch {
@@ -324,51 +326,36 @@ function DesignStudioContent() {
     }
   }
 
-  // Generate Email HTML for live canvas preview (main card only inside iframe)
-  const mainSignatureOnlyHtml = generateStudioHtml(
-    { ...state, extras: [] },
-    { preview: true }
-  );
-  // Full signature HTML for modal preview and exports
-  const fullSignatureHtml = generateStudioHtml(state, { preview: true });
-
-  // Helper to determine column placement (Left / Right / Full)
-  function getItemColumn(item: SignatureExtraItem): "left" | "right" | "full" {
-    if (item.column) return item.column;
-    if (state.layout === "single") return "full";
-    if (item.type === "image") return "left";
-    if (item.type === "banner") return "full";
-    if (item.type === "divider" && item.orientation !== "vertical") return "full";
-    return "right";
-  }
-
   // 1. Add Text
   function handleAddText() {
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
       return;
     }
+    const canvas = state.canvas || { width: 600, height: 200 };
+    const spot = findFreeSpot({ w: 240, h: 24 }, state.elements || [], canvas);
     const id = `txt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const column: "left" | "right" | "full" = state.layout === "single" ? "full" : "right";
-    const newExtra: ExtraTextItem = {
+    const newEl: FreeElement = {
       id,
       type: "text",
       text: "Your text here",
-      align: "left",
       size: "md",
       bold: false,
-      column,
+      align: "left",
+      x: spot.x,
+      y: spot.y,
+      w: 240,
+      h: 24,
     };
-    activeNewIdRef.current = id;
-    dispatch({ type: "ADD_EXTRA", payload: newExtra });
+    dispatch({ type: "ADD_ELEMENT", payload: newEl });
     setSelectedId(id);
-    showToast("Text element added");
+    showToast("Text added");
   }
 
   // 2. Add Image
   function handleAddImageClick() {
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
       return;
     }
     imageUploadInputRef.current?.click();
@@ -395,27 +382,43 @@ function DesignStudioContent() {
     try {
       const compressedBlob = await compressImageToBlob(file, 600, 0.85, "logo");
       const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
-      const isReplacing = state.extras?.some((item) => item.id === selectedId && item.type === "image");
+
+      // Measure natural aspect ratio
+      const img = new Image();
+      img.src = publicUrl;
+      await new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+      const aspect = (img.naturalWidth || 72) / Math.max(1, img.naturalHeight || 72);
+      const w = Math.min(200, Math.max(40, Math.round(72 * Math.max(1, aspect))));
+      const h = Math.round(w / aspect);
+
+      const isReplacing = state.elements?.some(
+        (item) => item.id === selectedId && item.type === "image"
+      );
       if (isReplacing && selectedId) {
         dispatch({
-          type: "UPDATE_EXTRA",
-          payload: { id: selectedId, item: { url: publicUrl } },
+          type: "UPDATE_ELEMENT",
+          payload: { id: selectedId, updates: { url: publicUrl } },
         });
         showToast("Image updated!");
       } else {
+        const canvas = state.canvas || { width: 600, height: 200 };
+        const spot = findFreeSpot({ w, h }, state.elements || [], canvas);
         const id = `img_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-        const column: "left" | "right" | "full" = state.layout === "single" ? "full" : "left";
-        const newExtra: ExtraImageItem = {
+        const newEl: FreeElement = {
           id,
           type: "image",
           url: publicUrl,
-          width: 80,
-          align: "left",
-          column,
+          x: spot.x,
+          y: spot.y,
+          w,
+          h,
         };
-        dispatch({ type: "ADD_EXTRA", payload: newExtra });
+        dispatch({ type: "ADD_ELEMENT", payload: newEl });
         setSelectedId(id);
-        showToast("Image element added!");
+        showToast("Image added!");
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to upload image.";
@@ -427,8 +430,8 @@ function DesignStudioContent() {
 
   // 3. Add Logo
   function handleAddLogoClick() {
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
       return;
     }
     logoUploadInputRef.current?.click();
@@ -437,12 +440,6 @@ function DesignStudioContent() {
   async function handleLogoFileSelected(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
-      if (logoUploadInputRef.current) logoUploadInputRef.current.value = "";
-      return;
-    }
 
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
     if (!allowedTypes.includes(file.type)) {
@@ -461,32 +458,43 @@ function DesignStudioContent() {
     try {
       const compressedBlob = await compressImageToBlob(file, 400, 0.85, "logo");
       const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
-      const id = `logo_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const column: "left" | "right" | "full" = state.layout === "single" ? "full" : "left";
-      const defaultUrl = state.website?.trim()
-        ? (state.website.startsWith("http") ? state.website : `https://${state.website}`)
-        : "";
-      const newExtra: ExtraImageItem = {
-        id,
-        type: "image",
-        url: publicUrl,
-        width: 100,
-        align: "left",
-        column,
-        linkUrl: defaultUrl,
-      };
-      // Clear legacy companyLogoUrl on main card to avoid any ghost duplication
-      if (state.companyLogoUrl) {
+
+      const img = new Image();
+      img.src = publicUrl;
+      await new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+      const aspect = (img.naturalWidth || 100) / Math.max(1, img.naturalHeight || 60);
+      const w = Math.min(120, Math.max(40, Math.round(60 * Math.max(1, aspect))));
+      const h = Math.round(w / aspect);
+
+      const isReplacing = state.elements?.some(
+        (item) => item.id === selectedId && item.type === "logo"
+      );
+      if (isReplacing && selectedId) {
         dispatch({
-          type: "UPDATE_SIGNATURE_FIELD",
-          field: "companyLogoUrl",
-          value: "",
+          type: "UPDATE_ELEMENT",
+          payload: { id: selectedId, updates: { url: publicUrl } },
         });
+        showToast("Logo updated!");
+      } else {
+        const canvas = state.canvas || { width: 600, height: 200 };
+        const spot = findFreeSpot({ w, h }, state.elements || [], canvas);
+        const id = `logo_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        const newEl: FreeElement = {
+          id,
+          type: "logo",
+          url: publicUrl,
+          x: spot.x,
+          y: spot.y,
+          w,
+          h,
+        };
+        dispatch({ type: "ADD_ELEMENT", payload: newEl });
+        setSelectedId(id);
+        showToast("Logo added!");
       }
-      dispatch({ type: "ADD_EXTRA", payload: newExtra });
-      setSelectedId(id);
-      setAutoOpenLinkId(id);
-      showToast("Logo added! Set redirect URL in the toolbar.");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to upload logo.";
       showToast(message);
@@ -497,57 +505,88 @@ function DesignStudioContent() {
 
   // 4. Add Divider
   function handleAddDivider() {
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
       return;
     }
+    const canvas = state.canvas || { width: 600, height: 200 };
+    const spot = findFreeSpot({ w: 240, h: 1 }, state.elements || [], canvas);
     const id = `div_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const newExtra: ExtraDividerItem = {
+    const newEl: FreeElement = {
       id,
       type: "divider",
       orientation: "horizontal",
-      width: 600,
       thickness: 1,
-      align: "center",
-      column: "full",
+      x: spot.x,
+      y: spot.y,
+      w: 240,
+      h: 1,
     };
-    dispatch({ type: "ADD_EXTRA", payload: newExtra });
+    dispatch({ type: "ADD_ELEMENT", payload: newEl });
     setSelectedId(id);
     showToast("Horizontal divider added");
   }
 
   // 5. Social Icons
   function handleSocialIconsClick() {
-    setSelectedId("main");
+    const existingSocial = state.elements?.find((el) => el.type === "social");
+    if (existingSocial) {
+      setSelectedId(existingSocial.id);
+      setEditDetailsSection("socials");
+      setIsEditDetailsOpen(true);
+      return;
+    }
+
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
+      return;
+    }
+
+    const canvas = state.canvas || { width: 600, height: 200 };
+    const spot = findFreeSpot({ w: 140, h: 24 }, state.elements || [], canvas);
+    const id = `soc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const newEl: FreeElement = {
+      id,
+      type: "social",
+      x: spot.x,
+      y: spot.y,
+      w: 140,
+      h: 24,
+    };
+    dispatch({ type: "ADD_ELEMENT", payload: newEl });
+    setSelectedId(id);
     setEditDetailsSection("socials");
     setIsEditDetailsOpen(true);
   }
 
   // 6. Add CTA
   function handleAddCta() {
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
       return;
     }
+    const canvas = state.canvas || { width: 600, height: 200 };
+    const spot = findFreeSpot({ w: 140, h: 36 }, state.elements || [], canvas);
     const id = `cta_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const column: "left" | "right" | "full" = state.layout === "single" ? "full" : "right";
-    const newExtra: ExtraCtaItem = {
+    const newEl: FreeElement = {
       id,
       type: "cta",
       label: "Book a Call",
-      url: "https://",
-      align: "left",
-      column,
+      url: "",
+      x: spot.x,
+      y: spot.y,
+      w: 140,
+      h: 36,
     };
-    dispatch({ type: "ADD_EXTRA", payload: newExtra });
+    dispatch({ type: "ADD_ELEMENT", payload: newEl });
     setSelectedId(id);
     showToast("CTA button added");
   }
 
   // 7. Add Banner
   function handleAddBannerClick() {
-    if ((state.extras?.length || 0) >= 20) {
-      showToast("You can add up to 20 elements");
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
       return;
     }
     bannerUploadInputRef.current?.click();
@@ -574,22 +613,40 @@ function DesignStudioContent() {
     try {
       const compressedBlob = await compressImageToBlob(file, 600, 0.85, "logo");
       const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
-      const isReplacing = state.extras?.some((item) => item.id === selectedId && item.type === "banner");
+
+      const canvasWidth = state.canvas?.width || 600;
+      const img = new Image();
+      img.src = publicUrl;
+      await new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+      const aspect = (img.naturalWidth || 600) / Math.max(1, img.naturalHeight || 100);
+      const h = Math.min(160, Math.max(40, Math.round(canvasWidth / aspect)));
+
+      const isReplacing = state.elements?.some(
+        (item) => item.id === selectedId && item.type === "banner"
+      );
       if (isReplacing && selectedId) {
         dispatch({
-          type: "UPDATE_EXTRA",
-          payload: { id: selectedId, item: { imageUrl: publicUrl } },
+          type: "UPDATE_ELEMENT",
+          payload: { id: selectedId, updates: { url: publicUrl } },
         });
         showToast("Banner updated!");
       } else {
+        const canvas = state.canvas || { width: 600, height: 200 };
+        const spot = findFreeSpot({ w: canvasWidth, h }, state.elements || [], canvas);
         const id = `ban_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-        const newExtra: ExtraBannerItem = {
+        const newEl: FreeElement = {
           id,
           type: "banner",
-          imageUrl: publicUrl,
-          column: "full",
+          url: publicUrl,
+          x: spot.x,
+          y: spot.y,
+          w: canvasWidth,
+          h,
         };
-        dispatch({ type: "ADD_EXTRA", payload: newExtra });
+        dispatch({ type: "ADD_ELEMENT", payload: newEl });
         setSelectedId(id);
         showToast("Banner added!");
       }
@@ -601,323 +658,42 @@ function DesignStudioContent() {
     }
   }
 
-  // Render Extra Item on Live Canvas with Direct Inline Editing
-  function renderCanvasExtra(extra: SignatureExtraItem, isSelected: boolean) {
-    const shape = state.design?.shape || "rounded";
-    const btnRadius = shape === "square" ? "0px" : shape === "pill" ? "999px" : "6px";
-    const isSolid = (state.design?.buttonStyle || "solid") !== "outline";
-    const fontStack = resolveEmailFont(state.fontFamily);
+  // Canvas Alignment Handler
+  function handleCanvasAlignment(id: string, alignment: CanvasAlignment) {
+    const el = state.elements?.find((item) => item.id === id);
+    if (!el || el.locked) return;
+    const canvasW = state.canvas?.width || 600;
+    const canvasH = state.canvas?.height || 200;
 
-    if (extra.type === "text") {
-      const fontSize = extra.size === "sm" ? 12 : extra.size === "lg" ? 16 : 14;
-      const widthVal = extra.width && extra.width < 600 ? `${extra.width}px` : "100%";
-      const alignClass =
-        extra.align === "left"
-          ? "mr-auto ml-0"
-          : extra.align === "right"
-          ? "ml-auto mr-0"
-          : "mx-auto";
+    let newX = el.x;
+    let newY = el.y;
 
-      return (
-        <div
-          className={`transition-all ${alignClass}`}
-          style={{ width: widthVal, maxWidth: "100%" }}
-        >
-          <textarea
-            ref={(el) => {
-              if (el && isSelected && selectedId === extra.id && activeNewIdRef.current === extra.id) {
-                el.focus();
-                el.select();
-                activeNewIdRef.current = null;
-              }
-            }}
-            value={extra.text}
-            placeholder="Type your text here..."
-            rows={1}
-            onClick={(e) => e.stopPropagation()}
-            onFocus={() => setSelectedId(extra.id)}
-            onChange={(e) => {
-              dispatch({
-                type: "UPDATE_EXTRA",
-                payload: { id: extra.id, item: { text: e.target.value } },
-              });
-              // Auto-resize height
-              e.target.style.height = "auto";
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
-            style={{
-              fontFamily: fontStack,
-              fontSize: `${fontSize}px`,
-              fontWeight: extra.bold ? "bold" : "normal",
-              textAlign: extra.align || "left",
-              color: state.design?.theme === "dark" ? "#F8FAFC" : "#1E293B",
-              background: "transparent",
-              border: "none",
-              outline: "none",
-              resize: "none",
-              width: "100%",
-              display: "block",
-              lineHeight: 1.25,
-              padding: 0,
-              margin: 0,
-            }}
-          />
-        </div>
+    if (alignment === "left") newX = 0;
+    if (alignment === "center") newX = Math.round((canvasW - el.w) / 2);
+    if (alignment === "right") newX = canvasW - el.w;
+    if (alignment === "top") newY = 0;
+    if (alignment === "middle") newY = Math.round((canvasH - el.h) / 2);
+    if (alignment === "bottom") newY = canvasH - el.h;
+
+    const candidate = { ...el, x: snap(newX, 4), y: snap(newY, 4) };
+    const others = (state.elements || []).filter((item) => item.id !== id);
+
+    const hasOverlap = others.some((other) => rectsOverlap(candidate, other));
+    if (hasOverlap) {
+      const resolved = resolveOverlap(
+        candidate,
+        others,
+        { width: canvasW, height: canvasH },
+        { x: el.x, y: el.y }
       );
-    }
-
-    if (extra.type === "cta") {
-      const widthVal = extra.width ? `${extra.width}px` : "auto";
-      return (
-        <div style={{ display: "inline-block", textAlign: extra.align || "left" }}>
-          <div
-            style={{
-              backgroundColor: isSolid ? state.themeColor || "#245FD4" : "transparent",
-              border: isSolid ? "none" : `2px solid ${state.themeColor || "#245FD4"}`,
-              borderRadius: btnRadius,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: widthVal,
-              maxWidth: "100%",
-            }}
-            className="px-4 py-1.5 shadow-xs cursor-text transition-all"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <input
-              type="text"
-              value={extra.label || ""}
-              placeholder="Button Label"
-              onFocus={() => setSelectedId(extra.id)}
-              onChange={(e) => {
-                dispatch({
-                  type: "UPDATE_EXTRA",
-                  payload: { id: extra.id, item: { label: e.target.value } },
-                });
-              }}
-              style={{
-                fontFamily: fontStack,
-                color: isSolid ? "#FFFFFF" : state.themeColor || "#245FD4",
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                fontSize: "12px",
-                fontWeight: "bold",
-                textAlign: "center",
-                width: extra.width ? "100%" : `${Math.max(8, (extra.label || "Button Label").length + 2)}ch`,
-              }}
-            />
-          </div>
-        </div>
-      );
-    }
-
-    if (extra.type === "image") {
-      const radius = shape === "square" ? "0px" : shape === "pill" ? "999px" : "4px";
-      return (
-        <div
-          style={{ display: "inline-block", textAlign: extra.align || "left" }}
-          title={extra.linkUrl ? `Clickable redirect in email: ${extra.linkUrl}` : undefined}
-          className="relative group/img"
-        >
-          {extra.url ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={extra.url}
-                alt="Logo or graphic"
-                style={{
-                  width: `${extra.width || 80}px`,
-                  maxWidth: "100%",
-                  display: "block",
-                  borderRadius: radius,
-                }}
-              />
-              {extra.linkUrl && (
-                <div
-                  className="absolute bottom-1 right-1 bg-slate-900/80 text-white rounded p-0.5 shadow pointer-events-none opacity-80 group-hover/img:opacity-100 transition"
-                  title={`Redirects to: ${extra.linkUrl}`}
-                >
-                  <svg className="h-2.5 w-2.5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                  </svg>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="h-16 w-20 bg-slate-100 rounded border border-dashed border-slate-300 flex items-center justify-center text-xs text-slate-400 mx-auto">
-              Image
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    if (extra.type === "divider") {
-      const align = extra.align || "center";
-      const thickness = extra.thickness || 1;
-      const isVertical = extra.orientation === "vertical";
-      const alignClass =
-        align === "left" ? "mr-auto ml-0" : align === "right" ? "ml-auto mr-0" : "mx-auto";
-
-      if (isVertical) {
-        const heightVal = extra.width ? Math.min(180, Math.max(20, extra.width)) : 48;
-        return (
-          <div
-            className="py-1 flex items-center h-full"
-            style={{
-              justifyContent:
-                align === "left" ? "flex-start" : align === "right" ? "flex-end" : "center",
-            }}
-          >
-            <div
-              style={{
-                width: `${thickness}px`,
-                height: `${heightVal}px`,
-                backgroundColor: state.themeColor || "#94A3B8",
-              }}
-              className="rounded-full shadow-2xs"
-            />
-          </div>
-        );
+      if (resolved.x === el.x && resolved.y === el.y) {
+        showToast("Elements cannot overlap in email signatures");
+        return;
       }
-
-      const widthVal = extra.width ? Math.min(600, Math.max(40, extra.width)) : 600;
-      const widthStyle = widthVal >= 600 ? "100%" : `${widthVal}px`;
-
-      return (
-        <div className="py-1 w-full">
-          <div
-            style={{
-              width: widthStyle,
-              height: `${thickness}px`,
-              backgroundColor: state.themeColor || "#CBD5E1",
-            }}
-            className={`${alignClass} rounded-full transition-all`}
-          />
-        </div>
-      );
+      dispatch({ type: "MOVE_ELEMENT", payload: { id, x: resolved.x, y: resolved.y } });
+    } else {
+      dispatch({ type: "MOVE_ELEMENT", payload: { id, x: candidate.x, y: candidate.y } });
     }
-
-    if (extra.type === "banner") {
-      return (
-        <div className="text-center w-full">
-          {extra.imageUrl ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={extra.imageUrl}
-              alt="Banner graphic"
-              className="w-full max-w-[600px] rounded-lg mx-auto object-cover"
-            />
-          ) : (
-            <div className="h-20 w-full bg-slate-100 rounded-lg border border-dashed border-slate-300 flex items-center justify-center text-xs text-slate-400">
-              Banner Placeholder
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    return null;
-  }
-
-  // Smooth interactive container resizing for canvas elements
-  function handleStartResize(
-    e: React.MouseEvent,
-    extra: SignatureExtraItem,
-    side: "left" | "right"
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const startX = e.clientX;
-    const currentW =
-      extra.type === "image"
-        ? extra.width || 80
-        : (extra as { width?: number }).width || 200;
-
-    setResizingInfo({ id: extra.id, width: currentW });
-
-    function onMouseMove(moveEvent: MouseEvent) {
-      const deltaX = moveEvent.clientX - startX;
-      const change = side === "right" ? deltaX : -deltaX;
-      const minW = extra.type === "image" ? 30 : 50;
-      const newWidth = Math.min(600, Math.max(minW, Math.round(currentW + change)));
-
-      setResizingInfo({ id: extra.id, width: newWidth });
-      dispatch({
-        type: "UPDATE_EXTRA",
-        payload: { id: extra.id, item: { width: newWidth } },
-      });
-    }
-
-    function onMouseUp() {
-      setResizingInfo(null);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    }
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-  }
-
-  // Smooth Drag & Drop Handlers for reordering canvas elements
-  function handleDragStart(e: React.DragEvent, id: string) {
-    e.dataTransfer.setData("text/plain", id);
-    e.dataTransfer.effectAllowed = "move";
-    setDraggingId(id);
-  }
-
-  function handleDragOver(e: React.DragEvent, id: string) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    if (draggingId && draggingId !== id) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const isTop = e.clientY - rect.top < rect.height / 2;
-      setDropIndicator({ id, position: isTop ? "before" : "after" });
-    }
-  }
-
-  function handleDrop(e: React.DragEvent, targetId: string) {
-    e.preventDefault();
-    if (!draggingId || draggingId === targetId) {
-      setDraggingId(null);
-      setDropIndicator(null);
-      return;
-    }
-
-    const currentExtras = [...(state.extras || [])];
-    const fromIndex = currentExtras.findIndex((item) => item.id === draggingId);
-    const toIndex = currentExtras.findIndex((item) => item.id === targetId);
-
-    if (fromIndex !== -1 && toIndex !== -1) {
-      const [movedItem] = currentExtras.splice(fromIndex, 1);
-      const targetItem = state.extras?.find((item) => item.id === targetId);
-      if (targetItem) {
-        movedItem.column = getItemColumn(targetItem);
-      }
-      const isInsertAfter = dropIndicator?.position === "after";
-      let insertIndex = toIndex;
-      if (fromIndex < toIndex) {
-        insertIndex = isInsertAfter ? toIndex : toIndex - 1;
-      } else {
-        insertIndex = isInsertAfter ? toIndex + 1 : toIndex;
-      }
-      insertIndex = Math.max(0, Math.min(currentExtras.length, insertIndex));
-      currentExtras.splice(insertIndex, 0, movedItem);
-
-      dispatch({ type: "SET_EXTRAS", payload: currentExtras });
-      showToast("Element reordered");
-    }
-
-    setDraggingId(null);
-    setDropIndicator(null);
-  }
-
-  function handleDragEnd() {
-    setDraggingId(null);
-    setDropIndicator(null);
   }
 
   // Save Signature to API Repository
@@ -925,18 +701,28 @@ function DesignStudioContent() {
     setIsSaving(true);
     try {
       const repo = getSignatureRepository();
+      const firstTextEl = state.elements?.find(
+        (el): el is FreeTextElement => el.type === "text" && Boolean(el.text.trim())
+      );
+      const firstText = firstTextEl?.text;
       const sigName = state.fullName?.trim()
         ? `${state.fullName.trim()}'s Signature`
+        : firstText?.trim()
+        ? `${firstText.trim()}'s Signature`
         : "My Signature";
+
       const trimmedAvatar = state.avatarUrl?.trim() || "";
       const avatarUrl =
         trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
           ? ""
           : trimmedAvatar;
+
       const payloadData: StudioSignatureData = {
         ...state,
         avatarUrl,
+        extras: [],
       };
+
       const saved = await repo.save({
         ...(editingSignatureId ? { id: editingSignatureId } : {}),
         name: sigName,
@@ -985,18 +771,28 @@ function DesignStudioContent() {
   async function handleSelectOverwrite(target: SavedSignature) {
     try {
       const repo = getSignatureRepository();
+      const firstTextEl = state.elements?.find(
+        (el): el is FreeTextElement => el.type === "text" && Boolean(el.text.trim())
+      );
+      const firstText = firstTextEl?.text;
       const sigName = state.fullName?.trim()
         ? `${state.fullName.trim()}'s Signature`
+        : firstText?.trim()
+        ? `${firstText.trim()}'s Signature`
         : "My Signature";
+
       const trimmedAvatar = state.avatarUrl?.trim() || "";
       const avatarUrl =
         trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
           ? ""
           : trimmedAvatar;
+
       const payloadData: StudioSignatureData = {
         ...state,
         avatarUrl,
+        extras: [],
       };
+
       const updated = await repo.save({
         id: target.id,
         name: sigName,
@@ -1004,7 +800,6 @@ function DesignStudioContent() {
         data: payloadData,
       });
 
-      // Clear active draft after successful save
       if (user?.id) {
         const activeDraftKey = editingSignatureId
           ? `sig_studio_draft_${user.id}_${editingSignatureId}`
@@ -1072,6 +867,9 @@ function DesignStudioContent() {
     ? `${user.firstName} ${user.lastName || ""}`.trim()
     : "Member";
 
+  const selectedElement = state.elements?.find((el) => el.id === selectedId);
+  const fullSignatureHtml = generateFreeHtml(state, { preview: true });
+
   if (isLoading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
@@ -1103,76 +901,31 @@ function DesignStudioContent() {
         </div>
       )}
 
-      {/* Edit Details Modal */}
-      <EditDetailsModal
-        isOpen={isEditDetailsOpen}
-        onClose={() => setIsEditDetailsOpen(false)}
-        selectedId={selectedId}
-        state={state}
-        dispatch={dispatch}
-        initialSection={editDetailsSection}
-        onToast={showToast}
-      />
-
-      {/* Premium Locked Feature Modal */}
-      <PremiumLockedModal
-        isOpen={premiumModalOpen}
-        onClose={() => setPremiumModalOpen(false)}
-      />
-
-      {/* Preview Real Width Modal (Desktop 600px / Mobile 360px) */}
-      <PreviewSignatureModal
-        isOpen={previewModalOpen}
-        onClose={() => setPreviewModalOpen(false)}
-        html={fullSignatureHtml}
-      />
-
-      {/* Save Success Modal */}
-      {savedSignatureRecord && (
-        <SaveSuccessModal
-          isOpen={Boolean(savedSignatureRecord)}
-          onClose={() => setSavedSignatureRecord(null)}
-          signatureName={savedSignatureRecord.name}
-          signature={savedSignatureRecord}
-          signatureData={state}
-        />
-      )}
-
-      {/* Free Tier Limit Overwrite Modal */}
-      <LimitOverwriteModal
-        isOpen={limitModalOpen}
-        onClose={() => setLimitModalOpen(false)}
-        signatures={allSignatures}
-        onSelectOverwrite={handleSelectOverwrite}
-      />
-
-      {/* 256px Fixed Sidebar */}
+      {/* Sidebar */}
       <DashboardSidebar
         mobileOpen={mobileMenuOpen}
         onCloseMobile={() => setMobileMenuOpen(false)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Navigation Bar */}
+      <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardTopBar
           userName={displayName}
-          userEmail={user?.email}
+          userEmail={user?.email || ""}
           onOpenMobileMenu={() => setMobileMenuOpen(true)}
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
         />
 
-        {/* Mobile View Switcher (< lg screens) */}
-        <div className="flex lg:hidden items-center justify-center border-b border-[#E2E8F0] bg-white px-4 py-2.5">
-          <div className="flex w-full max-w-[360px] items-center rounded-xl bg-slate-100 p-1">
+        {/* Mobile Segmented Control (< lg) */}
+        <div className="flex lg:hidden items-center justify-center border-b border-[#E2E8F0] bg-white px-4 py-2 shrink-0">
+          <div className="flex w-full max-w-xs rounded-xl bg-slate-100 p-1">
             <button
               type="button"
               onClick={() => setMobileTab("canvas")}
               className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition ${
                 mobileTab === "canvas"
                   ? "bg-white text-[#245FD4] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  : "text-[#64748B] hover:text-[#1E293B]"
               }`}
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
@@ -1184,7 +937,7 @@ function DesignStudioContent() {
               className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition ${
                 mobileTab === "tools"
                   ? "bg-white text-[#245FD4] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  : "text-[#64748B] hover:text-[#1E293B]"
               }`}
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
@@ -1193,12 +946,13 @@ function DesignStudioContent() {
           </div>
         </div>
 
-        {/* Desktop Split View: Left Tools Panel (340px lg / 418px xl) | Right Canvas Area */}
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Studio Workspace: Split Left (Tools) and Right (Canvas) */}
+        <div className="flex flex-1 min-h-0 overflow-hidden relative">
           {/* ======================================================== */}
-          {/* LEFT: TOOLS PANEL (340px on lg, 418px on xl, vertical scroll) */}
+          {/* LEFT: TOOLS PANEL */}
           {/* ======================================================== */}
           <aside
+            aria-label="Studio customization tools"
             className={`w-full lg:w-[340px] xl:w-[418px] shrink-0 border-r border-[#E2E8F0] bg-[#FCFCFC] overflow-y-auto studio-scrollbar p-5 pb-24 lg:pb-5 transition-all ${
               mobileTab === "tools" ? "block" : "hidden lg:block"
             }`}
@@ -1240,7 +994,6 @@ function DesignStudioContent() {
 
               {openSections.fonts && (
                 <div className="mt-3.5">
-                  {/* Free Fonts Responsive Grid */}
                   <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Font Selection">
                     {ALLOWED_STUDIO_FONTS.map((font) => {
                       const isSelected = state.fontFamily === font;
@@ -1324,7 +1077,6 @@ function DesignStudioContent() {
                     </div>
                   </div>
 
-                  {/* Fallback Note */}
                   <p
                     className="mt-2 text-[11px] text-[#94A3B8] leading-tight"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
@@ -1371,7 +1123,6 @@ function DesignStudioContent() {
 
               {openSections.colors && (
                 <div className="mt-3.5">
-                  {/* SOLID COLORS */}
                   <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
                     SOLID COLORS
                   </span>
@@ -1399,7 +1150,6 @@ function DesignStudioContent() {
                     })}
                   </div>
 
-                  {/* GRADIENT COLORS (PREMIUM) */}
                   <div className="mt-4">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
@@ -1425,37 +1175,6 @@ function DesignStudioContent() {
                           style={{ background: grad }}
                         />
                       ))}
-                    </div>
-                  </div>
-
-                  {/* GLASS THEME (PREMIUM) */}
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                        GLASS THEME
-                      </span>
-                      <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                        Premium
-                      </span>
-                    </div>
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={handlePremiumClick}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          handlePremiumClick();
-                        }
-                      }}
-                      className="mt-2 flex w-full items-center justify-center rounded-[10px] border border-[#E2E8F0] bg-white p-3 text-center cursor-pointer transition hover:bg-slate-50 opacity-95 hover:opacity-100 shadow-2xs"
-                    >
-                      <span
-                        className="text-[11px] text-[#64748B]"
-                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                      >
-                        Glass effects available in Premium
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -1524,7 +1243,7 @@ function DesignStudioContent() {
                   />
 
                   <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2">
-                    {/* 1. Add Text */}
+                    {/* Add Text */}
                     <button
                       type="button"
                       onClick={handleAddText}
@@ -1539,7 +1258,7 @@ function DesignStudioContent() {
                       <span>Add Text</span>
                     </button>
 
-                    {/* 2. Add Image */}
+                    {/* Add Image */}
                     <button
                       type="button"
                       onClick={handleAddImageClick}
@@ -1554,7 +1273,7 @@ function DesignStudioContent() {
                       <span>Add Image</span>
                     </button>
 
-                    {/* 3. Add Logo */}
+                    {/* Add Logo */}
                     <button
                       type="button"
                       onClick={handleAddLogoClick}
@@ -1567,7 +1286,7 @@ function DesignStudioContent() {
                       <span>Add Logo</span>
                     </button>
 
-                    {/* 4. Add Divider */}
+                    {/* Add Divider */}
                     <button
                       type="button"
                       onClick={handleAddDivider}
@@ -1580,7 +1299,7 @@ function DesignStudioContent() {
                       <span>Add Divider</span>
                     </button>
 
-                    {/* 5. Social Icons */}
+                    {/* Social Icons */}
                     <button
                       type="button"
                       onClick={handleSocialIconsClick}
@@ -1597,7 +1316,7 @@ function DesignStudioContent() {
                       <span>Social Icons</span>
                     </button>
 
-                    {/* 6. CTA Button */}
+                    {/* CTA Button */}
                     <button
                       type="button"
                       onClick={handleAddCta}
@@ -1612,8 +1331,8 @@ function DesignStudioContent() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-2">
-                    {/* 7. Add Banner */}
+                  <div className="grid grid-cols-1 gap-2 mt-2">
+                    {/* Add Banner */}
                     <button
                       type="button"
                       onClick={handleAddBannerClick}
@@ -1624,35 +1343,6 @@ function DesignStudioContent() {
                         <rect x="2" y="7" width="20" height="10" rx="2" />
                       </svg>
                       <span>Add Banner</span>
-                    </button>
-
-                    {/* 8. Contact Card */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        dispatch({
-                          type: "SET_FULL_STATE",
-                          payload: {
-                            ...state,
-                            fullName: "Your Name",
-                            jobTitle: "Your Job Title",
-                            companyName: "Company Name",
-                            email: "email@example.com",
-                            phone: "+1 (555) 000-0000",
-                            website: "www.example.com",
-                          },
-                        });
-                        setSelectedId("main");
-                        showToast("Contact card added!");
-                      }}
-                      className="flex items-center gap-2 rounded-[10px] border border-blue-200 bg-blue-50/60 px-3 py-2 text-xs font-medium text-[#245FD4] shadow-2xs transition hover:bg-blue-100 hover:border-[#245FD4] focus:outline-none focus:ring-1 focus:ring-[#245FD4]"
-                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                    >
-                      <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                      <span>Contact Card</span>
                     </button>
                   </div>
                 </div>
@@ -1695,7 +1385,6 @@ function DesignStudioContent() {
 
               {openSections.shapes && (
                 <div className="mt-3.5">
-                  {/* Free Shapes: Rounded, Square, Pill */}
                   <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Shape Selection">
                     {[
                       { id: "rounded", label: "Rounded", rx: "rounded-lg" },
@@ -1729,40 +1418,6 @@ function DesignStudioContent() {
                         </div>
                       );
                     })}
-                  </div>
-
-                  {/* PREMIUM SHAPES */}
-                  <div className="mt-3">
-                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                      PREMIUM
-                    </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5">
-                      {[
-                        { label: "Glass", color: "bg-indigo-100/60" },
-                        { label: "Blob", color: "bg-pink-100/60" },
-                      ].map((item) => (
-                        <div
-                          key={item.label}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex flex-col items-center justify-center rounded-[10px] border border-[#E2E8F0] bg-white p-3 cursor-pointer opacity-95 hover:opacity-100 transition select-none relative shadow-2xs"
-                        >
-                          <div className={`h-8 w-8 rounded-lg border border-slate-200 ${item.color}`} />
-                          <div className="mt-2 flex items-center gap-1">
-                            <span className="text-[11px] font-medium text-slate-700">{item.label}</span>
-                            <span className="h-2 w-2 rounded-full bg-amber-400" title="Premium" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </div>
               )}
@@ -1804,7 +1459,6 @@ function DesignStudioContent() {
 
               {openSections.socials && (
                 <div className="mt-3.5">
-                  {/* 3 Wide Option Rows */}
                   <div className="flex flex-col gap-2" role="radiogroup" aria-label="Social Icon Styles">
                     {[
                       { id: "filled", label: "Filled" },
@@ -1839,7 +1493,6 @@ function DesignStudioContent() {
                               : "border-[#E2E8F0] bg-white hover:border-slate-300"
                           }`}
                         >
-                          {/* Sample 4 icons preview */}
                           <div className="flex items-center gap-1.5">
                             {["in", "X", "ig", "f"].map((glyph) => (
                               <div
@@ -1860,36 +1513,6 @@ function DesignStudioContent() {
                         </div>
                       );
                     })}
-                  </div>
-
-                  {/* PREMIUM SOCIALS */}
-                  <div className="mt-3">
-                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                      PREMIUM
-                    </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5">
-                      {["Gradient", "Animated"].map((label) => (
-                        <div
-                          key={label}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-white p-2.5 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
-                        >
-                          <span className="text-xs font-medium text-slate-700">{label}</span>
-                          <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                            Premium
-                          </span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </div>
               )}
@@ -1933,7 +1556,6 @@ function DesignStudioContent() {
 
               {openSections.themes && (
                 <div className="mt-3.5">
-                  {/* Free Themes Grid */}
                   <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Theme Selection">
                     {[
                       { id: "corporate", label: "Corporate", bg: "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200" },
@@ -1969,43 +1591,11 @@ function DesignStudioContent() {
                       );
                     })}
                   </div>
-
-                  {/* PREMIUM THEMES */}
-                  <div className="mt-3">
-                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                      PREMIUM
-                    </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-3 gap-2 mt-1.5">
-                      {[
-                        { label: "Luxury", bg: "bg-[#78350F]" },
-                        { label: "Glass", bg: "bg-gradient-to-r from-indigo-500 to-purple-500" },
-                        { label: "Neon", bg: "bg-black border border-emerald-400" },
-                      ].map((item) => (
-                        <div
-                          key={item.label}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex flex-col items-center justify-center rounded-[10px] border border-[#E2E8F0] bg-white p-2 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
-                        >
-                          <div className={`h-6 w-full rounded ${item.bg}`} />
-                          <span className="mt-1.5 text-[10px] font-medium text-slate-700">{item.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               )}
             </div>
 
-            {/* 7. LAYOUT SECTION */}
+            {/* 7. QUICK ARRANGE (Previously Layout) */}
             <div className="border-b border-[#E2E8F0] pb-5 mb-5">
               <button
                 type="button"
@@ -2020,12 +1610,15 @@ function DesignStudioContent() {
                       <line x1="12" y1="3" x2="12" y2="21" />
                     </svg>
                   </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B]"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Layout
-                  </span>
+                  <div>
+                    <span
+                      className="text-sm font-bold text-[#1E293B] block leading-tight"
+                      style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                    >
+                      Quick Arrange
+                    </span>
+                    <span className="text-[10px] text-slate-400">Auto-align canvas elements</span>
+                  </div>
                 </div>
                 <svg
                   className={`h-4 w-4 text-slate-400 transition-transform ${
@@ -2042,14 +1635,14 @@ function DesignStudioContent() {
 
               {openSections.layout && (
                 <div className="mt-3.5">
-                  {/* Free Layouts: Single, Two Column, Compact */}
-                  <div className="grid grid-cols-1 min-[380px]:grid-cols-3 gap-2" role="radiogroup" aria-label="Layout Selection">
+                  <div className="grid grid-cols-1 min-[380px]:grid-cols-3 gap-2" role="radiogroup" aria-label="Quick Arrange">
                     {[
                       {
                         id: "single",
                         label: "Single",
+                        desc: "Stacked vertically",
                         thumb: (
-                          <div className="flex flex-col gap-0.5 items-center justify-center h-full w-full">
+                          <div className="flex flex-col gap-1 items-center justify-center h-full w-full">
                             <div className="h-2 w-2 rounded-full bg-slate-400" />
                             <div className="h-1 w-6 bg-slate-300 rounded" />
                             <div className="h-1 w-4 bg-slate-300 rounded" />
@@ -2059,9 +1652,11 @@ function DesignStudioContent() {
                       {
                         id: "two-column",
                         label: "Two Column",
+                        desc: "Media left, details right",
                         thumb: (
-                          <div className="flex items-center justify-center gap-1 h-full w-full">
+                          <div className="flex items-center justify-center gap-1.5 h-full w-full">
                             <div className="h-4 w-3 bg-slate-300 rounded-xs" />
+                            <div className="w-[1px] h-5 bg-slate-200" />
                             <div className="flex flex-col gap-0.5">
                               <div className="h-1 w-4 bg-slate-400 rounded" />
                               <div className="h-1 w-3 bg-slate-300 rounded" />
@@ -2072,10 +1667,14 @@ function DesignStudioContent() {
                       {
                         id: "compact",
                         label: "Compact",
+                        desc: "Tidy tight layout",
                         thumb: (
                           <div className="flex items-center justify-between w-full h-full px-1">
                             <div className="h-2.5 w-2.5 rounded-full bg-slate-400" />
-                            <div className="h-1 w-5 bg-slate-300 rounded" />
+                            <div className="flex flex-col gap-0.5">
+                              <div className="h-1 w-5 bg-slate-300 rounded" />
+                              <div className="h-0.5 w-4 bg-slate-200 rounded" />
+                            </div>
                           </div>
                         ),
                       },
@@ -2087,14 +1686,28 @@ function DesignStudioContent() {
                           role="radio"
                           aria-checked={isSelected}
                           tabIndex={0}
-                          onClick={() => dispatch({ type: "SET_LAYOUT", payload: lay.id as StudioLayout })}
+                          onClick={() => {
+                            dispatch({
+                              type: "ARRANGE_PRESET",
+                              payload: {
+                                preset: lay.id as "single" | "two-column" | "compact",
+                              },
+                            });
+                            showToast(`Arranged as ${lay.label} (Ctrl+Z to undo)`);
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              dispatch({ type: "SET_LAYOUT", payload: lay.id as StudioLayout });
+                              dispatch({
+                                type: "ARRANGE_PRESET",
+                                payload: {
+                                  preset: lay.id as "single" | "two-column" | "compact",
+                                },
+                              });
+                              showToast(`Arranged as ${lay.label} (Ctrl+Z to undo)`);
                             }
                           }}
-                          className={`flex flex-col items-center justify-center rounded-[10px] border p-2.5 cursor-pointer transition select-none ${
+                          className={`flex flex-col items-center justify-center rounded-[10px] border p-2 cursor-pointer transition select-none ${
                             isSelected
                               ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
                               : "border-[#E2E8F0] bg-white hover:border-slate-300"
@@ -2103,42 +1716,12 @@ function DesignStudioContent() {
                           <div className="h-7 w-full rounded border border-slate-200 bg-slate-50 flex items-center justify-center">
                             {lay.thumb}
                           </div>
-                          <span className="mt-1.5 text-[11px] font-medium text-[#1E293B]">
+                          <span className="mt-1 text-[11px] font-medium text-[#1E293B]">
                             {lay.label}
                           </span>
                         </div>
                       );
                     })}
-                  </div>
-
-                  {/* PREMIUM LAYOUTS */}
-                  <div className="mt-3">
-                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                      PREMIUM
-                    </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5">
-                      {["Glass", "Floating"].map((label) => (
-                        <div
-                          key={label}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-white p-2.5 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
-                        >
-                          <span className="text-xs font-medium text-slate-700">{label}</span>
-                          <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                            Premium
-                          </span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 </div>
               )}
@@ -2155,7 +1738,7 @@ function DesignStudioContent() {
                 <div className="flex items-center gap-2.5">
                   <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="7" width="18" height="10" rx="3" />
+                      <rect x="3" y="6" width="18" height="12" rx="3" />
                     </svg>
                   </div>
                   <span
@@ -2180,8 +1763,7 @@ function DesignStudioContent() {
 
               {openSections.buttons && (
                 <div className="mt-3.5">
-                  {/* Free Options: Solid, Outline */}
-                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Button Styles Selection">
+                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Button Styles">
                     {[
                       { id: "solid", label: "Solid", isSolid: true },
                       { id: "outline", label: "Outline", isSolid: false },
@@ -2193,11 +1775,19 @@ function DesignStudioContent() {
                           role="radio"
                           aria-checked={isSelected}
                           tabIndex={0}
-                          onClick={() => dispatch({ type: "SET_BUTTON_STYLE", payload: btn.id as StudioButtonStyle })}
+                          onClick={() =>
+                            dispatch({
+                              type: "SET_BUTTON_STYLE",
+                              payload: btn.id as StudioButtonStyle,
+                            })
+                          }
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              dispatch({ type: "SET_BUTTON_STYLE", payload: btn.id as StudioButtonStyle });
+                              dispatch({
+                                type: "SET_BUTTON_STYLE",
+                                payload: btn.id as StudioButtonStyle,
+                              });
                             }
                           }}
                           className={`flex flex-col items-center justify-center rounded-[10px] border p-3 cursor-pointer transition select-none ${
@@ -2222,40 +1812,6 @@ function DesignStudioContent() {
                       );
                     })}
                   </div>
-
-                  {/* PREMIUM BUTTONS */}
-                  <div className="mt-3">
-                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                      PREMIUM
-                    </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-3 gap-2 mt-1.5">
-                      {[
-                        { label: "Gradient", style: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white" },
-                        { label: "Glass", style: "bg-slate-100 border border-slate-300 text-slate-800" },
-                        { label: "Shadow", style: "bg-blue-600 text-white shadow-md" },
-                      ].map((item) => (
-                        <div
-                          key={item.label}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex flex-col items-center justify-center rounded-[10px] border border-[#E2E8F0] bg-white p-2 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
-                        >
-                          <div className={`rounded px-2.5 py-0.5 text-[9px] font-semibold ${item.style}`}>
-                            CTA
-                          </div>
-                          <span className="mt-1.5 text-[10px] font-medium text-slate-700">{item.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               )}
             </div>
@@ -2272,7 +1828,6 @@ function DesignStudioContent() {
             {/* Top Toolbar Row 1: Action Buttons (Preview Signature + Save & Continue) */}
             <div className="hidden lg:flex items-center justify-end px-6 pt-4 pb-1 shrink-0">
               <div className="flex items-center gap-2">
-                {/* Preview Signature (outlined, eye icon) */}
                 <button
                   type="button"
                   onClick={() => setPreviewModalOpen(true)}
@@ -2286,7 +1841,6 @@ function DesignStudioContent() {
                   <span>Preview Signature</span>
                 </button>
 
-                {/* Save & Continue (primary gradient, check icon) */}
                 <button
                   type="button"
                   onClick={handleSaveSignature}
@@ -2302,28 +1856,68 @@ function DesignStudioContent() {
               </div>
             </div>
 
-            {/* Row 2: Canvas Info on Left, 4 Separate Outlined Controls on Right */}
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-2 shrink-0">
+            {/* Row 2: Canvas Info on Left, Undo/Redo & Zoom Controls on Right */}
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-2 shrink-0 border-b border-slate-100">
               {/* Canvas Info */}
               <div className="flex items-center gap-2">
                 <span
                   className="text-[13px] font-bold text-[#1E293B]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  Canvas
+                  Design Canvas
                 </span>
                 <span className="text-xs text-[#94A3B8]">&bull;</span>
                 <span
                   className="text-[13px] text-[#94A3B8]"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
-                  Email Signature &mdash; 600px wide
+                  {state.canvas?.width || 600}px &times; {state.canvas?.height || 200}px
                 </span>
               </div>
 
-              {/* 4 Separate Small Outlined Controls */}
+              {/* Controls: Undo, Redo, Zoom Out, Reset, Zoom In, Fit */}
               <div className="flex items-center gap-1.5">
-                {/* 1. Zoom Out */}
+                {/* Undo Button */}
+                <button
+                  type="button"
+                  disabled={historyState.past.length === 0}
+                  onClick={() => dispatch({ type: "UNDO" })}
+                  className={`flex h-7 w-7 items-center justify-center rounded-md border border-[#E2E8F0] bg-white text-xs font-semibold shadow-2xs transition ${
+                    historyState.past.length > 0
+                      ? "text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                      : "text-slate-300 cursor-not-allowed opacity-50"
+                  }`}
+                  title="Undo (Ctrl/Cmd+Z)"
+                  aria-label="Undo"
+                >
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 7v6h6" />
+                    <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                  </svg>
+                </button>
+
+                {/* Redo Button */}
+                <button
+                  type="button"
+                  disabled={historyState.future.length === 0}
+                  onClick={() => dispatch({ type: "REDO" })}
+                  className={`flex h-7 w-7 items-center justify-center rounded-md border border-[#E2E8F0] bg-white text-xs font-semibold shadow-2xs transition ${
+                    historyState.future.length > 0
+                      ? "text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                      : "text-slate-300 cursor-not-allowed opacity-50"
+                  }`}
+                  title="Redo (Ctrl/Cmd+Shift+Z)"
+                  aria-label="Redo"
+                >
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 7v6h-6" />
+                    <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+                  </svg>
+                </button>
+
+                <div className="h-4 w-[1px] bg-slate-200 mx-0.5" />
+
+                {/* Zoom Out */}
                 <button
                   type="button"
                   onClick={handleZoomOut}
@@ -2336,7 +1930,7 @@ function DesignStudioContent() {
                   </svg>
                 </button>
 
-                {/* 2. Current Zoom (100%) */}
+                {/* Current Zoom (100%) */}
                 <button
                   type="button"
                   onClick={() => setZoom(100)}
@@ -2347,7 +1941,7 @@ function DesignStudioContent() {
                   {Math.round(zoom)}%
                 </button>
 
-                {/* 3. Zoom In */}
+                {/* Zoom In */}
                 <button
                   type="button"
                   onClick={handleZoomIn}
@@ -2361,7 +1955,7 @@ function DesignStudioContent() {
                   </svg>
                 </button>
 
-                {/* 4. Fit */}
+                {/* Fit */}
                 <button
                   type="button"
                   onClick={handleZoomFit}
@@ -2380,720 +1974,150 @@ function DesignStudioContent() {
               </div>
             </div>
 
-            {/* Canvas Body: Mock Email Window Container */}
+            {/* Canvas Body: Free Interactive Canvas */}
             <div
               ref={canvasAreaRef}
-              className="flex-1 overflow-auto p-3 sm:p-6 lg:p-8 flex items-start justify-center"
+              className="flex-1 overflow-auto flex flex-col items-center justify-start p-4 sm:p-8"
             >
-              <div
-                className="w-full max-w-[680px] bg-white rounded-[12px] border border-[#E5E7EB] shadow-xs transition-transform duration-150 origin-top flex flex-col"
-                style={{
-                  transform: zoom !== 100 ? `scale(${zoom / 100})` : undefined,
-                }}
-              >
-                {/* Window Chrome Header (soft red, yellow, green dots) */}
-                <div className="flex items-center gap-1.5 border-b border-[#F1F5F9] px-4 py-3 bg-white rounded-t-[12px]">
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#EF4444]" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#F59E0B]" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#10B981]" />
-                </div>
+              <FreeCanvas
+                data={state}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                dispatch={dispatch}
+                zoom={zoom}
+                onToast={showToast}
+              />
 
-                {/* Email Header Rows: To: and Subject: (empty values) */}
-                <div className="border-b border-[#F1F5F9] px-5 py-2.5 text-xs text-[#94A3B8]">
-                  <span className="text-[#94A3B8]">To:</span>
-                </div>
-                <div className="border-b border-[#F1F5F9] px-5 py-2.5 text-xs text-[#94A3B8]">
-                  <span className="text-[#94A3B8]">Subject:</span>
-                </div>
+              {/* Portaled FloatingToolbar when an element is selected */}
+              {selectedElement && (
+                <FloatingToolbar
+                  elementType={selectedElement.type}
+                  bold={selectedElement.type === "text" ? selectedElement.bold : false}
+                  onToggleBold={() =>
+                    selectedElement.type === "text" &&
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { bold: !selectedElement.bold } },
+                    })
+                  }
+                  size={selectedElement.type === "text" ? selectedElement.size : "md"}
+                  onSizeChange={(size) =>
+                    selectedElement.type === "text" &&
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { size } },
+                    })
+                  }
+                  url={
+                    selectedElement.type === "cta"
+                      ? selectedElement.url
+                      : (selectedElement as FreeImageElement).linkUrl || ""
+                  }
+                  onUrlChange={(newUrl) => {
+                    if (selectedElement.type === "cta") {
+                      dispatch({
+                        type: "UPDATE_ELEMENT",
+                        payload: { id: selectedId!, updates: { url: newUrl } },
+                      });
+                    } else {
+                      dispatch({
+                        type: "UPDATE_ELEMENT",
+                        payload: { id: selectedId!, updates: { linkUrl: newUrl } },
+                      });
+                    }
+                  }}
+                  width={selectedElement.w}
+                  onWidthChange={(w) =>
+                    dispatch({
+                      type: "RESIZE_ELEMENT",
+                      payload: {
+                        id: selectedId!,
+                        x: selectedElement.x,
+                        y: selectedElement.y,
+                        w,
+                        h: selectedElement.h,
+                      },
+                    })
+                  }
+                  orientation={
+                    selectedElement.type === "divider"
+                      ? selectedElement.orientation
+                      : "horizontal"
+                  }
+                  onOrientationChange={(orientation) =>
+                    selectedElement.type === "divider" &&
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: {
+                        id: selectedId!,
+                        updates: {
+                          orientation,
+                          w: orientation === "vertical" ? 1 : Math.max(40, selectedElement.w),
+                          h: orientation === "vertical" ? Math.max(48, selectedElement.h) : 1,
+                        },
+                      },
+                    })
+                  }
+                  thickness={
+                    selectedElement.type === "divider" ? selectedElement.thickness : 1
+                  }
+                  onThicknessChange={(thickness) =>
+                    selectedElement.type === "divider" &&
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { thickness } },
+                    })
+                  }
+                  onReplaceMedia={() => {
+                    if (selectedElement.type === "logo") {
+                      logoUploadInputRef.current?.click();
+                    } else if (selectedElement.type === "banner") {
+                      bannerUploadInputRef.current?.click();
+                    } else {
+                      imageUploadInputRef.current?.click();
+                    }
+                  }}
+                  onDuplicate={() =>
+                    dispatch({ type: "DUPLICATE_ELEMENT", payload: { id: selectedId! } })
+                  }
+                  onDelete={() => {
+                    dispatch({ type: "REMOVE_ELEMENT", payload: { id: selectedId! } });
+                    setSelectedId(null);
+                    showToast("Element deleted");
+                  }}
+                  onAlignCanvas={(alignment) =>
+                    selectedId && handleCanvasAlignment(selectedId, alignment)
+                  }
+                  locked={selectedElement.locked || false}
+                  onToggleLock={() =>
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { locked: !selectedElement.locked } },
+                    })
+                  }
+                  onEditDetails={() => {
+                    if (selectedElement.type === "social") {
+                      setEditDetailsSection("socials");
+                    } else {
+                      setEditDetailsSection("all");
+                    }
+                    setIsEditDetailsOpen(true);
+                  }}
+                  elementId={selectedId}
+                  zoom={zoom}
+                />
+              )}
 
-                {/* Compose Email Body (Clicking empty space clears selection) */}
-                <div
-                  className="p-4 sm:p-6 lg:p-8 flex flex-col min-h-[340px] cursor-default"
-                  onClick={() => setSelectedId(null)}
+              {/* Autosave Status Footnote */}
+              <div className="mt-8 mb-4 flex justify-center">
+                <span
+                  className="text-[11px] text-[#94A3B8]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
-                  {(() => {
-                    const hasMain = Boolean(
-                      state.fullName?.trim() ||
-                      state.jobTitle?.trim() ||
-                      state.companyName?.trim() ||
-                      state.email?.trim() ||
-                      state.phone?.trim() ||
-                      state.website?.trim() ||
-                      state.avatarUrl?.trim()
-                    );
-                    const hasExtras = Boolean(state.extras && state.extras.length > 0);
-                    const isBlankCanvas = !hasMain && !hasExtras;
-
-                    if (isBlankCanvas) {
-                      return (
-                        <div className="w-full max-w-[600px] mx-auto border-2 border-dashed border-slate-200 rounded-2xl p-8 sm:p-12 text-center bg-slate-50/50 hover:bg-slate-50/80 hover:border-[#245FD4]/50 transition duration-150">
-                          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-2xs mb-3">
-                            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <rect x="3" y="3" width="18" height="18" rx="2" />
-                              <line x1="12" y1="8" x2="12" y2="16" />
-                              <line x1="8" y1="12" x2="16" y2="12" />
-                            </svg>
-                          </div>
-                          <h3
-                            className="text-sm font-bold text-[#1E293B]"
-                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                          >
-                            Your signature canvas is blank
-                          </h3>
-                          <p
-                            className="text-xs text-[#64748B] mt-1 max-w-sm mx-auto"
-                            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                          >
-                            Start building your signature by adding elements below. Write and customize elements directly on the canvas without popups.
-                          </p>
-                          <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
-                            <button
-                              type="button"
-                              onClick={handleAddText}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E293B] shadow-2xs hover:border-[#245FD4] hover:text-[#245FD4] transition"
-                            >
-                              <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <polyline points="4 7 4 4 20 4 20 7" />
-                                <line x1="9" y1="20" x2="15" y2="20" />
-                                <line x1="12" y1="4" x2="12" y2="20" />
-                              </svg>
-                              <span>Add Text</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={handleAddImageClick}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E293B] shadow-2xs hover:border-[#245FD4] hover:text-[#245FD4] transition"
-                            >
-                              <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <circle cx="8.5" cy="8.5" r="1.5" />
-                                <polyline points="21 15 16 10 5 21" />
-                              </svg>
-                              <span>Add Image</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={handleAddLogoClick}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E293B] shadow-2xs hover:border-[#245FD4] hover:text-[#245FD4] transition"
-                            >
-                              <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                              </svg>
-                              <span>Add Logo</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={handleAddDivider}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E293B] shadow-2xs hover:border-[#245FD4] hover:text-[#245FD4] transition"
-                            >
-                              <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="3" y1="12" x2="21" y2="12" />
-                              </svg>
-                              <span>Add Divider</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={handleAddCta}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E293B] shadow-2xs hover:border-[#245FD4] hover:text-[#245FD4] transition"
-                            >
-                              <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="7" width="18" height="10" rx="3" />
-                              </svg>
-                              <span>Add CTA Button</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={handleAddBannerClick}
-                              className="flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1.5 text-xs font-semibold text-[#1E293B] shadow-2xs hover:border-[#245FD4] hover:text-[#245FD4] transition"
-                            >
-                              <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="2" y="5" width="20" height="14" rx="2" />
-                                <line x1="2" y1="10" x2="22" y2="10" />
-                              </svg>
-                              <span>Add Banner</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                dispatch({
-                                  type: "SET_FULL_STATE",
-                                  payload: {
-                                    ...state,
-                                    fullName: "Your Name",
-                                    jobTitle: "Your Job Title",
-                                    companyName: "Company Name",
-                                    email: "email@example.com",
-                                    phone: "+1 (555) 000-0000",
-                                    website: "www.example.com",
-                                  },
-                                });
-                                setSelectedId("main");
-                                showToast("Contact card added!");
-                              }}
-                              className="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-[#245FD4] shadow-2xs hover:bg-blue-100 transition"
-                            >
-                              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                              </svg>
-                              <span>Add Contact Card</span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    function renderExtraWrapper(extra: SignatureExtraItem, isColumnContext = false) {
-                      const isSelected = selectedId === extra.id;
-                      const allExtras = state.extras || [];
-                      const index = allExtras.findIndex((item) => item.id === extra.id);
-                      const canMoveUp = index > 0;
-                      const canMoveDown = index < allExtras.length - 1;
-                      const currentColumn = getItemColumn(extra);
-
-                      // Dynamic width & container styling for snug content-fitting
-                      let widthStyle: React.CSSProperties = {};
-                      let containerClass = "relative transition-all cursor-pointer ";
-
-                      if (extra.type === "image") {
-                        widthStyle = {
-                          width: `${extra.width || 80}px`,
-                          maxWidth: "100%",
-                        };
-                        containerClass += "p-1 rounded-[10px] w-fit ";
-                        if (!isColumnContext) {
-                          containerClass +=
-                            extra.align === "center"
-                              ? "mx-auto "
-                              : extra.align === "right"
-                              ? "ml-auto mr-0 "
-                              : "mr-auto ml-0 ";
-                        }
-                      } else if (extra.type === "cta") {
-                        widthStyle = extra.width ? { width: `${extra.width}px` } : { width: "fit-content" };
-                        containerClass += "p-1 rounded-[10px] w-fit ";
-                        if (!isColumnContext) {
-                          containerClass +=
-                            extra.align === "center"
-                              ? "mx-auto "
-                              : extra.align === "right"
-                              ? "ml-auto mr-0 "
-                              : "mr-auto ml-0 ";
-                        }
-                      } else if (extra.type === "text") {
-                        widthStyle =
-                          extra.width && extra.width < 600
-                            ? { width: `${extra.width}px` }
-                            : { width: "100%" };
-                        containerClass += "py-0.5 px-1.5 rounded-md w-full ";
-                        if (!isColumnContext && extra.width && extra.width < 600) {
-                          containerClass +=
-                            extra.align === "center"
-                              ? "mx-auto "
-                              : extra.align === "right"
-                              ? "ml-auto mr-0 "
-                              : "mr-auto ml-0 ";
-                        }
-                      } else if (extra.type === "divider" && extra.orientation === "vertical") {
-                        widthStyle = { width: "fit-content" };
-                        containerClass += "px-1.5 py-1 rounded-md w-fit h-full flex items-center ";
-                      } else if (extra.type === "divider") {
-                        widthStyle = { width: "100%" };
-                        containerClass += "py-1 px-1 rounded-md w-full ";
-                      } else {
-                        // banner
-                        widthStyle = { width: "100%", maxWidth: "600px" };
-                        containerClass += "p-1 rounded-[10px] w-full mx-auto ";
-                      }
-
-                      if (isSelected) {
-                        containerClass += "border-[1.5px] border-[#245FD4] bg-blue-50/15 shadow-xs ";
-                      } else {
-                        containerClass += "border border-dashed border-transparent hover:border-slate-300 ";
-                      }
-
-                      if (draggingId === extra.id) {
-                        containerClass += "opacity-35 scale-[0.98] border-dashed border-blue-400 bg-blue-50/20 ";
-                      }
-
-                      return (
-                        <div key={extra.id} className="relative group/wrapper">
-                          {/* Drop Target Indicator (Before) */}
-                          {dropIndicator?.id === extra.id && dropIndicator.position === "before" && (
-                            <div className="h-1.5 w-full bg-[#245FD4] rounded-full my-1 shadow-sm transition-all duration-150 animate-in fade-in" />
-                          )}
-
-                          <div
-                            draggable
-                            onDragStart={(e) => {
-                              if (
-                                document.activeElement &&
-                                (document.activeElement.tagName === "INPUT" ||
-                                  document.activeElement.tagName === "TEXTAREA" ||
-                                  (document.activeElement as HTMLElement).isContentEditable)
-                              ) {
-                                e.preventDefault();
-                                return;
-                              }
-                              handleDragStart(e, extra.id);
-                            }}
-                            onDragOver={(e) => handleDragOver(e, extra.id)}
-                            onDrop={(e) => handleDrop(e, extra.id)}
-                            onDragEnd={handleDragEnd}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedId(extra.id);
-                            }}
-                            style={widthStyle}
-                            className={containerClass}
-                          >
-                            {/* Drag Grip Handle */}
-                            <div
-                              title="Drag to reorder or move between columns"
-                              className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 flex h-6 w-5 items-center justify-center rounded bg-white border border-slate-200 text-slate-400 shadow-xs cursor-grab active:cursor-grabbing hover:text-[#245FD4] hover:border-[#245FD4] hover:bg-blue-50 transition-all ${
-                                isSelected ? "opacity-100" : "opacity-0 group-hover/wrapper:opacity-100"
-                              }`}
-                            >
-                              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="9" cy="6" r="1.5" />
-                                <circle cx="15" cy="6" r="1.5" />
-                                <circle cx="9" cy="12" r="1.5" />
-                                <circle cx="15" cy="12" r="1.5" />
-                                <circle cx="9" cy="18" r="1.5" />
-                                <circle cx="15" cy="18" r="1.5" />
-                              </svg>
-                            </div>
-
-                            {/* Edge Resize Handles (Left and Right) */}
-                            {isSelected && (
-                              <>
-                                <div
-                                  onMouseDown={(e) => handleStartResize(e, extra, "left")}
-                                  className="absolute -left-1.5 top-1/2 -translate-y-1/2 z-25 flex h-7 w-2.5 items-center justify-center rounded-full bg-white border border-[#245FD4] shadow-md hover:scale-125 cursor-ew-resize transition group/handle"
-                                  title="Drag to resize width"
-                                >
-                                  <div className="h-3 w-0.5 bg-[#245FD4] rounded-full group-hover/handle:bg-blue-700" />
-                                </div>
-
-                                <div
-                                  onMouseDown={(e) => handleStartResize(e, extra, "right")}
-                                  className="absolute -right-1.5 top-1/2 -translate-y-1/2 z-25 flex h-7 w-2.5 items-center justify-center rounded-full bg-white border border-[#245FD4] shadow-md hover:scale-125 cursor-ew-resize transition group/handle"
-                                  title="Drag to resize width"
-                                >
-                                  <div className="h-3 w-0.5 bg-[#245FD4] rounded-full group-hover/handle:bg-blue-700" />
-                                </div>
-
-                                {resizingInfo && resizingInfo.id === extra.id && (
-                                  <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-30 px-2 py-0.5 bg-[#0F172A] text-white text-[11px] font-bold rounded-md shadow-lg pointer-events-none animate-in fade-in">
-                                    {resizingInfo.width}px
-                                  </div>
-                                )}
-                              </>
-                            )}
-
-                            {/* Floating Toolbar when this extra is selected */}
-                            {isSelected && (
-                              <FloatingToolbar
-                                isMainCard={false}
-                                elementType={extra.type}
-                                autoOpenLinkMenu={autoOpenLinkId === extra.id && extra.type === "image" && !extra.linkUrl}
-                                column={currentColumn}
-                                onColumnChange={(newCol) => {
-                                  dispatch({
-                                    type: "UPDATE_EXTRA",
-                                    payload: { id: extra.id, item: { column: newCol } },
-                                  });
-                                  showToast(`Moved to ${newCol === "left" ? "Left Column" : newCol === "right" ? "Right Column" : "Full Width"}`);
-                                }}
-                                bold={extra.type === "text" ? extra.bold : undefined}
-                                onToggleBold={
-                                  extra.type === "text"
-                                    ? () => {
-                                        dispatch({
-                                          type: "UPDATE_EXTRA",
-                                          payload: { id: extra.id, item: { bold: !extra.bold } },
-                                        });
-                                      }
-                                    : undefined
-                                }
-                                size={extra.type === "text" ? extra.size : undefined}
-                                onSizeChange={
-                                  extra.type === "text"
-                                    ? (newSize) => {
-                                        dispatch({
-                                          type: "UPDATE_EXTRA",
-                                          payload: { id: extra.id, item: { size: newSize } },
-                                        });
-                                      }
-                                    : undefined
-                                }
-                                url={
-                                  extra.type === "cta"
-                                    ? extra.url
-                                    : extra.type === "image" || extra.type === "banner"
-                                    ? extra.linkUrl
-                                    : undefined
-                                }
-                                onUrlChange={
-                                  extra.type === "cta"
-                                    ? (newUrl) => {
-                                        dispatch({
-                                          type: "UPDATE_EXTRA",
-                                          payload: { id: extra.id, item: { url: newUrl } },
-                                        });
-                                      }
-                                    : extra.type === "image" || extra.type === "banner"
-                                    ? (newUrl) => {
-                                        setAutoOpenLinkId(null);
-                                        dispatch({
-                                          type: "UPDATE_EXTRA",
-                                          payload: { id: extra.id, item: { linkUrl: newUrl } },
-                                        });
-                                      }
-                                    : undefined
-                                }
-                                width={
-                                  extra.type === "image"
-                                    ? extra.width
-                                    : extra.type === "divider"
-                                    ? extra.width
-                                    : extra.type === "text"
-                                    ? extra.width
-                                    : extra.type === "cta"
-                                    ? extra.width
-                                    : undefined
-                                }
-                                onWidthChange={(newWidth) => {
-                                  dispatch({
-                                    type: "UPDATE_EXTRA",
-                                    payload: { id: extra.id, item: { width: newWidth } },
-                                  });
-                                }}
-                                orientation={extra.type === "divider" ? extra.orientation || "horizontal" : undefined}
-                                onOrientationChange={
-                                  extra.type === "divider"
-                                    ? (newOri) => {
-                                        dispatch({
-                                          type: "UPDATE_EXTRA",
-                                          payload: { id: extra.id, item: { orientation: newOri } },
-                                        });
-                                      }
-                                    : undefined
-                                }
-                                thickness={extra.type === "divider" ? extra.thickness || 1 : undefined}
-                                onThicknessChange={
-                                  extra.type === "divider"
-                                    ? (newThickness) => {
-                                        dispatch({
-                                          type: "UPDATE_EXTRA",
-                                          payload: { id: extra.id, item: { thickness: newThickness } },
-                                        });
-                                      }
-                                    : undefined
-                                }
-                                imageWidth={extra.type === "image" ? extra.width : undefined}
-                                onReplaceMedia={
-                                  extra.type === "image"
-                                    ? () => imageUploadInputRef.current?.click()
-                                    : extra.type === "banner"
-                                    ? () => bannerUploadInputRef.current?.click()
-                                    : undefined
-                                }
-                                canMoveUp={canMoveUp}
-                                canMoveDown={canMoveDown}
-                                onDuplicate={() => {
-                                  dispatch({
-                                    type: "DUPLICATE_EXTRA",
-                                    payload: { id: extra.id },
-                                  });
-                                  showToast("Element duplicated");
-                                }}
-                                onDelete={() => {
-                                  dispatch({
-                                    type: "REMOVE_EXTRA",
-                                    payload: { id: extra.id },
-                                  });
-                                  setSelectedId(null);
-                                  showToast("Element deleted");
-                                }}
-                                onAlign={(alignment) => {
-                                  dispatch({
-                                    type: "UPDATE_EXTRA",
-                                    payload: { id: extra.id, item: { align: alignment } },
-                                  });
-                                }}
-                                onMoveUp={() => {
-                                  dispatch({
-                                    type: "MOVE_EXTRA_UP",
-                                    payload: { id: extra.id },
-                                  });
-                                }}
-                                onMoveDown={() => {
-                                  dispatch({
-                                    type: "MOVE_EXTRA_DOWN",
-                                    payload: { id: extra.id },
-                                  });
-                                }}
-                              />
-                            )}
-
-                            {/* Render Extra Item Content */}
-                            {renderCanvasExtra(extra, isSelected)}
-                          </div>
-
-                          {/* Drop Target Indicator (After) */}
-                          {dropIndicator?.id === extra.id && dropIndicator.position === "after" && (
-                            <div className="h-1.5 w-full bg-[#245FD4] rounded-full my-1 shadow-sm transition-all duration-150 animate-in fade-in" />
-                          )}
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div className="mx-auto w-full max-w-[600px] min-w-[300px] space-y-3">
-                        {/* 1. Main Signature Card (only if hasMain is true) */}
-                        {hasMain && (
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedId("main");
-                            }}
-                            className={`relative rounded-[12px] p-4 bg-white shadow-xs transition-all cursor-pointer ${
-                              selectedId === "main"
-                                ? "border-[1.5px] border-[#245FD4]"
-                                : "border border-transparent hover:border-slate-300"
-                            }`}
-                          >
-                            {/* Floating Tool Action Pill over Main Card */}
-                            {selectedId === "main" && (
-                              <FloatingToolbar
-                                isMainCard={true}
-                                onAlign={(alignment) => {
-                                  if (alignment === "left") {
-                                    dispatch({ type: "SET_LAYOUT", payload: "single" });
-                                  } else if (alignment === "center") {
-                                    dispatch({ type: "SET_LAYOUT", payload: "two-column" });
-                                  } else {
-                                    dispatch({ type: "SET_LAYOUT", payload: "compact" });
-                                  }
-                                }}
-                                onDelete={() => {
-                                  dispatch({
-                                    type: "SET_FULL_STATE",
-                                    payload: {
-                                      ...state,
-                                      fullName: "",
-                                      jobTitle: "",
-                                      companyName: "",
-                                      email: "",
-                                      phone: "",
-                                      website: "",
-                                      avatarUrl: "",
-                                      companyLogoUrl: "",
-                                      socials: { linkedin: "", twitter: "", facebook: "", instagram: "" },
-                                    },
-                                  });
-                                  setSelectedId(null);
-                                  showToast("Contact card removed");
-                                }}
-                                onEditDetails={() => {
-                                  setEditDetailsSection("all");
-                                  setIsEditDetailsOpen(true);
-                                }}
-                              />
-                            )}
-
-                            {/* Sandboxed Iframe Preview (Main signature only) */}
-                            <div className="relative w-full">
-                              <SignaturePreviewFrame
-                                ref={previewFrameRef}
-                                html={mainSignatureOnlyHtml}
-                                minHeight={140}
-                              />
-                              {/* Transparent overlay over iframe so click/selection are captured */}
-                              <div
-                                className="absolute inset-0 cursor-pointer z-10"
-                                aria-label="Select signature"
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        {/* 2. Extra Elements List */}
-                        {state.extras && state.extras.length > 0 && (() => {
-                          const isTwoCol = state.layout === "two-column" || state.layout === "compact";
-
-                          if (!isTwoCol) {
-                            return (
-                              <div className="space-y-1.5 w-full">
-                                {state.extras.map((extra) => renderExtraWrapper(extra, false))}
-                              </div>
-                            );
-                          }
-
-                          // Partition elements into Top Full, Left Column, Right Column, Bottom Full
-                          const leftColumnItems: SignatureExtraItem[] = [];
-                          const rightColumnItems: SignatureExtraItem[] = [];
-                          let verticalDividerItem: ExtraDividerItem | null = null;
-                          const topFullItems: SignatureExtraItem[] = [];
-                          const bottomFullItems: SignatureExtraItem[] = [];
-
-                          let encounteredColumnItem = false;
-
-                          for (const item of state.extras) {
-                            if (item.type === "divider" && item.orientation === "vertical") {
-                              verticalDividerItem = item;
-                              continue;
-                            }
-
-                            const col = getItemColumn(item);
-                            if (col === "left") {
-                              encounteredColumnItem = true;
-                              leftColumnItems.push(item);
-                            } else if (col === "right") {
-                              encounteredColumnItem = true;
-                              rightColumnItems.push(item);
-                            } else {
-                              if (encounteredColumnItem) {
-                                bottomFullItems.push(item);
-                              } else {
-                                topFullItems.push(item);
-                              }
-                            }
-                          }
-
-                          return (
-                            <div className="space-y-2 w-full">
-                              {/* Top Full Elements (e.g. Banner, full divider) */}
-                              {topFullItems.length > 0 && (
-                                <div className="space-y-1.5 w-full">
-                                  {topFullItems.map((extra) => renderExtraWrapper(extra, false))}
-                                </div>
-                              )}
-
-                              {/* Side-by-Side Two Column Block */}
-                              <div className="flex flex-row items-start gap-4 sm:gap-5 w-full">
-                                {/* Left Column: Headshot / Logo / Left items (Snug fit) */}
-                                <div
-                                  onDragOver={(e) => {
-                                    e.preventDefault();
-                                    e.dataTransfer.dropEffect = "move";
-                                  }}
-                                  onDrop={(e) => {
-                                    e.preventDefault();
-                                    if (draggingId) {
-                                      dispatch({
-                                        type: "UPDATE_EXTRA",
-                                        payload: { id: draggingId, item: { column: "left" } },
-                                      });
-                                      setDraggingId(null);
-                                      setDropIndicator(null);
-                                      showToast("Moved to Left Column");
-                                    }
-                                  }}
-                                  className="w-fit shrink-0 min-w-[76px] flex flex-col gap-1.5 items-start"
-                                >
-                                  {leftColumnItems.length === 0 ? (
-                                    <div
-                                      onClick={handleAddImageClick}
-                                      className="h-20 w-20 rounded-xl border-2 border-dashed border-slate-200 hover:border-[#245FD4] bg-slate-50 flex flex-col items-center justify-center p-2 text-center cursor-pointer transition group"
-                                      title="Click to add photo to left column"
-                                    >
-                                      <svg className="h-5 w-5 text-slate-400 group-hover:text-[#245FD4] transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                                        <circle cx="8.5" cy="8.5" r="1.5" />
-                                        <polyline points="21 15 16 10 5 21" />
-                                      </svg>
-                                      <span className="text-[10px] text-slate-400 group-hover:text-[#245FD4] font-medium mt-1">
-                                        Add Photo
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    leftColumnItems.map((extra) => renderExtraWrapper(extra, true))
-                                  )}
-                                </div>
-
-                                {/* Optional Vertical Divider */}
-                                {verticalDividerItem ? (
-                                  <div className="shrink-0 self-stretch flex items-center px-1">
-                                    {renderExtraWrapper(verticalDividerItem, true)}
-                                  </div>
-                                ) : (
-                                  <div className="w-[1px] self-stretch bg-slate-200/80 my-1 shrink-0" />
-                                )}
-
-                                {/* Right Column: Name, Title, Company, Button (Closely Knitted!) */}
-                                <div
-                                  onDragOver={(e) => {
-                                    e.preventDefault();
-                                    e.dataTransfer.dropEffect = "move";
-                                  }}
-                                  onDrop={(e) => {
-                                    e.preventDefault();
-                                    if (draggingId) {
-                                      dispatch({
-                                        type: "UPDATE_EXTRA",
-                                        payload: { id: draggingId, item: { column: "right" } },
-                                      });
-                                      setDraggingId(null);
-                                      setDropIndicator(null);
-                                      showToast("Moved to Right Column");
-                                    }
-                                  }}
-                                  className="flex-1 min-w-0 flex flex-col gap-1 items-start"
-                                >
-                                  {rightColumnItems.length === 0 ? (
-                                    <div
-                                      onClick={handleAddText}
-                                      className="w-full h-20 rounded-xl border-2 border-dashed border-slate-200 hover:border-[#245FD4] bg-slate-50 flex flex-col items-center justify-center p-3 text-center cursor-pointer transition group"
-                                      title="Click to add text next to image"
-                                    >
-                                      <svg className="h-5 w-5 text-slate-400 group-hover:text-[#245FD4] transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="4 7 4 4 20 4 20 7" />
-                                        <line x1="9" y1="20" x2="15" y2="20" />
-                                        <line x1="12" y1="4" x2="12" y2="20" />
-                                      </svg>
-                                      <span className="text-[11px] text-slate-400 group-hover:text-[#245FD4] font-medium mt-1">
-                                        Add text on side of image
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    rightColumnItems.map((extra) => renderExtraWrapper(extra, true))
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Bottom Full Elements (e.g. Disclaimer, bottom banner) */}
-                              {bottomFullItems.length > 0 && (
-                                <div className="space-y-1.5 w-full">
-                                  {bottomFullItems.map((extra) => renderExtraWrapper(extra, false))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Autosave Status Footnote */}
-                  <div className="mt-auto pt-6 flex justify-end">
-                    <span
-                      className="text-[11px] text-[#94A3B8]"
-                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                    >
-                      {saveStatus === "saving"
-                        ? "Saving..."
-                        : `All changes saved \u00B7 ${state.fullName?.trim() ? `${state.fullName.trim()}'s Signature` : "My Signature"}`}
-                    </span>
-                  </div>
-                </div>
+                  {saveStatus === "saving"
+                    ? "Saving..."
+                    : `All changes saved \u00B7 ${state.elements?.length || 0} elements`}
+                </span>
               </div>
             </div>
           </main>
@@ -3128,6 +2152,44 @@ function DesignStudioContent() {
           </button>
         </div>
       </div>
+
+      {/* Modals */}
+      <PreviewSignatureModal
+        isOpen={previewModalOpen}
+        onClose={() => setPreviewModalOpen(false)}
+        html={fullSignatureHtml}
+        data={state}
+      />
+
+      <EditDetailsModal
+        isOpen={isEditDetailsOpen}
+        onClose={() => setIsEditDetailsOpen(false)}
+        selectedId={selectedId}
+        state={state}
+        dispatch={dispatch}
+        initialSection={editDetailsSection}
+        onToast={showToast}
+      />
+
+      {savedSignatureRecord && (
+        <SaveSuccessModal
+          isOpen={Boolean(savedSignatureRecord)}
+          onClose={() => setSavedSignatureRecord(null)}
+          signature={savedSignatureRecord}
+        />
+      )}
+
+      <LimitOverwriteModal
+        isOpen={limitModalOpen}
+        onClose={() => setLimitModalOpen(false)}
+        signatures={allSignatures}
+        onSelectOverwrite={handleSelectOverwrite}
+      />
+
+      <PremiumLockedModal
+        isOpen={premiumModalOpen}
+        onClose={() => setPremiumModalOpen(false)}
+      />
     </div>
   );
 }

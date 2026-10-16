@@ -60,6 +60,66 @@ export type SignatureExtraItem =
   | ExtraCtaItem
   | ExtraBannerItem;
 
+export type FreeBase = {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  locked?: boolean;
+};
+
+export type FreeTextElement = FreeBase & {
+  type: "text";
+  text: string;
+  size: "sm" | "md" | "lg";
+  bold: boolean;
+  align: "left" | "center" | "right";
+};
+
+export type FreeImageElement = FreeBase & {
+  type: "image";
+  url: string;
+  linkUrl?: string;
+};
+
+export type FreeLogoElement = FreeBase & {
+  type: "logo";
+  url: string;
+  linkUrl?: string;
+};
+
+export type FreeBannerElement = FreeBase & {
+  type: "banner";
+  url: string;
+  linkUrl?: string;
+};
+
+export type FreeDividerElement = FreeBase & {
+  type: "divider";
+  orientation: "horizontal" | "vertical";
+  thickness: number;
+};
+
+export type FreeCtaElement = FreeBase & {
+  type: "cta";
+  label: string;
+  url: string;
+};
+
+export type FreeSocialElement = FreeBase & {
+  type: "social";
+};
+
+export type FreeElement =
+  | FreeTextElement
+  | FreeImageElement
+  | FreeLogoElement
+  | FreeBannerElement
+  | FreeDividerElement
+  | FreeCtaElement
+  | FreeSocialElement;
+
 export interface StudioSignatureData {
   fullName: string;
   jobTitle: string;
@@ -90,4 +150,6 @@ export interface StudioSignatureData {
     disclaimer?: string;
   };
   extras?: SignatureExtraItem[];
+  canvas?: { width: 600; height: number };
+  elements?: FreeElement[];
 }

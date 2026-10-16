@@ -48,7 +48,11 @@ export default function SignatureCard({
   onExport,
   onDelete,
 }: SignatureCardProps) {
-  const name = signature.name || signature.data.fullName || "My Signature";
+  const firstText =
+    signature.kind === "studio" && signature.data.elements
+      ? (signature.data.elements.find((el) => el.type === "text") as { text?: string } | undefined)?.text
+      : undefined;
+  const name = signature.name || signature.data.fullName || firstText || "My Signature";
   const role = signature.data.jobTitle || "";
   const email = signature.data.email || "";
   const phone = signature.data.phone || "";
