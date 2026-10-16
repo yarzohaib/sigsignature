@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useState, useReducer, useRef, useCallback, ChangeEvent } from "react";
-import { useRouter } from "next/navigation";
+import {
+  Suspense,
+  useEffect,
+  useState,
+  useReducer,
+  useRef,
+  useCallback,
+  ChangeEvent,
+} from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import {
@@ -16,22 +24,21 @@ import {
   getStoredUser,
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
+import { getEditHref } from "@/lib/signatures/kind";
 import { SavedSignature } from "@/types/signature";
 import {
-  TemplateSignatureData,
+  StudioSignatureData,
   ExtraTextItem,
   ExtraImageItem,
   ExtraDividerItem,
   ExtraCtaItem,
   ExtraBannerItem,
   SignatureExtraItem,
-} from "@/types/template";
+} from "@/types/studio";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
-import {
-  generateSignatureHtml,
-  resolveEmailFont,
-} from "@/lib/generateSignatureHtml";
+import { resolveEmailFont } from "@/lib/email-core";
+import { generateStudioHtml } from "@/lib/studio/renderStudioHtml";
 import { useIsPremium } from "@/lib/premium";
 import {
   studioReducer,
@@ -43,7 +50,7 @@ import {
   StudioButtonStyle,
   ALLOWED_STUDIO_FONTS,
 } from "@/lib/studio/types";
-import { STUDIO_SOLID_COLORS } from "@/lib/signatureConstants";
+import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
 import PremiumLockedModal from "@/components/studio/PremiumLockedModal";
 import SignaturePreviewFrame, {
   SignaturePreviewFrameHandle,
@@ -54,8 +61,10 @@ import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import FloatingToolbar from "@/components/studio/FloatingToolbar";
 import EditDetailsModal from "@/components/studio/EditDetailsModal";
 
-export default function DesignStudioPage() {
+function DesignStudioContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
   const isPremium = useIsPremium();
 
   // Auth & Session
@@ -63,6 +72,10 @@ export default function DesignStudioPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Edit Signature tracking
+  const [editingSignatureId, setEditingSignatureId] = useState<string | null>(null);
+  const currentEditingIdRef = useRef<string | null>(null);
 
   // Responsive Segmented Control for < lg screens
   const [mobileTab, setMobileTab] = useState<"canvas" | "tools">("canvas");
@@ -158,55 +171,126 @@ export default function DesignStudioPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedId, showToast]);
 
-  // Verify Auth on Load
+  // Load Signature for Edit or Restore Draft
   useEffect(() => {
-    async function verifyAuth() {
+    let isCancelled = false;
+
+    async function initPage() {
       const cachedUser = getStoredUser();
-      if (cachedUser) {
+      if (cachedUser && !isCancelled) {
         setUser(cachedUser);
       }
 
+      let activeUser: UserProfile | null = cachedUser;
       try {
-        const freshUser = await getCurrentUser();
-        setUser(freshUser);
-
-        // Restore draft from localStorage if available
-        const userId = freshUser.id;
-        const draftKey = `sig_studio_draft_${userId}`;
-        try {
-          const savedDraft = localStorage.getItem(draftKey);
-          if (savedDraft) {
-            const parsed = JSON.parse(savedDraft);
-            if (parsed && typeof parsed === "object") {
-              // Clear legacy default Daniel Wilson template so users start with blank canvas
-              if (parsed.fullName === "Daniel Wilson" && parsed.email === "daniel@company.com") {
-                localStorage.removeItem(draftKey);
-              } else {
-                dispatch({ type: "SET_FULL_STATE", payload: parsed });
-              }
-            }
-          }
-        } catch {
-          // ignore localStorage parsing errors
+        activeUser = await getCurrentUser();
+        if (!isCancelled) {
+          setUser(activeUser);
         }
       } catch (err) {
         console.warn("Session expired or invalid, redirecting to login:", err);
         clearAuthSession();
         router.replace("/login?redirect=/design-studio");
         return;
-      } finally {
+      }
+
+      const userId = activeUser.id;
+
+      if (editId) {
+        if (currentEditingIdRef.current === editId) {
+          if (!isCancelled) setIsLoading(false);
+          return;
+        }
+
+        try {
+          const repo = getSignatureRepository();
+          const stored = await repo.get(editId);
+          if (isCancelled) return;
+
+          if (!stored) {
+            showToast("Signature not found");
+            router.replace("/design-studio");
+            return;
+          }
+
+          if (stored.kind !== "studio") {
+            router.replace(getEditHref(stored));
+            return;
+          }
+
+          setEditingSignatureId(stored.id);
+          currentEditingIdRef.current = stored.id;
+
+          // Check if there is an existing edit-session draft for this signature
+          const editDraftKey = `sig_studio_draft_${userId}_${stored.id}`;
+          let loadedData = stored.data as StudioSignatureData;
+          try {
+            const savedDraft = localStorage.getItem(editDraftKey);
+            if (savedDraft) {
+              const parsed = JSON.parse(savedDraft);
+              if (parsed && typeof parsed === "object") {
+                loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
+              }
+            }
+          } catch {
+            // ignore
+          }
+
+          dispatch({ type: "SET_FULL_STATE", payload: loadedData });
+        } catch (loadErr) {
+          console.error("Failed to load signature for editing:", loadErr);
+          if (!isCancelled) {
+            showToast("Failed to load signature");
+            router.replace("/design-studio");
+          }
+          return;
+        }
+      } else {
+        // No edit ID: start with blank canvas and restore draft if present
+        setEditingSignatureId(null);
+        currentEditingIdRef.current = null;
+
+        const draftKey = `sig_studio_draft_${userId}`;
+        let loadedData: StudioSignatureData = INITIAL_STUDIO_DATA;
+        try {
+          const savedDraft = localStorage.getItem(draftKey);
+          if (savedDraft) {
+            const parsed = JSON.parse(savedDraft);
+            if (parsed && typeof parsed === "object") {
+              // Clear legacy default Daniel Wilson profile preset so users start with blank canvas
+              if (parsed.fullName === "Daniel Wilson" && parsed.email === "daniel@company.com") {
+                localStorage.removeItem(draftKey);
+              } else {
+                loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
+              }
+            }
+          }
+        } catch {
+          // ignore localStorage parsing errors
+        }
+
+        dispatch({ type: "SET_FULL_STATE", payload: loadedData });
+      }
+
+      if (!isCancelled) {
         setIsLoading(false);
       }
     }
 
-    verifyAuth();
-  }, [router]);
+    initPage();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [editId, router, showToast]);
 
   // Debounced Autosave to localStorage (600ms)
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || isLoading) return;
     const userId = user.id;
-    const draftKey = `sig_studio_draft_${userId}`;
+    const draftKey = editingSignatureId
+      ? `sig_studio_draft_${userId}_${editingSignatureId}`
+      : `sig_studio_draft_${userId}`;
 
     const savingTimer = setTimeout(() => {
       setSaveStatus("saving");
@@ -225,7 +309,7 @@ export default function DesignStudioPage() {
       clearTimeout(savingTimer);
       clearTimeout(timer);
     };
-  }, [state, user?.id]);
+  }, [state, user?.id, editingSignatureId, isLoading]);
 
   // Logout Handler
   async function handleLogout() {
@@ -241,12 +325,12 @@ export default function DesignStudioPage() {
   }
 
   // Generate Email HTML for live canvas preview (main card only inside iframe)
-  const mainSignatureOnlyHtml = generateSignatureHtml(
+  const mainSignatureOnlyHtml = generateStudioHtml(
     { ...state, extras: [] },
     { preview: true }
   );
   // Full signature HTML for modal preview and exports
-  const fullSignatureHtml = generateSignatureHtml(state, { preview: true });
+  const fullSignatureHtml = generateStudioHtml(state, { preview: true });
 
   // Helper to determine column placement (Left / Right / Full)
   function getItemColumn(item: SignatureExtraItem): "left" | "right" | "full" {
@@ -844,16 +928,36 @@ export default function DesignStudioPage() {
       const sigName = state.fullName?.trim()
         ? `${state.fullName.trim()}'s Signature`
         : "My Signature";
-      const payloadData: TemplateSignatureData = {
+      const trimmedAvatar = state.avatarUrl?.trim() || "";
+      const avatarUrl =
+        trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
+          ? ""
+          : trimmedAvatar;
+      const payloadData: StudioSignatureData = {
         ...state,
-        avatarUrl: state.avatarUrl?.trim() || "/daniel-wilson.png",
+        avatarUrl,
       };
       const saved = await repo.save({
+        ...(editingSignatureId ? { id: editingSignatureId } : {}),
         name: sigName,
         templateId: "design-studio",
         data: payloadData,
       });
 
+      // Clear active draft after successful save
+      if (user?.id) {
+        const activeDraftKey = editingSignatureId
+          ? `sig_studio_draft_${user.id}_${editingSignatureId}`
+          : `sig_studio_draft_${user.id}`;
+        try {
+          localStorage.removeItem(activeDraftKey);
+        } catch {
+          // ignore
+        }
+      }
+
+      setEditingSignatureId(saved.id);
+      currentEditingIdRef.current = saved.id;
       setSavedSignatureRecord(saved);
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("sig_count_update"));
@@ -884,9 +988,14 @@ export default function DesignStudioPage() {
       const sigName = state.fullName?.trim()
         ? `${state.fullName.trim()}'s Signature`
         : "My Signature";
-      const payloadData: TemplateSignatureData = {
+      const trimmedAvatar = state.avatarUrl?.trim() || "";
+      const avatarUrl =
+        trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
+          ? ""
+          : trimmedAvatar;
+      const payloadData: StudioSignatureData = {
         ...state,
-        avatarUrl: state.avatarUrl?.trim() || "/daniel-wilson.png",
+        avatarUrl,
       };
       const updated = await repo.save({
         id: target.id,
@@ -895,7 +1004,21 @@ export default function DesignStudioPage() {
         data: payloadData,
       });
 
+      // Clear active draft after successful save
+      if (user?.id) {
+        const activeDraftKey = editingSignatureId
+          ? `sig_studio_draft_${user.id}_${editingSignatureId}`
+          : `sig_studio_draft_${user.id}`;
+        try {
+          localStorage.removeItem(activeDraftKey);
+        } catch {
+          // ignore
+        }
+      }
+
       setLimitModalOpen(false);
+      setEditingSignatureId(updated.id);
+      currentEditingIdRef.current = updated.id;
       setSavedSignatureRecord(updated);
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("sig_count_update"));
@@ -1010,6 +1133,7 @@ export default function DesignStudioPage() {
           isOpen={Boolean(savedSignatureRecord)}
           onClose={() => setSavedSignatureRecord(null)}
           signatureName={savedSignatureRecord.name}
+          signature={savedSignatureRecord}
           signatureData={state}
         />
       )}
@@ -3005,5 +3129,27 @@ export default function DesignStudioPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DesignStudioPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-[#FCFCFC] p-6">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
+            <p
+              className="text-base font-bold text-[#1E293B]"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              Loading Design Studio...
+            </p>
+          </div>
+        </main>
+      }
+    >
+      <DesignStudioContent />
+    </Suspense>
   );
 }

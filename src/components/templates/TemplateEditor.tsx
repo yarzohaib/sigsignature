@@ -9,7 +9,7 @@ import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { isSignatureLimitError } from "@/app/lib/api";
 import { SIGNATURE_COLOR_SWATCHES } from "@/lib/signatureConstants";
-import { generateSignatureHtml } from "@/lib/generateSignatureHtml";
+import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 
@@ -311,7 +311,7 @@ export default function TemplateEditor({
   }
 
   // Pre-generate HTML and minimal srcDoc for iframe preview
-  const generatedHtml = useMemo(() => generateSignatureHtml(formData), [formData]);
+  const generatedHtml = useMemo(() => generateTemplateHtml(formData), [formData]);
 
   const previewSrcDoc = useMemo(() => {
     return `<!DOCTYPE html><html><head><meta charset="utf-8" /><style>html, body { margin: 0; padding: 16px; background-color: #ffffff; box-sizing: border-box; } * { box-sizing: border-box; }</style></head><body>${generatedHtml}</body></html>`;

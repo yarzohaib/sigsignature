@@ -3,14 +3,30 @@
 import { useState, useRef } from "react";
 import { toPng } from "html-to-image";
 import { TemplateSignatureData } from "@/types/template";
-import { generateSignatureHtml, generateSignaturePlainText } from "@/lib/generateSignatureHtml";
-import { copySignatureRich } from "@/lib/clipboard";
+import { StudioSignatureData } from "@/types/studio";
+import { SavedSignature } from "@/types/signature";
+import { copySignatureRich } from "@/lib/email-core";
+import {
+  renderSavedSignatureHtml,
+  renderSavedSignaturePlainText,
+} from "@/lib/signatures/render";
+import {
+  generateTemplateHtml,
+  generateTemplatePlainText,
+} from "@/lib/templates/renderTemplateHtml";
+import {
+  generateStudioHtml,
+  generateStudioPlainText,
+} from "@/lib/studio/renderStudioHtml";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 
 interface SaveSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
-  signatureData: TemplateSignatureData;
+  signatureData?: TemplateSignatureData | StudioSignatureData;
+  signature?: SavedSignature;
+  preRenderedHtml?: string;
+  preRenderedPlainText?: string;
   signatureName?: string;
 }
 
@@ -18,6 +34,9 @@ export default function SaveSuccessModal({
   isOpen,
   onClose,
   signatureData,
+  signature,
+  preRenderedHtml,
+  preRenderedPlainText,
   signatureName,
 }: SaveSuccessModalProps) {
   const [copiedSignature, setCopiedSignature] = useState(false);
@@ -25,6 +44,50 @@ export default function SaveSuccessModal({
   const [isDownloadingImage, setIsDownloadingImage] = useState(false);
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
   const signatureDownloadRef = useRef<HTMLDivElement>(null);
+
+  function getHtmlAndPlainText(): {
+    html: string;
+    previewHtml: string;
+    plainText: string;
+  } {
+    if (preRenderedHtml) {
+      return {
+        html: preRenderedHtml,
+        previewHtml: preRenderedHtml,
+        plainText: preRenderedPlainText || "",
+      };
+    }
+    if (signature) {
+      return {
+        html: renderSavedSignatureHtml(signature),
+        previewHtml: renderSavedSignatureHtml(signature, { preview: true }),
+        plainText: renderSavedSignaturePlainText(signature),
+      };
+    }
+    if (signatureData) {
+      if (
+        "extras" in signatureData ||
+        "design" in signatureData ||
+        (signatureData.layout as string) === "single"
+      ) {
+        const studioData = signatureData as StudioSignatureData;
+        return {
+          html: generateStudioHtml(studioData),
+          previewHtml: generateStudioHtml(studioData, { preview: true }),
+          plainText: generateStudioPlainText(studioData),
+        };
+      }
+      const templateData = signatureData as TemplateSignatureData;
+      return {
+        html: generateTemplateHtml(templateData),
+        previewHtml: generateTemplateHtml(templateData),
+        plainText: generateTemplatePlainText(templateData),
+      };
+    }
+    return { html: "", previewHtml: "", plainText: "" };
+  }
+
+  const { html, previewHtml, plainText } = getHtmlAndPlainText();
 
   if (!isOpen) return null;
 
@@ -37,8 +100,6 @@ export default function SaveSuccessModal({
 
   // 1. Copy Signature as formatted rich text
   async function handleCopySignature() {
-    const html = generateSignatureHtml(signatureData);
-    const plainText = generateSignaturePlainText(signatureData);
     try {
       await copySignatureRich(html, plainText);
       setCopiedSignature(true);
@@ -52,7 +113,7 @@ export default function SaveSuccessModal({
   // 2. Download as Image (PNG via html-to-image)
   async function handleDownloadImage() {
     setIsDownloadingImage(true);
-    const fileName = (signatureName || signatureData.fullName || "my_signature")
+    const fileName = (signatureName || signatureData?.fullName || "my_signature")
       .trim()
       .replace(/\s+/g, "_");
 
@@ -84,11 +145,10 @@ export default function SaveSuccessModal({
   }
 
   function fallbackHtmlDownload() {
-    const html = generateSignatureHtml(signatureData);
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    const fileName = (signatureName || signatureData.fullName || "my_signature")
+    const fileName = (signatureName || signatureData?.fullName || "my_signature")
       .trim()
       .replace(/\s+/g, "_");
     a.href = url;
@@ -208,7 +268,7 @@ export default function SaveSuccessModal({
               <div
                 className="w-full overflow-hidden text-left"
                 dangerouslySetInnerHTML={{
-                  __html: generateSignatureHtml(signatureData, { preview: true }),
+                  __html: previewHtml,
                 }}
               />
             </div>
@@ -383,7 +443,7 @@ export default function SaveSuccessModal({
           }}
           aria-hidden="true"
           dangerouslySetInnerHTML={{
-            __html: generateSignatureHtml(signatureData, { preview: true }),
+            __html: previewHtml,
           }}
         />
       </div>

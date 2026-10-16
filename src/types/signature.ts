@@ -1,18 +1,44 @@
 import { TemplateSignatureData } from "./template";
+import { StudioSignatureData } from "./studio";
 
-export interface SavedSignature {
+export interface TemplateSavedSignature {
   id: string;
+  kind: "template";
   templateId: string;
-  templateVersion: number; // use 1 for now
-  name: string; // label shown on My Signatures, default to data.fullName or "My Signature"
-  data: TemplateSignatureData; // reuse the existing type from src/types/template.ts
-  createdAt: string; // ISO date
-  updatedAt: string; // ISO date
+  templateVersion: number;
+  name: string;
+  data: TemplateSignatureData;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type SaveSignatureInput = {
-  id?: string; // present when editing an existing signature
+export interface StudioSavedSignature {
+  id: string;
+  kind: "studio";
+  templateId: string;
+  templateVersion: number;
+  name: string;
+  data: StudioSignatureData;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type SavedSignature = TemplateSavedSignature | StudioSavedSignature;
+
+export type TemplateSaveSignatureInput = {
+  id?: string;
+  kind?: "template";
   templateId: string;
   name: string;
   data: TemplateSignatureData;
 };
+
+export type StudioSaveSignatureInput = {
+  id?: string;
+  kind?: "studio";
+  templateId: string;
+  name: string;
+  data: StudioSignatureData;
+};
+
+export type SaveSignatureInput = TemplateSaveSignatureInput | StudioSaveSignatureInput;

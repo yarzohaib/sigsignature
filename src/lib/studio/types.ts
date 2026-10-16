@@ -1,12 +1,23 @@
-import { TemplateSignatureData, SignatureExtraItem } from "@/types/template";
+import {
+  StudioSignatureData,
+  SignatureExtraItem,
+  StudioShape,
+  StudioTheme,
+  StudioButtonStyle,
+  StudioLayout,
+  StudioSocialIconsStyle,
+} from "@/types/studio";
 import { PREMIUM_ENABLED } from "@/lib/premium";
 
+export type {
+  StudioShape,
+  StudioTheme,
+  StudioButtonStyle,
+  StudioLayout,
+  StudioSocialIconsStyle,
+};
 export type StudioFont = "Inter" | "Roboto" | "Georgia" | "DM Sans";
-export type StudioShape = "rounded" | "square" | "pill";
-export type StudioTheme = "corporate" | "minimal" | "modern" | "dark";
-export type StudioButtonStyle = "solid" | "outline";
-export type StudioLayout = "single" | "two-column" | "compact";
-export type StudioSocialStyle = "filled" | "outline" | "minimal";
+export type StudioSocialStyle = StudioSocialIconsStyle;
 
 export const ALLOWED_STUDIO_FONTS: StudioFont[] = [
   "Inter",
@@ -45,7 +56,7 @@ export const ALLOWED_STUDIO_SOCIAL_STYLES: StudioSocialStyle[] = [
   "minimal",
 ];
 
-export const INITIAL_STUDIO_DATA: TemplateSignatureData = {
+export const INITIAL_STUDIO_DATA: StudioSignatureData = {
   fullName: "",
   jobTitle: "",
   companyName: "",
@@ -85,10 +96,10 @@ export type StudioAction =
   | { type: "SET_THEME"; payload: string; isPremium?: boolean }
   | { type: "SET_LAYOUT"; payload: string; isPremium?: boolean }
   | { type: "SET_BUTTON_STYLE"; payload: string; isPremium?: boolean }
-  | { type: "SET_FULL_STATE"; payload: TemplateSignatureData }
+  | { type: "SET_FULL_STATE"; payload: StudioSignatureData }
   | {
       type: "UPDATE_SIGNATURE_FIELD";
-      field: keyof TemplateSignatureData;
+      field: keyof StudioSignatureData;
       value: unknown;
     }
   | { type: "ADD_EXTRA"; payload: SignatureExtraItem }
@@ -103,9 +114,9 @@ export type StudioAction =
   | { type: "SET_EXTRAS"; payload: SignatureExtraItem[] };
 
 export function studioReducer(
-  state: TemplateSignatureData,
+  state: StudioSignatureData,
   action: StudioAction
-): TemplateSignatureData {
+): StudioSignatureData {
   const isPremiumUser =
     ("isPremium" in action && Boolean(action.isPremium)) || PREMIUM_ENABLED;
 

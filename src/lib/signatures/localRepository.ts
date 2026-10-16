@@ -1,8 +1,48 @@
 import { getStoredUser } from "@/app/lib/auth";
 import { SavedSignature, SaveSignatureInput } from "@/types/signature";
+import { TemplateSignatureData } from "@/types/template";
+import { StudioSignatureData } from "@/types/studio";
 import { SignatureRepository } from "./repository";
+import { getSignatureKind } from "./kind";
 
 const LEGACY_STORAGE_KEY = "sig_user_signatures";
+
+interface StoredSignatureLike {
+  id: string;
+  kind?: "template" | "studio";
+  templateId: string;
+  templateVersion?: number;
+  name: string;
+  data: TemplateSignatureData | StudioSignatureData;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+function normalizeSavedSignature(item: StoredSignatureLike): SavedSignature {
+  const kind = item.kind || getSignatureKind(item.templateId);
+  const base = {
+    id: item.id,
+    templateId: item.templateId,
+    templateVersion: item.templateVersion ?? 1,
+    name: item.name,
+    createdAt: item.createdAt || new Date().toISOString(),
+    updatedAt: item.updatedAt || new Date().toISOString(),
+  };
+
+  if (kind === "studio") {
+    return {
+      ...base,
+      kind: "studio",
+      data: item.data as StudioSignatureData,
+    };
+  }
+
+  return {
+    ...base,
+    kind: "template",
+    data: item.data as TemplateSignatureData,
+  };
+}
 
 /**
  * @deprecated LEGACY LOCALSTORAGE REPOSITORY
@@ -27,7 +67,7 @@ export class LocalSignatureRepository implements SignatureRepository {
       if (!raw) return [];
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        return parsed as SavedSignature[];
+        return (parsed as StoredSignatureLike[]).map(normalizeSavedSignature);
       }
       return [];
     } catch (err) {
@@ -79,20 +119,23 @@ export class LocalSignatureRepository implements SignatureRepository {
           const legacyId = typeof item.id === "string" ? item.id : `sig_${crypto.randomUUID()}`;
           if (!existingIds.has(legacyId)) {
             existingIds.add(legacyId);
-            migrated.push({
-              id: legacyId,
-              templateId: typeof item.templateId === "string" ? item.templateId : "minimal-1",
-              templateVersion: 1,
-              name:
-                typeof item.name === "string" && item.name
-                  ? item.name
-                  : item.rawTemplateData.fullName || "My Signature",
-              data: item.rawTemplateData,
-              createdAt: typeof item.createdAt === "string" ? item.createdAt : new Date().toISOString(),
-              updatedAt: typeof item.updatedAt === "string" && !item.updatedAt.startsWith("Updated")
-                ? item.updatedAt
-                : new Date().toISOString(),
-            });
+            migrated.push(
+              normalizeSavedSignature({
+                id: legacyId,
+                templateId: typeof item.templateId === "string" ? item.templateId : "minimal-1",
+                templateVersion: 1,
+                name:
+                  typeof item.name === "string" && item.name
+                    ? item.name
+                    : item.rawTemplateData.fullName || "My Signature",
+                data: item.rawTemplateData,
+                createdAt: typeof item.createdAt === "string" ? item.createdAt : new Date().toISOString(),
+                updatedAt:
+                  typeof item.updatedAt === "string" && !item.updatedAt.startsWith("Updated")
+                    ? item.updatedAt
+                    : new Date().toISOString(),
+              })
+            );
           }
         }
       }
@@ -137,34 +180,61 @@ export class LocalSignatureRepository implements SignatureRepository {
     const now = new Date().toISOString();
     const existingIndex = input.id ? existingList.findIndex((s) => s.id === input.id) : -1;
 
+    const kind = input.kind || getSignatureKind(input.templateId);
     let savedItem: SavedSignature;
 
     if (existingIndex >= 0) {
       const existing = existingList[existingIndex];
-      savedItem = {
+      const base = {
         id: existing.id,
         templateId: input.templateId,
         templateVersion: 1,
         name: input.name.trim() || input.data.fullName.trim() || "My Signature",
-        data: input.data,
         createdAt: existing.createdAt,
         updatedAt: now,
       };
+
+      if (kind === "studio") {
+        savedItem = {
+          ...base,
+          kind: "studio",
+          data: input.data as StudioSignatureData,
+        };
+      } else {
+        savedItem = {
+          ...base,
+          kind: "template",
+          data: input.data as TemplateSignatureData,
+        };
+      }
 
       const updatedList = [...existingList];
       updatedList[existingIndex] = savedItem;
       this.writeRaw(storageKey, updatedList);
     } else {
       const newId = input.id && input.id.startsWith("sig_") ? input.id : `sig_${crypto.randomUUID()}`;
-      savedItem = {
+      const base = {
         id: newId,
         templateId: input.templateId,
         templateVersion: 1,
         name: input.name.trim() || input.data.fullName.trim() || "My Signature",
-        data: input.data,
         createdAt: now,
         updatedAt: now,
       };
+
+      if (kind === "studio") {
+        savedItem = {
+          ...base,
+          kind: "studio",
+          data: input.data as StudioSignatureData,
+        };
+      } else {
+        savedItem = {
+          ...base,
+          kind: "template",
+          data: input.data as TemplateSignatureData,
+        };
+      }
 
       const updatedList = [savedItem, ...existingList];
       this.writeRaw(storageKey, updatedList);
@@ -190,15 +260,16 @@ export class LocalSignatureRepository implements SignatureRepository {
     }
 
     const now = new Date().toISOString();
-    const duplicated: SavedSignature = {
+    const duplicated = normalizeSavedSignature({
       id: `sig_${crypto.randomUUID()}`,
+      kind: target.kind,
       templateId: target.templateId,
       templateVersion: target.templateVersion || 1,
       name: `${target.name} (Copy)`,
       data: JSON.parse(JSON.stringify(target.data)),
       createdAt: now,
       updatedAt: now,
-    };
+    });
 
     const updatedList = [duplicated, ...existingList];
     this.writeRaw(storageKey, updatedList);

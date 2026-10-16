@@ -152,7 +152,7 @@ export default function ActionCards() {
         {/* Start From Scratch Button with text color #022977 */}
         <div className="mt-4 sm:mt-5 2xl:mt-6">
           <Link
-            href="#create-scratch"
+            href="/design-studio"
             className="flex h-[44px] sm:h-[46px] 2xl:h-[48px] w-full items-center justify-center gap-2 rounded-full border border-[#022977] bg-white px-6 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50"
             style={{
               fontFamily: "var(--font-commissioner), Commissioner, sans-serif",

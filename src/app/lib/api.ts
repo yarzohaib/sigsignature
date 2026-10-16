@@ -16,7 +16,7 @@ import {
   clearAuthSession,
 } from "./auth";
 import type { TemplateSignatureData } from "@/types/template";
-import type { SavedSignature } from "@/types/signature";
+import type { StudioSignatureData } from "@/types/studio";
 
 export interface AuthTokens {
   accessToken: string;
@@ -640,18 +640,28 @@ export function isSignatureLimitError(err: unknown): boolean {
   return false;
 }
 
+export interface BackendSavedSignature {
+  id: string;
+  templateId: string;
+  templateVersion: number;
+  name: string;
+  data: TemplateSignatureData | StudioSignatureData;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CreateSignaturePayload {
   name: string;
   templateId: string;
   templateVersion?: number;
-  data: TemplateSignatureData;
+  data: TemplateSignatureData | StudioSignatureData;
 }
 
 export interface UpdateSignaturePayload {
   name?: string;
   templateId?: string;
   templateVersion?: number;
-  data?: TemplateSignatureData;
+  data?: TemplateSignatureData | StudioSignatureData;
 }
 
 interface GenericApiResponse<T> {
@@ -679,7 +689,7 @@ async function handleSignatureApiResponse<T>(
 /**
  * Fetch all saved signatures for the authenticated user.
  */
-export async function fetchSignatures(): Promise<SavedSignature[]> {
+export async function fetchSignatures(): Promise<BackendSavedSignature[]> {
   const url = `${API_BASE_URL}/api/v1/signatures`;
 
   try {
@@ -690,7 +700,7 @@ export async function fetchSignatures(): Promise<SavedSignature[]> {
       },
     });
 
-    return await handleSignatureApiResponse<SavedSignature[]>(
+    return await handleSignatureApiResponse<BackendSavedSignature[]>(
       response,
       "Failed to load signatures"
     );
@@ -708,7 +718,7 @@ export async function fetchSignatures(): Promise<SavedSignature[]> {
 /**
  * Fetch a single saved signature by ID.
  */
-export async function fetchSignatureById(id: string): Promise<SavedSignature> {
+export async function fetchSignatureById(id: string): Promise<BackendSavedSignature> {
   const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}`;
 
   try {
@@ -719,7 +729,7 @@ export async function fetchSignatureById(id: string): Promise<SavedSignature> {
       },
     });
 
-    return await handleSignatureApiResponse<SavedSignature>(
+    return await handleSignatureApiResponse<BackendSavedSignature>(
       response,
       "Failed to load signature"
     );
@@ -739,7 +749,7 @@ export async function fetchSignatureById(id: string): Promise<SavedSignature> {
  */
 export async function createSignature(
   payload: CreateSignaturePayload
-): Promise<SavedSignature> {
+): Promise<BackendSavedSignature> {
   const url = `${API_BASE_URL}/api/v1/signatures`;
 
   try {
@@ -757,7 +767,7 @@ export async function createSignature(
       }),
     });
 
-    return await handleSignatureApiResponse<SavedSignature>(
+    return await handleSignatureApiResponse<BackendSavedSignature>(
       response,
       "Failed to save signature"
     );
@@ -778,7 +788,7 @@ export async function createSignature(
 export async function updateSignature(
   id: string,
   payload: UpdateSignaturePayload
-): Promise<SavedSignature> {
+): Promise<BackendSavedSignature> {
   const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}`;
 
   try {
@@ -798,7 +808,7 @@ export async function updateSignature(
       }),
     });
 
-    return await handleSignatureApiResponse<SavedSignature>(
+    return await handleSignatureApiResponse<BackendSavedSignature>(
       response,
       "Failed to update signature"
     );
@@ -842,7 +852,7 @@ export async function deleteSignature(id: string): Promise<void> {
 /**
  * Duplicate an existing signature by ID.
  */
-export async function duplicateSignature(id: string): Promise<SavedSignature> {
+export async function duplicateSignature(id: string): Promise<BackendSavedSignature> {
   const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}/duplicate`;
 
   try {
@@ -853,7 +863,7 @@ export async function duplicateSignature(id: string): Promise<SavedSignature> {
       },
     });
 
-    return await handleSignatureApiResponse<SavedSignature>(
+    return await handleSignatureApiResponse<BackendSavedSignature>(
       response,
       "Failed to duplicate signature"
     );

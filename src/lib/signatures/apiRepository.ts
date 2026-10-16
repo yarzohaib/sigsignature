@@ -7,11 +7,15 @@ import {
   duplicateSignature,
   isSignatureLimitError,
   ApiError,
+  BackendSavedSignature,
 } from "@/app/lib/api";
 import { getStoredUser } from "@/app/lib/auth";
 import { SavedSignature, SaveSignatureInput } from "@/types/signature";
+import { TemplateSignatureData } from "@/types/template";
+import { StudioSignatureData } from "@/types/studio";
 import { SignatureRepository } from "./repository";
 import { LocalSignatureRepository } from "./localRepository";
+import { getSignatureKind } from "./kind";
 
 function showToastNotification(message: string): void {
   if (typeof window === "undefined") return;
@@ -39,6 +43,22 @@ function showToastNotification(message: string): void {
   setTimeout(() => {
     toast.remove();
   }, 4000);
+}
+
+function toSavedSignature(item: BackendSavedSignature): SavedSignature {
+  const kind = getSignatureKind(item.templateId);
+  if (kind === "studio") {
+    return {
+      ...item,
+      kind: "studio",
+      data: item.data as StudioSignatureData,
+    };
+  }
+  return {
+    ...item,
+    kind: "template",
+    data: item.data as TemplateSignatureData,
+  };
 }
 
 export class ApiSignatureRepository implements SignatureRepository {
@@ -108,12 +128,14 @@ export class ApiSignatureRepository implements SignatureRepository {
       await this.importLegacyLocalSignatures(user.id);
     }
 
-    return fetchSignatures();
+    const items = await fetchSignatures();
+    return items.map(toSavedSignature);
   }
 
   async get(id: string): Promise<SavedSignature | null> {
     try {
-      return await fetchSignatureById(id);
+      const item = await fetchSignatureById(id);
+      return toSavedSignature(item);
     } catch (err: unknown) {
       if (err instanceof ApiError && err.statusCode === 404) {
         return null;
@@ -124,20 +146,22 @@ export class ApiSignatureRepository implements SignatureRepository {
 
   async save(input: SaveSignatureInput): Promise<SavedSignature> {
     if (input.id) {
-      return updateSignature(input.id, {
+      const updated = await updateSignature(input.id, {
         name: input.name,
         templateId: input.templateId,
         templateVersion: 1,
         data: input.data,
       });
+      return toSavedSignature(updated);
     }
 
-    return createSignature({
+    const created = await createSignature({
       name: input.name,
       templateId: input.templateId,
       templateVersion: 1,
       data: input.data,
     });
+    return toSavedSignature(created);
   }
 
   async remove(id: string): Promise<void> {
@@ -145,6 +169,7 @@ export class ApiSignatureRepository implements SignatureRepository {
   }
 
   async duplicate(id: string): Promise<SavedSignature> {
-    return duplicateSignature(id);
+    const duplicated = await duplicateSignature(id);
+    return toSavedSignature(duplicated);
   }
 }

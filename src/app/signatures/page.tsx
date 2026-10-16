@@ -16,7 +16,11 @@ import {
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { SavedSignature } from "@/types/signature";
-import { generateSignatureHtml, generateSignaturePlainText } from "@/lib/generateSignatureHtml";
+import {
+  renderSavedSignatureHtml,
+  renderSavedSignaturePlainText,
+} from "@/lib/signatures/render";
+import { getEditHref } from "@/lib/signatures/kind";
 import { copySignatureRich } from "@/lib/clipboard";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 
@@ -152,8 +156,8 @@ export default function MySignaturesPage() {
     const target = signatures.find((s) => s.id === id);
     if (!target) return;
 
-    const html = generateSignatureHtml(target.data);
-    const plainText = generateSignaturePlainText(target.data);
+    const html = renderSavedSignatureHtml(target);
+    const plainText = renderSavedSignaturePlainText(target);
 
     try {
       await copySignatureRich(html, plainText);
@@ -164,7 +168,10 @@ export default function MySignaturesPage() {
   }
 
   function handleEdit(id: string) {
-    router.push(`/templates?edit=${id}`);
+    const target = signatures.find((s) => s.id === id);
+    if (target) {
+      router.push(getEditHref(target));
+    }
   }
 
   function handleCreateNew() {

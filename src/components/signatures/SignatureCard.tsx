@@ -168,12 +168,24 @@ export default function SignatureCard({
       {/* Middle Info Row */}
       <div className="flex items-center justify-between p-3.5 pb-2.5">
         <div>
-          <h4
-            className="text-[14px] font-bold text-[#1E293B]"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            {signature.name}
-          </h4>
+          <div className="flex items-center gap-2">
+            <h4
+              className="text-[14px] font-bold text-[#1E293B]"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              {signature.name}
+            </h4>
+            <span
+              className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold ${
+                signature.kind === "studio"
+                  ? "bg-[#EFF6FF] text-[#245FD4] border border-[#BFDBFE]"
+                  : "bg-slate-100 text-[#475569] border border-slate-200"
+              }`}
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              {signature.kind === "studio" ? "Studio" : "Template"}
+            </span>
+          </div>
           <p
             className="text-[12px] text-[#94A3B8]"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}

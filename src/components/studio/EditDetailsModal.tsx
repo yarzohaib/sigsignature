@@ -3,13 +3,13 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
-  TemplateSignatureData,
+  StudioSignatureData,
   SignatureExtraItem,
   ExtraTextItem,
   ExtraImageItem,
   ExtraCtaItem,
   ExtraBannerItem,
-} from "@/types/template";
+} from "@/types/studio";
 import { StudioAction } from "@/lib/studio/types";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
@@ -18,7 +18,7 @@ interface EditDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedId: "main" | string | null;
-  state: TemplateSignatureData;
+  state: StudioSignatureData;
   dispatch: (action: StudioAction) => void;
   initialSection?: "all" | "socials";
   onToast: (msg: string, isError?: boolean) => void;
