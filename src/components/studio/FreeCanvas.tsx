@@ -406,8 +406,18 @@ export default function FreeCanvas({
     (e: React.PointerEvent) => {
       // 1. Release Drag
       if (dragState && dragState.pointerId === e.pointerId) {
+        try {
+          (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
+
         const movedEl = elements.find((item) => item.id === dragState.elementId);
-        if (movedEl) {
+        const hasActuallyMoved =
+          Math.abs(dragState.currentX - dragState.origX) > 2 ||
+          Math.abs(dragState.currentY - dragState.origY) > 2;
+
+        if (movedEl && hasActuallyMoved) {
           const others = elements.filter((item) => item.id !== dragState.elementId);
           const candidate: FreeElement = {
             ...movedEl,
@@ -450,6 +460,11 @@ export default function FreeCanvas({
 
       // 2. Release Resize
       if (resizeState && resizeState.pointerId === e.pointerId) {
+        try {
+          (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
         const resizedEl = elements.find((item) => item.id === resizeState.elementId);
         if (resizedEl) {
           const others = elements.filter((item) => item.id !== resizeState.elementId);

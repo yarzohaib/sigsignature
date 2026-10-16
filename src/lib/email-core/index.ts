@@ -95,14 +95,29 @@ export function resolveEmailFont(name: string): string {
   }
 }
 
+export const EMAIL_SAFE_ICONS: Record<SocialNetwork, string> = {
+  linkedin:
+    "https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/linkedin-icon-2x.png",
+  twitter:
+    "https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/twitter-icon-2x.png",
+  facebook:
+    "https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/facebook-icon-2x.png",
+  instagram:
+    "https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/instagram-icon-2x.png",
+};
+
 /**
- * Builds email social icon asset URL from the CDN / static bucket.
+ * Builds email social icon asset URL from reliable public CDN or asset bucket.
  */
 export function emailIconUrl(
   style: IconStyle | string,
   color: string,
   network: SocialNetwork | string
 ): string {
+  const net = (network || "").toLowerCase() as SocialNetwork;
+  if (EMAIL_SAFE_ICONS[net]) {
+    return EMAIL_SAFE_ICONS[net];
+  }
   const baseUrl = process.env.NEXT_PUBLIC_ASSET_BASE_URL;
   if (!baseUrl) {
     return "";

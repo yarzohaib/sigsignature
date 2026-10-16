@@ -58,44 +58,60 @@ function renderSocialLinks(
   fontStack: string,
   isPreview = false
 ): string {
-  const networks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork }[] = [
-    { key: "linkedin", label: "LinkedIn", network: "linkedin" },
-    { key: "twitter", label: "Twitter", network: "twitter" },
-    { key: "facebook", label: "Facebook", network: "facebook" },
-    { key: "instagram", label: "Instagram", network: "instagram" },
+  const networks: {
+    key: keyof StudioSignatureData["socials"];
+    label: string;
+    network: SocialNetwork;
+    defaultUrl: string;
+  }[] = [
+    { key: "linkedin", label: "LinkedIn", network: "linkedin", defaultUrl: "https://www.linkedin.com" },
+    { key: "twitter", label: "Twitter", network: "twitter", defaultUrl: "https://twitter.com" },
+    { key: "facebook", label: "Facebook", network: "facebook", defaultUrl: "https://www.facebook.com" },
+    { key: "instagram", label: "Instagram", network: "instagram", defaultUrl: "https://www.instagram.com" },
   ];
 
   const style = data.socialIconsStyle || "filled";
 
-  const items = networks
-    .map(({ key, label, network }) => {
-      const url = data.socials?.[key]?.trim();
-      if (!url) return null;
-      const href = safeUrl(normalizeWebsite(url));
-      if (!href) return null;
+  const activeNetworks = networks.filter((n) => Boolean(data.socials?.[n.key]?.trim()));
+  const targetNetworks = activeNetworks.length > 0 ? activeNetworks : networks;
 
-      // In preview mode or when asset URL is missing, use self-contained SVG Data URI
-      const iconUrl = isPreview
-        ? getSocialIconSvgDataUrl(style, themeColor, network)
-        : emailIconUrl(style, themeColor, network) || getSocialIconSvgDataUrl(style, themeColor, network);
+  const cells: string[] = [];
 
-      if (iconUrl) {
-        return `<a href="${href}" target="_blank" style="display:inline-block;text-decoration:none;margin-right:6px;"><img src="${escapeHtml(
-          iconUrl
-        )}" alt="${label}" width="20" height="20" style="display:block;border:0;outline:none;text-decoration:none;" /></a>`;
-      }
+  for (let i = 0; i < targetNetworks.length; i++) {
+    const { key, label, network, defaultUrl } = targetNetworks[i];
+    const userUrl = data.socials?.[key]?.trim();
+    const rawUrl = userUrl || (activeNetworks.length === 0 ? defaultUrl : "");
+    if (!rawUrl) continue;
+    const href = safeUrl(normalizeWebsite(rawUrl));
+    if (!href) continue;
 
-      return `<a href="${href}" target="_blank" style="display:inline-block;font-family:${fontStack};font-size:11px;color:${themeColor};text-decoration:underline;margin-right:6px;">${label}</a>`;
-    })
-    .filter(Boolean);
+    const isLast = i === targetNetworks.length - 1;
+    const paddingRight = isLast ? 0 : 6;
 
-  if (items.length === 0) return "";
+    const iconUrl = isPreview
+      ? getSocialIconSvgDataUrl(style, themeColor, network)
+      : emailIconUrl(style, themeColor, network);
 
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;display:inline-table;">
+    if (iconUrl) {
+      cells.push(`<td style="padding:0 ${paddingRight}px 0 0;vertical-align:middle;line-height:0;font-size:0;mso-line-height-rule:exactly;">
+        <a href="${href}" target="_blank" style="display:inline-block;text-decoration:none;line-height:0;font-size:0;">
+          <img src="${escapeHtml(
+            iconUrl
+          )}" alt="${label}" width="20" height="20" style="display:block;border:0;outline:none;text-decoration:none;width:20px;height:20px;" />
+        </a>
+      </td>`);
+    } else {
+      cells.push(`<td style="padding:0 ${paddingRight}px 0 0;vertical-align:middle;">
+        <a href="${href}" target="_blank" style="display:inline-block;font-family:${fontStack};font-size:11px;color:${themeColor};text-decoration:underline;">${label}</a>
+      </td>`);
+    }
+  }
+
+  if (cells.length === 0) return "";
+
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-spacing:0;margin:0;padding:0;">
     <tr>
-      <td style="padding:0;vertical-align:middle;">
-        ${items.join("")}
-      </td>
+      ${cells.join("\n      ")}
     </tr>
   </table>`;
 }

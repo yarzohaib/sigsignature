@@ -25,12 +25,13 @@ import {
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
-import { SavedSignature } from "@/types/signature";
+import { SavedSignature, StudioSavedSignature } from "@/types/signature";
 import {
   StudioSignatureData,
   FreeElement,
   FreeTextElement,
   FreeImageElement,
+  FreeLogoElement,
 } from "@/types/studio";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
@@ -711,15 +712,24 @@ function DesignStudioContent() {
         ? `${firstText.trim()}'s Signature`
         : "My Signature";
 
-      const trimmedAvatar = state.avatarUrl?.trim() || "";
+      const firstImageEl = state.elements?.find(
+        (el): el is FreeImageElement => el.type === "image" && Boolean(el.url?.trim())
+      );
+      const firstLogoEl = state.elements?.find(
+        (el): el is FreeLogoElement => el.type === "logo" && Boolean(el.url?.trim())
+      );
+      const trimmedAvatar = state.avatarUrl?.trim() || firstImageEl?.url?.trim() || "";
       const avatarUrl =
         trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
           ? ""
           : trimmedAvatar;
+      const companyLogoUrl = state.companyLogoUrl?.trim() || firstLogoEl?.url?.trim() || "";
 
       const payloadData: StudioSignatureData = {
         ...state,
+        fullName: state.fullName?.trim() || firstText?.trim() || "",
         avatarUrl,
+        companyLogoUrl,
         extras: [],
       };
 
@@ -744,7 +754,23 @@ function DesignStudioContent() {
 
       setEditingSignatureId(saved.id);
       currentEditingIdRef.current = saved.id;
-      setSavedSignatureRecord(saved);
+      const fullSavedRecord: StudioSavedSignature = {
+        id: saved.id,
+        kind: "studio",
+        templateId: "design-studio",
+        templateVersion: saved.templateVersion ?? 1,
+        name: saved.name || sigName,
+        createdAt: saved.createdAt,
+        updatedAt: saved.updatedAt,
+        data: {
+          ...payloadData,
+          ...(saved.kind === "studio" ? saved.data : {}),
+          canvas: payloadData.canvas,
+          elements: payloadData.elements,
+          design: payloadData.design,
+        },
+      };
+      setSavedSignatureRecord(fullSavedRecord);
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("sig_count_update"));
       }
@@ -781,15 +807,24 @@ function DesignStudioContent() {
         ? `${firstText.trim()}'s Signature`
         : "My Signature";
 
-      const trimmedAvatar = state.avatarUrl?.trim() || "";
+      const firstImageEl = state.elements?.find(
+        (el): el is FreeImageElement => el.type === "image" && Boolean(el.url?.trim())
+      );
+      const firstLogoEl = state.elements?.find(
+        (el): el is FreeLogoElement => el.type === "logo" && Boolean(el.url?.trim())
+      );
+      const trimmedAvatar = state.avatarUrl?.trim() || firstImageEl?.url?.trim() || "";
       const avatarUrl =
         trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
           ? ""
           : trimmedAvatar;
+      const companyLogoUrl = state.companyLogoUrl?.trim() || firstLogoEl?.url?.trim() || "";
 
       const payloadData: StudioSignatureData = {
         ...state,
+        fullName: state.fullName?.trim() || firstText?.trim() || "",
         avatarUrl,
+        companyLogoUrl,
         extras: [],
       };
 
@@ -814,7 +849,23 @@ function DesignStudioContent() {
       setLimitModalOpen(false);
       setEditingSignatureId(updated.id);
       currentEditingIdRef.current = updated.id;
-      setSavedSignatureRecord(updated);
+      const fullUpdatedRecord: StudioSavedSignature = {
+        id: updated.id,
+        kind: "studio",
+        templateId: "design-studio",
+        templateVersion: updated.templateVersion ?? 1,
+        name: updated.name || sigName,
+        createdAt: updated.createdAt,
+        updatedAt: updated.updatedAt,
+        data: {
+          ...payloadData,
+          ...(updated.kind === "studio" ? updated.data : {}),
+          canvas: payloadData.canvas,
+          elements: payloadData.elements,
+          design: payloadData.design,
+        },
+      };
+      setSavedSignatureRecord(fullUpdatedRecord);
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("sig_count_update"));
       }
@@ -2104,6 +2155,9 @@ function DesignStudioContent() {
                     setIsEditDetailsOpen(true);
                   }}
                   elementId={selectedId}
+                  x={selectedElement.x}
+                  y={selectedElement.y}
+                  h={selectedElement.h}
                   zoom={zoom}
                 />
               )}

@@ -2,6 +2,234 @@
 
 import Image from "next/image";
 import { SavedSignature } from "@/types/signature";
+import {
+  StudioSignatureData,
+  FreeElement,
+  FreeTextElement,
+  FreeImageElement,
+  FreeLogoElement,
+  FreeBannerElement,
+  FreeCtaElement,
+  StudioShape,
+} from "@/types/studio";
+import { THEME_PRESETS, getShapeBorderRadius } from "@/lib/studio/shared";
+import { resolveEmailFont, getSocialIconSvgDataUrl, SocialNetwork } from "@/lib/email-core";
+
+function MiniStudioElementView({
+  element,
+  data,
+  theme,
+  shape,
+  themeColor,
+  fontStack,
+}: {
+  element: FreeElement;
+  data: StudioSignatureData;
+  theme: { bg: string; text: string; muted: string; border: string };
+  shape: StudioShape;
+  themeColor: string;
+  fontStack: string;
+}) {
+  const imgRadius = getShapeBorderRadius(shape, "image");
+
+  if (element.type === "text") {
+    const textEl = element as FreeTextElement;
+    const fontSize = textEl.size === "lg" ? 16 : textEl.size === "sm" ? 12 : 14;
+    const lineHeight = textEl.size === "lg" ? 22 : textEl.size === "sm" ? 16 : 18;
+    const color = textEl.bold ? theme.text : theme.muted;
+
+    return (
+      <div
+        style={{
+          position: "absolute",
+          left: `${element.x}px`,
+          top: `${element.y}px`,
+          width: `${element.w}px`,
+          height: `${element.h}px`,
+          fontFamily: fontStack,
+          fontSize: `${fontSize}px`,
+          lineHeight: `${lineHeight}px`,
+          fontWeight: textEl.bold ? 700 : 400,
+          color,
+          textAlign: textEl.align || "left",
+          overflow: "hidden",
+          wordBreak: "break-word",
+        }}
+      >
+        {textEl.text}
+      </div>
+    );
+  }
+
+  if (element.type === "image" || element.type === "logo" || element.type === "banner") {
+    const mediaEl = element as FreeImageElement | FreeLogoElement | FreeBannerElement;
+    if (!mediaEl.url) return null;
+
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={mediaEl.url}
+        alt={element.type}
+        style={{
+          position: "absolute",
+          left: `${element.x}px`,
+          top: `${element.y}px`,
+          width: `${element.w}px`,
+          height: `${element.h}px`,
+          borderRadius: imgRadius,
+          objectFit: element.type === "logo" ? "contain" : "cover",
+          display: "block",
+        }}
+      />
+    );
+  }
+
+  if (element.type === "divider") {
+    const divColor = data.themeColor || theme.border || "#E2E8F0";
+    return (
+      <div
+        style={{
+          position: "absolute",
+          left: `${element.x}px`,
+          top: `${element.y}px`,
+          width: `${element.w}px`,
+          height: `${element.h}px`,
+          backgroundColor: divColor,
+        }}
+      />
+    );
+  }
+
+  if (element.type === "cta") {
+    const ctaEl = element as FreeCtaElement;
+    const isSolid = data.design?.buttonStyle !== "outline";
+    const btnRadius = getShapeBorderRadius(shape, "button");
+
+    return (
+      <div
+        style={{
+          position: "absolute",
+          left: `${element.x}px`,
+          top: `${element.y}px`,
+          width: `${element.w}px`,
+          height: `${element.h}px`,
+          backgroundColor: isSolid ? themeColor : "transparent",
+          border: isSolid ? "none" : `2px solid ${themeColor}`,
+          borderRadius: btnRadius,
+          color: isSolid ? "#FFFFFF" : themeColor,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: fontStack,
+          fontSize: "12px",
+          fontWeight: "bold",
+          overflow: "hidden",
+        }}
+      >
+        {ctaEl.label || "Button"}
+      </div>
+    );
+  }
+
+  if (element.type === "social") {
+    const networks: SocialNetwork[] = ["linkedin", "twitter", "facebook", "instagram"];
+    const style = data.socialIconsStyle || "filled";
+    const activeIcons = networks
+      .map((net) => {
+        const url = data.socials?.[net]?.trim();
+        if (!url) return null;
+        return { net, iconUrl: getSocialIconSvgDataUrl(style, themeColor, net) };
+      })
+      .filter((x): x is { net: SocialNetwork; iconUrl: string } => Boolean(x));
+
+    return (
+      <div
+        style={{
+          position: "absolute",
+          left: `${element.x}px`,
+          top: `${element.y}px`,
+          width: `${element.w}px`,
+          height: `${element.h}px`,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        {activeIcons.map(({ net, iconUrl }) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={net}
+            src={iconUrl}
+            alt={net}
+            style={{ width: "20px", height: "20px", display: "block" }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+}
+
+function StudioMiniPreview({ data }: { data: StudioSignatureData }) {
+  const canvasWidth = data.canvas?.width || 600;
+  const canvasHeight = data.canvas?.height || 200;
+  const elements = data.elements || [];
+
+  const themeKey = data.design?.theme || "corporate";
+  const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.corporate;
+  const shape = data.design?.shape || "rounded";
+  const cardRadius = getShapeBorderRadius(shape, "card");
+  const themeColor = data.themeColor || "#245FD4";
+  const fontStack = resolveEmailFont(data.fontFamily || "Inter");
+
+  // Sized to fit comfortably inside card preview container
+  const previewW = 280;
+  const scale = previewW / canvasWidth;
+  const previewH = Math.max(48, Math.round(canvasHeight * scale));
+
+  return (
+    <div className="w-full flex items-center justify-center py-1">
+      <div
+        style={{
+          width: `${previewW}px`,
+          height: `${previewH}px`,
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            width: `${canvasWidth}px`,
+            height: `${canvasHeight}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            backgroundColor: theme.bg,
+            border: theme.border && theme.border !== "transparent" ? `1px solid ${theme.border}` : "none",
+            borderRadius: cardRadius,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            overflow: "hidden",
+            pointerEvents: "none",
+          }}
+        >
+          {elements.map((el) => (
+            <MiniStudioElementView
+              key={el.id}
+              element={el}
+              data={data}
+              theme={theme}
+              shape={shape}
+              themeColor={themeColor}
+              fontStack={fontStack}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function formatRelativeTime(isoDate: string): string {
   const timestamp = new Date(isoDate).getTime();
@@ -48,6 +276,10 @@ export default function SignatureCard({
   onExport,
   onDelete,
 }: SignatureCardProps) {
+  const isStudioFree =
+    signature.kind === "studio" &&
+    Boolean(signature.data.elements && signature.data.elements.length > 0);
+
   const firstText =
     signature.kind === "studio" && signature.data.elements
       ? (signature.data.elements.find((el) => el.type === "text") as { text?: string } | undefined)?.text
@@ -57,116 +289,141 @@ export default function SignatureCard({
   const email = signature.data.email || "";
   const phone = signature.data.phone || "";
   const company = signature.data.companyName || "";
+  const companyLogoUrl = signature.data.companyLogoUrl || "";
   const tagline = signature.data.optional?.tagline || "";
   const website = signature.data.website || "";
   const avatar = signature.data.avatarUrl || "";
   const themeColor = signature.data.themeColor || "#245FD4";
   const relativeTime = formatRelativeTime(signature.updatedAt);
 
+  const hasCompanySection = Boolean(companyLogoUrl || company);
+
+  const socials = signature.data.socials;
+  const hasSocials = Boolean(
+    socials?.linkedin?.trim() ||
+      socials?.twitter?.trim() ||
+      socials?.facebook?.trim() ||
+      socials?.instagram?.trim()
+  );
+
   return (
     <div className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-white shadow-xs transition-all hover:shadow-md hover:border-slate-300">
       {/* Top Preview Section */}
       <div className="relative overflow-hidden rounded-t-xl bg-[#F8FAFC] p-3 sm:p-3.5 min-h-[148px] flex items-center justify-center">
-        <div className="w-full rounded-lg bg-white p-3 border border-slate-100 shadow-2xs">
-          <div className="flex items-center justify-between gap-3">
-            {/* Left: Avatar + Socials */}
-            <div className="flex flex-col items-center gap-1 shrink-0">
-              <div className="relative h-11 w-11 overflow-hidden rounded-lg bg-slate-100 border border-slate-200 shadow-2xs">
-                {avatar ? (
-                  <Image
-                    src={avatar}
-                    alt={name}
-                    width={44}
-                    height={44}
-                    className="h-full w-full object-cover"
-                    unoptimized={avatar.startsWith("data:")}
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-blue-50 text-[11px] font-bold text-[#245FD4]">
-                    {name.slice(0, 2).toUpperCase()}
+        {isStudioFree ? (
+          <StudioMiniPreview data={signature.data} />
+        ) : (
+          <div className="w-full rounded-lg bg-white p-3 border border-slate-100 shadow-2xs">
+            <div className="flex items-center justify-between gap-3">
+              {/* Left: Avatar + Socials */}
+              <div className="flex flex-col items-center gap-1 shrink-0">
+                <div className="relative h-11 w-11 overflow-hidden rounded-lg bg-slate-100 border border-slate-200 shadow-2xs">
+                  {avatar ? (
+                    <Image
+                      src={avatar}
+                      alt={name}
+                      width={44}
+                      height={44}
+                      className="h-full w-full object-cover"
+                      unoptimized={avatar.startsWith("data:")}
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-blue-50 text-[11px] font-bold text-[#245FD4]">
+                      {name.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                {/* Social icons if present */}
+                {hasSocials && (
+                  <div className="flex items-center gap-0.5">
+                    {socials?.linkedin && (
+                      <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#0077B5] text-[6px] font-bold text-white">
+                        in
+                      </span>
+                    )}
+                    {socials?.twitter && (
+                      <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#000000] text-[6px] font-bold text-white">
+                        𝕏
+                      </span>
+                    )}
+                    {socials?.facebook && (
+                      <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#1877F2] text-[6px] font-bold text-white">
+                        f
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
-              {/* Social icons */}
-              <div className="flex items-center gap-0.5">
-                <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#0077B5] text-[6px] font-bold text-white">
-                  in
-                </span>
-                <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#000000] text-[6px] font-bold text-white">
-                  𝕏
-                </span>
-                <span className="flex h-3 w-3 items-center justify-center rounded-xs bg-[#1877F2] text-[6px] font-bold text-white">
-                  f
-                </span>
+
+              {/* Middle: Details */}
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <h5 className="text-[12px] font-bold text-[#1E293B] leading-tight truncate">
+                  {name}
+                </h5>
+                {role && (
+                  <p className="text-[10px] font-medium text-[#64748B] leading-tight truncate">
+                    {role}
+                  </p>
+                )}
+                <div className="pt-0.5 space-y-0.5 text-[8.5px] text-[#64748B]">
+                  {phone && (
+                    <div className="flex items-center gap-1 truncate">
+                      <span style={{ color: themeColor }} className="font-bold">
+                        &#9742;
+                      </span>
+                      <span className="truncate">{phone}</span>
+                    </div>
+                  )}
+                  {email && (
+                    <div className="flex items-center gap-1 truncate">
+                      <span style={{ color: themeColor }} className="font-bold">
+                        &#9993;
+                      </span>
+                      <span className="truncate">{email}</span>
+                    </div>
+                  )}
+                  {website && (
+                    <div className="flex items-center gap-1 truncate">
+                      <span style={{ color: themeColor }} className="font-bold">
+                        &#9873;
+                      </span>
+                      <span className="truncate">{website}</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Middle: Details */}
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <h5 className="text-[12px] font-bold text-[#1E293B] leading-tight truncate">
-                {name}
-              </h5>
-              <p className="text-[10px] font-medium text-[#64748B] leading-tight truncate">
-                {role}
-              </p>
-              <div className="pt-0.5 space-y-0.5 text-[8.5px] text-[#64748B]">
-                {phone && (
-                  <div className="flex items-center gap-1 truncate">
-                    <span style={{ color: themeColor }} className="font-bold">
-                      &#9742;
-                    </span>
-                    <span className="truncate">{phone}</span>
+              {/* Right: Company - only rendered if companyLogoUrl or company exists */}
+              {hasCompanySection && (
+                <>
+                  <div className="h-12 w-px bg-slate-200 shrink-0" />
+                  <div className="flex flex-col items-center justify-center text-center shrink-0 w-[72px]">
+                    {companyLogoUrl ? (
+                      <Image
+                        src={companyLogoUrl}
+                        alt={company || "Logo"}
+                        width={28}
+                        height={28}
+                        className="h-7 w-7 object-contain"
+                        unoptimized={companyLogoUrl.startsWith("data:")}
+                      />
+                    ) : null}
+                    {company ? (
+                      <span className="mt-1 text-[8.5px] font-bold text-[#1E293B] leading-tight truncate max-w-full">
+                        {company}
+                      </span>
+                    ) : null}
+                    {tagline && (
+                      <span className="text-[7.5px] text-[#94A3B8] leading-tight truncate max-w-full">
+                        {tagline}
+                      </span>
+                    )}
                   </div>
-                )}
-                {email && (
-                  <div className="flex items-center gap-1 truncate">
-                    <span style={{ color: themeColor }} className="font-bold">
-                      &#9993;
-                    </span>
-                    <span className="truncate">{email}</span>
-                  </div>
-                )}
-                {website && (
-                  <div className="flex items-center gap-1 truncate">
-                    <span style={{ color: themeColor }} className="font-bold">
-                      &#9873;
-                    </span>
-                    <span className="truncate">{website}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Vertical divider */}
-            <div className="h-12 w-px bg-slate-200 shrink-0" />
-
-            {/* Right: Company */}
-            <div className="flex flex-col items-center justify-center text-center shrink-0 w-[72px]">
-              <svg width="22" height="22" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12 8H26C28.2091 8 30 9.79086 30 12V20C30 22.2091 28.2091 24 26 24H22"
-                  stroke={themeColor}
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M26 30H12C9.79086 30 8 28.2091 8 26V18C8 15.7909 9.79086 14 12 14H16"
-                  stroke={themeColor}
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span className="mt-1 text-[8.5px] font-bold text-[#1E293B] leading-tight truncate max-w-full">
-                {company || "Company"}
-              </span>
-              {tagline && (
-                <span className="text-[7.5px] text-[#94A3B8] leading-tight truncate max-w-full">
-                  {tagline}
-                </span>
+                </>
               )}
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Middle Info Row */}

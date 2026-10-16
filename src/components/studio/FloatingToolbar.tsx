@@ -35,6 +35,9 @@ interface FloatingToolbarProps {
   onToggleLock?: () => void;
   onEditDetails?: () => void;
   elementId?: string | null;
+  x?: number;
+  y?: number;
+  h?: number;
   zoom?: number;
   anchorRef?: RefObject<HTMLElement | null>;
   anchorEl?: HTMLElement | null;
@@ -64,6 +67,10 @@ export default function FloatingToolbar({
   onToggleLock,
   onEditDetails,
   elementId,
+  x,
+  y,
+  h,
+  zoom,
   anchorRef,
   anchorEl,
 }: FloatingToolbarProps) {
@@ -249,7 +256,7 @@ export default function FloatingToolbar({
       window.removeEventListener("scroll", handleThrottledUpdate, true);
       window.removeEventListener("resize", handleThrottledUpdate);
     };
-  }, [updatePosition]);
+  }, [updatePosition, x, y, width, h, zoom]);
 
   const [prevUrl, setPrevUrl] = useState(url);
   const [inputUrl, setInputUrl] = useState(url || "");
@@ -287,6 +294,8 @@ export default function FloatingToolbar({
               pointerEvents: coords.isVisible ? "auto" : "none",
             }}
             className="flex items-center bg-[#1E293B] text-white px-2 py-1 rounded-xl shadow-xl select-none border border-slate-700/60 max-w-[95vw] overflow-visible transition-opacity duration-75"
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
           >
             {/* TEXT SPECIFIC: BOLD & SIZE */}

@@ -117,6 +117,11 @@ export default function FreeElementView({
     }
   }
 
+  function handleClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    onSelect(element.id, e);
+  }
+
   function handleDoubleClick(e: React.MouseEvent) {
     if (element.type === "text" && !element.locked) {
       e.stopPropagation();
@@ -355,6 +360,7 @@ export default function FreeElementView({
       id={`free-el-${element.id}`}
       data-element-id={element.id}
       onPointerDown={handlePointerDown}
+      onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       style={{
         position: "absolute",
@@ -410,6 +416,9 @@ export default function FreeElementView({
               onPointerDown={(e) => {
                 e.stopPropagation();
                 onStartResize(element.id, h, e);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
               }}
               style={{
                 position: "absolute",

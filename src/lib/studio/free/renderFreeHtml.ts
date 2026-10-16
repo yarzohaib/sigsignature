@@ -30,15 +30,69 @@ interface RowBand {
   elements: FreeElement[];
 }
 
+interface ColumnCluster {
+  x: number;
+  w: number;
+  elements: FreeElement[];
+}
+
+/**
+ * Clusters elements within a horizontal band into non-overlapping vertical columns.
+ * Elements whose horizontal spans overlap are grouped into the same column so they
+ * can be stacked vertically in a nested table without expanding the outer row.
+ */
+function partitionIntoColumns(elements: FreeElement[]): ColumnCluster[] {
+  if (elements.length === 0) return [];
+
+  // Sort by x ascending, then y ascending
+  const sorted = [...elements].sort((a, b) => {
+    if (a.x !== b.x) return a.x - b.x;
+    return a.y - b.y;
+  });
+
+  const columns: ColumnCluster[] = [];
+
+  for (const el of sorted) {
+    const lastCol = columns[columns.length - 1];
+    if (!lastCol) {
+      columns.push({
+        x: el.x,
+        w: el.w,
+        elements: [el],
+      });
+      continue;
+    }
+
+    const lastColRight = lastCol.x + lastCol.w;
+    if (el.x < lastColRight) {
+      lastCol.elements.push(el);
+      const newRight = Math.max(lastColRight, el.x + el.w);
+      const newLeft = Math.min(lastCol.x, el.x);
+      lastCol.x = newLeft;
+      lastCol.w = newRight - newLeft;
+    } else {
+      columns.push({
+        x: el.x,
+        w: el.w,
+        elements: [el],
+      });
+    }
+  }
+
+  return columns;
+}
+
 /**
  * Generates email-safe nested table markup from free canvas elements.
- * Groups elements into horizontal row bands, inserting spacer cells and spacer rows.
+ * Groups elements into horizontal bands and vertical column clusters.
+ * Guaranteed to produce row cell widths that sum exactly to canvasWidth.
  */
 export function generateFreeHtml(
   data: StudioSignatureData,
   options?: FreeRenderOptions
 ): string {
   const canvasWidth = data.canvas?.width || 600;
+  const canvasHeight = data.canvas?.height || 200;
   const elements = data.elements || [];
 
   const themeKey = data.design?.theme || "corporate";
@@ -47,9 +101,14 @@ export function generateFreeHtml(
   const shape = data.design?.shape || "rounded";
   const buttonStyle = data.design?.buttonStyle || "solid";
   const fontStack = resolveEmailFont(data.fontFamily || "Inter");
+  const cardRadius = getShapeBorderRadius(shape, "card");
+  const borderCss =
+    theme.border && theme.border !== "transparent"
+      ? `border:1px solid ${theme.border};`
+      : "border:none;";
 
   if (elements.length === 0) {
-    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${canvasWidth}" style="width:${canvasWidth}px;max-width:${canvasWidth}px;border-collapse:collapse;background-color:${theme.bg};">
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${canvasWidth}" style="width:${canvasWidth}px;max-width:${canvasWidth}px;border-collapse:separate;border-spacing:0;background-color:${theme.bg};${borderCss}border-radius:${cardRadius};">
   <tr>
     <td style="padding:16px;text-align:center;font-family:${fontStack};font-size:13px;color:${theme.muted};">
       Email Signature
@@ -80,21 +139,16 @@ export function generateFreeHtml(
     }
   }
 
-  let textElementCount = 0;
-
   function renderElementHtml(el: FreeElement): string {
     if (el.type === "text") {
       const textEl = el as FreeTextElement;
-      const isFirstText = textElementCount === 0;
-      textElementCount++;
-
       const fontSize = textEl.size === "lg" ? 16 : textEl.size === "sm" ? 12 : 14;
       const lineHeight = textEl.size === "lg" ? 22 : textEl.size === "sm" ? 16 : 18;
-      const color = isFirstText ? theme.text : textEl.bold ? theme.text : theme.muted;
+      const color = textEl.bold ? theme.text : theme.muted;
       const fontWeight = textEl.bold ? "bold" : "normal";
       const align = textEl.align || "left";
 
-      return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;margin:0;padding:0;word-break:break-word;">
+      return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
   ${escapeHtml(textEl.text || "")}
 </div>`;
     }
@@ -113,7 +167,6 @@ export function generateFreeHtml(
       }
 
       if (!imgSrc) {
-        // Empty placeholder in preview or blank space
         if (options?.preview) {
           return `<div style="width:${el.w}px;height:${el.h}px;background-color:#F1F5F9;border-radius:${getShapeBorderRadius(
             shape,
@@ -124,9 +177,10 @@ export function generateFreeHtml(
       }
 
       const imgRadius = getShapeBorderRadius(shape, "image");
+      const fitMode = el.type === "logo" ? "contain" : "cover";
       const imgTag = `<img src="${escapeHtml(
         imgSrc
-      )}" alt="${el.type}" width="${el.w}" height="${el.h}" style="display:block;border:0;outline:none;text-decoration:none;width:${el.w}px;height:${el.h}px;border-radius:${imgRadius};object-fit:cover;" />`;
+      )}" alt="${el.type}" width="${el.w}" height="${el.h}" style="display:block;border:0;outline:none;text-decoration:none;width:${el.w}px;height:${el.h}px;border-radius:${imgRadius};object-fit:${fitMode};" />`;
 
       const link = mediaEl.linkUrl?.trim()
         ? safeUrl(normalizeWebsite(mediaEl.linkUrl))
@@ -189,48 +243,81 @@ export function generateFreeHtml(
     return "";
   }
 
-  // 3. Build HTML table bands
+  // 3. Build HTML table bands with column clustering
   const bandRows: string[] = [];
 
   for (let i = 0; i < bands.length; i++) {
     const band = bands[i];
-
-    // Spacer row between bands
-    if (i > 0) {
-      const gap = Math.max(0, band.top - bands[i - 1].bottom);
-      if (gap > 0) {
-        bandRows.push(`  <tr>
-    <td height="${gap}" style="font-size:0;line-height:0;height:${gap}px;mso-line-height-rule:exactly;">&nbsp;</td>
-  </tr>`);
-      }
-    }
-
-    // Sort elements in band by x
-    band.elements.sort((a, b) => a.x - b.x);
+    const columns = partitionIntoColumns(band.elements);
 
     let currX = 0;
     const bandCells: string[] = [];
 
-    for (const el of band.elements) {
-      // Horizontal spacer before element
-      if (el.x > currX) {
-        const spacerW = el.x - currX;
+    for (const col of columns) {
+      // Horizontal spacer before column
+      if (col.x > currX) {
+        const spacerW = col.x - currX;
         bandCells.push(`        <td width="${spacerW}" style="width:${spacerW}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>`);
-        currX = el.x;
+        currX = col.x;
       }
 
-      const padTop = Math.max(0, el.y - band.top);
-      const padTopStyle = padTop > 0 ? `padding-top:${padTop}px;` : "";
-      const content = renderElementHtml(el);
+      // Sort elements within this column by y ascending
+      col.elements.sort((a, b) => a.y - b.y);
 
-      bandCells.push(`        <td width="${el.w}" valign="top" style="width:${el.w}px;vertical-align:top;${padTopStyle}padding-bottom:0;padding-left:0;padding-right:0;">
+      if (col.elements.length === 1) {
+        const el = col.elements[0];
+        const padTop = Math.max(0, el.y - band.top);
+        const padLeft = Math.max(0, el.x - col.x);
+        const padStyles: string[] = [];
+        if (padTop > 0) padStyles.push(`padding-top:${padTop}px`);
+        if (padLeft > 0) padStyles.push(`padding-left:${padLeft}px`);
+        const padStyleStr = padStyles.length > 0 ? `${padStyles.join(";")};` : "";
+        const content = renderElementHtml(el);
+
+        bandCells.push(`        <td width="${col.w}" valign="top" style="width:${col.w}px;vertical-align:top;${padStyleStr}padding-bottom:0;padding-right:0;margin:0;">
           ${content}
         </td>`);
+      } else {
+        // Multiple vertically stacked elements inside this column
+        const firstEl = col.elements[0];
+        const colPadTop = Math.max(0, firstEl.y - band.top);
+        const colPadTopStr = colPadTop > 0 ? `padding-top:${colPadTop}px;` : "";
 
-      currX = el.x + el.w;
+        const nestedRows: string[] = [];
+        for (let j = 0; j < col.elements.length; j++) {
+          const el = col.elements[j];
+          if (j > 0) {
+            const prevEl = col.elements[j - 1];
+            const gapY = Math.max(0, el.y - (prevEl.y + prevEl.h));
+            if (gapY > 0) {
+              nestedRows.push(`            <tr>
+              <td height="${gapY}" style="height:${gapY}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
+            </tr>`);
+            }
+          }
+
+          const padLeft = Math.max(0, el.x - col.x);
+          const padLeftStr = padLeft > 0 ? `padding-left:${padLeft}px;` : "";
+          const content = renderElementHtml(el);
+
+          nestedRows.push(`            <tr>
+              <td valign="top" style="vertical-align:top;${padLeftStr}padding-top:0;padding-bottom:0;padding-right:0;margin:0;">
+                ${content}
+              </td>
+            </tr>`);
+        }
+
+        bandCells.push(`        <td width="${col.w}" valign="top" style="width:${col.w}px;vertical-align:top;${colPadTopStr}padding-bottom:0;padding-left:0;padding-right:0;margin:0;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${col.w}" style="width:${col.w}px;border-collapse:collapse;">
+${nestedRows.join("\n")}
+          </table>
+        </td>`);
+      }
+
+      currX = col.x + col.w;
     }
 
-    // Trailing spacer after last element in band
+    // Trailing spacer after last column in band
     if (currX < canvasWidth) {
       const trailW = canvasWidth - currX;
       bandCells.push(`        <td width="${trailW}" style="width:${trailW}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>`);
@@ -247,8 +334,42 @@ ${bandCells.join("\n")}
   </tr>`);
   }
 
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${canvasWidth}" style="width:${canvasWidth}px;max-width:${canvasWidth}px;border-collapse:collapse;background-color:${theme.bg};">
-${bandRows.join("\n")}
+  // 4. Assemble outer table with canvas height spacers and pill/border styling
+  const outerRows: string[] = [];
+
+  // Top spacer before first band
+  const topGap = Math.max(0, bands[0].top);
+  if (topGap > 0) {
+    outerRows.push(`  <tr>
+    <td height="${topGap}" style="height:${topGap}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
+  </tr>`);
+  }
+
+  for (let i = 0; i < bands.length; i++) {
+    // Spacer row between bands
+    if (i > 0) {
+      const gap = Math.max(0, bands[i].top - bands[i - 1].bottom);
+      if (gap > 0) {
+        outerRows.push(`  <tr>
+    <td height="${gap}" style="height:${gap}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
+  </tr>`);
+      }
+    }
+
+    outerRows.push(bandRows[i]);
+  }
+
+  // Bottom spacer after last band
+  const lastBandBottom = bands[bands.length - 1].bottom;
+  const bottomGap = Math.max(0, canvasHeight - lastBandBottom);
+  if (bottomGap > 0) {
+    outerRows.push(`  <tr>
+    <td height="${bottomGap}" style="height:${bottomGap}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td>
+  </tr>`);
+  }
+
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${canvasWidth}" style="width:${canvasWidth}px;max-width:${canvasWidth}px;border-collapse:separate;border-spacing:0;background-color:${theme.bg};${borderCss}border-radius:${cardRadius};">
+${outerRows.join("\n")}
 </table>`;
 }
 
