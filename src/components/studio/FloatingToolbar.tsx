@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   useCallback,
+  useMemo,
   useSyncExternalStore,
   ChangeEvent,
   RefObject,
@@ -12,6 +13,8 @@ import {
 import { createPortal } from "react-dom";
 
 export type CanvasAlignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
+
+export type TeamFieldBind = "name" | "jobTitle" | "email" | "phone" | "photo";
 
 interface FloatingToolbarProps {
   elementType?: "text" | "image" | "logo" | "banner" | "divider" | "cta" | "social";
@@ -41,6 +44,8 @@ interface FloatingToolbarProps {
   zoom?: number;
   anchorRef?: RefObject<HTMLElement | null>;
   anchorEl?: HTMLElement | null;
+  bind?: TeamFieldBind;
+  onBindChange?: (bind: TeamFieldBind | null) => void;
 }
 
 const emptySubscribe = () => () => {};
@@ -73,6 +78,8 @@ export default function FloatingToolbar({
   zoom,
   anchorRef,
   anchorEl,
+  bind,
+  onBindChange,
 }: FloatingToolbarProps) {
   const mounted = useSyncExternalStore(
     emptySubscribe,
@@ -80,7 +87,7 @@ export default function FloatingToolbar({
     () => false
   );
   const [openMenu, setOpenMenu] = useState<
-    "align" | "link" | "size" | "thickness" | null
+    "align" | "link" | "size" | "thickness" | "teamField" | null
   >(null);
 
   const sentinelRef = useRef<HTMLSpanElement>(null);
@@ -273,6 +280,45 @@ export default function FloatingToolbar({
     elementType === "banner" ||
     elementType === "cta";
 
+  const isTeamFieldSupported = elementType === "text" || elementType === "image";
+
+  const teamFieldOptions = useMemo(() => {
+    if (elementType === "text") {
+      return [
+        { label: "None", value: null },
+        { label: "Name", value: "name" as const },
+        { label: "Job title", value: "jobTitle" as const },
+        { label: "Email", value: "email" as const },
+        { label: "Phone", value: "phone" as const },
+      ];
+    }
+    if (elementType === "image") {
+      return [
+        { label: "None", value: null },
+        { label: "Photo", value: "photo" as const },
+      ];
+    }
+    return [];
+  }, [elementType]);
+
+  const currentBindLabel = useMemo(() => {
+    if (!bind) return null;
+    switch (bind) {
+      case "name":
+        return "Name";
+      case "jobTitle":
+        return "Job title";
+      case "email":
+        return "Email";
+      case "phone":
+        return "Phone";
+      case "photo":
+        return "Photo";
+      default:
+        return null;
+    }
+  }, [bind]);
+
   return (
     <>
       <span ref={sentinelRef} className="hidden" aria-hidden="true" />
@@ -455,6 +501,91 @@ export default function FloatingToolbar({
                   >
                     +
                   </button>
+                </div>
+
+                <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
+              </>
+            )}
+
+            {/* TEAM FIELD (Text & Image elements) */}
+            {isTeamFieldSupported && (
+              <>
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-label="Link to team field"
+                    title={currentBindLabel ? `Linked to: ${currentBindLabel}` : "Link to team field"}
+                    onClick={() =>
+                      setOpenMenu((prev) => (prev === "teamField" ? null : "teamField"))
+                    }
+                    className={`flex h-7 px-2 items-center gap-1.5 rounded text-xs font-semibold transition focus:outline-none focus:ring-1 focus:ring-blue-400 ${
+                      currentBindLabel
+                        ? "bg-[#245FD4]/30 text-blue-200 border border-[#245FD4]/50"
+                        : "text-slate-200 hover:text-white hover:bg-slate-700/60"
+                    }`}
+                  >
+                    <svg
+                      className="h-3.5 w-3.5 text-blue-400 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span className="text-[11px] font-medium whitespace-nowrap">
+                      {currentBindLabel ? currentBindLabel : "Team field"}
+                    </span>
+                    <svg
+                      className="h-3 w-3 text-slate-400 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  {openMenu === "teamField" && (
+                    <div className="absolute top-full mt-2 left-0 z-50 flex flex-col min-w-[130px] rounded-lg bg-[#0F172A] p-1 shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100">
+                      <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800 mb-1">
+                        Team field
+                      </div>
+                      {teamFieldOptions.map((opt) => {
+                        const isCurrent = (bind || null) === opt.value;
+                        return (
+                          <button
+                            key={opt.label}
+                            type="button"
+                            onClick={() => {
+                              onBindChange?.(opt.value);
+                              setOpenMenu(null);
+                            }}
+                            className={`flex items-center justify-between rounded px-2.5 py-1.5 text-xs text-left transition ${
+                              isCurrent
+                                ? "bg-[#245FD4] text-white font-bold"
+                                : "text-slate-200 hover:bg-slate-800 hover:text-white"
+                            }`}
+                          >
+                            <span>{opt.label}</span>
+                            {isCurrent && (
+                              <svg
+                                className="h-3 w-3 text-white"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />

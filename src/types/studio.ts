@@ -75,12 +75,14 @@ export type FreeTextElement = FreeBase & {
   size: "sm" | "md" | "lg";
   bold: boolean;
   align: "left" | "center" | "right";
+  bind?: "name" | "jobTitle" | "email" | "phone";
 };
 
 export type FreeImageElement = FreeBase & {
   type: "image";
   url: string;
   linkUrl?: string;
+  bind?: "photo";
 };
 
 export type FreeLogoElement = FreeBase & {
@@ -143,6 +145,9 @@ export interface StudioSignatureData {
     twitter: string;
     facebook: string;
     instagram?: string;
+    github?: string;
+    youtube?: string;
+    website?: string;
   };
   optional: {
     address?: string;

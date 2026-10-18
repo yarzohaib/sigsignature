@@ -877,3 +877,399 @@ export async function duplicateSignature(id: string): Promise<BackendSavedSignat
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Team Signatures API
+// ---------------------------------------------------------------------------
+
+export type TeamMemberStatus = "draft" | "sent" | "accepted" | "expired" | "revoked";
+
+export type BackendSocialPlatform =
+  | "linkedin"
+  | "x"
+  | "facebook"
+  | "instagram"
+  | "github"
+  | "youtube"
+  | "website";
+
+export interface BackendTeamMemberSocial {
+  platform: BackendSocialPlatform | string;
+  url: string;
+}
+
+export interface BackendTeamMember {
+  id: string;
+  teamId?: string;
+  name: string;
+  email: string;
+  jobTitle: string;
+  phone: string;
+  photoUrl: string;
+  socials?: BackendTeamMemberSocial[];
+  status: TeamMemberStatus;
+  sentAt: string | null;
+  acceptedAt: string | null;
+  tokenExpiresAt: string | null;
+  sendCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BackendTeam {
+  id: string;
+  ownerId?: string;
+  name: string;
+  kind: "template" | "studio";
+  templateId: string;
+  templateVersion: number;
+  data: unknown;
+  memberLimit: number;
+  createdAt: string;
+  updatedAt: string;
+  members: BackendTeamMember[];
+}
+
+export interface CreateTeamPayload {
+  signatureId: string;
+  name?: string;
+}
+
+export interface UpdateTeamPayload {
+  name?: string;
+  data?: unknown;
+}
+
+export interface AddTeamMemberPayload {
+  name: string;
+  email: string;
+  jobTitle?: string;
+  phone?: string;
+  photoUrl?: string;
+  socials?: BackendTeamMemberSocial[];
+}
+
+export interface UpdateTeamMemberPayload {
+  name?: string;
+  email?: string;
+  jobTitle?: string;
+  phone?: string;
+  photoUrl?: string;
+  socials?: BackendTeamMemberSocial[];
+}
+
+export interface SendTeamMemberResult extends BackendTeamMember {
+  devInviteUrl?: string;
+  suppressed?: boolean;
+  delivered?: boolean;
+}
+
+/**
+ * Fetch the authenticated user's team signature and members.
+ * Returns null if the user does not have a team.
+ */
+export async function getTeam(): Promise<BackendTeam | null> {
+  const url = `${API_BASE_URL}/api/v1/team`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    return await handleSignatureApiResponse<BackendTeam | null>(
+      response,
+      "Failed to load team signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Create a new team signature snapshot from an existing signature.
+ */
+export async function createTeamFromSignature(
+  payload: CreateTeamPayload
+): Promise<BackendTeam> {
+  const url = `${API_BASE_URL}/api/v1/team`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        signatureId: payload.signatureId,
+        ...(payload.name ? { name: payload.name.trim() } : {}),
+      }),
+    });
+
+    return await handleSignatureApiResponse<BackendTeam>(
+      response,
+      "Failed to create team signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Update the team's name and/or signature design data.
+ */
+export async function updateTeam(
+  patch: UpdateTeamPayload
+): Promise<BackendTeam> {
+  const url = `${API_BASE_URL}/api/v1/team`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        ...(patch.name !== undefined ? { name: patch.name.trim() } : {}),
+        ...(patch.data !== undefined ? { data: patch.data } : {}),
+      }),
+    });
+
+    return await handleSignatureApiResponse<BackendTeam>(
+      response,
+      "Failed to update team signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Delete the team signature and all its members.
+ */
+export async function deleteTeam(): Promise<void> {
+  const url = `${API_BASE_URL}/api/v1/team`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    await handleSignatureApiResponse<void>(
+      response,
+      "Failed to delete team signature"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Add a new team member.
+ */
+export async function addTeamMember(
+  input: AddTeamMemberPayload
+): Promise<BackendTeamMember> {
+  const url = `${API_BASE_URL}/api/v1/team/members`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        name: input.name.trim(),
+        email: input.email.trim().toLowerCase(),
+        jobTitle: input.jobTitle !== undefined ? input.jobTitle.trim() : "",
+        phone: input.phone !== undefined ? input.phone.trim() : "",
+        photoUrl: input.photoUrl !== undefined ? input.photoUrl.trim() : "",
+        ...(input.socials !== undefined ? { socials: input.socials } : {}),
+      }),
+    });
+
+    return await handleSignatureApiResponse<BackendTeamMember>(
+      response,
+      "Failed to add team member"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Update an existing team member's details.
+ */
+export async function updateTeamMember(
+  id: string,
+  patch: UpdateTeamMemberPayload
+): Promise<BackendTeamMember> {
+  const url = `${API_BASE_URL}/api/v1/team/members/${encodeURIComponent(id)}`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        ...(patch.name !== undefined ? { name: patch.name.trim() } : {}),
+        ...(patch.email !== undefined ? { email: patch.email.trim().toLowerCase() } : {}),
+        ...(patch.jobTitle !== undefined ? { jobTitle: patch.jobTitle.trim() } : {}),
+        ...(patch.phone !== undefined ? { phone: patch.phone.trim() } : {}),
+        ...(patch.photoUrl !== undefined ? { photoUrl: patch.photoUrl.trim() } : {}),
+        ...(patch.socials !== undefined ? { socials: patch.socials } : {}),
+      }),
+    });
+
+    return await handleSignatureApiResponse<BackendTeamMember>(
+      response,
+      "Failed to update team member"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Remove a member from the team.
+ */
+export async function removeTeamMember(id: string): Promise<void> {
+  const url = `${API_BASE_URL}/api/v1/team/members/${encodeURIComponent(id)}`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    await handleSignatureApiResponse<void>(
+      response,
+      "Failed to remove team member"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Send or resend an email invite to a team member.
+ * Returns the member plus optional devInviteUrl and suppressed flags.
+ */
+export async function sendTeamMember(id: string): Promise<SendTeamMemberResult> {
+  const url = `${API_BASE_URL}/api/v1/team/members/${encodeURIComponent(id)}/send`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to send invite email (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    const member = (result?.data ?? {}) as BackendTeamMember;
+    return {
+      ...member,
+      devInviteUrl: result?.devInviteUrl || (result?.data?.devInviteUrl as string | undefined),
+      suppressed: Boolean(result?.suppressed),
+      delivered: Boolean(result?.delivered),
+    };
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Revoke an active invite link for a team member.
+ */
+export async function revokeTeamMember(id: string): Promise<BackendTeamMember> {
+  const url = `${API_BASE_URL}/api/v1/team/members/${encodeURIComponent(id)}/revoke`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    return await handleSignatureApiResponse<BackendTeamMember>(
+      response,
+      "Failed to revoke invite"
+    );
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}

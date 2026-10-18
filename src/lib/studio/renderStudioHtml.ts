@@ -59,27 +59,32 @@ function renderSocialLinks(
   isPreview = false
 ): string {
   const networks: {
-    key: keyof StudioSignatureData["socials"];
+    key: string;
     label: string;
     network: SocialNetwork;
     defaultUrl: string;
   }[] = [
     { key: "linkedin", label: "LinkedIn", network: "linkedin", defaultUrl: "https://www.linkedin.com" },
-    { key: "twitter", label: "Twitter", network: "twitter", defaultUrl: "https://twitter.com" },
+    { key: "twitter", label: "X", network: "twitter", defaultUrl: "https://twitter.com" },
     { key: "facebook", label: "Facebook", network: "facebook", defaultUrl: "https://www.facebook.com" },
     { key: "instagram", label: "Instagram", network: "instagram", defaultUrl: "https://www.instagram.com" },
+    { key: "github", label: "GitHub", network: "github", defaultUrl: "https://github.com" },
+    { key: "youtube", label: "YouTube", network: "youtube", defaultUrl: "https://youtube.com" },
+    { key: "website", label: "Website", network: "website", defaultUrl: "https://website.com" },
   ];
 
   const style = data.socialIconsStyle || "filled";
 
-  const activeNetworks = networks.filter((n) => Boolean(data.socials?.[n.key]?.trim()));
-  const targetNetworks = activeNetworks.length > 0 ? activeNetworks : networks;
+  const activeNetworks = networks.filter((n) =>
+    Boolean((data.socials as Record<string, string | undefined>)?.[n.key]?.trim())
+  );
+  const targetNetworks = activeNetworks.length > 0 ? activeNetworks : networks.slice(0, 4);
 
   const cells: string[] = [];
 
   for (let i = 0; i < targetNetworks.length; i++) {
     const { key, label, network, defaultUrl } = targetNetworks[i];
-    const userUrl = data.socials?.[key]?.trim();
+    const userUrl = (data.socials as Record<string, string | undefined>)?.[key]?.trim();
     const rawUrl = userUrl || (activeNetworks.length === 0 ? defaultUrl : "");
     if (!rawUrl) continue;
     const href = safeUrl(normalizeWebsite(rawUrl));

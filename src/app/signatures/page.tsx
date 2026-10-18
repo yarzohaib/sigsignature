@@ -8,7 +8,16 @@ import SignaturesHeader from "@/components/signatures/SignaturesHeader";
 import SignatureCard from "@/components/signatures/SignatureCard";
 import DeleteSignatureModal from "@/components/signatures/DeleteSignatureModal";
 import EmptySignaturesState from "@/components/signatures/EmptySignaturesState";
-import { UserProfile, getCurrentUser, logoutUser, isSignatureLimitError } from "@/app/lib/api";
+import Link from "next/link";
+import {
+  UserProfile,
+  getCurrentUser,
+  logoutUser,
+  isSignatureLimitError,
+  getTeam,
+  createTeamFromSignature,
+  updateTeam,
+} from "@/app/lib/api";
 import {
   clearAuthSession,
   getStoredRefreshToken,
@@ -16,6 +25,9 @@ import {
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { SavedSignature } from "@/types/signature";
+import type { StudioSignatureData } from "@/types/studio";
+import { autoBindStudioData } from "@/lib/team/autoBind";
+import { isStudioNameOrEmailUnlinked } from "@/lib/team/boundFields";
 import {
   renderSavedSignatureHtml,
   renderSavedSignaturePlainText,
@@ -37,6 +49,13 @@ export default function MySignaturesPage() {
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Copy to team state
+  const [copyToTeamSig, setCopyToTeamSig] = useState<SavedSignature | null>(null);
+  const [hasTeamAlready, setHasTeamAlready] = useState<boolean | null>(null);
+  const [isCheckingTeam, setIsCheckingTeam] = useState(false);
+  const [isCopyingToTeam, setIsCopyingToTeam] = useState(false);
+  const [copyToTeamError, setCopyToTeamError] = useState<string | null>(null);
 
   const loadSignatures = useCallback(async () => {
     try {
@@ -174,6 +193,53 @@ export default function MySignaturesPage() {
     }
   }
 
+  async function handleStartCopyToTeam(signature: SavedSignature) {
+    setCopyToTeamSig(signature);
+    setCopyToTeamError(null);
+    setIsCheckingTeam(true);
+    setHasTeamAlready(null);
+    try {
+      const existingTeam = await getTeam();
+      setHasTeamAlready(existingTeam !== null);
+    } catch {
+      setHasTeamAlready(false);
+    } finally {
+      setIsCheckingTeam(false);
+    }
+  }
+
+  async function handleConfirmCopyToTeam() {
+    if (!copyToTeamSig) return;
+    setIsCopyingToTeam(true);
+    setCopyToTeamError(null);
+    try {
+      const createdTeam = await createTeamFromSignature({
+        signatureId: copyToTeamSig.id,
+        name: copyToTeamSig.name,
+      });
+
+      let hasUnlinkedImportant = false;
+      if (createdTeam.kind === "studio") {
+        const boundData = autoBindStudioData(createdTeam.data as StudioSignatureData);
+        await updateTeam({ data: boundData });
+        hasUnlinkedImportant = isStudioNameOrEmailUnlinked(boundData);
+      }
+
+      setCopyToTeamSig(null);
+      if (hasUnlinkedImportant) {
+        router.push("/team-signatures?unlinked=true");
+      } else {
+        router.push("/team-signatures");
+      }
+    } catch (err: unknown) {
+      console.error("Failed to copy to team:", err);
+      const msg = err instanceof Error ? err.message : "Failed to copy to Team Signatures.";
+      setCopyToTeamError(msg);
+    } finally {
+      setIsCopyingToTeam(false);
+    }
+  }
+
   function handleCreateNew() {
     router.push("/templates");
   }
@@ -264,6 +330,7 @@ export default function MySignaturesPage() {
                     onDuplicate={handleDuplicate}
                     onExport={handleExport}
                     onDelete={handleStartDelete}
+                    onCopyToTeam={handleStartCopyToTeam}
                   />
                 ))}
               </div>
@@ -281,6 +348,113 @@ export default function MySignaturesPage() {
         onClose={() => setDeletingSignature(null)}
         onConfirm={handleConfirmDelete}
       />
+
+      {/* Copy to Team Confirmation / Conflict Modal */}
+      {copyToTeamSig && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl transition">
+            {isCheckingTeam ? (
+              <div className="flex flex-col items-center justify-center py-8 gap-3">
+                <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
+                <p className="text-xs text-[#64748B]">Checking team status...</p>
+              </div>
+            ) : hasTeamAlready ? (
+              <div>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#0B1A3D]">
+                      Team signature already exists
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-[#64748B] leading-relaxed">
+                      You already have a team signature. Delete it first to use a different design.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex items-center justify-end gap-3 pt-3 border-t border-[#F1F5F9]">
+                  <button
+                    type="button"
+                    onClick={() => setCopyToTeamSig(null)}
+                    className="rounded-xl border border-[#CBD5E1] bg-white px-4 py-2 text-xs sm:text-sm font-medium text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    Close
+                  </button>
+                  <Link
+                    href="/team-signatures"
+                    className="rounded-xl bg-[#245FD4] hover:bg-[#1D4ED8] px-4 py-2 text-xs sm:text-sm font-semibold text-white transition shadow-xs"
+                  >
+                    Go to Team Signatures
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#245FD4]">
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[#0B1A3D]">
+                      Use &quot;{copyToTeamSig.name}&quot; as your team signature?
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-[#64748B] leading-relaxed">
+                      This copies the design to Team Signatures. Your original stays in My Signatures.
+                    </p>
+                  </div>
+                </div>
+
+                {copyToTeamError && (
+                  <div className="mt-3 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700">
+                    {copyToTeamError}
+                  </div>
+                )}
+
+                <div className="mt-6 flex items-center justify-end gap-3 pt-3 border-t border-[#F1F5F9]">
+                  <button
+                    type="button"
+                    onClick={() => setCopyToTeamSig(null)}
+                    disabled={isCopyingToTeam}
+                    className="rounded-xl border border-[#CBD5E1] bg-white px-4 py-2 text-xs sm:text-sm font-medium text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmCopyToTeam}
+                    disabled={isCopyingToTeam}
+                    className="flex items-center gap-2 rounded-xl bg-[#245FD4] hover:bg-[#1D4ED8] px-4 py-2 text-xs sm:text-sm font-semibold text-white transition shadow-xs disabled:opacity-50 cursor-pointer"
+                  >
+                    {isCopyingToTeam ? (
+                      <>
+                        <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        <span>Copying...</span>
+                      </>
+                    ) : (
+                      <span>Use as team signature</span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Toast Feedback */}
       {toastMessage && (

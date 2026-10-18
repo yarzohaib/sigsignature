@@ -18,6 +18,9 @@ export interface TemplateSignatureData {
     twitter: string;
     facebook: string;
     instagram?: string;
+    github?: string;
+    youtube?: string;
+    website?: string;
   };
   optional: {
     address?: string;

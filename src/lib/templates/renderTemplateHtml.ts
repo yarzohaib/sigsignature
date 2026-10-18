@@ -7,6 +7,7 @@ import {
   telHref,
   resolveEmailFont,
   emailIconUrl,
+  SocialNetwork,
 } from "@/lib/email-core";
 
 /**
@@ -18,19 +19,22 @@ function renderSocialLinks(
   fontStack: string
 ): string {
   const networks: Array<{
-    key: keyof TemplateSignatureData["socials"];
+    key: string;
     label: string;
-    network: "linkedin" | "twitter" | "facebook" | "instagram";
+    network: SocialNetwork;
   }> = [
     { key: "linkedin", label: "LinkedIn", network: "linkedin" },
     { key: "twitter", label: "Twitter", network: "twitter" },
     { key: "facebook", label: "Facebook", network: "facebook" },
     { key: "instagram", label: "Instagram", network: "instagram" },
+    { key: "github", label: "GitHub", network: "github" },
+    { key: "youtube", label: "YouTube", network: "youtube" },
+    { key: "website", label: "Website", network: "website" },
   ];
 
   const items = networks
     .map(({ key, label, network }) => {
-      const rawUrl = data.socials[key];
+      const rawUrl = (data.socials as Record<string, string | undefined>)?.[key];
       if (!rawUrl || !rawUrl.trim()) return "";
       const url = safeUrl(normalizeWebsite(rawUrl));
       if (!url) return "";

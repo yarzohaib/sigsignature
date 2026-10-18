@@ -10,10 +10,11 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Protect /dashboard, /signatures, /templates, /pricing, /design-studio and nested routes
+  // Protect /dashboard, /signatures, /team-signatures, /templates, /pricing, /design-studio and nested routes
   if (
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/signatures") ||
+    pathname.startsWith("/team-signatures") ||
     pathname.startsWith("/templates") ||
     pathname.startsWith("/pricing") ||
     pathname.startsWith("/design-studio")
@@ -37,6 +38,8 @@ export const config = {
   matcher: [
     "/dashboard/:path*",
     "/signatures/:path*",
+    "/team-signatures/:path*",
+    "/team-signatures",
     "/templates/:path*",
     "/pricing/:path*",
     "/design-studio/:path*",

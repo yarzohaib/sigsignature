@@ -58,7 +58,7 @@ import PremiumLockedModal from "@/components/studio/PremiumLockedModal";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
-import FloatingToolbar, { CanvasAlignment } from "@/components/studio/FloatingToolbar";
+import FloatingToolbar, { CanvasAlignment, TeamFieldBind } from "@/components/studio/FloatingToolbar";
 import EditDetailsModal from "@/components/studio/EditDetailsModal";
 import FreeCanvas from "@/components/studio/FreeCanvas";
 
@@ -128,6 +128,7 @@ function DesignStudioContent() {
     socials: true,
     themes: true,
     layout: true,
+    teamFields: true,
     buttons: true,
   });
 
@@ -1778,6 +1779,119 @@ function DesignStudioContent() {
               )}
             </div>
 
+            {/* TEAM FIELDS SECTION */}
+            <div className="pb-2">
+              <button
+                type="button"
+                onClick={() => toggleSection("teamFields")}
+                aria-expanded={openSections.teamFields}
+                className="flex w-full items-center justify-between text-left group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Team fields
+                  </span>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                    openSections.teamFields ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.teamFields && (
+                <div className="mt-3.5">
+                  <p
+                    className="text-xs text-slate-500 mb-2.5 leading-relaxed"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    Linked fields are replaced with each team member&apos;s own details.
+                  </p>
+                  <div className="space-y-1.5" role="list" aria-label="Team fields">
+                    {(
+                      [
+                        { key: "name", label: "Name" },
+                        { key: "jobTitle", label: "Job title" },
+                        { key: "email", label: "Email" },
+                        { key: "phone", label: "Phone" },
+                        { key: "photo", label: "Photo" },
+                      ] as const
+                    ).map((field) => {
+                      const linked = (state.elements || []).find(
+                        (el) => "bind" in el && (el as { bind?: string }).bind === field.key
+                      );
+                      const isLinked = Boolean(linked);
+                      const isSelected = linked && selectedId === linked.id;
+
+                      return (
+                        <button
+                          key={field.key}
+                          type="button"
+                          onClick={() => {
+                            if (!state.elements || state.elements.length === 0) {
+                              dispatch({ type: "MIGRATE_FLOW_TO_FREE" });
+                            }
+                            if (linked) {
+                              setSelectedId(linked.id);
+                            } else {
+                              showToast("Select an element and use Link to team field");
+                            }
+                          }}
+                          className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium transition cursor-pointer border ${
+                            isSelected
+                              ? "bg-[#EFF6FF] text-[#245FD4] border-[#245FD4]/40 shadow-2xs font-semibold"
+                              : "bg-white text-[#1E293B] border-slate-200/80 hover:bg-slate-50 hover:border-slate-300"
+                          }`}
+                          aria-label={`Team field ${field.label}: ${isLinked ? "linked" : "unlinked"}`}
+                        >
+                          <span className="text-[12px]">{field.label}</span>
+                          <div className="flex items-center gap-1.5">
+                            {isLinked ? (
+                              <svg
+                                className="h-4 w-4 text-emerald-600 shrink-0"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-label="Linked"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            ) : (
+                              <span
+                                className="h-2 w-2 rounded-full bg-slate-300 shrink-0"
+                                title="Not linked"
+                                aria-label="Not linked"
+                              />
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* 8. BUTTON STYLES SECTION */}
             <div className="pb-2">
               <button
@@ -2159,6 +2273,22 @@ function DesignStudioContent() {
                   y={selectedElement.y}
                   h={selectedElement.h}
                   zoom={zoom}
+                  bind={
+                    selectedElement.type === "text" || selectedElement.type === "image"
+                      ? (selectedElement as { bind?: TeamFieldBind }).bind
+                      : undefined
+                  }
+                  onBindChange={(newBind) => {
+                    if (selectedId) {
+                      dispatch({
+                        type: "LINK_TEAM_FIELD",
+                        payload: {
+                          id: selectedId,
+                          field: newBind || undefined,
+                        },
+                      });
+                    }
+                  }}
                 />
               )}
 

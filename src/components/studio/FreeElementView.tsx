@@ -392,6 +392,28 @@ export default function FreeElementView({
         </div>
       )}
 
+      {/* Linked Team Field Badge */}
+      {"bind" in element && element.bind && (
+        <div
+          data-team-field-badge={element.bind}
+          className="absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded bg-[#449AFA] px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none"
+        >
+          <span>
+            {element.bind === "name"
+              ? "Name"
+              : element.bind === "jobTitle"
+              ? "Job title"
+              : element.bind === "email"
+              ? "Email"
+              : element.bind === "phone"
+              ? "Phone"
+              : element.bind === "photo"
+              ? "Photo"
+              : element.bind}
+          </span>
+        </div>
+      )}
+
       {/* Lock Indicator */}
       {element.locked && isSelected && (
         <div className="absolute -top-5 right-0 flex items-center gap-1 bg-slate-800 text-slate-200 text-[10px] px-1.5 py-0.5 rounded z-30 pointer-events-none shadow">

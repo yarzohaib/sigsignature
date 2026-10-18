@@ -2,6 +2,8 @@ import {
   StudioSignatureData,
   SignatureExtraItem,
   FreeElement,
+  FreeTextElement,
+  FreeImageElement,
   StudioShape,
   StudioTheme,
   StudioButtonStyle,
@@ -11,6 +13,7 @@ import {
 import { PREMIUM_ENABLED } from "@/lib/premium";
 import { clampToCanvas, rectsOverlap, findFreeSpot, snap } from "./free/geometry";
 import { arrangeElements } from "./free/arrange";
+import { migrateFlowToFree } from "./free/migrate";
 
 export type {
   StudioShape,
@@ -124,7 +127,15 @@ export type StudioAction =
   | { type: "REMOVE_ELEMENT"; payload: { id: string } }
   | { type: "DUPLICATE_ELEMENT"; payload: { id: string; newId?: string } }
   | { type: "SET_CANVAS_HEIGHT"; payload: { height: number } }
-  | { type: "ARRANGE_PRESET"; payload: { preset: "single" | "two-column" | "compact" } };
+  | { type: "ARRANGE_PRESET"; payload: { preset: "single" | "two-column" | "compact" } }
+  | {
+      type: "LINK_TEAM_FIELD";
+      payload: {
+        id: string;
+        field?: "name" | "jobTitle" | "email" | "phone" | "photo";
+      };
+    }
+  | { type: "MIGRATE_FLOW_TO_FREE" };
 
 export function studioReducer(
   state: StudioSignatureData,
@@ -492,6 +503,52 @@ export function studioReducer(
         layout: action.payload.preset,
         canvas: { width: 600, height: result.canvasHeight },
         elements: result.elements,
+      };
+    }
+
+    case "MIGRATE_FLOW_TO_FREE": {
+      if (state.elements && state.elements.length > 0) return state;
+      return migrateFlowToFree(state);
+    }
+
+    case "LINK_TEAM_FIELD": {
+      let stateToUse = state;
+      if (!stateToUse.elements || stateToUse.elements.length === 0) {
+        stateToUse = migrateFlowToFree(stateToUse);
+      }
+      const currentElements = stateToUse.elements || [];
+      const { id, field } = action.payload;
+      const target = currentElements.find((el) => el.id === id);
+      if (!target) return stateToUse;
+
+      const nextElements: FreeElement[] = currentElements.map((el) => {
+        if (el.id === id) {
+          if (!field) {
+            const copy = { ...el };
+            delete (copy as { bind?: string }).bind;
+            return copy as FreeElement;
+          }
+          if (el.type === "text" && field !== "photo") {
+            const updated: FreeTextElement = { ...el, bind: field };
+            return updated;
+          }
+          if (el.type === "image" && field === "photo") {
+            const updated: FreeImageElement = { ...el, bind: "photo" };
+            return updated;
+          }
+          return el;
+        }
+        if (field && "bind" in el && (el as { bind?: string }).bind === field) {
+          const copy = { ...el };
+          delete (copy as { bind?: string }).bind;
+          return copy as FreeElement;
+        }
+        return el;
+      });
+
+      return {
+        ...stateToUse,
+        elements: nextElements,
       };
     }
 

@@ -11,6 +11,9 @@ export const SOCIAL_NETWORKS = [
   "twitter",
   "facebook",
   "instagram",
+  "github",
+  "youtube",
+  "website",
 ] as const;
 
 export const ICON_STYLES = ["filled", "outline", "circle", "minimal"] as const;
@@ -28,6 +31,12 @@ export const EMAIL_SAFE_ICONS: Record<SocialNetwork, string> = {
     "https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/facebook-icon-2x.png",
   instagram:
     "https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/instagram-icon-2x.png",
+  github:
+    "https://cdn-icons-png.flaticon.com/512/733/733553.png",
+  youtube:
+    "https://cdn-icons-png.flaticon.com/512/1384/1384060.png",
+  website:
+    "https://cdn-icons-png.flaticon.com/512/1006/1006771.png",
 };
 
 export function emailIconUrl(
