@@ -22,10 +22,8 @@ export function renderSavedSignatureHtml(
     }
     return generateStudioHtml(sig.data, options);
   }
-  const data =
-    sig.templateId && !sig.data.templateId
-      ? { ...sig.data, templateId: sig.templateId }
-      : sig.data;
+  const templateId = sig.templateId || sig.data.templateId;
+  const data = templateId ? { ...sig.data, templateId } : sig.data;
   return generateTemplateHtml(data);
 }
 
@@ -36,5 +34,7 @@ export function renderSavedSignaturePlainText(sig: SavedSignature): string {
     }
     return generateStudioPlainText(sig.data);
   }
-  return generateTemplatePlainText(sig.data);
+  const templateId = sig.templateId || sig.data.templateId;
+  const data = templateId ? { ...sig.data, templateId } : sig.data;
+  return generateTemplatePlainText(data);
 }

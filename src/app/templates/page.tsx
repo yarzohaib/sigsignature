@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
@@ -9,12 +9,14 @@ import TemplateGalleryCard from "@/components/templates/TemplateGalleryCard";
 import TemplateEditor from "@/components/templates/TemplateEditor";
 import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
-import { UserProfile, getCurrentUser, logoutUser } from "@/app/lib/api";
+import { UserProfile, getCurrentUser, logoutUser, fetchAccount } from "@/app/lib/api";
 import {
   clearAuthSession,
   getStoredRefreshToken,
   getStoredUser,
   getStoredSettings,
+  setStoredSettings,
+  setStoredUser,
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
@@ -117,6 +119,19 @@ function TemplatesContent() {
       try {
         const freshUser = await getCurrentUser();
         setUser(freshUser);
+
+        try {
+          const account = await fetchAccount();
+          if (account?.settings) {
+            setStoredSettings(account.settings);
+          }
+          if (account?.user) {
+            setStoredUser(account.user);
+            setUser(account.user);
+          }
+        } catch {
+          // Keep cached settings if fetchAccount fails
+        }
       } catch (err) {
         console.warn("Session expired or invalid, redirecting to login:", err);
         clearAuthSession();
@@ -142,11 +157,23 @@ function TemplatesContent() {
     }
   }
 
-  // Filter templates by category
-  const filteredTemplates = AVAILABLE_TEMPLATES.filter((tpl) => {
-    if (selectedCategory === "All") return true;
-    return tpl.category === selectedCategory;
-  });
+  // Filter and sort templates by category and sortOption
+  const filteredTemplates = useMemo(() => {
+    let list = AVAILABLE_TEMPLATES.filter((tpl) => {
+      if (selectedCategory === "All") return true;
+      return tpl.category === selectedCategory;
+    });
+
+    if (sortOption === "popular") {
+      list = [...list].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+    } else if (sortOption === "newest") {
+      list = [...list].reverse();
+    } else if (sortOption === "name") {
+      list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return list;
+  }, [selectedCategory, sortOption]);
 
   const displayName = user?.firstName
     ? `${user.firstName} ${user.lastName || ""}`.trim()

@@ -8,23 +8,20 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { isSignatureLimitError } from "@/app/lib/api";
-import { getStoredSettings, getStoredUser } from "@/app/lib/auth";
+import {
+  getStoredSettings,
+  getStoredUser,
+  getStoredAvatarUrl,
+  setStoredAvatarUrl,
+} from "@/app/lib/auth";
 import { SIGNATURE_COLOR_SWATCHES } from "@/lib/signatureConstants";
 import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
+import {
+  VALID_TEMPLATE_FONTS,
+  mapToValidTemplateFont,
+} from "@/lib/templates/designs/shared";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
-
-const EMAIL_SAFE_FONTS = [
-  "Arial",
-  "Arimo",
-  "Montserrat",
-  "Georgia",
-  "Verdana",
-  "Trebuchet MS",
-  "Tahoma",
-  "Times New Roman",
-] as const;
-type EmailSafeFont = (typeof EMAIL_SAFE_FONTS)[number];
 
 interface TemplateEditorProps {
   template: TemplateItem;
@@ -50,28 +47,25 @@ export default function TemplateEditor({
   const [formData, setFormData] = useState<TemplateSignatureData>(() => {
     const isNewSignature = !initialData && !editingSignatureId;
     const base = initialData || template.defaultData;
-    let font = EMAIL_SAFE_FONTS.includes(base.fontFamily as EmailSafeFont)
-      ? base.fontFamily
-      : "Arial";
+    let font = mapToValidTemplateFont(base.fontFamily);
 
     let themeColor = base.themeColor;
     let avatarUrl = base.avatarUrl;
     let fullName = base.fullName;
     let companyName = base.companyName;
+    let email = base.email;
 
     if (isNewSignature) {
       const storedSettings = getStoredSettings();
       const storedUser = getStoredUser();
+      const storedAvatar = getStoredAvatarUrl();
 
       if (storedSettings) {
         if (storedSettings.signatureFont) {
-          font = storedSettings.signatureFont;
+          font = mapToValidTemplateFont(storedSettings.signatureFont);
         }
         if (storedSettings.brandColor) {
           themeColor = storedSettings.brandColor;
-        }
-        if (storedSettings.includePhoto === false) {
-          avatarUrl = "";
         }
       }
 
@@ -83,6 +77,16 @@ export default function TemplateEditor({
         if (storedUser.companyName) {
           companyName = storedUser.companyName;
         }
+        if (storedUser.email) {
+          email = storedUser.email;
+        }
+      }
+
+      const shouldIncludePhoto = storedSettings?.includePhoto !== false;
+      if (!shouldIncludePhoto) {
+        avatarUrl = "";
+      } else if (storedAvatar) {
+        avatarUrl = storedAvatar;
       }
     }
 
@@ -95,6 +99,7 @@ export default function TemplateEditor({
       avatarUrl,
       fullName,
       companyName,
+      email,
     };
   });
 
@@ -123,6 +128,65 @@ export default function TemplateEditor({
     subtitle: string;
     isError?: boolean;
   } | null>(null);
+
+  // Synchronize user profile defaults on client mount (handles SSR/hydration cases)
+  const hasAppliedDefaultsRef = useRef(false);
+  useEffect(() => {
+    const isNewSignature = !initialData && !editingSignatureId;
+    if (!isNewSignature || hasAppliedDefaultsRef.current) return;
+    hasAppliedDefaultsRef.current = true;
+
+    const storedSettings = getStoredSettings();
+    const storedUser = getStoredUser();
+    const storedAvatar = getStoredAvatarUrl();
+
+    setFormData((prev) => {
+      let nextAvatar = prev.avatarUrl;
+      const shouldIncludePhoto = storedSettings?.includePhoto !== false;
+      if (!shouldIncludePhoto) {
+        nextAvatar = "";
+      } else if (storedAvatar) {
+        nextAvatar = storedAvatar;
+      }
+
+      let nextFont = prev.fontFamily;
+      if (storedSettings?.signatureFont) {
+        nextFont = mapToValidTemplateFont(storedSettings.signatureFont);
+      }
+
+      let nextThemeColor = prev.themeColor;
+      if (storedSettings?.brandColor) {
+        nextThemeColor = storedSettings.brandColor;
+      }
+
+      let nextFullName = prev.fullName;
+      let nextCompanyName = prev.companyName;
+      let nextEmail = prev.email;
+
+      if (storedUser) {
+        const userFullName = `${storedUser.firstName || ""} ${storedUser.lastName || ""}`.trim();
+        if (userFullName) {
+          nextFullName = userFullName;
+        }
+        if (storedUser.companyName) {
+          nextCompanyName = storedUser.companyName;
+        }
+        if (storedUser.email) {
+          nextEmail = storedUser.email;
+        }
+      }
+
+      return {
+        ...prev,
+        avatarUrl: nextAvatar,
+        fontFamily: nextFont,
+        themeColor: nextThemeColor,
+        fullName: nextFullName,
+        companyName: nextCompanyName,
+        email: nextEmail,
+      };
+    });
+  }, [initialData, editingSignatureId]);
 
   function showToast(title: string, subtitle: string, isError = false) {
     setToastMessage({ title, subtitle, isError });
@@ -211,6 +275,10 @@ export default function TemplateEditor({
         ...prev,
         avatarUrl: publicUrl,
       }));
+      // If user had no stored avatar yet, persist this as their default avatar
+      if (!getStoredAvatarUrl()) {
+        setStoredAvatarUrl(publicUrl);
+      }
       showToast("Photo uploaded!", "Your profile photo was uploaded successfully.");
     } catch (err: unknown) {
       console.error("Image upload error:", err);
@@ -230,11 +298,18 @@ export default function TemplateEditor({
     }
   }
 
-  // Reset photo to default template photo
+  // Reset photo to user default photo or template photo
   function handleResetPhoto() {
+    const storedSettings = getStoredSettings();
+    const storedAvatar = getStoredAvatarUrl();
+    const defaultAvatar =
+      storedSettings?.includePhoto === false
+        ? ""
+        : (storedAvatar || template.defaultData.avatarUrl);
+
     setFormData((prev) => ({
       ...prev,
-      avatarUrl: template.defaultData.avatarUrl,
+      avatarUrl: defaultAvatar,
     }));
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -485,16 +560,15 @@ export default function TemplateEditor({
         <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3.5">
           <span className="text-[12px] font-medium text-[#64748B]">Font</span>
           <select
-            value={EMAIL_SAFE_FONTS.includes(formData.fontFamily as EmailSafeFont) ? formData.fontFamily : "Arial"}
-            onChange={(e) => handleInputChange("fontFamily", e.target.value)}
+            value={mapToValidTemplateFont(formData.fontFamily)}
+            onChange={(e) => handleInputChange("fontFamily", mapToValidTemplateFont(e.target.value))}
             className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
           >
-            <option value="Arial">Arial</option>
-            <option value="Montserrat">Montserrat</option>
-            <option value="Georgia">Georgia</option>
-            <option value="Verdana">Verdana</option>
-            <option value="Trebuchet MS">Trebuchet MS</option>
-            <option value="Tahoma">Tahoma</option>
+            {VALID_TEMPLATE_FONTS.map((fontName) => (
+              <option key={fontName} value={fontName}>
+                {fontName}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -596,14 +670,26 @@ export default function TemplateEditor({
                         >
                           {isUploadingPhoto ? "Uploading..." : "Upload Custom Photo"}
                         </button>
-                        {formData.avatarUrl !== template.defaultData.avatarUrl && (
+                        {formData.avatarUrl ? (
+                          <button
+                            type="button"
+                            disabled={isUploadingPhoto}
+                            onClick={() => {
+                              setFormData((prev) => ({ ...prev, avatarUrl: "" }));
+                              if (fileInputRef.current) fileInputRef.current.value = "";
+                            }}
+                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-rose-600 hover:bg-rose-50 disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            Remove
+                          </button>
+                        ) : (
                           <button
                             type="button"
                             disabled={isUploadingPhoto}
                             onClick={handleResetPhoto}
                             className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
                           >
-                            Reset
+                            Restore Default
                           </button>
                         )}
                         <input

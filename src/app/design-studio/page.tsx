@@ -22,7 +22,10 @@ import {
   clearAuthSession,
   getStoredRefreshToken,
   getStoredUser,
+  getStoredSettings,
+  getStoredAvatarUrl,
 } from "@/app/lib/auth";
+import { mapToValidTemplateFont } from "@/lib/templates/designs/shared";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
 import { SavedSignature, StudioSavedSignature } from "@/types/signature";
@@ -258,6 +261,7 @@ function DesignStudioContent() {
 
         const draftKey = `sig_studio_draft_${userId}`;
         let loadedData: StudioSignatureData = INITIAL_STUDIO_DATA;
+        let hasSavedDraft = false;
         try {
           const savedDraft = localStorage.getItem(draftKey);
           if (savedDraft) {
@@ -267,10 +271,32 @@ function DesignStudioContent() {
                 parsed = migrateFlowToFree(parsed);
               }
               loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
+              hasSavedDraft = true;
             }
           }
         } catch {
           // ignore localStorage parsing errors
+        }
+
+        if (!hasSavedDraft) {
+          const storedSettings = getStoredSettings();
+          const storedAvatar = getStoredAvatarUrl();
+          const userFullName = `${activeUser.firstName || ""} ${activeUser.lastName || ""}`.trim();
+          const shouldIncludePhoto = storedSettings?.includePhoto !== false;
+          const userAvatar = shouldIncludePhoto && storedAvatar ? storedAvatar : "";
+
+          loadedData = {
+            ...INITIAL_STUDIO_DATA,
+            fullName: userFullName || INITIAL_STUDIO_DATA.fullName,
+            companyName: activeUser.companyName || INITIAL_STUDIO_DATA.companyName,
+            email: activeUser.email || INITIAL_STUDIO_DATA.email,
+            themeColor: storedSettings?.brandColor || INITIAL_STUDIO_DATA.themeColor,
+            fontFamily: storedSettings?.signatureFont
+              ? mapToValidTemplateFont(storedSettings.signatureFont)
+              : INITIAL_STUDIO_DATA.fontFamily,
+            avatarUrl: userAvatar,
+          };
+          loadedData = migrateFlowToFree(loadedData);
         }
 
         dispatch({ type: "SET_FULL_STATE", payload: loadedData });

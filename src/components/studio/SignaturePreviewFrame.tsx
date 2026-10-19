@@ -200,10 +200,15 @@ export const SignaturePreviewFrame = forwardRef<
     const t1 = setTimeout(measureContent, 100);
     const t2 = setTimeout(measureContent, 300);
     const t3 = setTimeout(measureContent, 700);
+    const t4 = setTimeout(() => {
+      measureContent();
+      setMeasured(true);
+    }, 1200);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
+      clearTimeout(t4);
     };
   }, [html, measureContent]);
 
