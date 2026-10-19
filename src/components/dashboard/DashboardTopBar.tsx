@@ -11,6 +11,8 @@ type TopBarProps = {
   onOpenMobileMenu: () => void;
   onLogout: () => void;
   isLoggingOut?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 };
 
 export default function DashboardTopBar({
@@ -21,10 +23,23 @@ export default function DashboardTopBar({
   onOpenMobileMenu,
   onLogout,
   isLoggingOut = false,
+  searchValue,
+  onSearchChange,
 }: TopBarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [internalSearch, setInternalSearch] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const currentSearch = searchValue !== undefined ? searchValue : internalSearch;
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (onSearchChange) {
+      onSearchChange(val);
+    } else {
+      setInternalSearch(val);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -70,8 +85,8 @@ export default function DashboardTopBar({
           </svg>
           <input
             type="text"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            value={currentSearch}
+            onChange={handleSearchChange}
             placeholder="Search anything..."
             className="ml-2.5 w-full bg-transparent text-[14px] text-[#1E293B] placeholder-[#94A3B8] focus:outline-none"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
@@ -96,11 +111,13 @@ export default function DashboardTopBar({
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          {/* Active notification badge: only rendered when count > 0 */}
-          {notificationCount > 0 && (
+          {/* Active notification badge: renders small blue dot or count */}
+          {notificationCount > 0 ? (
             <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#245FD4] text-[10px] font-bold text-white shadow-xs">
               {notificationCount > 9 ? "9+" : notificationCount}
             </span>
+          ) : (
+            <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-[#245FD4] ring-2 ring-white" />
           )}
         </button>
 

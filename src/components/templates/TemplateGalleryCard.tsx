@@ -1,7 +1,9 @@
 "use client";
 
-import Image from "next/image";
+import { useMemo } from "react";
 import { TemplateItem } from "@/types/template";
+import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
+import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 
 interface TemplateGalleryCardProps {
   template: TemplateItem;
@@ -14,6 +16,10 @@ export default function TemplateGalleryCard({
   onUseTemplate,
 }: TemplateGalleryCardProps) {
   const { defaultData } = template;
+  const previewHtml = useMemo(
+    () => generateTemplateHtml(defaultData),
+    [defaultData]
+  );
 
   return (
     <div
@@ -32,63 +38,8 @@ export default function TemplateGalleryCard({
       )}
 
       {/* Signature Preview Area */}
-      <div className="relative flex min-h-[160px] w-full items-center justify-center bg-white p-4 sm:p-5">
-        <div className="flex w-full items-center justify-between gap-4">
-          {/* Avatar + Socials */}
-          <div className="flex flex-col items-center gap-1.5 shrink-0">
-            <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-slate-100 border border-slate-200 shadow-2xs">
-              <Image
-                src={defaultData.avatarUrl || "/daniel-wilson.png"}
-                alt={defaultData.fullName}
-                width={56}
-                height={56}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            {/* Social Icons row */}
-            <div className="flex items-center gap-1">
-              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-[#0077B5] text-[7px] font-bold text-white">in</span>
-              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-[#000000] text-[7px] font-bold text-white">𝕏</span>
-              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-[#1877F2] text-[7px] font-bold text-white">f</span>
-            </div>
-          </div>
-
-          {/* Details */}
-          <div className="min-w-0 flex-1 space-y-0.5">
-            <h4 className="text-[13px] font-bold text-[#1E293B] leading-tight truncate">
-              {defaultData.fullName}
-            </h4>
-            <p className="text-[10.5px] font-medium text-[#64748B] leading-tight">
-              {defaultData.jobTitle}
-            </p>
-            <div className="pt-1 space-y-0.5 text-[9px] text-[#64748B]">
-              <div className="flex items-center gap-1 truncate">
-                <span className="text-[#245FD4] font-bold">&#9742;</span>
-                <span>{defaultData.phone}</span>
-              </div>
-              <div className="flex items-center gap-1 truncate">
-                <span className="text-[#245FD4] font-bold">&#9993;</span>
-                <span className="truncate">{defaultData.email}</span>
-              </div>
-              <div className="flex items-center gap-1 truncate">
-                <span className="text-[#245FD4] font-bold">&#9873;</span>
-                <span className="truncate">{defaultData.website}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Vertical Divider */}
-          <div className="h-14 w-px bg-slate-200" />
-
-          {/* Company Logo and Name */}
-          <div className="flex flex-col items-center justify-center text-center shrink-0 w-[80px]">
-            <svg width="28" height="28" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 8H26C28.2091 8 30 9.79086 30 12V20C30 22.2091 28.2091 24 26 24H22" stroke="#245FD4" strokeWidth="4" strokeLinecap="round" />
-              <path d="M26 30H12C9.79086 30 8 28.2091 8 26V18C8 15.7909 9.79086 14 12 14H16" stroke="#245FD4" strokeWidth="4" strokeLinecap="round" />
-            </svg>
-            <span className="mt-1 text-[9px] font-bold text-[#1E293B] leading-tight">Company Name</span>
-          </div>
-        </div>
+      <div className="relative aspect-16/9 w-full overflow-hidden bg-[#F8FAFC]">
+        <SignaturePreviewFrame html={previewHtml} />
 
         {/* Hover Action Overlay matching Figma */}
         <div className="absolute inset-0 z-10 flex items-center justify-center gap-2.5 bg-slate-900/40 p-4 opacity-0 backdrop-blur-2xs transition-opacity duration-150 group-hover:opacity-100">

@@ -28,6 +28,7 @@ export interface UserProfile {
   email: string;
   firstName: string;
   lastName?: string | null;
+  companyName?: string | null;
   isActive?: boolean;
   isVerified?: boolean;
   createdAt?: string;

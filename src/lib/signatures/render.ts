@@ -22,7 +22,11 @@ export function renderSavedSignatureHtml(
     }
     return generateStudioHtml(sig.data, options);
   }
-  return generateTemplateHtml(sig.data);
+  const data =
+    sig.templateId && !sig.data.templateId
+      ? { ...sig.data, templateId: sig.templateId }
+      : sig.data;
+  return generateTemplateHtml(data);
 }
 
 export function renderSavedSignaturePlainText(sig: SavedSignature): string {

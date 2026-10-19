@@ -89,6 +89,16 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
       ),
     },
     {
+      name: "Brand Assets",
+      href: "#brand-assets",
+      icon: (
+        <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        </svg>
+      ),
+    },
+    {
       name: "Design Studio",
       href: "/design-studio",
       icon: (
@@ -121,7 +131,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
     },
     {
       name: "Help & Support",
-      href: "#help",
+      href: "/help",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -202,12 +212,18 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                 (item.href === "/team-signatures" && pathname.startsWith("/team-signatures")) ||
                 (item.href === "/templates" && pathname.startsWith("/templates")) ||
                 (item.href === "/pricing" && pathname.startsWith("/pricing")) ||
-                (item.href === "/design-studio" && pathname.startsWith("/design-studio"));
+                (item.href === "/design-studio" && pathname.startsWith("/design-studio")) ||
+                (item.href === "/help" && pathname.startsWith("/help"));
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={onCloseMobile}
+                  onClick={(e) => {
+                    if (item.href.startsWith("#")) {
+                      e.preventDefault();
+                    }
+                    onCloseMobile?.();
+                  }}
                   className={`flex items-center gap-3.5 rounded-xl px-3.5 py-2.5 transition-colors ${
                     isActive
                       ? "bg-[#EFF6FF] text-[#245FD4]"
@@ -291,6 +307,16 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                   {signatureCount} / 3 Signatures
                 </span>
               </div>
+            </div>
+
+            {/* Plan progress bar */}
+            <div className="mt-2.5 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[#245FD4] transition-all duration-300"
+                style={{
+                  width: `${Math.min(100, Math.max(12, (signatureCount / 3) * 100))}%`,
+                }}
+              />
             </div>
 
             <div className="mt-2.5 flex items-center justify-between">

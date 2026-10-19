@@ -1,6 +1,7 @@
 export type TemplateCategory = "All" | "Minimal" | "Corporate" | "Creative" | "Bold";
 
 export interface TemplateSignatureData {
+  templateId?: string;
   fullName: string;
   jobTitle: string;
   companyName: string;
@@ -11,7 +12,7 @@ export interface TemplateSignatureData {
   companyLogoUrl?: string;
   themeColor: string;
   fontFamily: string;
-  layout: "two-column" | "horizontal" | "compact";
+  layout: "two-column" | "horizontal" | "compact" | "single" | "corporate-card";
   socialIconsStyle: "filled" | "outline" | "circle";
   socials: {
     linkedin: string;

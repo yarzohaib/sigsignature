@@ -13,7 +13,7 @@ import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 
-const EMAIL_SAFE_FONTS = ["Arial", "Georgia", "Verdana", "Trebuchet MS", "Tahoma"] as const;
+const EMAIL_SAFE_FONTS = ["Arial", "Montserrat", "Georgia", "Verdana", "Trebuchet MS", "Tahoma"] as const;
 type EmailSafeFont = (typeof EMAIL_SAFE_FONTS)[number];
 
 interface TemplateEditorProps {
@@ -44,6 +44,8 @@ export default function TemplateEditor({
       : "Arial";
     return {
       ...base,
+      templateId: template.id,
+      layout: template.defaultData.layout,
       fontFamily: font,
     };
   });
@@ -98,7 +100,7 @@ export default function TemplateEditor({
   }
 
   // Handle social link changes
-  function handleSocialChange(platform: "linkedin" | "twitter" | "facebook" | "instagram", value: string) {
+  function handleSocialChange(platform: keyof TemplateSignatureData["socials"], value: string) {
     setFormData((prev) => ({
       ...prev,
       socials: {
@@ -191,15 +193,34 @@ export default function TemplateEditor({
     }
   }
 
+  // Helper to prepare form data for save
+  function prepareDataForSave(): TemplateSignatureData {
+    const rawInsta = formData.socials.instagram?.trim() || "";
+    const normalizedInsta = rawInsta
+      ? rawInsta.startsWith("http://") || rawInsta.startsWith("https://")
+        ? rawInsta
+        : `https://instagram.com/${rawInsta.replace(/^@/, "").replace(/\/.*$/, "")}`
+      : "";
+
+    return {
+      ...formData,
+      socials: {
+        ...formData.socials,
+        instagram: normalizedInsta,
+      },
+    };
+  }
+
   // Save the signature to user's signatures list
   async function handleSaveSignature() {
     try {
       setIsSaving(true);
+      const dataToSave = prepareDataForSave();
       const saved = await getSignatureRepository().save({
         id: currentSignatureId,
         templateId: template.id,
         name: formData.fullName || template.name || "My Signature",
-        data: formData,
+        data: dataToSave,
       });
       setCurrentSignatureId(saved.id);
       if (typeof window !== "undefined") {
@@ -230,11 +251,12 @@ export default function TemplateEditor({
 
   // Handle overwrite choice when user is at 3-signature limit
   async function handleSelectOverwrite(target: SavedSignature) {
+    const dataToSave = prepareDataForSave();
     const saved = await getSignatureRepository().save({
       id: target.id,
       templateId: template.id,
       name: formData.fullName || target.name || template.name || "My Signature",
-      data: formData,
+      data: dataToSave,
     });
     setCurrentSignatureId(saved.id);
     setIsLimitModalOpen(false);
@@ -311,7 +333,10 @@ export default function TemplateEditor({
   }
 
   // Pre-generate HTML and minimal srcDoc for iframe preview
-  const generatedHtml = useMemo(() => generateTemplateHtml(formData), [formData]);
+  const generatedHtml = useMemo(
+    () => generateTemplateHtml({ ...formData, templateId: template.id }),
+    [formData, template.id]
+  );
 
   const previewSrcDoc = useMemo(() => {
     return `<!DOCTYPE html><html><head><meta charset="utf-8" /><style>html, body { margin: 0; padding: 16px; background-color: #ffffff; box-sizing: border-box; } * { box-sizing: border-box; }</style></head><body>${generatedHtml}</body></html>`;
@@ -418,6 +443,7 @@ export default function TemplateEditor({
             className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
           >
             <option value="Arial">Arial</option>
+            <option value="Montserrat">Montserrat</option>
             <option value="Georgia">Georgia</option>
             <option value="Verdana">Verdana</option>
             <option value="Trebuchet MS">Trebuchet MS</option>
@@ -444,19 +470,6 @@ export default function TemplateEditor({
           </div>
         </div>
 
-        {/* Layout Selector */}
-        <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3.5">
-          <span className="text-[12px] font-medium text-[#64748B]">Layout</span>
-          <select
-            value={formData.layout}
-            onChange={(e) => handleInputChange("layout", e.target.value)}
-            className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
-          >
-            <option value="two-column">Two Column</option>
-            <option value="horizontal">Horizontal</option>
-            <option value="compact">Compact</option>
-          </select>
-        </div>
 
         {/* Social Icons Style */}
         <div className="flex items-center gap-2">
@@ -521,7 +534,7 @@ export default function TemplateEditor({
                         width={56}
                         height={56}
                         className="h-full w-full object-cover"
-                        unoptimized={Boolean(formData.avatarUrl?.startsWith("data:") || formData.avatarUrl?.startsWith("blob:"))}
+                        unoptimized
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -699,10 +712,7 @@ export default function TemplateEditor({
                           width={56}
                           height={56}
                           className="h-full w-full object-contain p-1"
-                          unoptimized={Boolean(
-                            formData.companyLogoUrl.startsWith("data:") ||
-                              formData.companyLogoUrl.startsWith("blob:")
-                          )}
+                          unoptimized
                         />
                       ) : (
                         <svg className="h-6 w-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -824,6 +834,16 @@ export default function TemplateEditor({
                     className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
                   />
                 </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-[#64748B]">Instagram Profile</label>
+                  <input
+                    type="text"
+                    value={formData.socials.instagram || ""}
+                    onChange={(e) => handleSocialChange("instagram", e.target.value)}
+                    placeholder="https://instagram.com/... or @handle"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -870,6 +890,21 @@ export default function TemplateEditor({
                     placeholder="e.g. 123 Business Ave, New York, NY 10001"
                     className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
                   />
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-[#64748B]">
+                    Servicing Region / Disclaimer Notice
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.optional.disclaimer || ""}
+                    onChange={(e) => handleOptionalChange("disclaimer", e.target.value)}
+                    placeholder="e.g. Proudly servicing Metropolitan & Regional Areas"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                  />
+                  <p className="mt-1 text-[10px] text-[#94A3B8]">
+                    Displayed in the signature footer bar or disclaimer notice.
+                  </p>
                 </div>
               </div>
             )}

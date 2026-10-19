@@ -4,6 +4,7 @@ export const SIGNATURE_COLOR_SWATCHES = [
   "#022977",
   "#8B5CF6",
   "#059669",
+  "#DCBB9A",
 ] as const;
 
 export const SOCIAL_NETWORKS = [

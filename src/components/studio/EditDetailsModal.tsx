@@ -358,6 +358,7 @@ export default function EditDetailsModal({
                           alt="preview"
                           fill
                           className="object-cover"
+                          unoptimized
                         />
                       </div>
                     )}
