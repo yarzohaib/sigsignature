@@ -45,8 +45,18 @@ export default function TeamTemplateBar({ team, onDeleteTeam }: TeamTemplateBarP
       <div className="flex items-center justify-between rounded-xl border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm">
         {/* Template info */}
         <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
-          <span className="text-[#64748B]">Team template:</span>
-          <span className="font-semibold text-[#0B1A3D] truncate">{team.name}</span>
+          <span
+            className="font-semibold text-[#1E293B]"
+            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+          >
+            Team template:
+          </span>
+          <span
+            className="font-medium text-[#94A3B8] truncate"
+            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+          >
+            {team.name}
+          </span>
           <span className="text-[#CBD5E1]">·</span>
           <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
             {kindBadge}

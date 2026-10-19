@@ -1274,3 +1274,446 @@ export async function revokeTeamMember(id: string): Promise<BackendTeamMember> {
     );
   }
 }
+
+export interface AccountSettings {
+  defaultTemplateId: string | null;
+  defaultExportFormat: "html" | "plain";
+  signatureFont: string;
+  brandColor: string;
+  includePhoto: boolean;
+  notifyProductUpdates: boolean;
+  notifyTips: boolean;
+  premiumWaitlistAt: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
+
+export interface AccountUsage {
+  signatures: number;
+  signatureLimit: number;
+}
+
+export interface AccountData {
+  user: UserProfile;
+  hasPassword: boolean;
+  providers: string[];
+  settings: AccountSettings;
+  usage: AccountUsage;
+}
+
+export interface UpdateProfilePayload {
+  firstName?: string;
+  lastName?: string | null;
+  companyName?: string | null;
+}
+
+export interface UpdateSettingsPayload {
+  defaultTemplateId?: string | null;
+  defaultExportFormat?: "html" | "plain";
+  signatureFont?: string;
+  brandColor?: string;
+  includePhoto?: boolean;
+  notifyProductUpdates?: boolean;
+  notifyTips?: boolean;
+}
+
+/**
+ * Fetch full account profile, settings, providers, and usage limits.
+ */
+export async function fetchAccount(): Promise<AccountData> {
+  const url = `${API_BASE_URL}/api/v1/account`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to load account (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return (result?.data ?? {}) as AccountData;
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Update personal profile details (firstName, lastName, companyName).
+ */
+export async function updateAccountProfile(
+  payload: UpdateProfilePayload
+): Promise<UserProfile> {
+  const url = `${API_BASE_URL}/api/v1/account`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to update profile (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return (result?.data?.user ?? {}) as UserProfile;
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Update signature defaults and notifications settings.
+ */
+export async function updateAccountSettings(
+  payload: UpdateSettingsPayload
+): Promise<AccountSettings> {
+  const url = `${API_BASE_URL}/api/v1/account/settings`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to update settings (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return (result?.data?.settings ?? {}) as AccountSettings;
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Join premium waitlist (idempotent).
+ */
+export async function joinWaitlist(): Promise<AccountSettings> {
+  const url = `${API_BASE_URL}/api/v1/account/waitlist`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to join waitlist (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return (result?.data?.settings ?? {}) as AccountSettings;
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+export interface UserSession {
+  id: string;
+  userId: string;
+  isCurrent: boolean;
+  device: string;
+  deviceName?: string | null;
+  userAgent?: string | null;
+  ipAddress?: string | null;
+  lastUsedAt: string;
+  expiresAt?: string;
+  revokedAt?: string | null;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface DeleteAccountPayload {
+  password?: string;
+  confirm?: string;
+}
+
+/**
+ * Maps error codes from account security endpoints to user-friendly messages.
+ */
+export function getFriendlySecurityErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) {
+    switch (err.code) {
+      case "INVALID_CURRENT_PASSWORD":
+        return "The current password you entered is incorrect.";
+      case "NO_PASSWORD_SET":
+        return "No password is set on this account. You sign in using a social provider.";
+      case "CONFIRMATION_REQUIRED":
+        return "Confirmation required. Please type DELETE to confirm.";
+      case "INVALID_PASSWORD":
+        return "Incorrect password. Please try again.";
+      case "PASSWORD_UNCHANGED":
+        return "Your new password must be different from your current password.";
+      case "RATE_LIMIT_EXCEEDED":
+        return "Too many attempts. Please wait a little while before trying again.";
+      default:
+        if (err.statusCode === 429) {
+          return "Rate limit reached. Please wait a little while before trying again.";
+        }
+        return err.message;
+    }
+  }
+
+  if (err instanceof Error) {
+    return err.message;
+  }
+
+  return "An unexpected error occurred. Please try again.";
+}
+
+/**
+ * Change account password (revokes other active sessions).
+ */
+export async function changeAccountPassword(
+  payload: ChangePasswordPayload
+): Promise<{ message: string }> {
+  const url = `${API_BASE_URL}/api/v1/account/password`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to change password (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return { message: result?.message || "Password changed successfully" };
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Fetch all active sessions for the authenticated user.
+ */
+export async function fetchUserSessions(): Promise<UserSession[]> {
+  const url = `${API_BASE_URL}/api/v1/auth/sessions`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to fetch sessions (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    const sessions = (result?.data?.sessions ?? []) as UserSession[];
+    return sessions;
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Revoke a specific session by ID.
+ */
+export async function revokeUserSession(sessionId: string): Promise<void> {
+  const url = `${API_BASE_URL}/api/v1/auth/sessions/${encodeURIComponent(sessionId)}`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to revoke session (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Revoke all active sessions except the current one.
+ */
+export async function revokeOtherUserSessions(): Promise<{ count: number }> {
+  const url = `${API_BASE_URL}/api/v1/auth/sessions/revoke-others`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message =
+        result?.message || `Failed to revoke other sessions (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    const count = Number(result?.count ?? result?.revokedCount ?? 0);
+    return { count };
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Download account data as a JSON blob attachment.
+ */
+export async function downloadAccountExport(): Promise<Blob> {
+  const url = `${API_BASE_URL}/api/v1/account/export`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const result = await response.json().catch(() => null);
+      const message =
+        result?.message || `Failed to export account data (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return await response.blob();
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Permanently delete user account and all owned resources.
+ */
+export async function deleteUserAccount(payload: DeleteAccountPayload): Promise<void> {
+  const url = `${API_BASE_URL}/api/v1/account`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const result = await response.json().catch(() => null);
+      const message =
+        result?.message || `Failed to delete account (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}

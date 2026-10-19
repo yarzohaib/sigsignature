@@ -8,12 +8,22 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { isSignatureLimitError } from "@/app/lib/api";
+import { getStoredSettings, getStoredUser } from "@/app/lib/auth";
 import { SIGNATURE_COLOR_SWATCHES } from "@/lib/signatureConstants";
 import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 
-const EMAIL_SAFE_FONTS = ["Arial", "Montserrat", "Georgia", "Verdana", "Trebuchet MS", "Tahoma"] as const;
+const EMAIL_SAFE_FONTS = [
+  "Arial",
+  "Arimo",
+  "Montserrat",
+  "Georgia",
+  "Verdana",
+  "Trebuchet MS",
+  "Tahoma",
+  "Times New Roman",
+] as const;
 type EmailSafeFont = (typeof EMAIL_SAFE_FONTS)[number];
 
 interface TemplateEditorProps {
@@ -36,17 +46,55 @@ export default function TemplateEditor({
   // Current signature ID being edited (persisted after first save)
   const [currentSignatureId, setCurrentSignatureId] = useState<string | undefined>(editingSignatureId);
 
-  // Form data state: map legacy/unrecognized fonts to Arial
+  // Form data state: map legacy/unrecognized fonts to Arial; apply user defaults ONLY for new signatures
   const [formData, setFormData] = useState<TemplateSignatureData>(() => {
+    const isNewSignature = !initialData && !editingSignatureId;
     const base = initialData || template.defaultData;
-    const font = EMAIL_SAFE_FONTS.includes(base.fontFamily as EmailSafeFont)
+    let font = EMAIL_SAFE_FONTS.includes(base.fontFamily as EmailSafeFont)
       ? base.fontFamily
       : "Arial";
+
+    let themeColor = base.themeColor;
+    let avatarUrl = base.avatarUrl;
+    let fullName = base.fullName;
+    let companyName = base.companyName;
+
+    if (isNewSignature) {
+      const storedSettings = getStoredSettings();
+      const storedUser = getStoredUser();
+
+      if (storedSettings) {
+        if (storedSettings.signatureFont) {
+          font = storedSettings.signatureFont;
+        }
+        if (storedSettings.brandColor) {
+          themeColor = storedSettings.brandColor;
+        }
+        if (storedSettings.includePhoto === false) {
+          avatarUrl = "";
+        }
+      }
+
+      if (storedUser) {
+        const userFullName = `${storedUser.firstName || ""} ${storedUser.lastName || ""}`.trim();
+        if (userFullName) {
+          fullName = userFullName;
+        }
+        if (storedUser.companyName) {
+          companyName = storedUser.companyName;
+        }
+      }
+    }
+
     return {
       ...base,
       templateId: template.id,
       layout: template.defaultData.layout,
       fontFamily: font,
+      themeColor,
+      avatarUrl,
+      fullName,
+      companyName,
     };
   });
 
@@ -376,15 +424,14 @@ export default function TemplateEditor({
     <div className="flex flex-col gap-5 sm:gap-6 pb-12">
       {/* Top Header Row matching Figma: Back Button & Template Name */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-6 sm:gap-7">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center justify-start bg-transparent p-0 transition hover:opacity-80 active:scale-98"
+            className="inline-flex items-center justify-start bg-transparent p-0 transition hover:opacity-80 active:scale-98 cursor-pointer"
             style={{
-              width: "156px",
               height: "36px",
-              gap: "12px",
+              gap: "8px",
               fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
               fontWeight: 600,
               fontSize: "14px",
@@ -405,12 +452,12 @@ export default function TemplateEditor({
             <span
               style={{
                 fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                fontWeight: 500,
+                fontWeight: 600,
                 fontSize: "14px",
                 lineHeight: "36px",
                 letterSpacing: "0%",
                 verticalAlign: "middle",
-                color: "#94A3B8",
+                color: "#1E293B",
               }}
             >
               Editing:
@@ -418,12 +465,12 @@ export default function TemplateEditor({
             <span
               style={{
                 fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: "14px",
                 lineHeight: "36px",
                 letterSpacing: "0%",
                 verticalAlign: "middle",
-                color: "#1E293B",
+                color: "#94A3B8",
               }}
             >
               {template.name}
@@ -570,7 +617,7 @@ export default function TemplateEditor({
                     </div>
                   </div>
 
-                  {(!formData.avatarUrl || formData.avatarUrl.startsWith("/")) && (
+                  {/* {(!formData.avatarUrl || formData.avatarUrl.startsWith("/")) && (
                     <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200/90 bg-amber-50/90 p-2.5 text-[11px] text-amber-800 leading-snug">
                       <svg className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10" />
@@ -579,7 +626,7 @@ export default function TemplateEditor({
                       </svg>
                       <span>This is a sample photo. Upload your own photo, otherwise your signature will be exported without a photo.</span>
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 {/* Text input fields (2-column grid matching Figma) */}

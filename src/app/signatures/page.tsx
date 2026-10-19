@@ -22,6 +22,7 @@ import {
   clearAuthSession,
   getStoredRefreshToken,
   getStoredUser,
+  getStoredSettings,
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { SavedSignature } from "@/types/signature";
@@ -33,7 +34,7 @@ import {
   renderSavedSignaturePlainText,
 } from "@/lib/signatures/render";
 import { getEditHref } from "@/lib/signatures/kind";
-import { copySignatureRich } from "@/lib/clipboard";
+import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 
 export default function MySignaturesPage() {
@@ -179,7 +180,12 @@ export default function MySignaturesPage() {
     const plainText = renderSavedSignaturePlainText(target);
 
     try {
-      await copySignatureRich(html, plainText);
+      const storedSettings = getStoredSettings();
+      if (storedSettings?.defaultExportFormat === "plain") {
+        await copyTextToClipboard(plainText);
+      } else {
+        await copySignatureRich(html, plainText);
+      }
       setShowCopiedAlert(true);
     } catch {
       showToast(`Failed to copy "${target.name}". Please try again.`);
@@ -241,7 +247,7 @@ export default function MySignaturesPage() {
   }
 
   function handleCreateNew() {
-    router.push("/templates");
+    router.push("/templates?new=true");
   }
 
   const displayName = user?.firstName

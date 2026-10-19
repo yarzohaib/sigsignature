@@ -9,6 +9,7 @@ import ComparisonSection from "@/components/landing/ComparisonSection";
 import PricingSection from "@/components/landing/PricingSection";
 import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
+import FlashToast from "@/components/common/FlashToast";
 
 export const metadata: Metadata = {
   title: "Free Email Signature Generator | SigSignature",
@@ -43,6 +44,9 @@ export default function LandingPage() {
 
       {/* Separate Footer Component */}
       <Footer />
+
+      {/* Flash Toast for global redirects like account deletion */}
+      <FlashToast />
     </div>
   );
 }

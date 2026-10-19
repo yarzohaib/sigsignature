@@ -18,7 +18,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/templates") ||
     pathname.startsWith("/pricing") ||
     pathname.startsWith("/design-studio") ||
-    pathname.startsWith("/help")
+    pathname.startsWith("/help") ||
+    pathname.startsWith("/settings")
   ) {
     if (!hasSession) {
       const loginUrl = new URL("/login", request.url);
@@ -46,6 +47,8 @@ export const config = {
     "/design-studio/:path*",
     "/help/:path*",
     "/help",
+    "/settings/:path*",
+    "/settings",
     "/login",
     "/signup",
   ],

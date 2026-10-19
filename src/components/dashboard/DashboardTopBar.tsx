@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { getStoredAvatarUrl } from "@/app/lib/auth";
 
 type TopBarProps = {
   userName?: string;
@@ -9,7 +11,7 @@ type TopBarProps = {
   avatarUrl?: string | null;
   notificationCount?: number;
   onOpenMobileMenu: () => void;
-  onLogout: () => void;
+  onLogout?: () => void;
   isLoggingOut?: boolean;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
@@ -17,18 +19,29 @@ type TopBarProps = {
 
 export default function DashboardTopBar({
   userName = "Member",
-  userEmail,
   avatarUrl = null,
   notificationCount = 0,
   onOpenMobileMenu,
-  onLogout,
-  isLoggingOut = false,
   searchValue,
   onSearchChange,
 }: TopBarProps) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [internalSearch, setInternalSearch] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+
+  // Avatar state resolved from props or localStorage, synchronized across pages
+  const [storedAvatar, setStoredAvatar] = useState<string | null>(() => getStoredAvatarUrl());
+
+  useEffect(() => {
+    function handleAvatarUpdate(e: Event) {
+      const customEvent = e as CustomEvent<string | null>;
+      setStoredAvatar(customEvent.detail ?? getStoredAvatarUrl());
+    }
+    window.addEventListener("sig_avatar_update", handleAvatarUpdate);
+    return () => window.removeEventListener("sig_avatar_update", handleAvatarUpdate);
+  }, []);
+
+  const resolvedAvatar = avatarUrl || storedAvatar;
 
   const currentSearch = searchValue !== undefined ? searchValue : internalSearch;
 
@@ -43,12 +56,22 @@ export default function DashboardTopBar({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
+      const target = event.target as Node;
+      if (notificationsRef.current && !notificationsRef.current.contains(target)) {
+        setNotificationsOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setNotificationsOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   return (
@@ -101,141 +124,117 @@ export default function DashboardTopBar({
 
       {/* Right: Notifications & User Profile */}
       <div className="flex items-center gap-4 sm:gap-6">
-        {/* Notification Bell */}
-        <button
-          type="button"
-          className="relative flex h-10 w-10 items-center justify-center rounded-full text-[#64748B] transition hover:bg-slate-100 hover:text-[#1E293B]"
-          aria-label="Notifications"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-          {/* Active notification badge: renders small blue dot or count */}
-          {notificationCount > 0 ? (
-            <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#245FD4] text-[10px] font-bold text-white shadow-xs">
-              {notificationCount > 9 ? "9+" : notificationCount}
-            </span>
-          ) : (
-            <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-[#245FD4] ring-2 ring-white" />
-          )}
-        </button>
-
-        {/* User Profile dropdown */}
-        <div className="relative" ref={dropdownRef}>
+        {/* Notification Bell with Dropdown */}
+        <div className="relative" ref={notificationsRef}>
           <button
             type="button"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2.5 rounded-full py-1 pr-1 pl-1 transition hover:bg-slate-50 focus:outline-none"
-            aria-expanded={dropdownOpen}
+            onClick={() => {
+              setNotificationsOpen((prev) => !prev);
+            }}
+            className={`relative flex h-10 w-10 items-center justify-center rounded-full transition ${
+              notificationsOpen
+                ? "bg-slate-100 text-[#1E293B]"
+                : "text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]"
+            }`}
+            aria-label="Notifications"
+            aria-expanded={notificationsOpen}
+            aria-haspopup="true"
           >
-            {/* User Avatar: uses placeholder avatar by default */}
-            <div className="relative h-9 w-9 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100">
-              <Image
-                src={avatarUrl || "/placeholder-avatar.svg"}
-                alt={userName || "Profile avatar"}
-                width={36}
-                height={36}
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            {/* User Name matching typography from Image 4 */}
-            <span
-              className="hidden sm:inline-block text-[#1E293B]"
-              style={{
-                fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "18.67px",
-                letterSpacing: "0%",
-                verticalAlign: "middle",
-              }}
-            >
-              {userName}
-            </span>
-
-            {/* Chevron down icon */}
-            <svg
-              className={`h-4 w-4 text-[#64748B] transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
+            {/* Active notification indicator: appears only when there is a new notification */}
+            {notificationCount > 0 && (
+              <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-[#245FD4] ring-2 ring-white" />
+            )}
           </button>
 
-          {/* User Dropdown Menu */}
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-xl animate-in fade-in zoom-in-95">
-              <div className="border-b border-slate-100 px-3 py-2.5">
-                <p
+          {/* Notifications Dropdown */}
+          {notificationsOpen && (
+            <div className="absolute -right-14 sm:right-0 mt-2 w-[280px] sm:w-80 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xl animate-in fade-in zoom-in-95 z-50">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3
                   className="text-sm font-bold text-[#1E293B]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  {userName}
-                </p>
-                {userEmail && (
-                  <p
-                    className="truncate text-xs text-[#64748B]"
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  >
-                    {userEmail}
-                  </p>
+                  Notifications
+                </h3>
+                {notificationCount > 0 ? (
+                  <span className="rounded-full bg-[#245FD4]/10 px-2 py-0.5 text-[11px] font-semibold text-[#245FD4]">
+                    {notificationCount} new
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-[#64748B]">
+                    0 new
+                  </span>
                 )}
               </div>
 
-              <div className="py-1">
-                <button
-                  type="button"
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                  <span>My Profile</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                  </svg>
-                  <span>Account Settings</span>
-                </button>
-              </div>
-
-              <div className="border-t border-slate-100 pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    onLogout();
-                  }}
-                  disabled={isLoggingOut}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
-                </button>
-              </div>
+              {/* Empty state when zero notifications */}
+              {notificationCount === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 text-[#94A3B8] mb-3">
+                    <svg className="h-6 w-6 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                  </div>
+                  <p
+                    className="text-sm font-semibold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    No notifications yet
+                  </p>
+                  <p
+                    className="mt-1 text-xs text-[#64748B] max-w-[220px]"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    We&apos;ll notify you when important updates, team activity, or alerts arrive.
+                  </p>
+                </div>
+              ) : (
+                <div className="py-4 text-center text-xs text-[#64748B]">
+                  You have {notificationCount} unread {notificationCount === 1 ? "notification" : "notifications"}.
+                </div>
+              )}
             </div>
           )}
         </div>
+
+        {/* User Profile Link directly to Settings */}
+        <Link
+          href="/settings"
+          className="group flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1 transition hover:bg-slate-100 focus:outline-none"
+          title="Account Settings"
+          aria-label="Account Settings"
+        >
+          {/* User Avatar: uses uploaded avatar preview or placeholder */}
+          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
+            <Image
+              src={resolvedAvatar || "/placeholder-avatar.svg"}
+              alt={userName || "Profile avatar"}
+              width={36}
+              height={36}
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          {/* User Name matching typography from Figma */}
+          <span
+            className="hidden sm:inline-block text-[#1E293B] transition group-hover:text-[#245FD4]"
+            style={{
+              fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
+              fontWeight: 700,
+              fontSize: "14px",
+              lineHeight: "18.67px",
+              letterSpacing: "0%",
+              verticalAlign: "middle",
+            }}
+          >
+            {userName}
+          </span>
+        </Link>
       </div>
     </header>
   );

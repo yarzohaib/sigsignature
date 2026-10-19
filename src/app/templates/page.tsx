@@ -14,6 +14,7 @@ import {
   clearAuthSession,
   getStoredRefreshToken,
   getStoredUser,
+  getStoredSettings,
 } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
@@ -26,10 +27,21 @@ function TemplatesContent() {
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
 
+  const isNew = searchParams.get("new") === "true";
+
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [defaultTemplateId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const settings = getStoredSettings();
+      if (settings?.defaultTemplateId) {
+        return settings.defaultTemplateId;
+      }
+    }
+    return "professional-minimal";
+  });
 
   // Category sorting & filtering state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
@@ -41,13 +53,21 @@ function TemplatesContent() {
   const [editingSignatureId, setEditingSignatureId] = useState<string | undefined>(undefined);
   const [templateNotFound, setTemplateNotFound] = useState(false);
 
-  // Reactive edit query param handler (only loads existing signature when URL has ?edit=<id>)
+  // Reactive edit query param handler (only loads existing signature when URL has ?edit=<id>, or preselects default when ?new=true)
   useEffect(() => {
     let isCancelled = false;
 
     async function loadSignatureForEditing() {
       if (!editId) {
         setTemplateNotFound(false);
+        if (isNew && !isCancelled) {
+          const settings = getStoredSettings();
+          const targetId = settings?.defaultTemplateId || "professional-minimal";
+          const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === targetId) || AVAILABLE_TEMPLATES[0];
+          setEditingSignatureId(undefined);
+          setEditingSignatureData(undefined);
+          setEditingTemplate(tpl);
+        }
         return;
       }
 
@@ -85,7 +105,7 @@ function TemplatesContent() {
     return () => {
       isCancelled = true;
     };
-  }, [editId, router]);
+  }, [editId, isNew, router]);
 
   useEffect(() => {
     async function verifyAuth() {
@@ -295,6 +315,7 @@ function TemplatesContent() {
                       <TemplateGalleryCard
                         key={template.id}
                         template={template}
+                        isDefault={template.id === defaultTemplateId}
                         onUseTemplate={(t) => {
                           setEditingSignatureId(undefined);
                           setEditingSignatureData(undefined);

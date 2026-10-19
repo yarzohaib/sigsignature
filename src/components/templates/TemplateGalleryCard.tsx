@@ -7,12 +7,14 @@ import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 
 interface TemplateGalleryCardProps {
   template: TemplateItem;
+  isDefault?: boolean;
   onUseTemplate: (template: TemplateItem) => void;
   onPreview?: (template: TemplateItem) => void;
 }
 
 export default function TemplateGalleryCard({
   template,
+  isDefault = false,
   onUseTemplate,
 }: TemplateGalleryCardProps) {
   const { defaultData } = template;
@@ -69,6 +71,11 @@ export default function TemplateGalleryCard({
           <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-[#245FD4]">
             {template.category}
           </span>
+          {isDefault && (
+            <span className="rounded-full bg-[#022977] px-2 py-0.5 text-[10px] font-bold text-white shadow-2xs">
+              Default
+            </span>
+          )}
         </div>
 
         <button

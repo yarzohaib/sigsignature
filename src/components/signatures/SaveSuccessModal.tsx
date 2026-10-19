@@ -5,7 +5,8 @@ import { toPng } from "html-to-image";
 import { TemplateSignatureData } from "@/types/template";
 import { StudioSignatureData } from "@/types/studio";
 import { SavedSignature } from "@/types/signature";
-import { copySignatureRich } from "@/lib/email-core";
+import { copySignatureRich, copyTextToClipboard } from "@/lib/email-core";
+import { getStoredSettings } from "@/app/lib/auth";
 import {
   renderSavedSignatureHtml,
   renderSavedSignaturePlainText,
@@ -109,10 +110,15 @@ export default function SaveSuccessModal({
     }, 3000);
   }
 
-  // 1. Copy Signature as formatted rich text
+  // 1. Copy Signature as formatted rich text or plain text according to user defaults
   async function handleCopySignature() {
     try {
-      await copySignatureRich(html, plainText);
+      const storedSettings = getStoredSettings();
+      if (storedSettings?.defaultExportFormat === "plain") {
+        await copyTextToClipboard(plainText);
+      } else {
+        await copySignatureRich(html, plainText);
+      }
       setCopiedSignature(true);
       setShowCopiedAlert(true);
       setTimeout(() => setCopiedSignature(false), 2500);

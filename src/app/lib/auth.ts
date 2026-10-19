@@ -1,9 +1,12 @@
-import { AuthTokens, UserProfile } from "./api";
+import { AccountSettings, AuthTokens, UserProfile } from "./api";
 
 export const AUTH_TOKEN_KEY = "sig_access_token";
 export const REFRESH_TOKEN_KEY = "sig_refresh_token";
 export const AUTH_USER_KEY = "sig_user";
 export const AUTH_COOKIE_NAME = "sig_token";
+
+export const AUTH_SETTINGS_KEY = "sig_user_settings";
+export const AUTH_AVATAR_PREVIEW_KEY = "sig_user_avatar_preview";
 
 /**
  * Stores tokens and user profile into localStorage and cookies.
@@ -38,11 +41,43 @@ export function clearAuthSession() {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(AUTH_USER_KEY);
+    localStorage.removeItem(AUTH_SETTINGS_KEY);
+    localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+    window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: null }));
 
     // Clear cookie
     document.cookie = `${AUTH_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
   } catch (err) {
     console.error("Failed to clear auth session:", err);
+  }
+}
+
+/**
+ * Retrieves stored user avatar preview URL from localStorage.
+ */
+export function getStoredAvatarUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(AUTH_AVATAR_PREVIEW_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Stores user avatar URL into localStorage and notifies listeners.
+ */
+export function setStoredAvatarUrl(url: string | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (url) {
+      localStorage.setItem(AUTH_AVATAR_PREVIEW_KEY, url);
+    } else {
+      localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+    }
+    window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: url }));
+  } catch (err) {
+    console.error("Failed to store avatar url:", err);
   }
 }
 
@@ -95,6 +130,49 @@ export function getStoredUser(): UserProfile | null {
     return JSON.parse(raw) as UserProfile;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Updates stored user profile in localStorage and notifies listeners.
+ */
+export function setStoredUser(user: UserProfile): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    window.dispatchEvent(new CustomEvent("sig_user_update", { detail: user }));
+  } catch (err) {
+    console.error("Failed to update stored user:", err);
+  }
+}
+
+/**
+ * Retrieves cached user settings from localStorage.
+ */
+export function getStoredSettings(): AccountSettings | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = localStorage.getItem(AUTH_SETTINGS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as AccountSettings;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Stores user settings in localStorage and notifies listeners.
+ */
+export function setStoredSettings(settings: AccountSettings): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(AUTH_SETTINGS_KEY, JSON.stringify(settings));
+    window.dispatchEvent(new CustomEvent("sig_settings_update", { detail: settings }));
+  } catch (err) {
+    console.error("Failed to store settings in localStorage:", err);
   }
 }
 
