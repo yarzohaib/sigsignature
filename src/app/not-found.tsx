@@ -98,7 +98,7 @@ export default function NotFound() {
             Return to Home
           </Link>
           <Link
-            href="mailto:support@sigsignature.com"
+            href="mailto:teams@thenevon.com"
             className="flex h-12 w-full items-center justify-center rounded-xl border border-[#C1C1C1]/60 bg-white font-body text-sm font-semibold text-[#1243A3] shadow-2xs transition hover:bg-slate-50"
           >
             Contact Support

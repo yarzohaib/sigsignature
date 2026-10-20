@@ -198,9 +198,9 @@ export default function PrivacyPage() {
                   </ul>
                   <p className="pt-2">
                     To exercise any of these rights, manage your account directly via Settings or contact our Data
-                    Privacy Officer at:{" "}
-                    <a href="mailto:privacy@thenevon.com" className="font-semibold text-[#1243A3] underline">
-                      privacy@thenevon.com
+                    Privacy team at:{" "}
+                    <a href="mailto:teams@thenevon.com" className="font-semibold text-[#1243A3] underline">
+                      teams@thenevon.com
                     </a>
                     .
                   </p>
@@ -213,14 +213,14 @@ export default function PrivacyPage() {
                   Privacy Inquiries &amp; Data Requests
                 </h3>
                 <p className="mt-2 font-body text-slate-600">
-                  For questions or concerns regarding this Privacy Policy or our data protection practices, please contact us.
+                  For questions or concerns regarding this Privacy Policy or our data protection practices, please contact our team.
                 </p>
                 <div className="mt-6 flex justify-center">
                   <a
-                    href="mailto:privacy@thenevon.com"
+                    href="mailto:teams@thenevon.com"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
-                    <span>Contact privacy@thenevon.com</span>
+                    <span>Contact Privacy Team</span>
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                     </svg>

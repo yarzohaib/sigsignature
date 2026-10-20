@@ -8,10 +8,10 @@ const styles = ["Minimal", "Execute", "Compact"];
 export default function SignaturePreview({ className = "", floating = false }: SignaturePreviewProps) {
   return (
     <div
-      className={`w-full max-w-[624px] rounded-[40px] bg-[#EFEDE9] p-6 shadow-[0_24px_60px_rgba(2,41,119,0.18)] ${className}`}
+      className={`w-full max-w-[624px] rounded-[24px] sm:rounded-[40px] bg-[#EFEDE9] p-4 sm:p-6 shadow-[0_24px_60px_rgba(2,41,119,0.18)] ${className}`}
     >
       <div
-        className={`rounded-[28px] border border-line/60 bg-surface p-6 ${
+        className={`rounded-[20px] sm:rounded-[28px] border border-line/60 bg-surface p-4 sm:p-6 ${
           floating ? "animate-float-slow-1" : ""
         }`}
       >
@@ -33,9 +33,9 @@ export default function SignaturePreview({ className = "", floating = false }: S
           </span>
         </div>
 
-        <div className="mt-10 text-[10px] text-slate-700">
-          <p>
-            nadir@thenevon.com <span className="mx-2 text-line">|</span> +655 863 1279
+        <div className="mt-8 sm:mt-10 text-[10px] text-slate-700">
+          <p className="break-all sm:break-normal">
+            sardar@thenevon.com <span className="mx-2 text-line">|</span> +655 863 1279
           </p>
           <p className="mt-2">www.thenevon.com</p>
         </div>
@@ -53,11 +53,11 @@ export default function SignaturePreview({ className = "", floating = false }: S
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-3">
+      <div className="mt-4 flex gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-3 sm:gap-3">
         {styles.map((style) => (
           <div
             key={style}
-            className={`flex h-12 items-center justify-center rounded-[13px] text-sm font-medium select-none cursor-default pointer-events-none ${
+            className={`flex h-12 min-w-[88px] flex-1 sm:min-w-0 sm:flex-initial items-center justify-center rounded-[13px] text-xs sm:text-sm font-medium select-none cursor-default pointer-events-none px-3 ${
               style === "Minimal"
                 ? "bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] text-white shadow-xs"
                 : "border border-line bg-[#F4F2EE] text-slate-800"

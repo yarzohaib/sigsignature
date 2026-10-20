@@ -10,3 +10,4 @@ export * from "./FeatureGrid";
 export * from "./FeatureCard";
 export * from "./FeatureCardVisual";
 export * from "./FeatureIconTile";
+export * from "./useInView";

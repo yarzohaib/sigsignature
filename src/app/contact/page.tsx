@@ -12,9 +12,10 @@ export const metadata: Metadata = {
 
 const contactChannels = [
   {
-    department: "Product Support",
-    email: "support@thenevon.com",
-    scope: "Assistance with signature installation, formatting bugs, and billing inquiries.",
+    department: "Product & Support",
+    email: "teams@thenevon.com",
+    scope: "Assistance with signature setup, formatting, client compatibility, and bug inquiries.",
+    actionText: "Contact Support Team",
     icon: (
       <svg
         className="h-6 w-6 text-white"
@@ -33,9 +34,32 @@ const contactChannels = [
     ),
   },
   {
-    department: "Business & Partnerships",
-    email: "partnerships@thenevon.com",
-    scope: "Custom team deployments, bulk licensing, and integration inquiries.",
+    department: "Design & Custom Templates",
+    email: "design@thenevon.com",
+    scope: "Custom corporate signature designs, layout styling, and brand identity requests.",
+    actionText: "Contact Design Team",
+    icon: (
+      <svg
+        className="h-6 w-6 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.39m3.42 3.415a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.416a6.717 6.717 0 01-1.622 3.39m4.765-4.649a6.717 6.717 0 013.39-1.622"
+        />
+      </svg>
+    ),
+  },
+  {
+    department: "Executive Office & Partnerships",
+    email: "sardar@thenevon.com",
+    scope: "Executive leadership, strategic enterprise partnerships, and corporate licensing.",
+    actionText: "Contact Executive Office",
     icon: (
       <svg
         className="h-6 w-6 text-white"
@@ -54,9 +78,10 @@ const contactChannels = [
     ),
   },
   {
-    department: "Press & Media",
-    email: "press@thenevon.com",
-    scope: "Media inquiries, brand asset requests, and interview coordination.",
+    department: "People & Culture (HR)",
+    email: "hr@thenevon.com",
+    scope: "Talent recruitment, workplace culture, and career inquiries across The Nevon.",
+    actionText: "Contact HR Team",
     icon: (
       <svg
         className="h-6 w-6 text-white"
@@ -69,7 +94,7 @@ const contactChannels = [
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
-          d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"
+          d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.999-3.199a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
         />
       </svg>
     ),
@@ -117,11 +142,11 @@ export default function ContactPage() {
         {/* DIRECT CONTACT CHANNELS */}
         <section className="py-12 sm:py-16">
           <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {contactChannels.map((item) => (
                 <div
                   key={item.department}
-                  className="flex flex-col justify-between rounded-3xl border border-[#245FD4]/30 bg-gradient-to-b from-white to-blue-50/30 p-8 shadow-xs"
+                  className="flex flex-col justify-between rounded-3xl border border-[#245FD4]/30 bg-gradient-to-b from-white to-blue-50/30 p-7 shadow-xs sm:p-8"
                 >
                   <div>
                     <div
@@ -133,10 +158,10 @@ export default function ContactPage() {
                       {item.icon}
                     </div>
 
-                    <h2 className="font-heading mt-6 text-xl font-semibold text-slate-900 sm:text-2xl">
+                    <h2 className="font-heading mt-6 text-lg font-semibold text-slate-900 sm:text-xl">
                       {item.department}
                     </h2>
-                    <p className="mt-2.5 font-body text-sm leading-relaxed text-slate-600 sm:text-base">
+                    <p className="mt-2.5 font-body text-sm leading-relaxed text-slate-600">
                       {item.scope}
                     </p>
                   </div>
@@ -146,7 +171,7 @@ export default function ContactPage() {
                       href={`mailto:${item.email}`}
                       className="inline-flex items-center gap-2 font-body text-sm font-semibold text-[#1243A3] transition hover:text-[#245FD4]"
                     >
-                      <span>{item.email}</span>
+                      <span>{item.actionText}</span>
                       <svg
                         className="h-4 w-4"
                         fill="none"

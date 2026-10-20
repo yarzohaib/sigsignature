@@ -9,7 +9,8 @@
     "lint": "eslint",
     "verify:templates": "tsx scripts/verifyTemplates.ts",
     "icons:generate": "node scripts/generate-email-icons.mjs",
-    "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js"
+    "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js",
+    "check:responsive": "tsx scripts/checkResponsive.ts"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
@@ -25,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "playwright": "^1.64.1",
     "sharp": "^0.35.5",
     "simple-icons": "^16.35.0",
     "tailwindcss": "^4",

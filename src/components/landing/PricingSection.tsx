@@ -105,15 +105,15 @@ export default function PricingSection() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section id="pricing" className="scroll-mt-24 bg-[#FCFCFC] py-16 sm:py-24">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+    <section id="pricing" className="scroll-mt-24 bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]">
         {/* Section Header */}
         <div className="text-center">
-          <Reveal y={16} blur={6} className="mb-4 inline-block">
+          <Reveal y={16} blur={6} className="mb-3 sm:mb-4 inline-block">
             <SectionBadge label="PRICING" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[54px] lg:leading-[1.12]">
+            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[54px] lg:leading-[1.12] 3xl:text-[60px] font-semibold tracking-tight text-slate-900 leading-tight [text-wrap:balance]">
               Transparent Pricing,{" "}
               <span className="text-[#1243A3]">Start Free.</span>
             </h2>
@@ -121,17 +121,17 @@ export default function PricingSection() {
         </div>
 
         {/* Pricing Cards: Portrait rectangles, reduced heights, Premium taller than Free */}
-        <div className="mx-auto mt-12 flex flex-col items-center justify-center gap-7 sm:mt-16 md:flex-row md:items-center lg:gap-8">
+        <div className="mx-auto mt-10 sm:mt-14 lg:mt-16 flex flex-col items-center justify-center gap-7 md:flex-row md:items-stretch lg:gap-8">
           {/* Free Plan Card: Vertical rectangle (min-h-[460px], max-w-[350px]) */}
           <motion.div
             initial={shouldReduceMotion ? false : "hidden"}
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : freeCardVariants}
-            className="flex w-full max-w-[350px] justify-center"
+            className="flex w-full max-w-[480px] md:max-w-[350px] mx-auto md:mx-0 justify-center md:self-stretch"
           >
             <div
-              className="relative flex w-full min-h-[460px] flex-col justify-between rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-6 sm:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] hover:border-brand/40"
+              className="relative flex w-full min-h-[460px] md:h-full flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(196, 223, 251, 0.5) 50.81%, #FFFFFF 99.33%)",
@@ -139,7 +139,7 @@ export default function PricingSection() {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="font-heading text-lg font-semibold text-slate-900">
+                  <span className="font-heading text-lg 3xl:text-xl font-semibold text-slate-900">
                     Free Plan
                   </span>
                   {shouldReduceMotion ? (
@@ -158,7 +158,7 @@ export default function PricingSection() {
 
                 {/* Price */}
                 <div className="mt-5 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">
+                  <span className="font-heading text-4xl sm:text-5xl 3xl:text-[56px] font-semibold tracking-tight text-slate-900">
                     $0
                   </span>
                   <span className="font-body text-sm font-normal text-[#878787]">
@@ -169,7 +169,7 @@ export default function PricingSection() {
                 {/* Features List */}
                 <motion.ul
                   variants={shouldReduceMotion ? undefined : listVariants}
-                  className="mt-6 space-y-3 font-body text-sm text-[#878787]"
+                  className="mt-6 space-y-3 font-body text-sm 3xl:text-[15px] text-[#878787]"
                 >
                   {freeFeatures.map((feat) => (
                     <motion.li
@@ -188,7 +188,7 @@ export default function PricingSection() {
               <div className="mt-6 pt-2">
                 <Link
                   href="/signup"
-                  className="flex h-11 sm:h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 hover:opacity-95 active:scale-[0.98]"
+                  className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
                 >
                   Lets Start
                 </Link>
@@ -202,10 +202,10 @@ export default function PricingSection() {
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : premiumCardVariants}
-            className="flex w-full max-w-[370px] justify-center"
+            className="flex w-full max-w-[480px] md:max-w-[370px] mx-auto md:mx-0 justify-center md:self-stretch"
           >
             <div
-              className="relative flex w-full min-h-[520px] flex-col justify-between rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-7 sm:p-8 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-1.5 hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] hover:border-[#8A95F2]/70"
+              className="relative flex w-full min-h-[520px] md:h-full flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-5 sm:p-8 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] [@media(hover:hover)]:hover:border-[#8A95F2]/70"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(138, 149, 242, 0.15) 50.81%, #FFFFFF 99.33%)",
@@ -214,7 +214,7 @@ export default function PricingSection() {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="font-heading text-xl font-semibold text-slate-900">
+                  <span className="font-heading text-xl 3xl:text-2xl font-semibold text-slate-900">
                     Premium Plan
                   </span>
                   <span className="rounded-full bg-slate-100 px-3 py-1 font-body text-xs font-semibold text-slate-600">
@@ -224,7 +224,7 @@ export default function PricingSection() {
 
                 {/* Price */}
                 <div className="mt-6 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">
+                  <span className="font-heading text-4xl sm:text-5xl 3xl:text-[56px] font-semibold tracking-tight text-slate-900">
                     $10
                   </span>
                   <span className="font-body text-sm font-normal text-[#878787]">
@@ -235,7 +235,7 @@ export default function PricingSection() {
                 {/* Features List */}
                 <motion.ul
                   variants={shouldReduceMotion ? undefined : listVariants}
-                  className="mt-7 space-y-3.5 font-body text-sm text-[#878787]"
+                  className="mt-7 space-y-3.5 font-body text-sm 3xl:text-[15px] text-[#878787]"
                 >
                   {premiumFeatures.map((feat) => (
                     <motion.li
@@ -255,7 +255,7 @@ export default function PricingSection() {
                 <button
                   type="button"
                   onClick={() => setWaitlistJoined(true)}
-                  className="flex h-11 sm:h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 hover:opacity-95 active:scale-[0.98]"
+                  className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
                 >
                   {waitlistJoined ? "Added to Waitlist!" : "Join the Waitlist"}
                 </button>

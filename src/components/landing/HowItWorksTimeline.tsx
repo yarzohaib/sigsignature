@@ -27,6 +27,8 @@ interface StepItemViewProps {
   index: number;
   smoothProgress: MotionValue<number>;
   activeStep: number;
+  mobileActiveStep: number;
+  isMobile: boolean;
   shouldReduceMotion: boolean | null;
   circleRef?: React.Ref<HTMLDivElement>;
 }
@@ -34,20 +36,22 @@ interface StepItemViewProps {
 /**
  * StepItemView:
  * Renders an individual step container.
- * Moves forward (scale: 1.06, y: -10px) when the bar reaches this step,
- * and backward (scale: 0.96, y: 0px) as the bar moves away.
- * No opacity fading: all text and circles remain 100% solid and crisp.
+ * Moves forward (scale: 1.06, y: -10px) on desktop when the bar reaches this step.
+ * On mobile below md: gets a soft glow ring as it passes the vertical middle of the screen.
+ * Reduced motion shows the final state.
  */
 function StepItemView({
   item,
   index,
   smoothProgress,
   activeStep,
+  mobileActiveStep,
+  isMobile,
   shouldReduceMotion,
   circleRef,
 }: StepItemViewProps) {
-  // Move forward and backward in direct physical synchronization with the progress bar
-  const scale = useTransform(
+  // Move forward and backward in direct physical synchronization with the progress bar on desktop
+  const desktopScale = useTransform(
     smoothProgress,
     index === 0
       ? [0, 0.45, 1]
@@ -61,7 +65,7 @@ function StepItemView({
       : [0.96, 0.96, 1.06]
   );
 
-  const y = useTransform(
+  const desktopY = useTransform(
     smoothProgress,
     index === 0
       ? [0, 0.45, 1]
@@ -75,21 +79,25 @@ function StepItemView({
       : [0, 0, -10]
   );
 
-  const isActive = shouldReduceMotion || index === activeStep;
+  const isActive = shouldReduceMotion
+    ? true
+    : isMobile
+    ? index <= mobileActiveStep
+    : index === activeStep;
 
   return (
     <motion.div
       style={
-        shouldReduceMotion
+        shouldReduceMotion || isMobile
           ? { scale: 1, y: 0 }
-          : { scale, y, transformOrigin: "center top" }
+          : { scale: desktopScale, y: desktopY, transformOrigin: "center top" }
       }
-      className="relative flex flex-col items-start"
+      className="relative flex flex-row md:flex-col items-start gap-4 md:gap-0"
     >
-      {/* 74x74 Number Circle container */}
+      {/* 40x40 on mobile, 74x74 on desktop Number Circle container */}
       <div
         ref={circleRef}
-        className="relative z-10 flex h-[74px] w-[74px] items-center justify-center"
+        className="relative z-10 flex h-[40px] w-[40px] md:h-[74px] md:w-[74px] items-center justify-center shrink-0"
       >
         <motion.div
           data-timeline-circle
@@ -98,9 +106,7 @@ function StepItemView({
               "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
           }}
           animate={
-            shouldReduceMotion
-              ? { boxShadow: "none" }
-              : isActive
+            isActive
               ? {
                   boxShadow:
                     "0 0 0 8px rgba(36, 95, 212, 0.2), 0 0 24px rgba(36, 95, 212, 0.28)",
@@ -110,20 +116,20 @@ function StepItemView({
                 }
           }
           transition={{
-            duration: 0.3,
+            duration: 0.35,
             ease: "easeOut",
           }}
-          className="flex h-[74px] w-[74px] items-center justify-center rounded-full border border-[#C1C1C1] shadow-xs"
+          className="flex h-[40px] w-[40px] md:h-[74px] md:w-[74px] items-center justify-center rounded-full border border-[#C1C1C1] shadow-xs"
         >
-          <span className="font-heading text-2xl font-bold text-white sm:text-[28px]">
+          <span className="font-heading text-[15px] font-bold text-white md:text-2xl md:text-[28px]">
             {item.step}
           </span>
         </motion.div>
       </div>
 
       {/* Title & Description: solid 100% opacity, no fade */}
-      <div data-timeline-content className="opacity-100">
-        <h3 className="font-heading mt-4 text-xl font-semibold text-slate-900 sm:mt-6 md:mt-11 sm:text-2xl">
+      <div data-timeline-content className="opacity-100 flex-1 md:flex-none">
+        <h3 className="font-heading mt-0 md:mt-11 text-lg sm:text-xl md:text-xl lg:text-2xl font-semibold text-slate-900">
           {item.title}
         </h3>
         <p className="font-body mt-2 text-sm leading-relaxed text-[#878787] sm:mt-3 sm:text-base">
@@ -152,23 +158,57 @@ export default function HowItWorksTimeline({
 }: HowItWorksTimelineProps) {
   const outerTrackRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const firstCircleRef = useRef<HTMLDivElement>(null);
-  const lastCircleRef = useRef<HTMLDivElement>(null);
+  const circle0Ref = useRef<HTMLDivElement>(null);
+  const circle1Ref = useRef<HTMLDivElement>(null);
+  const circle2Ref = useRef<HTMLDivElement>(null);
 
   const shouldReduceMotion = useReducedMotion();
   const [activeStep, setActiveStep] = useState(0);
+  const [mobileActiveStep, setMobileActiveStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const onScroll = () => {
+      const midY = window.innerHeight * 0.5;
+      const refs = [circle0Ref, circle1Ref, circle2Ref];
+      let active = 0;
+      refs.forEach((r, idx) => {
+        if (r.current) {
+          const rect = r.current.getBoundingClientRect();
+          const circleCenter = rect.top + rect.height / 2;
+          if (circleCenter <= midY) {
+            active = idx;
+          }
+        }
+      });
+      setMobileActiveStep(active);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isMobile]);
 
   // Vertical line coordinates for mobile stacked layout
   const [verticalLine, setVerticalLine] = useState<{
     top: number;
     height: number;
-  }>({ top: 37, height: 420 });
+  }>({ top: 20, height: 420 });
 
   useEffect(() => {
     const updateVerticalLine = () => {
-      if (firstCircleRef.current && lastCircleRef.current && containerRef.current) {
-        const firstCircle = firstCircleRef.current;
-        const lastCircle = lastCircleRef.current;
+      if (circle0Ref.current && circle2Ref.current && containerRef.current) {
+        const firstCircle = circle0Ref.current;
+        const lastCircle = circle2Ref.current;
         const container = containerRef.current;
 
         const firstRect = firstCircle.getBoundingClientRect();
@@ -223,17 +263,17 @@ export default function HowItWorksTimeline({
       id="how-it-works"
       ref={outerTrackRef}
       className={`scroll-mt-24 overflow-x-clip bg-[#FCFCFC] ${
-        shouldReduceMotion ? "py-16 sm:py-24" : "relative h-[220vh]"
+        shouldReduceMotion ? "py-14 sm:py-16 lg:py-24 3xl:py-28" : "relative h-[220svh]"
       }`}
     >
       <div
         className={
           shouldReduceMotion
-            ? "mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12"
-            : "sticky top-0 flex min-h-screen flex-col justify-center overflow-hidden py-8 sm:py-12 md:py-16"
+            ? "mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]"
+            : "sticky top-0 flex min-h-0 [@media(min-height:700px)]:min-h-[100svh] flex-col justify-center overflow-hidden py-6 sm:py-10 md:py-16"
         }
       >
-        <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]">
           {/* Section Header */}
           {children}
 
@@ -262,7 +302,7 @@ export default function HowItWorksTimeline({
             {/* Gray Track */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-[36px] w-[2px] bg-[#C1C1C1] md:hidden"
+              className="pointer-events-none absolute left-[19px] w-[2px] bg-[#C1C1C1] md:hidden"
               style={{
                 top: verticalLine.top,
                 height: verticalLine.height,
@@ -272,19 +312,31 @@ export default function HowItWorksTimeline({
             <motion.div
               aria-hidden="true"
               data-timeline-line
-              className="pointer-events-none absolute left-[36px] w-[2px] bg-[#245FD4] origin-top md:hidden"
+              className="pointer-events-none absolute left-[19px] w-[2px] bg-[#245FD4] origin-top md:hidden transition-[transform] duration-500 ease-out"
               style={{
                 top: verticalLine.top,
                 height: verticalLine.height,
-                scaleY: shouldReduceMotion ? 1 : smoothProgress,
+                scaleY: shouldReduceMotion
+                  ? 1
+                  : isMobile
+                  ? mobileActiveStep === 0
+                    ? 0.05
+                    : mobileActiveStep === 1
+                    ? 0.5
+                    : 1
+                  : smoothProgress,
               }}
             />
 
             {/* 3 Steps Grid */}
             <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3 md:gap-8 lg:gap-14 xl:gap-16">
               {steps.map((item, index) => {
-                const isFirst = index === 0;
-                const isLast = index === steps.length - 1;
+                const circleRef =
+                  index === 0
+                    ? circle0Ref
+                    : index === 1
+                    ? circle1Ref
+                    : circle2Ref;
 
                 return (
                   <StepItemView
@@ -293,14 +345,10 @@ export default function HowItWorksTimeline({
                     index={index}
                     smoothProgress={smoothProgress}
                     activeStep={activeStep}
+                    mobileActiveStep={mobileActiveStep}
+                    isMobile={isMobile}
                     shouldReduceMotion={shouldReduceMotion}
-                    circleRef={
-                      isFirst
-                        ? firstCircleRef
-                        : isLast
-                        ? lastCircleRef
-                        : undefined
-                    }
+                    circleRef={circleRef}
                   />
                 );
               })}

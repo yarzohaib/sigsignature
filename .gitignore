@@ -40,5 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# responsive audit screenshots
+screenshots/responsive
+
 # generated assets
 generated-email-icons/

@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "sigsignature-assets-prod.s3.ap-southeast-2.amazonaws.com",
+        hostname: "sigsignature-prod-assets-2026.s3.ap-southeast-2.amazonaws.com",
       },
       {
         protocol: "https",

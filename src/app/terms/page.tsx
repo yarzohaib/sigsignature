@@ -108,8 +108,8 @@ const termsSections = [
       <p>
         These Terms shall be governed by and construed in accordance with applicable laws. Inquiries regarding
         these Terms should be sent to:{" "}
-        <a href="mailto:legal@thenevon.com" className="font-semibold text-[#1243A3] underline">
-          legal@thenevon.com
+        <a href="mailto:sardar@thenevon.com" className="font-semibold text-[#1243A3] underline">
+          sardar@thenevon.com
         </a>
         .
       </p>
@@ -193,14 +193,14 @@ export default function TermsPage() {
                   Questions regarding our terms?
                 </h3>
                 <p className="mt-2 font-body text-slate-600">
-                  Our legal team is available to assist with contractual, governance, or compliance questions.
+                  Our governance and executive team is available to assist with contractual, governance, or compliance questions.
                 </p>
                 <div className="mt-6 flex justify-center">
                   <a
-                    href="mailto:legal@thenevon.com"
+                    href="mailto:sardar@thenevon.com"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
-                    <span>Contact legal@thenevon.com</span>
+                    <span>Contact Governance Team</span>
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                     </svg>

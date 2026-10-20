@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import ProblemSection from "@/components/landing/ProblemSection";
@@ -11,6 +11,12 @@ import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
 import FlashToast from "@/components/common/FlashToast";
 import LandingMotionConfig from "@/components/motion/LandingMotionConfig";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Free Email Signature Generator | SigSignature",
