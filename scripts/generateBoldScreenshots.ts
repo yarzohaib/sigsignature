@@ -1,9 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
 import { AVAILABLE_TEMPLATES } from "../src/lib/templatesData";
 import { generateTemplateHtml } from "../src/lib/templates/renderTemplateHtml";
-import { TemplateSignatureData, TemplateItem } from "../src/types/template";
+import { TemplateItem } from "../src/types/template";
 
 const artifactDir = "/Users/zohaib/.gemini/antigravity/brain/43efaccf-ce6f-41ad-ba5a-5201f13ceea4";
 const tempHtmlDir = path.join(artifactDir, "scratch");

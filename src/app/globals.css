@@ -102,6 +102,72 @@ h1, h2, h3, h4, h5, h6 {
   animation-delay: 1.5s;
 }
 
+@keyframes float-slow-1 {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float-slow-2 {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float-slow-1 {
+  animation: float-slow-1 5s ease-in-out infinite;
+}
+
+.animate-float-slow-2 {
+  animation: float-slow-2 5s ease-in-out infinite;
+  animation-delay: 2.5s;
+}
+
+@keyframes cta-idle-glow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 24px 6px rgba(217, 244, 253, 0.6), 0 4px 14px rgba(0, 0, 0, 0.16);
+  }
+}
+
+.animate-cta-idle-glow {
+  animation: cta-idle-glow 3.5s ease-in-out infinite;
+}
+
+.animate-cta-idle-glow:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-slow-1,
+  .animate-float-slow-2,
+  .animate-cta-idle-glow {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .animate-cta-idle-glow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  [data-reveal-card] > div,
+  [data-reveal-card],
+  [data-timeline-circle],
+  [data-timeline-content] {
+    transition: none !important;
+  }
+}
+
 /* Custom Design Studio 8px scrollbar with #022977 thumb */
 .studio-scrollbar::-webkit-scrollbar {
   width: 8px;
@@ -115,4 +181,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 .studio-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #011d57;
+}
+
+/* Fallback for environments with JavaScript disabled or slow hydration */
+@media (scripting: none) {
+  [data-reveal],
+  [data-reveal-group],
+  [data-reveal-item],
+  [data-word-reveal],
+  [data-reveal-grid],
+  [data-reveal-card],
+  [data-reveal-visual],
+  [data-timeline-circle],
+  [data-timeline-content] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  [data-timeline-line] {
+    transform: none !important;
+  }
 }

@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
 import { AVAILABLE_TEMPLATES } from "../src/lib/templatesData";
 import { generateTemplateHtml } from "../src/lib/templates/renderTemplateHtml";
 import { TemplateSignatureData } from "../src/types/template";

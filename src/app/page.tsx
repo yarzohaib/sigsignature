@@ -10,6 +10,7 @@ import PricingSection from "@/components/landing/PricingSection";
 import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
 import FlashToast from "@/components/common/FlashToast";
+import LandingMotionConfig from "@/components/motion/LandingMotionConfig";
 
 export const metadata: Metadata = {
   title: "Free Email Signature Generator | SigSignature",
@@ -19,7 +20,8 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="relative isolate flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
+    <LandingMotionConfig>
+      <div className="relative isolate flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
   {/* Hero glows from Figma: Ellipse 68 (below) and Ellipse 67 (on top) */}
   <div
     aria-hidden
@@ -48,5 +50,6 @@ export default function LandingPage() {
       {/* Flash Toast for global redirects like account deletion */}
       <FlashToast />
     </div>
+    </LandingMotionConfig>
   );
 }

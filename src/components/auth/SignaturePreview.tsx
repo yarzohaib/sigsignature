@@ -1,15 +1,20 @@
 type SignaturePreviewProps = {
   className?: string;
+  floating?: boolean;
 };
 
 const styles = ["Minimal", "Execute", "Compact"];
 
-export default function SignaturePreview({ className = "" }: SignaturePreviewProps) {
+export default function SignaturePreview({ className = "", floating = false }: SignaturePreviewProps) {
   return (
     <div
       className={`w-full max-w-[624px] rounded-[40px] bg-[#EFEDE9] p-6 shadow-[0_24px_60px_rgba(2,41,119,0.18)] ${className}`}
     >
-      <div className="rounded-[28px] border border-line/60 bg-surface p-6">
+      <div
+        className={`rounded-[28px] border border-line/60 bg-surface p-6 ${
+          floating ? "animate-float-slow-1" : ""
+        }`}
+      >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#245FD4] to-[#022977]" />
@@ -18,7 +23,11 @@ export default function SignaturePreview({ className = "" }: SignaturePreviewPro
               <p className="text-[11px] text-slate-600">Head of TheNevon • CEO</p>
             </div>
           </div>
-          <span className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-0.5 text-[10px] text-slate-700">
+          <span
+            className={`flex items-center gap-1.5 rounded-full border border-line px-2.5 py-0.5 text-[10px] text-slate-700 ${
+              floating ? "animate-float-slow-2" : ""
+            }`}
+          >
             <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
             Active
           </span>
@@ -32,7 +41,11 @@ export default function SignaturePreview({ className = "" }: SignaturePreviewPro
         </div>
 
         <div className="mt-5 flex items-center gap-3">
-          <span className="rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 py-1.5 text-[9px] font-semibold text-white">
+          <span
+            className={`rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 py-1.5 text-[9px] font-semibold text-white ${
+              floating ? "animate-float-slow-2" : ""
+            }`}
+          >
             Book a call ›
           </span>
           <span className="text-[10px] font-bold text-[#245FD4]">in</span>
