@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, ChangeEvent } from "react";
+import { useRef, ChangeEvent, useState } from "react";
 import Image from "next/image";
 
 interface ProfileCardProps {
@@ -37,6 +37,8 @@ export default function ProfileCard({
   onAvatarRemove,
 }: ProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const displaySrc = avatarUrl && failedUrl !== avatarUrl ? avatarUrl : "/placeholder-avatar.svg";
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,10 +81,12 @@ export default function ProfileCard({
       <div className="py-5 flex items-center gap-4">
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 shadow-2xs">
           <Image
-            src={avatarUrl || "/placeholder-avatar.svg"}
+            src={displaySrc}
             alt={firstName ? `${firstName} avatar` : "Profile avatar"}
             width={56}
             height={56}
+            unoptimized
+            onError={() => avatarUrl && setFailedUrl(avatarUrl)}
             className="h-full w-full object-cover"
           />
           {isUploadingAvatar && (

@@ -139,7 +139,8 @@ export default function Navbar() {
     ? [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email.split("@")[0]
     : "";
   const displayEmail = user?.email || "";
-  const resolvedAvatar = avatarUrl || "/placeholder-avatar.svg";
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const displaySrc = avatarUrl && failedUrl !== avatarUrl ? avatarUrl : "/placeholder-avatar.svg";
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -270,10 +271,12 @@ export default function Navbar() {
                 aria-label="View user profile"
               >
                 <Image
-                  src={resolvedAvatar}
+                  src={displaySrc}
                   alt={displayName || "Profile photo"}
                   width={32}
                   height={32}
+                  unoptimized
+                  onError={() => avatarUrl && setFailedUrl(avatarUrl)}
                   className="h-full w-full object-cover"
                 />
               </button>
@@ -342,10 +345,12 @@ export default function Navbar() {
                     <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100">
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/30 bg-slate-100">
                         <Image
-                          src={resolvedAvatar}
+                          src={displaySrc}
                           alt={displayName || "Profile photo"}
                           width={40}
                           height={40}
+                          unoptimized
+                          onError={() => avatarUrl && setFailedUrl(avatarUrl)}
                           className="h-full w-full object-cover"
                         />
                       </div>
@@ -522,10 +527,12 @@ export default function Navbar() {
                 {/* User Avatar Photo */}
                 <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/20 bg-slate-100 transition group-hover:ring-brand">
                   <Image
-                    src={resolvedAvatar}
+                    src={displaySrc}
                     alt={displayName || "Profile photo"}
                     width={36}
                     height={36}
+                    unoptimized
+                    onError={() => avatarUrl && setFailedUrl(avatarUrl)}
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -568,10 +575,12 @@ export default function Navbar() {
                     <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100">
                       <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/30 bg-slate-100">
                         <Image
-                          src={resolvedAvatar}
+                          src={displaySrc}
                           alt={displayName || "Profile photo"}
                           width={44}
                           height={44}
+                          unoptimized
+                          onError={() => avatarUrl && setFailedUrl(avatarUrl)}
                           className="h-full w-full object-cover"
                         />
                       </div>

@@ -42,6 +42,8 @@ export default function DashboardTopBar({
   }, []);
 
   const resolvedAvatar = avatarUrl || storedAvatar;
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const displaySrc = resolvedAvatar && failedUrl !== resolvedAvatar ? resolvedAvatar : "/placeholder-avatar.svg";
 
   const currentSearch = searchValue !== undefined ? searchValue : internalSearch;
 
@@ -212,10 +214,12 @@ export default function DashboardTopBar({
           {/* User Avatar: uses uploaded avatar preview or placeholder */}
           <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
             <Image
-              src={resolvedAvatar || "/placeholder-avatar.svg"}
+              src={displaySrc}
               alt={userName || "Profile avatar"}
               width={36}
               height={36}
+              unoptimized
+              onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
               className="h-full w-full object-cover"
             />
           </div>
