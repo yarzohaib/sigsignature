@@ -5,7 +5,7 @@
 export const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_URL ||
   process.env.API_URL ||
-  "http://13.55.213.189"
+  "https://api.sigsignature.com"
 ).replace(/\/$/, "");
 
 import {
