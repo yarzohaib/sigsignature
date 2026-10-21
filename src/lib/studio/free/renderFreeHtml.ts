@@ -11,6 +11,7 @@ import {
 import {
   escapeHtml,
   safeUrl,
+  safeImageUrl,
   normalizeWebsite,
   resolveEmailFont,
 } from "@/lib/email-core";
@@ -161,9 +162,9 @@ export function generateFreeHtml(
 
       let imgSrc = "";
       if (rawUrl && !isSample) {
-        imgSrc = safeUrl(rawUrl);
+        imgSrc = safeImageUrl(rawUrl);
       } else if (isSample && options?.preview) {
-        imgSrc = safeUrl(rawUrl);
+        imgSrc = safeImageUrl(rawUrl);
       }
 
       if (!imgSrc) {

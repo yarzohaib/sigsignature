@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import {
   FreeElement,
   FreeTextElement,
@@ -229,12 +230,14 @@ export default function FreeElementView({
 
         if (hasUrl) {
           return (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={mediaEl.url}
               alt={element.type}
+              width={element.w || 100}
+              height={element.h || 100}
               className="w-full h-full object-cover select-none pointer-events-none block"
               style={{ borderRadius: imgRadius }}
+              unoptimized
               draggable={false}
             />
           );
@@ -327,12 +330,14 @@ export default function FreeElementView({
                 getSocialIconSvgDataUrl(style, themeColor, n.network) ||
                 emailIconUrl(style, themeColor, n.network);
               return (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   key={n.key}
                   src={iconUrl}
                   alt={n.label}
+                  width={20}
+                  height={20}
                   className="w-5 h-5 shrink-0 block"
+                  unoptimized
                   draggable={false}
                 />
               );

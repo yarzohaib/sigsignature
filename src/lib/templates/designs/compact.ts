@@ -5,6 +5,7 @@ import {
   validateThemeColor,
   renderSocialLinks,
   renderCompactContactItems,
+  hasSafeImage,
 } from "./shared";
 
 /**
@@ -15,11 +16,7 @@ export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor);
   const fontStack = resolveEmailFont(data.fontFamily);
 
-  const hasAvatar = Boolean(
-    data.avatarUrl &&
-      data.avatarUrl.trim().length > 0 &&
-      !data.avatarUrl.trim().startsWith("javascript:")
-  );
+  const hasAvatar = hasSafeImage(data.avatarUrl);
 
   const socialLinksHtml = renderSocialLinks(data, themeColor, fontStack);
 

@@ -65,14 +65,20 @@ export function validateThemeColor(color?: string | null): string {
 }
 
 /**
- * Verifies if an image URL is safe and not an empty or unsafe protocol (javascript:, data:).
+ * Verifies if an image URL is safe and not an empty or unsafe protocol (e.g. javascript:, data:, vbscript:).
+ * Restricts src values to http, https, relative paths, or safe data:image/ URIs.
  */
 export function hasSafeImage(url?: string | null): boolean {
   if (!url) return false;
   const trimmed = url.trim();
   if (trimmed.length === 0) return false;
-  if (/^(javascript:|data:)/i.test(trimmed)) return false;
-  return true;
+  if (/^(javascript:|data:|vbscript:)/i.test(trimmed) || /[<>"']/.test(trimmed)) {
+    return false;
+  }
+  if (/^(https?:\/\/|\/|data:image\/(png|jpeg|jpg|gif|webp|svg\+xml)[;,])/i.test(trimmed)) {
+    return true;
+  }
+  return false;
 }
 
 /**

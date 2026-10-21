@@ -19,8 +19,8 @@ export type IconStyle = "filled" | "outline" | "circle" | "minimal";
 /**
  * Escapes special HTML characters in user text to prevent XSS and malformed markup.
  */
-export function escapeHtml(text: string): string {
-  if (!text) return "";
+export function escapeHtml(text: string | null | undefined): string {
+  if (text === null || text === undefined) return "";
   return String(text)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -31,11 +31,13 @@ export function escapeHtml(text: string): string {
 
 /**
  * Sanitizes URLs to allow only safe email schemes: http, https, mailto, and tel.
- * Returns an empty string for javascript:, data:, or invalid protocols.
+ * Returns an empty string for javascript:, data:, invalid protocols, or strings containing markup.
  */
-export function safeUrl(value: string): string {
+export function safeUrl(value: string | null | undefined): string {
   if (!value) return "";
-  const trimmed = value.trim();
+  const trimmed = String(value).trim();
+  if (/[<>]/.test(trimmed)) return "";
+  if (/^(javascript:|vbscript:|data:)/i.test(trimmed)) return "";
   if (/^(https?:\/\/|mailto:|tel:)/i.test(trimmed)) {
     return escapeHtml(trimmed);
   }
@@ -43,12 +45,31 @@ export function safeUrl(value: string): string {
 }
 
 /**
- * Adds https:// protocol to website URLs when missing.
+ * Sanitizes image src URLs to allow only safe schemes: http, https, relative paths,
+ * or safe base64/svg data URIs.
+ * Returns an empty string for javascript:, vbscript:, invalid protocols, or strings containing markup.
  */
-export function normalizeWebsite(value: string): string {
+export function safeImageUrl(value: string | null | undefined): string {
   if (!value) return "";
-  const trimmed = value.trim();
+  const trimmed = String(value).trim();
+  if (/[<>]/.test(trimmed)) return "";
+  if (/^(javascript:|vbscript:|data:text\/html)/i.test(trimmed)) return "";
+  if (/^(https?:\/\/|\/|data:image\/(png|jpeg|jpg|gif|webp|svg\+xml)[;,])/i.test(trimmed)) {
+    return escapeHtml(trimmed);
+  }
+  return "";
+}
+
+/**
+ * Adds https:// protocol to website URLs when missing, while strictly rejecting unsafe schemes.
+ */
+export function normalizeWebsite(value: string | null | undefined): string {
+  if (!value) return "";
+  const trimmed = String(value).trim();
   if (!trimmed) return "";
+  if (/^(javascript:|data:|vbscript:)/i.test(trimmed) || /[\s<>"']/.test(trimmed)) {
+    return "";
+  }
   if (/^https?:\/\//i.test(trimmed)) {
     return trimmed;
   }
@@ -58,9 +79,9 @@ export function normalizeWebsite(value: string): string {
 /**
  * Sanitizes phone numbers for tel: links, retaining only digits and a single leading +.
  */
-export function telHref(phone: string): string {
+export function telHref(phone: string | null | undefined): string {
   if (!phone) return "";
-  const trimmed = phone.trim();
+  const trimmed = String(phone).trim();
   const hasPlus = trimmed.startsWith("+");
   const digits = trimmed.replace(/\D/g, "");
   if (!digits) return "";
@@ -195,6 +216,104 @@ function stripHtmlComments(html: string): string {
 }
 
 /**
+ * Builds a sanitized DocumentFragment from an HTML string using standard DOM nodes
+ * (createElement, createTextNode, textContent).
+ * Strictly removes executable tags (<script>, <iframe>, <object>, etc.) and all on* event handlers.
+ * Restricts href and src to safe protocols.
+ */
+export function buildSafeDomFragment(html: string): DocumentFragment {
+  const fragment = document.createDocumentFragment();
+  if (!html) return fragment;
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  const ALLOWED_TAGS = new Set([
+    "table", "thead", "tbody", "tfoot", "tr", "td", "th",
+    "div", "span", "p", "a", "img", "strong", "b", "em", "i",
+    "br", "hr", "sub", "sup"
+  ]);
+
+  const ALLOWED_ATTRS = new Set([
+    "href", "src", "alt", "title", "width", "height", "style",
+    "align", "valign", "bgcolor", "border", "cellpadding", "cellspacing",
+    "role", "target", "rel", "class"
+  ]);
+
+  function cleanNode(node: Node): Node | null {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return document.createTextNode(node.textContent || "");
+    }
+    if (node.nodeType === Node.COMMENT_NODE) {
+      return null;
+    }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement;
+      const tagName = el.tagName.toLowerCase();
+
+      if (!ALLOWED_TAGS.has(tagName)) {
+        return null;
+      }
+
+      const cleanEl = document.createElement(tagName);
+
+      for (let i = 0; i < el.attributes.length; i++) {
+        const attr = el.attributes[i];
+        const name = attr.name.toLowerCase();
+
+        // Disallow all inline event handlers (onerror, onload, onclick, etc.)
+        if (name.startsWith("on")) {
+          continue;
+        }
+
+        if (!ALLOWED_ATTRS.has(name)) {
+          continue;
+        }
+
+        const val = attr.value;
+
+        // Protocol restriction on href
+        if (name === "href") {
+          const trimmed = val.trim();
+          if (!/^(https?:\/\/|mailto:|tel:)/i.test(trimmed)) {
+            continue;
+          }
+        }
+
+        // Protocol restriction on src
+        if (name === "src") {
+          const trimmed = val.trim();
+          if (!/^(https?:\/\/|\/|data:image\/(png|jpeg|jpg|gif|webp|svg\+xml)[;,])/i.test(trimmed)) {
+            continue;
+          }
+        }
+
+        cleanEl.setAttribute(name, val);
+      }
+
+      Array.from(el.childNodes).forEach((child) => {
+        const cleanedChild = cleanNode(child);
+        if (cleanedChild) {
+          cleanEl.appendChild(cleanedChild);
+        }
+      });
+
+      return cleanEl;
+    }
+    return null;
+  }
+
+  Array.from(doc.body.childNodes).forEach((child) => {
+    const cleaned = cleanNode(child);
+    if (cleaned) {
+      fragment.appendChild(cleaned);
+    }
+  });
+
+  return fragment;
+}
+
+/**
  * Copies formatted rich signature (HTML + plain text fallback) to the clipboard.
  */
 export async function copySignatureRich(html: string, plainText: string): Promise<void> {
@@ -230,7 +349,7 @@ export async function copySignatureRich(html: string, plainText: string): Promis
     const container = document.createElement("div");
     container.setAttribute("aria-hidden", "true");
     container.contentEditable = "true";
-    container.innerHTML = cleanHtml;
+    container.appendChild(buildSafeDomFragment(cleanHtml));
 
     container.style.position = "fixed";
     container.style.left = "-9999px";

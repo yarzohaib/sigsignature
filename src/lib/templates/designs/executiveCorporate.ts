@@ -7,6 +7,7 @@ import {
   resolveEmailFont,
   validateThemeColor,
   parseInstagramField,
+  hasSafeImage,
 } from "./shared";
 
 /**
@@ -17,8 +18,8 @@ export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor);
   const fontStack = resolveEmailFont(data.fontFamily);
 
-  const hasAvatar = Boolean(data.avatarUrl && data.avatarUrl.trim().length > 0 && !data.avatarUrl.trim().startsWith("javascript:"));
-  const hasLogo = Boolean(data.companyLogoUrl && data.companyLogoUrl.trim().length > 0 && !data.companyLogoUrl.trim().startsWith("javascript:"));
+  const hasAvatar = hasSafeImage(data.avatarUrl);
+  const hasLogo = hasSafeImage(data.companyLogoUrl);
 
     const compWords = (data.companyName || "Sterling & Co.").trim().split(/\s+/).filter(Boolean);
     const monogram = compWords.length > 1
@@ -60,7 +61,7 @@ export function render(data: TemplateSignatureData): string {
   <td width="12" style="width:12px;font-size:1px;line-height:1px;">&nbsp;</td>
   <td valign="middle" class="contact-text" style="font-family:${fontStack};font-size:13px;color:#353A3D;font-weight:400;">
     <strong style="color:#353A3D;font-family:${fontStack};font-size:13px;font-weight:400;text-decoration:none;">
-      <a href="${telHref(data.phone)}" style="color:#353A3D;text-decoration:none;font-family:${fontStack};font-size:13px;font-weight:400;">${escapeHtml(data.phone.trim())}</a>
+      <a href="${safeUrl(telHref(data.phone))}" style="color:#353A3D;text-decoration:none;font-family:${fontStack};font-size:13px;font-weight:400;">${escapeHtml(data.phone.trim())}</a>
     </strong>
   </td>
 </tr>`);

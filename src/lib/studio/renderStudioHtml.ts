@@ -8,6 +8,7 @@ import { SIGNATURE_COLOR_SWATCHES } from "@/lib/signatureConstants";
 import {
   escapeHtml,
   safeUrl,
+  safeImageUrl,
   normalizeWebsite,
   telHref,
   resolveEmailFont,
@@ -245,7 +246,7 @@ export function renderExtrasHtml(
     if (item.type === "image") {
       const align = item.align || (isColumn ? "left" : "center");
       const width = Math.min(600, Math.max(20, Number(item.width) || 80));
-      const imgSrc = safeUrl(item.url || "");
+      const imgSrc = safeImageUrl(item.url || "");
       if (!imgSrc) return "";
       const linkHref = item.linkUrl?.trim() ? safeUrl(normalizeWebsite(item.linkUrl)) : "";
       const radius = shape === "square" ? "0px" : shape === "pill" ? "999px" : "4px";
@@ -336,7 +337,7 @@ export function renderExtrasHtml(
     }
 
     if (item.type === "banner") {
-      const bannerSrc = safeUrl(item.imageUrl || "");
+      const bannerSrc = safeImageUrl(item.imageUrl || "");
       if (!bannerSrc) return "";
       const linkHref = item.linkUrl?.trim() ? safeUrl(normalizeWebsite(item.linkUrl)) : "";
 
