@@ -282,7 +282,7 @@ function TemplatesContent() {
                   </div>
 
                   <Link
-                    href="/dashboard"
+                    href="/design-studio"
                     className="inline-flex h-[40px] items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-xs font-semibold text-[#022977] shadow-xs transition hover:bg-slate-50 active:scale-95 shrink-0"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
@@ -401,7 +401,7 @@ function TemplatesContent() {
                   </div>
 
                   <Link
-                    href="/dashboard"
+                    href="/design-studio"
                     className="flex h-[40px] items-center justify-center gap-2 rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 shrink-0"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
