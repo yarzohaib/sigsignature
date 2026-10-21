@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Contact Us | SigSignature",
   description:
     "Get in touch with the Sig Signature team for technical support, business partnerships, or product inquiries.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/contact",
+  },
 };
 
 const contactChannels = [

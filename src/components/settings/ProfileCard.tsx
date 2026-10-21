@@ -19,6 +19,7 @@ interface ProfileCardProps {
   onLastNameChange: (value: string) => void;
   onCompanyNameChange: (value: string) => void;
   onAvatarUpload: (file: File) => void;
+  onAvatarRemove?: () => void;
 }
 
 export default function ProfileCard({
@@ -33,6 +34,7 @@ export default function ProfileCard({
   onLastNameChange,
   onCompanyNameChange,
   onAvatarUpload,
+  onAvatarRemove,
 }: ProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -98,15 +100,35 @@ export default function ProfileCard({
             className="hidden"
             onChange={handleFileChange}
           />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploadingAvatar}
-            className="text-left text-sm font-semibold text-[#245FD4] transition hover:underline disabled:opacity-50"
-            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-          >
-            {isUploadingAvatar ? "Uploading photo..." : "Upload photo"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingAvatar}
+              className="text-left text-sm font-semibold text-[#245FD4] transition hover:underline disabled:opacity-50"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              {isUploadingAvatar
+                ? "Uploading photo..."
+                : avatarUrl
+                ? "Change photo"
+                : "Upload photo"}
+            </button>
+            {avatarUrl && onAvatarRemove && (
+              <>
+                <span className="text-slate-300">·</span>
+                <button
+                  type="button"
+                  onClick={onAvatarRemove}
+                  disabled={isUploadingAvatar}
+                  className="text-left text-sm font-semibold text-rose-600 transition hover:underline disabled:opacity-50"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Remove
+                </button>
+              </>
+            )}
+          </div>
           <span
             className="mt-0.5 text-[12px] text-[#94A3B8]"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}

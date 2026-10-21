@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Changelog & Product Updates | SigSignature",
   description:
     "Track the latest features, engine updates, bug fixes, and client compatibility improvements in Sig Signature.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/updates",
+  },
 };
 
 const v1Features = [

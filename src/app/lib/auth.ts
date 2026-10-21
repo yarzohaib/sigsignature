@@ -21,6 +21,23 @@ export function setAuthSession(tokens: AuthTokens, user: UserProfile) {
     }
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
 
+    // Restore or update user avatar preview
+    const resolvedAvatar =
+      user.avatarUrl ||
+      (user.id ? localStorage.getItem(`sig_avatar_${user.id}`) : null) ||
+      null;
+
+    if (resolvedAvatar) {
+      localStorage.setItem(AUTH_AVATAR_PREVIEW_KEY, resolvedAvatar);
+      if (user.id) {
+        localStorage.setItem(`sig_avatar_${user.id}`, resolvedAvatar);
+      }
+      window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: resolvedAvatar }));
+    } else {
+      localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+      window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: null }));
+    }
+
     // Also persist in cookie for Next.js middleware and SSR
     const maxAge = 7 * 24 * 60 * 60; // 7 days
     document.cookie = `${AUTH_COOKIE_NAME}=${encodeURIComponent(
@@ -58,7 +75,15 @@ export function clearAuthSession() {
 export function getStoredAvatarUrl(): string | null {
   if (typeof window === "undefined") return null;
   try {
-    return localStorage.getItem(AUTH_AVATAR_PREVIEW_KEY);
+    const preview = localStorage.getItem(AUTH_AVATAR_PREVIEW_KEY);
+    if (preview) return preview;
+    const user = getStoredUser();
+    if (user?.avatarUrl) return user.avatarUrl;
+    if (user?.id) {
+      const userCached = localStorage.getItem(`sig_avatar_${user.id}`);
+      if (userCached) return userCached;
+    }
+    return null;
   } catch {
     return null;
   }
@@ -70,10 +95,17 @@ export function getStoredAvatarUrl(): string | null {
 export function setStoredAvatarUrl(url: string | null): void {
   if (typeof window === "undefined") return;
   try {
+    const user = getStoredUser();
     if (url) {
       localStorage.setItem(AUTH_AVATAR_PREVIEW_KEY, url);
+      if (user?.id) {
+        localStorage.setItem(`sig_avatar_${user.id}`, url);
+      }
     } else {
       localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+      if (user?.id) {
+        localStorage.removeItem(`sig_avatar_${user.id}`);
+      }
     }
     window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: url }));
   } catch (err) {
@@ -141,6 +173,23 @@ export function setStoredUser(user: UserProfile): void {
 
   try {
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+
+    if (user.avatarUrl !== undefined) {
+      if (user.avatarUrl) {
+        localStorage.setItem(AUTH_AVATAR_PREVIEW_KEY, user.avatarUrl);
+        if (user.id) {
+          localStorage.setItem(`sig_avatar_${user.id}`, user.avatarUrl);
+        }
+        window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: user.avatarUrl }));
+      } else {
+        localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+        if (user.id) {
+          localStorage.removeItem(`sig_avatar_${user.id}`);
+        }
+        window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: null }));
+      }
+    }
+
     window.dispatchEvent(new CustomEvent("sig_user_update", { detail: user }));
   } catch (err) {
     console.error("Failed to update stored user:", err);

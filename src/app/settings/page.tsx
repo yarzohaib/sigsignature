@@ -29,7 +29,7 @@ import {
   setStoredSettings,
   clearAuthSession,
   getStoredRefreshToken,
-  AUTH_AVATAR_PREVIEW_KEY,
+  getStoredAvatarUrl,
   setStoredAvatarUrl,
 } from "@/app/lib/auth";
 import { compressImageToBlob } from "@/lib/imageUtils";
@@ -39,6 +39,7 @@ interface FormState {
   firstName: string;
   lastName: string;
   companyName: string;
+  avatarUrl: string | null;
   defaultTemplateId: string | null;
   defaultExportFormat: "html" | "plain";
   signatureFont: string;
@@ -63,10 +64,12 @@ export default function SettingsPage() {
   const [initialFormState, setInitialFormState] = useState<FormState>(() => {
     const cachedUser = typeof window !== "undefined" ? getStoredUser() : null;
     const cachedSettings = typeof window !== "undefined" ? getStoredSettings() : null;
+    const cachedAvatar = typeof window !== "undefined" ? getStoredAvatarUrl() : null;
     return {
       firstName: cachedUser?.firstName || "",
       lastName: cachedUser?.lastName || "",
       companyName: cachedUser?.companyName || "",
+      avatarUrl: cachedUser?.avatarUrl || cachedAvatar || null,
       defaultTemplateId: cachedSettings?.defaultTemplateId || "professional-minimal",
       defaultExportFormat: cachedSettings?.defaultExportFormat || "html",
       signatureFont: cachedSettings?.signatureFont || "Arimo",
@@ -79,10 +82,12 @@ export default function SettingsPage() {
   const [formState, setFormState] = useState<FormState>(() => {
     const cachedUser = typeof window !== "undefined" ? getStoredUser() : null;
     const cachedSettings = typeof window !== "undefined" ? getStoredSettings() : null;
+    const cachedAvatar = typeof window !== "undefined" ? getStoredAvatarUrl() : null;
     return {
       firstName: cachedUser?.firstName || "",
       lastName: cachedUser?.lastName || "",
       companyName: cachedUser?.companyName || "",
+      avatarUrl: cachedUser?.avatarUrl || cachedAvatar || null,
       defaultTemplateId: cachedSettings?.defaultTemplateId || "professional-minimal",
       defaultExportFormat: cachedSettings?.defaultExportFormat || "html",
       signatureFont: cachedSettings?.signatureFont || "Arimo",
@@ -91,13 +96,8 @@ export default function SettingsPage() {
     };
   });
 
-  // Avatar upload and preview state
-  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(AUTH_AVATAR_PREVIEW_KEY);
-    }
-    return null;
-  });
+  // Avatar preview url derived directly from active form state
+  const avatarPreviewUrl = formState.avatarUrl;
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Notifications toggles state (separate from main save changes button as they save optimistically)
@@ -140,10 +140,12 @@ export default function SettingsPage() {
         if (!isMounted) return;
 
         setAccountData(data);
+        const serverAvatar = data.user.avatarUrl || null;
         const serverForm: FormState = {
           firstName: data.user.firstName || "",
           lastName: data.user.lastName || "",
           companyName: data.user.companyName || "",
+          avatarUrl: serverAvatar,
           defaultTemplateId: data.settings.defaultTemplateId || "professional-minimal",
           defaultExportFormat: data.settings.defaultExportFormat || "html",
           signatureFont: data.settings.signatureFont || "Arimo",
@@ -159,6 +161,7 @@ export default function SettingsPage() {
         // Synchronize local caches
         setStoredUser(data.user);
         setStoredSettings(data.settings);
+        setStoredAvatarUrl(serverAvatar);
       } catch (err: unknown) {
         console.error("Failed to load account:", err);
         // If unauthenticated, redirect to login
@@ -220,6 +223,7 @@ export default function SettingsPage() {
       formState.firstName.trim() !== initialFormState.firstName.trim() ||
       (formState.lastName || "").trim() !== (initialFormState.lastName || "").trim() ||
       (formState.companyName || "").trim() !== (initialFormState.companyName || "").trim() ||
+      (formState.avatarUrl || null) !== (initialFormState.avatarUrl || null) ||
       formState.defaultTemplateId !== initialFormState.defaultTemplateId ||
       formState.defaultExportFormat !== initialFormState.defaultExportFormat ||
       formState.signatureFont !== initialFormState.signatureFont ||
@@ -246,6 +250,7 @@ export default function SettingsPage() {
   // Handle Cancel: resets form to initial state
   const handleCancel = () => {
     setFormState(initialFormState);
+    setStoredAvatarUrl(initialFormState.avatarUrl);
   };
 
   // Handle Save Changes: sends PATCH account and PATCH settings only for changed fields
@@ -267,6 +272,10 @@ export default function SettingsPage() {
       }
       if ((formState.companyName || "").trim() !== (initialFormState.companyName || "").trim()) {
         profilePayload.companyName = formState.companyName.trim() || null;
+        hasProfileChange = true;
+      }
+      if ((formState.avatarUrl || null) !== (initialFormState.avatarUrl || null)) {
+        profilePayload.avatarUrl = formState.avatarUrl || null;
         hasProfileChange = true;
       }
 
@@ -300,6 +309,7 @@ export default function SettingsPage() {
       if (hasProfileChange) {
         updatedUser = await updateAccountProfile(profilePayload);
         setStoredUser(updatedUser);
+        setStoredAvatarUrl(updatedUser.avatarUrl || null);
       }
 
       // 2. Send settings updates if any changed
@@ -350,9 +360,9 @@ export default function SettingsPage() {
       const compressedBlob = await compressImageToBlob(file, 400, 0.85, "avatar");
 
       const publicUrl = await uploadSignatureImage(compressedBlob, "avatar");
-      setAvatarPreviewUrl(publicUrl);
+      setFormState((prev) => ({ ...prev, avatarUrl: publicUrl }));
       setStoredAvatarUrl(publicUrl);
-      showToast("Photo uploaded successfully");
+      showToast("Photo uploaded. Click Save Changes to save your profile picture.");
     } catch (err: unknown) {
       console.error("Avatar upload failed:", err);
       const msg = err instanceof Error ? err.message : "Failed to upload avatar.";
@@ -360,6 +370,13 @@ export default function SettingsPage() {
     } finally {
       setIsUploadingAvatar(false);
     }
+  };
+
+  // Avatar remove handler
+  const handleAvatarRemove = () => {
+    setFormState((prev) => ({ ...prev, avatarUrl: null }));
+    setStoredAvatarUrl(null);
+    showToast("Photo removed. Click Save Changes to save your changes.");
   };
 
   // Optimistic Toggle: Product Updates
@@ -559,6 +576,7 @@ export default function SettingsPage() {
                     setFormState((prev) => ({ ...prev, companyName: val }))
                   }
                   onAvatarUpload={handleAvatarUpload}
+                  onAvatarRemove={handleAvatarRemove}
                 />
 
                 {/* 2. Signature defaults card */}

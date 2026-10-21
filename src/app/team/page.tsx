@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Meet the Team | SigSignature",
   description:
     "The builders, designers, and problem solvers behind Sig Signature and The Nevon.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/team",
+  },
 };
 
 interface TeamMember {

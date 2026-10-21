@@ -1,12 +1,20 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import robots from "../src/app/robots";
-import sitemap from "../src/app/sitemap";
 import { middleware } from "../src/middleware";
 import { NextRequest } from "next/server";
 import { siteMetadata, getSiteMetadata } from "../src/lib/seo";
+import { metadata as homeMetadata } from "../src/app/page";
+import { metadata as aboutMetadata } from "../src/app/about/page";
+import { metadata as teamMetadata } from "../src/app/team/page";
+import { metadata as contactMetadata } from "../src/app/contact/page";
+import { metadata as updatesMetadata } from "../src/app/updates/page";
+import { metadata as privacyMetadata } from "../src/app/privacy/page";
+import { metadata as termsMetadata } from "../src/app/terms/page";
 
-describe("SEO, Robots.txt & Sitemap Suite", () => {
+describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
   // 1. Robots.txt configuration
   test("1. robots.txt provides valid rules, allows public rendering, disallows private routes, and references sitemap", () => {
     delete process.env.NEXT_PUBLIC_PRE_LAUNCH;
@@ -62,48 +70,61 @@ describe("SEO, Robots.txt & Sitemap Suite", () => {
     }
   });
 
-  // 3. Sitemap.xml canonical public URLs
-  test("3. sitemap.xml includes only canonical, working public pages on www.sigsignature.com", () => {
-    const entries = sitemap();
-    const urls = entries.map((e) => e.url);
+  // 3. Sitemap.xml follows Puzzroo XML theme, namespaces, section comments, and working canonical pages
+  test("3. sitemap.xml strictly follows the Puzzroo XML theme, schema, comments and canonical URLs", () => {
+    const sitemapPath = path.resolve(__dirname, "../public/sitemap.xml");
+    assert.ok(fs.existsSync(sitemapPath), "public/sitemap.xml must exist");
 
-    // Assert canonical domain
-    for (const url of urls) {
-      assert.ok(url.startsWith("https://www.sigsignature.com"), `URL must use production domain: ${url}`);
-    }
+    const xml = fs.readFileSync(sitemapPath, "utf-8");
 
-    // Exactly 7 public canonical pages
+    // Verify XML declaration and schema definitions
+    assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'), "Must start with XML declaration");
+    assert.ok(xml.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'), "Must include standard sitemaps schema");
+    assert.ok(xml.includes('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'), "Must include xsi schema namespace");
+    assert.ok(
+      xml.includes('xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'),
+      "Must include xsi:schemaLocation reference"
+    );
+
+    // Verify Puzzroo-style section comments
+    assert.ok(xml.includes("<!-- Homepage - Highest Priority -->"), "Must have Homepage section comment");
+    assert.ok(xml.includes("<!-- Information Pages -->"), "Must have Information Pages section comment");
+    assert.ok(xml.includes("<!-- Legal Pages -->"), "Must have Legal Pages section comment");
+
+    // Extract all <loc> values
+    const locMatches = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
+    assert.equal(locMatches.length, 7, "Sitemap must contain exactly 7 public URLs");
+
     const expectedPages = [
       "https://www.sigsignature.com/",
       "https://www.sigsignature.com/about",
       "https://www.sigsignature.com/team",
       "https://www.sigsignature.com/contact",
       "https://www.sigsignature.com/updates",
-      "https://www.sigsignature.com/terms",
       "https://www.sigsignature.com/privacy",
+      "https://www.sigsignature.com/terms",
     ];
 
-    assert.equal(urls.length, 7, "Sitemap should contain exactly the 7 public indexable pages");
     for (const expected of expectedPages) {
-      assert.ok(urls.includes(expected), `Sitemap must include ${expected}`);
+      assert.ok(locMatches.includes(expected), `Sitemap must include loc: ${expected}`);
+    }
+
+    // Verify lastmod matches YYYY-MM-DD date format
+    const lastmodMatches = [...xml.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map((m) => m[1]);
+    assert.equal(lastmodMatches.length, 7, "Every entry must have a lastmod");
+    for (const dateStr of lastmodMatches) {
+      assert.match(dateStr, /^\d{4}-\d{2}-\d{2}$/, `lastmod must strictly follow YYYY-MM-DD: ${dateStr}`);
     }
 
     // Assert NO private routes or redirects exist in sitemap
-    assert.ok(!urls.some((u) => u.includes("dashboard")), "Must not include dashboard");
-    assert.ok(!urls.some((u) => u.includes("signatures")), "Must not include signatures");
-    assert.ok(!urls.some((u) => u.includes("design-studio")), "Must not include design-studio");
-    assert.ok(!urls.some((u) => u.includes("/s/")), "Must not include /s/");
-    assert.ok(!urls.some((u) => u.includes("login")), "Must not include login");
-    assert.ok(!urls.some((u) => u.includes("signup")), "Must not include signup");
-    assert.ok(!urls.some((u) => u.includes("forgot")), "Must not include forgot");
-    assert.ok(!urls.some((u) => u.includes("forgot-password")), "Must not include redirects");
-
-    // Verify metadata presence
-    for (const entry of entries) {
-      assert.ok(entry.lastModified instanceof Date, "lastModified must be a Date object");
-      assert.ok(typeof entry.changeFrequency === "string", "changeFrequency must be provided");
-      assert.ok(typeof entry.priority === "number" && entry.priority > 0 && entry.priority <= 1, "priority must be between 0 and 1");
-    }
+    assert.ok(!locMatches.some((u) => u.includes("dashboard")), "Must not include dashboard");
+    assert.ok(!locMatches.some((u) => u.includes("signatures")), "Must not include signatures");
+    assert.ok(!locMatches.some((u) => u.includes("design-studio")), "Must not include design-studio");
+    assert.ok(!locMatches.some((u) => u.includes("/s/")), "Must not include /s/");
+    assert.ok(!locMatches.some((u) => u.includes("login")), "Must not include login");
+    assert.ok(!locMatches.some((u) => u.includes("signup")), "Must not include signup");
+    assert.ok(!locMatches.some((u) => u.includes("forgot")), "Must not include forgot");
+    assert.ok(!locMatches.some((u) => u.includes("forgot-password")), "Must not include redirects");
   });
 
   // 4. Pre-launch and Launch Header Controls via Middleware
@@ -172,7 +193,7 @@ describe("SEO, Robots.txt & Sitemap Suite", () => {
   // 5. Layout Metadata Canonical & Robots
   test("5. Root layout configures metadataBase, canonical alternates, and indexable robots", () => {
     assert.equal(siteMetadata.metadataBase?.toString(), "https://www.sigsignature.com/");
-    assert.deepEqual(siteMetadata.alternates?.canonical, "./");
+    assert.equal(siteMetadata.alternates?.canonical, "https://www.sigsignature.com");
 
     // In production without NEXT_PUBLIC_PRE_LAUNCH, robots must allow indexing
     const robotsMeta = siteMetadata.robots as Record<string, unknown>;
@@ -183,5 +204,74 @@ describe("SEO, Robots.txt & Sitemap Suite", () => {
     const preLaunchMeta = getSiteMetadata(true).robots as Record<string, unknown>;
     assert.equal(preLaunchMeta.index, false);
     assert.equal(preLaunchMeta.follow, false);
+  });
+
+  // 6. Absolute Canonical URLs on Each Distinct Public Page
+  test("6. Every distinct public page sets its own absolute canonical URL pointing to itself", () => {
+    // 1. Homepage
+    assert.equal(
+      homeMetadata.alternates?.canonical,
+      "https://www.sigsignature.com",
+      "Homepage canonical must point to https://www.sigsignature.com"
+    );
+
+    // 2. About
+    assert.equal(
+      aboutMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/about",
+      "About page canonical must point to https://www.sigsignature.com/about (not homepage)"
+    );
+
+    // 3. Team
+    assert.equal(
+      teamMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/team",
+      "Team page canonical must point to https://www.sigsignature.com/team (not homepage)"
+    );
+
+    // 4. Contact
+    assert.equal(
+      contactMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/contact",
+      "Contact page canonical must point to https://www.sigsignature.com/contact (not homepage)"
+    );
+
+    // 5. Updates
+    assert.equal(
+      updatesMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/updates",
+      "Updates page canonical must point to https://www.sigsignature.com/updates (not homepage)"
+    );
+
+    // 6. Privacy
+    assert.equal(
+      privacyMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/privacy",
+      "Privacy page canonical must point to https://www.sigsignature.com/privacy (not homepage)"
+    );
+
+    // 7. Terms
+    assert.equal(
+      termsMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/terms",
+      "Terms page canonical must point to https://www.sigsignature.com/terms (not homepage)"
+    );
+
+    // Verify all canonical URLs are mutually distinct
+    const canonicals = [
+      homeMetadata.alternates?.canonical,
+      aboutMetadata.alternates?.canonical,
+      teamMetadata.alternates?.canonical,
+      contactMetadata.alternates?.canonical,
+      updatesMetadata.alternates?.canonical,
+      privacyMetadata.alternates?.canonical,
+      termsMetadata.alternates?.canonical,
+    ];
+    const uniqueCanonicals = new Set(canonicals);
+    assert.equal(
+      uniqueCanonicals.size,
+      7,
+      "All 7 public indexable pages must have unique canonical URLs"
+    );
   });
 });

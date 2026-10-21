@@ -6,7 +6,7 @@ export function getSiteMetadata(
   return {
     metadataBase: new URL("https://www.sigsignature.com"),
     alternates: {
-      canonical: "./",
+      canonical: "https://www.sigsignature.com",
     },
     robots: isPreLaunch
       ? {

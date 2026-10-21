@@ -29,6 +29,7 @@ export interface UserProfile {
   firstName: string;
   lastName?: string | null;
   companyName?: string | null;
+  avatarUrl?: string | null;
   isActive?: boolean;
   isVerified?: boolean;
   createdAt?: string;
@@ -1306,6 +1307,7 @@ export interface UpdateProfilePayload {
   firstName?: string;
   lastName?: string | null;
   companyName?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface UpdateSettingsPayload {

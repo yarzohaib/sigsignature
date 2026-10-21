@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   title: "Free Email Signature Generator | SigSignature",
   description:
     "Create up to 3 professional signatures with SigSignature’s free email signature generator. Customize templates, preview live, and export HTML or images.",
+  alternates: {
+    canonical: "https://www.sigsignature.com",
+  },
 };
 
 export default function LandingPage() {

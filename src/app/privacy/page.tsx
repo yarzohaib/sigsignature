@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Privacy Policy | SigSignature",
   description:
     "Learn how Sig Signature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/privacy",
+  },
 };
 
 const providers = [

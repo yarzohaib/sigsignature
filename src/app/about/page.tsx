@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "About Us | SigSignature",
   description:
     "Sig Signature by The Nevon is a lightweight, deliverability-focused HTML email signature generator built for modern professionals and teams.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/about",
+  },
 };
 
 const engineeringPrinciples = [

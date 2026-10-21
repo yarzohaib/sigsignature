@@ -12,6 +12,7 @@ import {
   clearAuthSession,
   getStoredRefreshToken,
   getStoredUser,
+  setStoredUser,
 } from "@/app/lib/auth";
 
 export default function DashboardPage() {
@@ -33,6 +34,7 @@ export default function DashboardPage() {
       try {
         const freshUser = await getCurrentUser();
         setUser(freshUser);
+        setStoredUser(freshUser);
       } catch (err) {
         console.warn("Session expired or invalid, redirecting to login:", err);
         clearAuthSession();

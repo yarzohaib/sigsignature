@@ -70,9 +70,10 @@ export default function Navbar() {
     const avatar = parts[2] || null;
     if (!token || !userStr) return { user: null, avatarUrl: null };
     try {
+      const parsedUser = JSON.parse(userStr) as UserProfile;
       return {
-        user: JSON.parse(userStr) as UserProfile,
-        avatarUrl: avatar,
+        user: parsedUser,
+        avatarUrl: avatar || parsedUser.avatarUrl || null,
       };
     } catch {
       return { user: null, avatarUrl: null };
