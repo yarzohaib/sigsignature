@@ -238,30 +238,35 @@ export default function SecurityCard({
               <span>Loading session details...</span>
             </div>
           ) : (
-            <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 min-w-0">
+            <div className="rounded-xl bg-slate-50 p-2.5 sm:p-3 border border-slate-100">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <svg className="h-4 w-4 shrink-0 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
                     <line x1="8" y1="21" x2="16" y2="21" />
                     <line x1="12" y1="17" x2="12" y2="21" />
                   </svg>
-                  <span
-                    className="truncate text-xs font-medium text-[#1E293B]"
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  >
-                    {currentSession?.device || "Chrome · macOS"}
-                  </span>
+                  <div className="min-w-0 flex flex-col justify-center">
+                    <span
+                      className="truncate text-xs font-medium text-[#1E293B] leading-tight"
+                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                    >
+                      {currentSession?.device || "Chrome · macOS"}
+                    </span>
+                    {currentSession?.ipAddress && (
+                      <span
+                        className="truncate text-[11px] text-slate-400 mt-0.5 leading-tight"
+                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                      >
+                        IP: {currentSession.ipAddress}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200">
                   Current session
                 </span>
               </div>
-              {currentSession?.ipAddress && (
-                <p className="mt-1 pl-6 text-[11px] text-slate-400">
-                  IP: {currentSession.ipAddress}
-                </p>
-              )}
             </div>
           )}
 
@@ -297,12 +302,19 @@ export default function SecurityCard({
                       key={s.id}
                       className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/70 p-2 text-xs"
                     >
-                      <div className="min-w-0 pr-2">
-                        <p className="truncate font-medium text-[#1E293B]">{s.device}</p>
-                        <p className="text-[11px] text-slate-400">
-                          {formatRelativeTime(s.lastUsedAt)}
-                          {s.ipAddress ? ` · ${s.ipAddress}` : ""}
-                        </p>
+                      <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                        <svg className="h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                          <line x1="8" y1="21" x2="16" y2="21" />
+                          <line x1="12" y1="17" x2="12" y2="21" />
+                        </svg>
+                        <div className="min-w-0 flex flex-col justify-center">
+                          <p className="truncate font-medium text-[#1E293B] leading-tight">{s.device}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5 leading-tight">
+                            {formatRelativeTime(s.lastUsedAt)}
+                            {s.ipAddress ? ` · IP: ${s.ipAddress}` : ""}
+                          </p>
+                        </div>
                       </div>
                       <button
                         type="button"
