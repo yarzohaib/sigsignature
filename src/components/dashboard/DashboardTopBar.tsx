@@ -3,7 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getStoredAvatarUrl } from "@/app/lib/auth";
+import { useRouter } from "next/navigation";
+import { getStoredAvatarUrl, getStoredRefreshToken, clearAuthSession, getStoredUser } from "@/app/lib/auth";
+import { logoutUser, UserProfile } from "@/app/lib/api";
 
 type TopBarProps = {
   userName?: string;
@@ -18,16 +20,36 @@ type TopBarProps = {
 };
 
 export default function DashboardTopBar({
-  userName = "Member",
+  userName,
+  userEmail,
   avatarUrl = null,
   notificationCount = 0,
   onOpenMobileMenu,
+  onLogout,
+  isLoggingOut = false,
   searchValue,
   onSearchChange,
 }: TopBarProps) {
+  const router = useRouter();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [internalLoggingOut, setInternalLoggingOut] = useState(false);
   const [internalSearch, setInternalSearch] = useState("");
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Stored user profile for fallback name and email
+  const [storedUser] = useState<UserProfile | null>(() => getStoredUser());
+
+  const resolvedUserName =
+    userName ||
+    (storedUser
+      ? [storedUser.firstName, storedUser.lastName].filter(Boolean).join(" ") ||
+        storedUser.email?.split("@")[0]
+      : "") ||
+    "Member";
+
+  const resolvedUserEmail = userEmail || storedUser?.email || "";
 
   // Avatar state resolved from props or localStorage, synchronized across pages
   const [storedAvatar, setStoredAvatar] = useState<string | null>(() => getStoredAvatarUrl());
@@ -56,16 +78,40 @@ export default function DashboardTopBar({
     }
   };
 
+  const handleInternalLogout = async () => {
+    if (onLogout) {
+      onLogout();
+      return;
+    }
+    setInternalLoggingOut(true);
+    try {
+      const refreshToken = getStoredRefreshToken();
+      await logoutUser(refreshToken || undefined);
+    } catch (err) {
+      console.warn("Logout error:", err);
+    } finally {
+      clearAuthSession();
+      setProfileDropdownOpen(false);
+      setInternalLoggingOut(false);
+      router.replace("/login");
+      router.refresh();
+    }
+  };
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const target = event.target as Node;
       if (notificationsRef.current && !notificationsRef.current.contains(target)) {
         setNotificationsOpen(false);
       }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(target)) {
+        setProfileDropdownOpen(false);
+      }
     }
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setNotificationsOpen(false);
+        setProfileDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -204,41 +250,148 @@ export default function DashboardTopBar({
           )}
         </div>
 
-        {/* User Profile Link directly to Settings */}
-        <Link
-          href="/settings"
-          className="group flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1 transition hover:bg-slate-100 focus:outline-none"
-          title="Account Settings"
-          aria-label="Account Settings"
-        >
-          {/* User Avatar: uses uploaded avatar preview or placeholder */}
-          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
-            <Image
-              src={displaySrc}
-              alt={userName || "Profile avatar"}
-              width={36}
-              height={36}
-              unoptimized
-              onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
-              className="h-full w-full object-cover"
-            />
-          </div>
-
-          {/* User Name matching typography from Figma */}
-          <span
-            className="hidden sm:inline-block text-[#1E293B] transition group-hover:text-[#245FD4]"
-            style={{
-              fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-              fontWeight: 700,
-              fontSize: "14px",
-              lineHeight: "18.67px",
-              letterSpacing: "0%",
-              verticalAlign: "middle",
-            }}
+        {/* User Profile Dropdown */}
+        <div className="relative" ref={profileDropdownRef}>
+          <button
+            type="button"
+            onClick={() => setProfileDropdownOpen((prev) => !prev)}
+            aria-expanded={profileDropdownOpen}
+            aria-haspopup="true"
+            className="group flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1 transition hover:bg-slate-100 focus:outline-none cursor-pointer"
+            title="User menu"
+            aria-label="User menu"
           >
-            {userName}
-          </span>
-        </Link>
+            {/* User Avatar: uses uploaded avatar preview or placeholder */}
+            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
+              <Image
+                src={displaySrc}
+                alt={resolvedUserName || "Profile avatar"}
+                width={36}
+                height={36}
+                unoptimized
+                onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            {/* User Name matching typography from Figma */}
+            <span
+              className="hidden sm:inline-block text-[#1E293B] transition group-hover:text-[#245FD4]"
+              style={{
+                fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "18.67px",
+                letterSpacing: "0%",
+                verticalAlign: "middle",
+              }}
+            >
+              {resolvedUserName}
+            </span>
+
+            {/* Chevron indicator */}
+            <svg
+              className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+                profileDropdownOpen ? "rotate-180 text-[#245FD4]" : "group-hover:text-slate-600"
+              }`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+
+          {/* Profile Dropdown Menu */}
+          {profileDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-xl animate-in fade-in zoom-in-95 z-50 text-left">
+              {/* User Header */}
+              <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100 mb-1">
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100">
+                  <Image
+                    src={displaySrc}
+                    alt={resolvedUserName || "Profile photo"}
+                    width={40}
+                    height={40}
+                    unoptimized
+                    onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className="text-sm font-bold text-[#1E293B] truncate"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    {resolvedUserName}
+                  </p>
+                  {resolvedUserEmail && (
+                    <p
+                      className="text-xs text-[#64748B] truncate"
+                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                      title={resolvedUserEmail}
+                    >
+                      {resolvedUserEmail}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* My Profile */}
+              <div className="space-y-0.5">
+                <Link
+                  href="/settings"
+                  onClick={() => setProfileDropdownOpen(false)}
+                  className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-[#245FD4]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  <svg
+                    className="h-4 w-4 text-slate-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span>My Profile</span>
+                </Link>
+              </div>
+
+              <div className="my-1 border-t border-slate-100" />
+
+              {/* Log out */}
+              <button
+                type="button"
+                onClick={handleInternalLogout}
+                disabled={isLoggingOut || internalLoggingOut}
+                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:opacity-60 cursor-pointer text-left"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                <svg
+                  className="h-4 w-4 text-rose-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>{isLoggingOut || internalLoggingOut ? "Logging out..." : "Log out"}</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

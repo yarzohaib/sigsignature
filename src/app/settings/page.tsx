@@ -514,19 +514,6 @@ export default function SettingsPage() {
               <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 pt-1">
                 <button
                   type="button"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 sm:px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition hover:bg-red-50 hover:text-red-600 hover:border-red-200 disabled:opacity-50 active:scale-95 cursor-pointer"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  title="Log out of your account"
-                >
-                  <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span>{isLoggingOut ? "Logging out..." : "Log out"}</span>
-                </button>
-                <button
-                  type="button"
                   onClick={handleCancel}
                   disabled={!isDirty || isSaving}
                   className="rounded-xl border border-slate-200 bg-white px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
@@ -658,63 +645,6 @@ export default function SettingsPage() {
                   hasPassword={accountData?.hasPassword ?? true}
                   onShowToast={showToast}
                 />
-
-                {/* 8. Log out card */}
-                <div className="rounded-2xl border border-[#E1E6EF] bg-white p-6 shadow-xs">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
-                        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h2
-                          className="text-[18px] font-semibold text-[#172238] leading-tight"
-                          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                        >
-                          Log out
-                        </h2>
-                        <p
-                          className="mt-0.5 text-[13px] text-[#6B7280]"
-                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                        >
-                          End your current session on this device.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-[#F1F5F9] flex items-center justify-between">
-                    <div className="flex flex-col min-w-0 pr-2">
-                      <span
-                        className="text-xs font-semibold text-[#1E293B] truncate"
-                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                      >
-                        {displayName}
-                      </span>
-                      {displayEmail && (
-                        <span
-                          className="text-[11px] text-[#64748B] truncate"
-                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                        >
-                          {displayEmail}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      disabled={isLoggingOut}
-                      className="flex items-center gap-2 shrink-0 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-600 shadow-2xs transition hover:bg-red-100 disabled:opacity-50 active:scale-95 cursor-pointer"
-                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                    >
-                      <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      <span>{isLoggingOut ? "Logging out..." : "Log out"}</span>
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           </main>
