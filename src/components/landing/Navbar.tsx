@@ -49,11 +49,6 @@ export default function Navbar() {
   const [hidePill, setHidePill] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const prevOpenRef = useRef(false);
