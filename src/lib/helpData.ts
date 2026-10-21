@@ -25,6 +25,7 @@ export interface SupportInfo {
   description: string;
   buttonText: string;
   fallbackEmail: string;
+  href?: string;
 }
 
 export const HELP_CATEGORIES: HelpCategory[] = [
@@ -133,5 +134,6 @@ export const SUPPORT_INFO: SupportInfo = {
   title: "Still need a hand?",
   description: "Tell us what you're trying to do. A screenshot or email client name helps.",
   buttonText: "Contact Support",
+  href: "/contact",
   fallbackEmail: "teams@thenevon.com",
 };

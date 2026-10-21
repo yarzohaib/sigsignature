@@ -1,13 +1,8 @@
 import React from "react";
+import Link from "next/link";
 import { SUPPORT_INFO } from "@/lib/helpData";
 
 export default function SupportBanner() {
-  const supportEmail =
-    process.env.NEXT_PUBLIC_SUPPORT_EMAIL || SUPPORT_INFO.fallbackEmail;
-  const mailtoHref = `mailto:${supportEmail}?subject=${encodeURIComponent(
-    "Help & Support Request - Sig Signature"
-  )}`;
-
   return (
     <section
       aria-labelledby="support-banner-heading"
@@ -46,13 +41,13 @@ export default function SupportBanner() {
         </div>
       </div>
 
-      <a
-        href={mailtoHref}
+      <Link
+        href={SUPPORT_INFO.href || "/contact"}
         className="inline-flex items-center justify-center rounded-xl bg-[#245FD4] hover:bg-[#1E4FB0] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition shrink-0 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]"
         style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
       >
         {SUPPORT_INFO.buttonText}
-      </a>
+      </Link>
     </section>
   );
 }

@@ -278,7 +278,7 @@ function LoginForm() {
                 href="/forgot"
                 className="font-normal text-[#022977] underline transition hover:text-brand-dark"
               >
-                 Forgot your password?Reset it
+                 Forgot your password? Reset it
               </Link>
             </span>
           </div>
