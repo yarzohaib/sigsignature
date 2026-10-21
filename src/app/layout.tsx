@@ -28,6 +28,13 @@ export const metadata: Metadata = {
   },
   description:
     "SigSignature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-icon.png",
+  },
   verification: {
     google: "DUyyrpNeKYNjkUUggUmFhX3q03kIWGrqg-2qJHNPcCI",
   },

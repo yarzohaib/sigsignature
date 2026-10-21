@@ -7,6 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "test": "tsx --test tests/**/*.test.ts",
     "verify:templates": "tsx scripts/verifyTemplates.ts",
     "icons:generate": "node scripts/generate-email-icons.mjs",
     "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js",
