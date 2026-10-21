@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
+import { getSecurityHeaders } from "./src/lib/csp";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       {
@@ -21,6 +22,28 @@ const nextConfig: NextConfig = {
         hostname: "cdn-icons-png.flaticon.com",
       },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/forgot-password",
+        destination: "/forgot",
+        permanent: true,
+      },
+      {
+        source: "/reset-password",
+        destination: "/reset",
+        permanent: true,
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: getSecurityHeaders(),
+      },
+    ];
   },
 };
 
