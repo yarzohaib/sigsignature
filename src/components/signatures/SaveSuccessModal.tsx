@@ -35,6 +35,155 @@ interface SaveSuccessModalProps {
   signatureName?: string;
 }
 
+/**
+ * Calculates canvas dimensions from studio signature data or canvas element bounds.
+ */
+function getCanvasDimensions(
+  signature?: SavedSignature,
+  signatureData?: TemplateSignatureData | StudioSignatureData
+): { width?: number; height?: number } {
+  let w: number | undefined;
+  let h: number | undefined;
+
+  const studioData =
+    signature?.kind === "studio"
+      ? signature.data
+      : signatureData &&
+        ("extras" in signatureData ||
+          "elements" in signatureData ||
+          "canvas" in signatureData ||
+          (signatureData as StudioSignatureData).layout === "single")
+      ? (signatureData as StudioSignatureData)
+      : undefined;
+
+  if (studioData) {
+    if (studioData.canvas?.width && Number.isFinite(studioData.canvas.width)) {
+      w = Number(studioData.canvas.width);
+    }
+    if (studioData.canvas?.height && Number.isFinite(studioData.canvas.height)) {
+      h = Number(studioData.canvas.height);
+    }
+    if (Array.isArray(studioData.elements)) {
+      for (const el of studioData.elements) {
+        if (typeof el.x === "number" && typeof el.w === "number") {
+          w = Math.max(w || 0, el.x + el.w);
+        }
+        if (typeof el.y === "number" && typeof el.h === "number") {
+          h = Math.max(h || 0, el.y + el.h);
+        }
+      }
+    }
+  }
+
+  return { width: w, height: h };
+}
+
+/**
+ * Pre-inlines all <img> tags inside a container as base64 data URLs.
+ * Avoids CORS / foreignObject cross-origin tainting when rasterizing with html-to-image.
+ */
+async function inlineImages(container: HTMLElement): Promise<void> {
+  const images = Array.from(container.querySelectorAll<HTMLImageElement>("img"));
+  if (images.length === 0) return;
+
+  await Promise.all(
+    images.map(async (img) => {
+      const src = img.getAttribute("src");
+      if (!src || src.startsWith("data:") || src.startsWith("blob:")) {
+        return;
+      }
+
+      try {
+        const response = await fetch(src, {
+          mode: "cors",
+          credentials: "omit",
+        });
+        if (!response.ok) return;
+
+        const blob = await response.blob();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (typeof reader.result === "string") {
+              resolve(reader.result);
+            } else {
+              reject(new Error("FileReader did not produce a string"));
+            }
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+
+        img.setAttribute("src", base64);
+        img.src = base64;
+
+        if (!img.complete) {
+          await new Promise<void>((resolve) => {
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          });
+        }
+      } catch (err) {
+        console.warn("Could not pre-inline image:", src, err);
+      }
+    })
+  );
+}
+
+/**
+ * Validates whether the exported image is completely blank (100% white or transparent).
+ */
+async function isImageBlank(dataUrl: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const w = img.naturalWidth || img.width;
+        const h = img.naturalHeight || img.height;
+        if (w === 0 || h === 0) {
+          resolve(true);
+          return;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        if (!ctx) {
+          resolve(false);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+
+        let hasContent = false;
+        // Step through pixels: non-white content has (r < 248 || g < 248 || b < 248) and alpha > 30
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const a = data[i + 3];
+
+          if (a > 30 && (r < 248 || g < 248 || b < 248)) {
+            hasContent = true;
+            break;
+          }
+        }
+
+        resolve(!hasContent);
+      } catch (err) {
+        console.warn("Could not check pixel data on canvas:", err);
+        resolve(false);
+      }
+    };
+    img.onerror = () => resolve(true);
+    img.src = dataUrl;
+  });
+}
+
 export default function SaveSuccessModal({
   isOpen,
   onClose,
@@ -100,6 +249,7 @@ export default function SaveSuccessModal({
   }
 
   const { html, previewHtml, plainText } = getHtmlAndPlainText();
+  const canvasDimensions = getCanvasDimensions(signature, signatureData);
 
   if (!isOpen) return null;
 
@@ -140,12 +290,121 @@ export default function SaveSuccessModal({
         throw new Error("Download element not available");
       }
 
-      const dataUrl = await toPng(target, {
-        pixelRatio: 2.5,
-        backgroundColor: "#FFFFFF",
-        cacheBust: true,
+      // Step 1: Pre-inline all external / S3 / relative images as data URLs
+      await inlineImages(target);
+
+      // Step 2: Ensure fonts are loaded before rasterization
+      if (typeof document !== "undefined" && document.fonts?.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (fontErr) {
+          console.warn("document.fonts.ready error:", fontErr);
+        }
+      }
+
+      // Step 3: Wait two animation frames to allow DOM layout to settle
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve();
+          });
+        });
       });
 
+      // Step 4: Calculate exact export dimensions
+      const targetRect = target.getBoundingClientRect();
+      const contentWidth = canvasDimensions.width || 600;
+      const exportWidth = Math.ceil(
+        Math.max(
+          contentWidth + 48,
+          target.scrollWidth,
+          target.offsetWidth,
+          targetRect.width
+        )
+      );
+      const exportHeight = Math.ceil(
+        Math.max(
+          canvasDimensions.height ? canvasDimensions.height + 48 : 0,
+          target.scrollHeight,
+          target.offsetHeight,
+          targetRect.height
+        )
+      );
+
+      // Step 5: Warm-up call to html-to-image to prime font and CSS caches
+      try {
+        await toPng(target, {
+          pixelRatio: 1,
+          skipFonts: false,
+          width: exportWidth,
+          height: exportHeight,
+          style: {
+            position: "static",
+            left: "0",
+            top: "0",
+            transform: "none",
+            margin: "0",
+          },
+        });
+      } catch (warmupErr) {
+        console.warn("toPng warmup warning:", warmupErr);
+      }
+
+      // Step 6: Wait double rAF again after warm-up
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve();
+          });
+        });
+      });
+
+      // Step 7: Final high-resolution capture at 2.5x pixel ratio
+      let dataUrl: string;
+      try {
+        dataUrl = await toPng(target, {
+          pixelRatio: 2.5,
+          backgroundColor: "#FFFFFF",
+          cacheBust: false,
+          width: exportWidth,
+          height: exportHeight,
+          style: {
+            position: "static",
+            left: "0",
+            top: "0",
+            transform: "none",
+            margin: "0",
+          },
+        });
+      } catch (firstAttemptErr) {
+        console.warn("toPng initial attempt failed, retrying with skipFonts: true", firstAttemptErr);
+        dataUrl = await toPng(target, {
+          pixelRatio: 2.5,
+          backgroundColor: "#FFFFFF",
+          cacheBust: false,
+          skipFonts: true,
+          width: exportWidth,
+          height: exportHeight,
+          style: {
+            position: "static",
+            left: "0",
+            top: "0",
+            transform: "none",
+            margin: "0",
+          },
+        });
+      }
+
+      // Step 8: Validate that the exported image is not blank white
+      const blank = await isImageBlank(dataUrl);
+      if (blank) {
+        console.warn("Generated signature image is blank white, triggering fallback HTML download");
+        showToast("Image generation resulted in a blank image. Downloading HTML instead.");
+        fallbackHtmlDownload();
+        return;
+      }
+
+      // Step 9: Trigger download
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `${fileName}_signature.png`;
@@ -155,6 +414,7 @@ export default function SaveSuccessModal({
       showToast("Signature image downloaded!");
     } catch (err) {
       console.warn("toPng failed, using fallback:", err);
+      showToast("Image generation failed. Downloading HTML instead.");
       fallbackHtmlDownload();
     } finally {
       setIsDownloadingImage(false);
@@ -162,7 +422,8 @@ export default function SaveSuccessModal({
   }
 
   function fallbackHtmlDownload() {
-    const blob = new Blob([html], { type: "text/html" });
+    const rawHtml = html || previewHtml;
+    const blob = new Blob([rawHtml], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     const fileName = (signatureName || signatureData?.fullName || "my_signature")
@@ -445,24 +706,45 @@ export default function SaveSuccessModal({
           </div>
         )}
 
-        {/* Off-screen high-res container for PNG download */}
+        {/* Hidden capture sandbox for PNG export */}
         <div
-          ref={signatureDownloadRef}
+          aria-hidden="true"
           style={{
             position: "fixed",
-            left: "-9999px",
-            top: "-9999px",
-            width: "600px",
-            maxWidth: "600px",
-            backgroundColor: "#FFFFFF",
-            padding: "24px",
-            borderRadius: "12px",
+            left: 0,
+            top: 0,
+            width: 0,
+            height: 0,
+            overflow: "hidden",
+            zIndex: -1,
+            pointerEvents: "none",
+            opacity: 1,
+            visibility: "visible",
           }}
-          aria-hidden="true"
-          dangerouslySetInnerHTML={{
-            __html: previewHtml,
-          }}
-        />
+        >
+          <div
+            ref={signatureDownloadRef}
+            style={{
+              position: "relative",
+              display: "inline-block",
+              boxSizing: "border-box",
+              backgroundColor: "#FFFFFF",
+              padding: "24px",
+              borderRadius: "12px",
+              overflow: "visible",
+              width: `${(canvasDimensions.width || 600) + 48}px`,
+              minWidth: `${(canvasDimensions.width || 600) + 48}px`,
+              ...(canvasDimensions.height
+                ? {
+                    minHeight: `${canvasDimensions.height + 48}px`,
+                  }
+                : {}),
+            }}
+            dangerouslySetInnerHTML={{
+              __html: previewHtml,
+            }}
+          />
+        </div>
       </div>
     </div>
   );
