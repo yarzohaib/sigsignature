@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: "Dashboard | SigSignature",
   description:
     "Your SigSignature dashboard to create, manage, and monitor your professional email signatures.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function DashboardLayout({

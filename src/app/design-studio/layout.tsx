@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: "Design Studio | SigSignature",
   description:
     "Design, customize, and preview your professional HTML email signature with real-time editing and multi-client compilation.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function DesignStudioLayout({
