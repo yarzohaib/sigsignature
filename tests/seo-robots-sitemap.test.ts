@@ -13,10 +13,15 @@ import { metadata as contactMetadata } from "../src/app/contact/page";
 import { metadata as updatesMetadata } from "../src/app/updates/page";
 import { metadata as privacyMetadata } from "../src/app/privacy/page";
 import { metadata as termsMetadata } from "../src/app/terms/page";
+import { metadata as loginMetadata } from "../src/app/(Auth)/login/layout";
+import { metadata as signupMetadata } from "../src/app/(Auth)/signup/layout";
+import { metadata as forgotMetadata } from "../src/app/(Auth)/forgot/layout";
+import { metadata as resetMetadata } from "../src/app/(Auth)/reset/layout";
+import { metadata as verifyMetadata } from "../src/app/(Auth)/verify/layout";
 
 describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
   // 1. Robots.txt configuration
-  test("1. robots.txt provides valid rules, allows public rendering, disallows private routes, and references sitemap", () => {
+  test("1. robots.txt provides valid rules, allows public and authentication rendering, disallows private routes, and references sitemap", () => {
     delete process.env.NEXT_PUBLIC_PRE_LAUNCH;
     const rulesConfig = robots();
 
@@ -38,13 +43,16 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
     assert.ok(allowed.includes("/updates"), "Must allow /updates");
     assert.ok(allowed.includes("/terms"), "Must allow /terms");
     assert.ok(allowed.includes("/privacy"), "Must allow /privacy");
+    assert.ok(allowed.includes("/login"), "Must allow /login");
+    assert.ok(allowed.includes("/signup"), "Must allow /signup");
+    assert.ok(allowed.includes("/forgot"), "Must allow /forgot");
 
     // Check that assets needed for rendering are allowed
     assert.ok(allowed.includes("/_next/static/"), "Must allow /_next/static/ for CSS/JS");
     assert.ok(allowed.includes("/_next/image"), "Must allow /_next/image for Next.js image optimization");
     assert.ok(allowed.includes("/favicon.ico"), "Must allow favicon");
 
-    // Check disallowed private/auth paths
+    // Check disallowed private/token-based paths
     const disallowed = Array.isArray(wildcardRule.disallow) ? wildcardRule.disallow : [wildcardRule.disallow || ""];
     assert.ok(disallowed.includes("/dashboard"), "Must disallow /dashboard");
     assert.ok(disallowed.includes("/signatures"), "Must disallow /signatures");
@@ -53,9 +61,11 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
     assert.ok(disallowed.includes("/settings"), "Must disallow /settings");
     assert.ok(disallowed.includes("/help"), "Must disallow /help");
     assert.ok(disallowed.includes("/s/"), "Must disallow /s/ (saved/preview signatures)");
-    assert.ok(disallowed.includes("/login"), "Must disallow /login");
-    assert.ok(disallowed.includes("/signup"), "Must disallow /signup");
-    assert.ok(disallowed.includes("/forgot"), "Must disallow /forgot");
+    assert.ok(disallowed.includes("/reset"), "Must disallow /reset (token-dependent)");
+    assert.ok(disallowed.includes("/verify"), "Must disallow /verify (token-dependent)");
+    assert.ok(!disallowed.includes("/login"), "Must NOT disallow /login");
+    assert.ok(!disallowed.includes("/signup"), "Must NOT disallow /signup");
+    assert.ok(!disallowed.includes("/forgot"), "Must NOT disallow /forgot");
   });
 
   // 2. Pre-launch robots blocking
@@ -71,7 +81,7 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
   });
 
   // 3. Sitemap.xml follows Puzzroo XML theme, namespaces, section comments, and working canonical pages
-  test("3. sitemap.xml strictly follows the Puzzroo XML theme, schema, comments and canonical URLs", () => {
+  test("3. sitemap.xml strictly follows the Puzzroo XML theme, schema, comments, authentication pages, and canonical URLs", () => {
     const sitemapPath = path.resolve(__dirname, "../public/sitemap.xml");
     assert.ok(fs.existsSync(sitemapPath), "public/sitemap.xml must exist");
 
@@ -88,15 +98,19 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
 
     // Verify Puzzroo-style section comments
     assert.ok(xml.includes("<!-- Homepage - Highest Priority -->"), "Must have Homepage section comment");
+    assert.ok(xml.includes("<!-- Authentication Pages -->"), "Must have Authentication Pages section comment");
     assert.ok(xml.includes("<!-- Information Pages -->"), "Must have Information Pages section comment");
     assert.ok(xml.includes("<!-- Legal Pages -->"), "Must have Legal Pages section comment");
 
     // Extract all <loc> values
     const locMatches = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
-    assert.equal(locMatches.length, 7, "Sitemap must contain exactly 7 public URLs");
+    assert.equal(locMatches.length, 10, "Sitemap must contain exactly 10 public URLs");
 
     const expectedPages = [
       "https://www.sigsignature.com/",
+      "https://www.sigsignature.com/login",
+      "https://www.sigsignature.com/signup",
+      "https://www.sigsignature.com/forgot",
       "https://www.sigsignature.com/about",
       "https://www.sigsignature.com/team",
       "https://www.sigsignature.com/contact",
@@ -111,24 +125,23 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
 
     // Verify lastmod matches YYYY-MM-DD date format
     const lastmodMatches = [...xml.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map((m) => m[1]);
-    assert.equal(lastmodMatches.length, 7, "Every entry must have a lastmod");
+    assert.equal(lastmodMatches.length, 10, "Every entry must have a lastmod");
     for (const dateStr of lastmodMatches) {
       assert.match(dateStr, /^\d{4}-\d{2}-\d{2}$/, `lastmod must strictly follow YYYY-MM-DD: ${dateStr}`);
     }
 
-    // Assert NO private routes or redirects exist in sitemap
+    // Assert NO private routes or token pages exist in sitemap
     assert.ok(!locMatches.some((u) => u.includes("dashboard")), "Must not include dashboard");
     assert.ok(!locMatches.some((u) => u.includes("signatures")), "Must not include signatures");
     assert.ok(!locMatches.some((u) => u.includes("design-studio")), "Must not include design-studio");
     assert.ok(!locMatches.some((u) => u.includes("/s/")), "Must not include /s/");
-    assert.ok(!locMatches.some((u) => u.includes("login")), "Must not include login");
-    assert.ok(!locMatches.some((u) => u.includes("signup")), "Must not include signup");
-    assert.ok(!locMatches.some((u) => u.includes("forgot")), "Must not include forgot");
+    assert.ok(!locMatches.some((u) => u.includes("reset")), "Must not include reset");
+    assert.ok(!locMatches.some((u) => u.includes("verify")), "Must not include verify");
     assert.ok(!locMatches.some((u) => u.includes("forgot-password")), "Must not include redirects");
   });
 
   // 4. Pre-launch and Launch Header Controls via Middleware
-  test("4. Middleware emits X-Robots-Tag: noindex on temporary domains and private routes, but NOT on public production pages", () => {
+  test("4. Middleware emits X-Robots-Tag: noindex on temporary domains and private routes, but NOT on public production pages or auth pages", () => {
     delete process.env.NEXT_PUBLIC_PRE_LAUNCH;
 
     // Case A: Temporary staging domain (sigsignature.vercel.app)
@@ -156,15 +169,15 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
       "Private dashboard route must be marked noindex"
     );
 
-    // Case C: Auth route on production domain (/login)
-    const loginReq = new NextRequest("https://www.sigsignature.com/login", {
+    // Case C: Token-based auth route on production domain (/reset)
+    const resetReq = new NextRequest("https://www.sigsignature.com/reset", {
       headers: { host: "www.sigsignature.com" },
     });
-    const loginRes = middleware(loginReq);
+    const resetRes = middleware(resetReq);
     assert.equal(
-      loginRes.headers.get("X-Robots-Tag"),
+      resetRes.headers.get("X-Robots-Tag"),
       "noindex, nofollow, noarchive",
-      "Auth login route must be marked noindex"
+      "Token-based reset route must be marked noindex"
     );
 
     // Case D: Public production page on www.sigsignature.com (/about)
@@ -188,6 +201,19 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
       null,
       "Public root homepage must NOT have noindex header at launch"
     );
+
+    // Case F: Authentication pages on www.sigsignature.com (/login, /signup, /forgot)
+    for (const authPath of ["/login", "/signup", "/forgot"]) {
+      const authReq = new NextRequest(`https://www.sigsignature.com${authPath}`, {
+        headers: { host: "www.sigsignature.com" },
+      });
+      const authRes = middleware(authReq);
+      assert.equal(
+        authRes.headers.get("X-Robots-Tag"),
+        null,
+        `Public auth page ${authPath} must NOT have noindex header at launch`
+      );
+    }
   });
 
   // 5. Layout Metadata Canonical & Robots
@@ -206,8 +232,8 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
     assert.equal(preLaunchMeta.follow, false);
   });
 
-  // 6. Absolute Canonical URLs on Each Distinct Public Page
-  test("6. Every distinct public page sets its own absolute canonical URL pointing to itself", () => {
+  // 6. Absolute Canonical URLs on Each Distinct Public Page and Auth Page
+  test("6. Every distinct public page and auth page sets its own absolute canonical URL pointing to itself", () => {
     // 1. Homepage
     assert.equal(
       homeMetadata.alternates?.canonical,
@@ -219,43 +245,71 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
     assert.equal(
       aboutMetadata.alternates?.canonical,
       "https://www.sigsignature.com/about",
-      "About page canonical must point to https://www.sigsignature.com/about (not homepage)"
+      "About page canonical must point to https://www.sigsignature.com/about"
     );
 
     // 3. Team
     assert.equal(
       teamMetadata.alternates?.canonical,
       "https://www.sigsignature.com/team",
-      "Team page canonical must point to https://www.sigsignature.com/team (not homepage)"
+      "Team page canonical must point to https://www.sigsignature.com/team"
     );
 
     // 4. Contact
     assert.equal(
       contactMetadata.alternates?.canonical,
       "https://www.sigsignature.com/contact",
-      "Contact page canonical must point to https://www.sigsignature.com/contact (not homepage)"
+      "Contact page canonical must point to https://www.sigsignature.com/contact"
     );
 
     // 5. Updates
     assert.equal(
       updatesMetadata.alternates?.canonical,
       "https://www.sigsignature.com/updates",
-      "Updates page canonical must point to https://www.sigsignature.com/updates (not homepage)"
+      "Updates page canonical must point to https://www.sigsignature.com/updates"
     );
 
     // 6. Privacy
     assert.equal(
       privacyMetadata.alternates?.canonical,
       "https://www.sigsignature.com/privacy",
-      "Privacy page canonical must point to https://www.sigsignature.com/privacy (not homepage)"
+      "Privacy page canonical must point to https://www.sigsignature.com/privacy"
     );
 
     // 7. Terms
     assert.equal(
       termsMetadata.alternates?.canonical,
       "https://www.sigsignature.com/terms",
-      "Terms page canonical must point to https://www.sigsignature.com/terms (not homepage)"
+      "Terms page canonical must point to https://www.sigsignature.com/terms"
     );
+
+    // 8. Login
+    assert.equal(
+      loginMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/login",
+      "Login page canonical must point to https://www.sigsignature.com/login"
+    );
+    assert.equal((loginMetadata.robots as Record<string, unknown>)?.index, true);
+
+    // 9. Signup
+    assert.equal(
+      signupMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/signup",
+      "Signup page canonical must point to https://www.sigsignature.com/signup"
+    );
+    assert.equal((signupMetadata.robots as Record<string, unknown>)?.index, true);
+
+    // 10. Forgot
+    assert.equal(
+      forgotMetadata.alternates?.canonical,
+      "https://www.sigsignature.com/forgot",
+      "Forgot page canonical must point to https://www.sigsignature.com/forgot"
+    );
+    assert.equal((forgotMetadata.robots as Record<string, unknown>)?.index, true);
+
+    // Non-indexable token flows remain noindex
+    assert.equal((resetMetadata.robots as Record<string, unknown>)?.index, false);
+    assert.equal((verifyMetadata.robots as Record<string, unknown>)?.index, false);
 
     // Verify all canonical URLs are mutually distinct
     const canonicals = [
@@ -266,12 +320,15 @@ describe("SEO, Robots.txt, Sitemap & Canonical Suite", () => {
       updatesMetadata.alternates?.canonical,
       privacyMetadata.alternates?.canonical,
       termsMetadata.alternates?.canonical,
+      loginMetadata.alternates?.canonical,
+      signupMetadata.alternates?.canonical,
+      forgotMetadata.alternates?.canonical,
     ];
     const uniqueCanonicals = new Set(canonicals);
     assert.equal(
       uniqueCanonicals.size,
-      7,
-      "All 7 public indexable pages must have unique canonical URLs"
+      10,
+      "All 10 public indexable pages must have unique canonical URLs"
     );
   });
 });

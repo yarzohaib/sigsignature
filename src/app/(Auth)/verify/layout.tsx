@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: "Verify Email | SigSignature",
   description:
     "Verify your email address to activate your SigSignature account and start creating professional signatures.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function VerifyLayout({

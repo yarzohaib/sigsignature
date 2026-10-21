@@ -4,6 +4,10 @@ export const metadata: Metadata = {
   title: "Reset Password | SigSignature",
   description:
     "Set a new secure password for your SigSignature account.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ResetLayout({

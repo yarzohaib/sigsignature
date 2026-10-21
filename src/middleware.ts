@@ -59,9 +59,6 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/s/") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/auth/") ||
-    pathname === "/login" ||
-    pathname === "/signup" ||
-    pathname === "/forgot" ||
     pathname === "/reset" ||
     pathname === "/verify" ||
     pathname === "/404";
