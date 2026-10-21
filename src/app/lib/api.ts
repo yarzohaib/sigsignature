@@ -168,7 +168,8 @@ export type OAuthProvider = "google" | "github";
  */
 export function startOAuth(provider: OAuthProvider): void {
   if (typeof window !== "undefined") {
-    const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}`;
+    const origin = window.location.origin;
+    const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}`;
     try {
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign(targetUrl);
