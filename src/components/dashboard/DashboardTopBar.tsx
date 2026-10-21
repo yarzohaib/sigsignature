@@ -307,45 +307,47 @@ export default function DashboardTopBar({
 
           {/* Profile Dropdown Menu */}
           {profileDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-[#E2E8F0] bg-white p-2 shadow-xl animate-in fade-in zoom-in-95 z-50 text-left">
+            <div className="absolute right-0 mt-2 w-60 rounded-2xl border border-slate-200/90 bg-white/98 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.1),0_4px_12px_-2px_rgba(15,23,42,0.05)] backdrop-blur-md z-50 text-left overflow-hidden animate-in fade-in zoom-in-95">
               {/* User Header */}
-              <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100 mb-1">
-                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100">
-                  <Image
-                    src={displaySrc}
-                    alt={resolvedUserName || "Profile photo"}
-                    width={40}
-                    height={40}
-                    unoptimized
-                    onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p
-                    className="text-sm font-bold text-[#1E293B] truncate"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    {resolvedUserName}
-                  </p>
-                  {resolvedUserEmail && (
+              <div className="px-3.5 py-3 border-b border-slate-100 bg-slate-50/60">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-white">
+                    <Image
+                      src={displaySrc}
+                      alt={resolvedUserName || "Profile photo"}
+                      width={32}
+                      height={32}
+                      unoptimized
+                      onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
                     <p
-                      className="text-xs text-[#64748B] truncate"
-                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                      title={resolvedUserEmail}
+                      className="font-heading text-xs font-bold text-slate-900 truncate leading-snug"
+                      style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
-                      {resolvedUserEmail}
+                      {resolvedUserName}
                     </p>
-                  )}
+                    {resolvedUserEmail && (
+                      <p
+                        className="font-body text-[11px] text-slate-500 truncate mt-0.5 leading-snug"
+                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                        title={resolvedUserEmail}
+                      >
+                        {resolvedUserEmail}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* My Profile */}
-              <div className="space-y-0.5">
+              <div className="p-1.5">
                 <Link
                   href="/settings"
                   onClick={() => setProfileDropdownOpen(false)}
-                  className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-[#245FD4]"
+                  className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100/80 hover:text-brand"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <svg
@@ -364,31 +366,34 @@ export default function DashboardTopBar({
                 </Link>
               </div>
 
-              <div className="my-1 border-t border-slate-100" />
+              {/* Divider */}
+              <div className="border-t border-slate-100" />
 
               {/* Log out */}
-              <button
-                type="button"
-                onClick={handleInternalLogout}
-                disabled={isLoggingOut || internalLoggingOut}
-                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:opacity-60 cursor-pointer text-left"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                <svg
-                  className="h-4 w-4 text-rose-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              <div className="p-1.5">
+                <button
+                  type="button"
+                  onClick={handleInternalLogout}
+                  disabled={isLoggingOut || internalLoggingOut}
+                  className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50/80 disabled:opacity-60 cursor-pointer text-left"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>{isLoggingOut || internalLoggingOut ? "Logging out..." : "Log out"}</span>
-              </button>
+                  <svg
+                    className="h-4 w-4 text-rose-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  <span>{isLoggingOut || internalLoggingOut ? "Logging out..." : "Log out"}</span>
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -565,48 +565,50 @@ export default function Navbar() {
               <AnimatePresence>
                 {userDropdownOpen && (
                   <motion.div
-                    initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -4 }}
+                    initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
                     animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: -4 }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
                     transition={{ duration: 0.15, ease: "easeOut" }}
-                    className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-slate-200/90 bg-white p-3 shadow-xl backdrop-blur-md z-50 text-left"
+                    className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-slate-200/90 bg-white/98 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.1),0_4px_12px_-2px_rgba(15,23,42,0.05)] backdrop-blur-md z-50 text-left overflow-hidden"
                   >
                     {/* Header: User Credentials (Photo, Name, Email) */}
-                    <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100">
-                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/30 bg-slate-100">
-                        <Image
-                          src={displaySrc}
-                          alt={displayName || "Profile photo"}
-                          width={44}
-                          height={44}
-                          unoptimized
-                          onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className="font-heading text-sm font-bold text-slate-900 truncate"
-                          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                        >
-                          {displayName}
-                        </p>
-                        <p
-                          className="font-body text-xs text-slate-500 truncate"
-                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                          title={displayEmail}
-                        >
-                          {displayEmail}
-                        </p>
+                    <div className="px-3.5 py-3 border-b border-slate-100 bg-slate-50/60">
+                      <div className="flex items-center gap-2.5">
+                        <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-white">
+                          <Image
+                            src={displaySrc}
+                            alt={displayName || "Profile photo"}
+                            width={32}
+                            height={32}
+                            unoptimized
+                            onError={() => avatarUrl && setFailedUrl(avatarUrl)}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className="font-heading text-xs font-bold text-slate-900 truncate leading-snug"
+                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                          >
+                            {displayName}
+                          </p>
+                          <p
+                            className="font-body text-[11px] text-slate-500 truncate mt-0.5 leading-snug"
+                            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                            title={displayEmail}
+                          >
+                            {displayEmail}
+                          </p>
+                        </div>
                       </div>
                     </div>
 
                     {/* Quick navigation links */}
-                    <div className="mt-2 space-y-1">
+                    <div className="p-1.5 space-y-0.5">
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-brand"
+                        className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100/80 hover:text-brand"
                         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                       >
                         <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -619,63 +621,39 @@ export default function Navbar() {
                       </Link>
 
                       <Link
-                        href="/signatures"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-brand"
-                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                      >
-                        <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 20h9" />
-                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                        </svg>
-                        <span>My Signatures</span>
-                      </Link>
-
-                      <Link
-                        href="/design-studio"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-brand"
-                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                      >
-                        <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="12" cy="12" r="3" />
-                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                        </svg>
-                        <span>Design Studio</span>
-                      </Link>
-
-                      <Link
                         href="/settings"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-brand"
+                        className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100/80 hover:text-brand"
                         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                       >
-                        <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="12" cy="12" r="3" />
-                          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
                         </svg>
                         <span>My Profile</span>
                       </Link>
                     </div>
 
                     {/* Divider */}
-                    <div className="my-2 border-t border-slate-100" />
+                    <div className="border-t border-slate-100" />
 
                     {/* Logout Button */}
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      disabled={isLoggingOut}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 disabled:opacity-60"
-                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                    >
-                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" y1="12" x2="9" y2="12" />
-                      </svg>
-                      <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
-                    </button>
+                    <div className="p-1.5">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                        className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50/80 disabled:opacity-60 cursor-pointer text-left"
+                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                      >
+                        <svg className="h-4 w-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" />
+                          <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
