@@ -7,7 +7,7 @@ interface GoogleTrackingProps {
 
 export function GoogleTracking({
   gtmId = process.env.NEXT_PUBLIC_GTM_ID,
-  gaId = process.env.NEXT_PUBLIC_GA_ID,
+  gaId = process.env.NEXT_PUBLIC_GA_ID || "G-MZM2JLRVWY",
 }: GoogleTrackingProps) {
   // If neither GTM nor GA ID is configured in the environment, render nothing
   if (!gtmId && !gaId) {
@@ -35,7 +35,29 @@ export function GoogleTracking({
         }}
       />
 
-      {/* 2. Google Tag Manager Container (Recommended primary container) */}
+      {/* 2. Google tag (gtag.js) for GA4: G-MZM2JLRVWY */}
+      {gaId && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            strategy="afterInteractive"
+          />
+          <Script
+            id="google-analytics-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `,
+            }}
+          />
+        </>
+      )}
+
+      {/* 3. Google Tag Manager Container */}
       {gtmId && (
         <Script
           id="google-tag-manager"
@@ -50,30 +72,6 @@ export function GoogleTracking({
             `,
           }}
         />
-      )}
-
-      {/* 3. Direct Google Analytics 4 (Alternative fallback if GTM is not used) */}
-      {!gtmId && gaId && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-            strategy="afterInteractive"
-          />
-          <Script
-            id="google-analytics-init"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${gaId}', {
-                  page_path: window.location.pathname,
-                });
-              `,
-            }}
-          />
-        </>
       )}
     </>
   );
