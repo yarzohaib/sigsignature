@@ -81,7 +81,7 @@ export default function HelpContent() {
 
         {/* Help & Support Body Canvas */}
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:px-10 2xl:px-12">
-          <main className="mx-auto flex flex-col gap-8 sm:gap-10 w-full max-w-none 3xl:max-w-[2100px] pb-10">
+          <main className="flex flex-col gap-8 sm:gap-10 w-full pb-10">
             {/* 1. Hero */}
             <HelpHero />
 

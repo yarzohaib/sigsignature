@@ -127,7 +127,7 @@ export default function PricingPage() {
 
         {/* Canvas: Single page without scroll on LG screens, vertically balanced and bounded on XL/2XL */}
         <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white">
-          <main className="mx-auto flex flex-1 flex-col justify-between w-full max-w-none 3xl:max-w-[2100px] my-auto py-1">
+          <main className="flex flex-1 flex-col justify-between w-full my-auto py-1">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1

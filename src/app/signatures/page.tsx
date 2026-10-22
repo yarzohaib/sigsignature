@@ -291,7 +291,7 @@ export default function MySignaturesPage() {
 
         {/* My Signatures Body Canvas */}
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12">
-          <main className="mx-auto flex flex-col gap-6 sm:gap-7 w-full max-w-none 3xl:max-w-[2100px]">
+          <main className="flex flex-col gap-6 sm:gap-7 w-full">
             {/* Page Header with Title and Create New Signature Button */}
             <SignaturesHeader onCreateClick={handleCreateNew} />
 

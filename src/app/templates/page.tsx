@@ -216,7 +216,7 @@ function TemplatesContent() {
 
         {/* Templates Body Canvas */}
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12">
-          <main className="mx-auto flex flex-col gap-6 sm:gap-7 w-full max-w-none 3xl:max-w-[2100px]">
+          <main className="flex flex-col gap-6 sm:gap-7 w-full">
             {/* If template not found, show friendly message */}
             {templateNotFound ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-[#E2E8F0] bg-white p-12 text-center shadow-xs">

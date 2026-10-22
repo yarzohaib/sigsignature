@@ -290,7 +290,7 @@ export default function TeamSignaturesPage() {
           isLoggingOut={isLoggingOut}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 xl:px-10 2xl:px-12 max-w-none 3xl:max-w-[2100px] w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 xl:px-10 2xl:px-12 w-full">
           {/* Header */}
           <TeamSignaturesHeader
             memberCount={memberCount}
