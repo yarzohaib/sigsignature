@@ -9,10 +9,11 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
  * Blocks default to aria-hidden="true" so screen readers don't announce every individual shape.
  */
 export function Skeleton({ className = "", ...props }: SkeletonProps) {
+  const hasCustomRadius = className.includes("rounded-");
   return (
     <div
       aria-hidden="true"
-      className={`animate-shimmer rounded-lg ${className}`}
+      className={`animate-shimmer ${hasCustomRadius ? "" : "rounded-lg"} ${className}`}
       {...props}
     />
   );
