@@ -35,39 +35,36 @@ export default function GettingStartedSteps() {
   ];
 
   return (
-    <section
-      className="rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-4.5 sm:p-5.5 xl:p-6 2xl:p-8 3xl:p-10 shadow-xs shrink-0"
-      aria-label="Getting Started Steps"
-    >
-      <h3 className="font-montserrat font-bold text-lg sm:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl text-[#1E293B] leading-snug">
+    <section className="rounded-2xl 3xl:rounded-3xl border border-[#E2E8F0] bg-white p-4.5 sm:p-5.5 xl:p-6 2xl:p-7 3xl:p-9 4xl:p-11 shadow-xs shrink-0" aria-label="Getting Started Steps">
+      <h3
+        className="text-[#1E293B] font-bold text-[20px] leading-[26.67px] 3xl:text-[24px] 3xl:leading-[32px] 4xl:text-[28px] 4xl:leading-[36px]"
+        style={{
+          fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
+          letterSpacing: "0%",
+          verticalAlign: "middle",
+        }}
+      >
         Getting Started
       </h3>
 
       {/* Steps Container */}
-      <div className="mt-3.5 sm:mt-4 xl:mt-5 2xl:mt-6">
+      <div className="mt-3.5 sm:mt-4 2xl:mt-5 3xl:mt-7 4xl:mt-8">
         {/* Desktop / Tablet layout with connecting dashed lines */}
-        <div className="hidden md:grid md:grid-cols-5 md:gap-4 lg:gap-6 xl:gap-8 2xl:gap-10 3xl:gap-12">
+        <div className="hidden md:grid md:grid-cols-5 md:gap-4 lg:gap-6 2xl:gap-8 3xl:gap-10 4xl:gap-12">
           {steps.map((step, idx) => (
             <div key={step.number} className="flex flex-col items-start text-left">
               {/* Step Badge row with connector to next step */}
               <div className="relative flex w-full items-center">
                 <div
-                  className={`relative z-10 flex h-9 w-9 sm:h-10 sm:w-10 xl:h-12 xl:w-12 2xl:h-14 2xl:w-14 3xl:h-16 3xl:w-16 shrink-0 items-center justify-center rounded-full text-xs sm:text-sm xl:text-base 2xl:text-lg 3xl:text-xl font-bold font-montserrat shadow-xs ring-4 2xl:ring-6 3xl:ring-8 ring-white ${
+                  className={`relative z-10 flex h-9 w-9 2xl:h-10 2xl:w-10 3xl:h-13 3xl:w-13 4xl:h-16 4xl:w-16 shrink-0 items-center justify-center rounded-full text-[13px] 2xl:text-[14px] 3xl:text-[17px] 4xl:text-[20px] font-bold shadow-xs ${
                     step.completed
-                      ? "bg-[#163BA4] text-white"
-                      : "bg-[#E2E8F0] text-[#64748B]"
+                      ? "bg-[#163BA4] text-white ring-4 ring-white"
+                      : "bg-[#E2E8F0] text-[#64748B] ring-4 ring-white"
                   }`}
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {step.completed ? (
-                    <svg
-                      className="h-4 w-4 xl:h-5 xl:w-5 2xl:h-6 2xl:w-6 3xl:h-7 3xl:w-7"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
+                    <svg className="h-4 w-4 3xl:h-5.5 3xl:w-5.5 4xl:h-7 4xl:w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   ) : (
@@ -78,19 +75,25 @@ export default function GettingStartedSteps() {
                 {/* Dashed connector line to next circle (only between steps 1-4, stops at step 5) */}
                 {idx < steps.length - 1 && (
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-5 xl:left-6 2xl:left-7 3xl:left-8 -right-4 sm:-right-6 lg:-right-8 xl:-right-10 2xl:-right-12 3xl:-right-14 z-0 border-t-2 xl:border-t-[3px] border-dashed border-[#E2E8F0]"
+                    className="absolute top-1/2 -translate-y-1/2 left-4 2xl:left-5 3xl:left-6.5 4xl:left-8 -right-6 lg:-right-8 2xl:-right-[42px] 3xl:-right-[52px] 4xl:-right-[64px] z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
                     aria-hidden="true"
                   />
                 )}
               </div>
 
               {/* Description above title */}
-              <p className="font-commissioner font-normal mt-2.5 2xl:mt-3 text-xs sm:text-[13px] xl:text-sm 2xl:text-base 3xl:text-lg leading-relaxed text-[#64748B] min-h-[34px] sm:min-h-[38px] xl:min-h-[42px] 2xl:min-h-[48px]">
+              <p
+                className="mt-2.5 3xl:mt-3.5 4xl:mt-4 text-[12px] 2xl:text-[13px] 3xl:text-[15px] 4xl:text-[17px] leading-[17px] 2xl:leading-[18px] 3xl:leading-[22px] 4xl:leading-[25px] text-[#64748B] min-h-[34px] 2xl:min-h-[36px] 3xl:min-h-[44px] 4xl:min-h-[52px]"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
                 {step.subtext}
               </p>
 
               {/* Title below description */}
-              <h4 className="font-montserrat font-bold mt-1 2xl:mt-1.5 text-sm xl:text-base 2xl:text-lg 3xl:text-xl text-[#1E293B]">
+              <h4
+                className="mt-1 3xl:mt-1.5 text-[14px] 2xl:text-[15px] 3xl:text-[17px] 4xl:text-[19px] font-bold text-[#1E293B]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
                 {step.title}
               </h4>
             </div>
@@ -103,20 +106,13 @@ export default function GettingStartedSteps() {
             <div key={step.number} className="flex items-start gap-3.5">
               <div className="flex flex-col items-center">
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold font-montserrat ${
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                     step.completed ? "bg-[#163BA4] text-white" : "bg-[#E2E8F0] text-[#64748B]"
                   }`}
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {step.completed ? (
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   ) : (
@@ -128,10 +124,16 @@ export default function GettingStartedSteps() {
                 )}
               </div>
               <div className="pt-0.5">
-                <h4 className="font-montserrat font-bold text-sm text-[#1E293B]">
+                <h4
+                  className="text-[14px] font-bold text-[#1E293B]"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
                   {step.title}
                 </h4>
-                <p className="font-commissioner text-xs leading-[17px] text-[#64748B]">
+                <p
+                  className="text-[12px] leading-[17px] text-[#64748B]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
                   {step.subtext}
                 </p>
               </div>

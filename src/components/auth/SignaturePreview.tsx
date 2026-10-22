@@ -1,3 +1,5 @@
+import { LinkedInBrandIcon, XBrandIcon } from "./icons";
+
 type SignaturePreviewProps = {
   className?: string;
   floating?: boolean;
@@ -40,16 +42,38 @@ export default function SignaturePreview({ className = "", floating = false }: S
           <p className="mt-2">www.thenevon.com</p>
         </div>
 
-        <div className="mt-5 flex items-center gap-3">
+        <div className="mt-5 flex items-center gap-2.5 sm:gap-3">
           <span
-            className={`rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 py-1.5 text-[9px] font-semibold text-white ${
+            className={`rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 py-1.5 text-[9px] font-semibold text-white shadow-xs select-none ${
               floating ? "animate-float-slow-2" : ""
             }`}
           >
             Book a call ›
           </span>
-          <span className="text-[10px] font-bold text-[#245FD4]">in</span>
-          <span className="text-[11px] font-bold text-slate-900">X</span>
+          <a
+            href="https://www.linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="LinkedIn"
+            className={`group inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] transition-transform duration-150 hover:scale-110 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand ${
+              floating ? "animate-float-slow-2" : ""
+            }`}
+          >
+            <LinkedInBrandIcon />
+          </a>
+          <a
+            href="https://x.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="X (formerly Twitter)"
+            title="X (formerly Twitter)"
+            className={`group inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] transition-transform duration-150 hover:scale-110 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand ${
+              floating ? "animate-float-slow-2" : ""
+            }`}
+          >
+            <XBrandIcon />
+          </a>
         </div>
       </div>
 

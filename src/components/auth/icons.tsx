@@ -25,3 +25,71 @@ export function EyeIcon() {
     </svg>
   );
 }
+
+export function LinkedInBrandIcon({ className = "h-[19px] w-[19px]" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="172.1 235.1 19 19"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="LinkedIn"
+      role="img"
+    >
+      <rect
+        x="172.1"
+        y="235.1"
+        width="19"
+        height="19"
+        rx="5"
+        className="fill-[#F5F3EF] transition-colors group-hover:fill-[#EBE8E2]"
+      />
+      <path
+        d="M178.988 241.1C178.988 241.366 178.889 241.62 178.711 241.807C178.534 241.995 178.294 242.1 178.044 242.1C177.793 242.1 177.553 241.994 177.376 241.807C177.199 241.619 177.099 241.365 177.1 241.099C177.1 240.834 177.199 240.58 177.377 240.392C177.554 240.205 177.794 240.1 178.044 240.1C178.295 240.1 178.535 240.206 178.712 240.393C178.889 240.581 178.989 240.835 178.988 241.1ZM179.017 242.84H177.128V249.1H179.017V242.84ZM182.001 242.84H180.122V249.1H181.982V245.815C181.982 243.985 184.234 243.815 184.234 245.815V249.1H186.1V245.135C186.1 242.05 182.766 242.165 181.982 243.68L182.001 242.84Z"
+        className="fill-[#022977] transition-colors group-hover:fill-[#245FD4]"
+      />
+    </svg>
+  );
+}
+
+export function XBrandIcon({ className = "h-[19px] w-[19px]" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="203.1 235.1 19 19"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="X (formerly Twitter)"
+      role="img"
+    >
+      <rect
+        x="203.1"
+        y="235.1"
+        width="19"
+        height="19"
+        rx="5"
+        className="fill-[#F5F3EF] transition-colors group-hover:fill-[#EBE8E2]"
+      />
+      <path
+        d="M216.55 239.1H218.39L214.37 243.759L219.1 250.1H215.397L212.494 246.255L209.177 250.1H207.335L211.635 245.115L207.1 239.101H210.897L213.516 242.615L216.55 239.1ZM215.902 248.983H216.922L210.34 240.159H209.246L215.902 248.983Z"
+        className="fill-[#022977] transition-colors group-hover:fill-slate-900"
+      />
+    </svg>
+  );
+}
+
+export function LinkedInIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
+    </svg>
+  );
+}
+
+export function XIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z" />
+    </svg>
+  );
+}

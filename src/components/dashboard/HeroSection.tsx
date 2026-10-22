@@ -4,23 +4,42 @@ export default function HeroSection() {
   return (
     <section className="text-left shrink-0">
       {/* Welcome Heading with wave emoji placed AFTER text */}
-      <h1 className="flex items-center gap-2.5 sm:gap-3 2xl:gap-4 font-montserrat font-bold text-2xl sm:text-3xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl text-[#1E293B] tracking-tight leading-tight">
+      <h1
+        className="flex items-center gap-2.5 text-[#1E293B] font-bold text-[30px] leading-[36px] 3xl:text-[38px] 3xl:leading-[46px] 4xl:text-[46px] 4xl:leading-[54px]"
+        style={{
+          fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
+          letterSpacing: "0%",
+          verticalAlign: "middle",
+        }}
+      >
         <span>Welcome to Sig Signature!</span>
-        <span
-          className="text-2xl sm:text-3xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl select-none inline-block"
-          role="img"
-          aria-label="wave"
-        >
+        <span className="text-[28px] 3xl:text-[36px] 4xl:text-[44px] select-none inline-block" role="img" aria-label="wave">
           👋
         </span>
       </h1>
 
-      {/* Subtitles matching Commissioner typography with dynamic responsive scaling */}
-      <div className="mt-2 xl:mt-3 2xl:mt-4 space-y-1 sm:space-y-1.5 2xl:space-y-2 pb-2 sm:pb-3 2xl:pb-4">
-        <p className="font-commissioner font-normal text-sm sm:text-base xl:text-lg 2xl:text-xl 3xl:text-2xl text-[#64748B] leading-relaxed">
+      {/* Subtitles matching Commissioner 18px typography with space after description */}
+      <div className="mt-2 3xl:mt-3 4xl:mt-4 space-y-1 3xl:space-y-1.5 pb-2 sm:pb-3 2xl:pb-4 3xl:pb-5 4xl:pb-6">
+        <p
+          className="text-[#64748B] text-[18px] leading-[24px] 3xl:text-[21px] 3xl:leading-[28px] 4xl:text-[24px] 4xl:leading-[32px]"
+          style={{
+            fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+            fontWeight: 400,
+            letterSpacing: "0%",
+            verticalAlign: "middle",
+          }}
+        >
           Let&apos;s build your first professional email signature.
         </p>
-        <p className="font-commissioner font-normal text-sm sm:text-base xl:text-lg 2xl:text-xl 3xl:text-2xl text-[#64748B] leading-relaxed">
+        <p
+          className="text-[#64748B] text-[18px] leading-[24px] 3xl:text-[21px] 3xl:leading-[28px] 4xl:text-[24px] 4xl:leading-[32px]"
+          style={{
+            fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+            fontWeight: 400,
+            letterSpacing: "0%",
+            verticalAlign: "middle",
+          }}
+        >
           Choose how you&apos;d like to get started.
         </p>
       </div>
