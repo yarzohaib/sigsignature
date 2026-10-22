@@ -10,15 +10,15 @@ import {
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="scroll-mt-24 overflow-x-clip bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
+    <section id="features" className="scroll-mt-20 md:scroll-mt-18 overflow-x-clip bg-[#FCFCFC] pt-8 sm:pt-10 lg:pt-12 pb-14 sm:pb-16 lg:pb-24 3xl:pb-28">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
-          <Reveal y={16} blur={6} className="mb-3 sm:mb-4 inline-block">
+          <Reveal y={16} blur={6} className="mb-2.5 sm:mb-3 inline-block">
             <SectionBadge label="FEATURES" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[54px] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
+            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[50px] xl:text-[54px] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
               Everything You Need to Build the{" "}
               <span className="text-[#1243A3]">Perfect Signature.</span>
             </h2>
@@ -26,7 +26,7 @@ export default function FeaturesSection() {
         </div>
 
         {/* Bento Grid with Asymmetric Boxes */}
-        <FeatureGrid className="mt-10 grid grid-cols-1 gap-6 sm:mt-14 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+        <FeatureGrid className="mt-8 grid grid-cols-1 gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           {/* ROW 1 */}
           {/* Card 1 (WIDE - 7 cols in Figma 687px) */}
           <FeatureCard colSpan="lg:col-span-7" direction="left" aria-label="Templates or From Scratch">

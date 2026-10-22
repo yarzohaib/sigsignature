@@ -12,7 +12,7 @@ export function Skeleton({ className = "", ...props }: SkeletonProps) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-shimmer rounded-lg bg-slate-200/80 ${className}`}
+      className={`animate-shimmer rounded-lg ${className}`}
       {...props}
     />
   );

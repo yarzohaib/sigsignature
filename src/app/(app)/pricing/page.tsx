@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
+import PricingSkeleton from "@/components/skeletons/PricingSkeleton";
 
-export default function PricingPage() {
+function PricingContent() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
 
   function handleGoPremium() {
@@ -378,5 +379,19 @@ export default function PricingPage() {
             </div>
           </main>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white w-full">
+          <PricingSkeleton />
+        </div>
+      }
+    >
+      <PricingContent />
+    </Suspense>
   );
 }

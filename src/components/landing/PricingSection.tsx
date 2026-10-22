@@ -106,15 +106,15 @@ export default function PricingSection() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section id="pricing" className="scroll-mt-24 bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
+    <section id="pricing" className="scroll-mt-18 sm:scroll-mt-20 bg-[#FCFCFC] pt-8 sm:pt-10 lg:pt-12 pb-14 sm:pb-16 lg:pb-20 3xl:pb-24">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
-          <Reveal y={16} blur={6} className="mb-3 sm:mb-4 inline-block">
+          <Reveal y={16} blur={6} className="mb-2.5 sm:mb-3 inline-block">
             <SectionBadge label="PRICING" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[54px] lg:leading-[1.12] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight [text-wrap:balance]">
+            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[50px] xl:text-[54px] lg:leading-[1.12] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight [text-wrap:balance]">
               Transparent Pricing,{" "}
               <span className="text-[#1243A3]">Start Free.</span>
             </h2>
@@ -122,7 +122,10 @@ export default function PricingSection() {
         </div>
 
         {/* Pricing Cards: Portrait rectangles, elevated Premium hero card */}
-        <div className="mx-auto mt-12 sm:mt-16 lg:mt-20 flex flex-col items-center justify-center gap-7 md:flex-row md:items-center lg:gap-8 xl:gap-10">
+        <div
+          id="pricing-cards"
+          className="mx-auto mt-7 sm:mt-9 lg:mt-11 flex flex-col items-center justify-center gap-6 sm:gap-7 md:flex-row md:items-center lg:gap-8 xl:gap-10 scroll-mt-20 md:scroll-mt-24"
+        >
           {/* Free Plan Card: Vertical rectangle (standard baseline height, max-w-[420px]) */}
           <motion.div
             initial={shouldReduceMotion ? false : "hidden"}
@@ -132,7 +135,7 @@ export default function PricingSection() {
             className="flex w-full max-w-[440px] md:max-w-[380px] lg:max-w-[420px] mx-auto md:mx-0 justify-center"
           >
             <div
-              className="relative flex w-full min-h-[460px] md:min-h-[490px] lg:min-h-[500px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
+              className="relative flex w-full min-h-[440px] md:min-h-[470px] lg:min-h-[480px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-6 lg:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(196, 223, 251, 0.5) 50.81%, #FFFFFF 99.33%)",
@@ -158,7 +161,7 @@ export default function PricingSection() {
                 </div>
 
                 {/* Price */}
-                <div className="mt-5 flex items-baseline gap-1">
+                <div className="mt-4 sm:mt-5 flex items-baseline gap-1">
                   <span className="font-heading text-4xl sm:text-5xl 3xl:text-[56px] font-semibold tracking-tight text-slate-900">
                     $0
                   </span>
@@ -170,7 +173,7 @@ export default function PricingSection() {
                 {/* Features List */}
                 <motion.ul
                   variants={shouldReduceMotion ? undefined : listVariants}
-                  className="mt-6 space-y-3 font-body text-sm 3xl:text-[15px] text-[#878787]"
+                  className="mt-5 sm:mt-6 space-y-2.5 sm:space-y-3 font-body text-sm 3xl:text-[15px] text-[#878787]"
                 >
                   {freeFeatures.map((feat) => (
                     <motion.li
@@ -186,7 +189,7 @@ export default function PricingSection() {
               </div>
 
               {/* CTA Button */}
-              <div className="mt-6 pt-2">
+              <div className="mt-5 pt-1 sm:mt-6 sm:pt-2">
                 <Link
                   href="/signup"
                   className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
@@ -197,16 +200,16 @@ export default function PricingSection() {
             </div>
           </motion.div>
 
-          {/* Premium Plan Card: Hero card elevated vertically, taller (min-h-[577px], max-w-[463px]), frosted glowing shadow */}
+          {/* Premium Plan Card: Hero card elevated vertically, taller (min-h-[550px], max-w-[463px]), frosted glowing shadow */}
           <motion.div
             initial={shouldReduceMotion ? false : "hidden"}
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : premiumCardVariants}
-            className="flex w-full max-w-[460px] md:max-w-[410px] lg:max-w-[463px] mx-auto md:mx-0 justify-center md:-mt-6 lg:-mt-8 z-10"
+            className="flex w-full max-w-[460px] md:max-w-[410px] lg:max-w-[463px] mx-auto md:mx-0 justify-center md:-mt-5 lg:-mt-7 z-10"
           >
             <div
-              className="relative flex w-full min-h-[520px] md:min-h-[570px] lg:min-h-[577px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-6 sm:p-8 lg:p-9 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] [@media(hover:hover)]:hover:border-[#8A95F2]/70"
+              className="relative flex w-full min-h-[500px] md:min-h-[540px] lg:min-h-[550px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-6 sm:p-7 lg:p-8 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] [@media(hover:hover)]:hover:border-[#8A95F2]/70"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(138, 149, 242, 0.15) 50.81%, #FFFFFF 99.33%)",
@@ -224,7 +227,7 @@ export default function PricingSection() {
                 </div>
 
                 {/* Price */}
-                <div className="mt-6 flex items-baseline gap-1">
+                <div className="mt-5 sm:mt-6 flex items-baseline gap-1">
                   <span className="font-heading text-4xl sm:text-5xl 3xl:text-[56px] font-semibold tracking-tight text-slate-900">
                     $10
                   </span>
@@ -236,7 +239,7 @@ export default function PricingSection() {
                 {/* Features List */}
                 <motion.ul
                   variants={shouldReduceMotion ? undefined : listVariants}
-                  className="mt-7 space-y-3.5 font-body text-sm 3xl:text-[15px] text-[#878787]"
+                  className="mt-6 sm:mt-7 space-y-3 sm:space-y-3.5 font-body text-sm 3xl:text-[15px] text-[#878787]"
                 >
                   {premiumFeatures.map((feat) => (
                     <motion.li
@@ -252,7 +255,7 @@ export default function PricingSection() {
               </div>
 
               {/* Waitlist Button */}
-              <div className="mt-6 pt-2">
+              <div className="mt-5 pt-1 sm:mt-6 sm:pt-2">
                 <button
                   type="button"
                   onClick={() => setWaitlistJoined(true)}

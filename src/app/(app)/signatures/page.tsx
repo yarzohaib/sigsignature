@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import SignaturesHeader from "@/components/signatures/SignaturesHeader";
 import SignatureCard from "@/components/signatures/SignatureCard";
@@ -27,10 +27,9 @@ import {
 import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
-import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 
-export default function MySignaturesPage() {
+function MySignaturesContent() {
   const router = useRouter();
 
   // Initial state from in-memory cache for Stale-While-Revalidate
@@ -38,8 +37,6 @@ export default function MySignaturesPage() {
   const [signatures, setSignatures] = useState<SavedSignature[]>(() => cachedSignatures || []);
   const [isLoading, setIsLoading] = useState(!cachedSignatures);
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  const showSkeleton = useDelayedLoading(isLoading);
 
   // Modals and feedback state
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
@@ -234,6 +231,15 @@ export default function MySignaturesPage() {
     }
   };
 
+  // Instant Skeleton Mount matching Templates benchmark
+  if (isLoading && signatures.length === 0) {
+    return (
+      <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+        <SignaturesListSkeleton title="My Signatures" />
+      </div>
+    );
+  }
+
   return (
     <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
       <main className="flex flex-col gap-6 sm:gap-7 w-full">
@@ -241,9 +247,7 @@ export default function MySignaturesPage() {
         <SignaturesHeader onCreateClick={handleCreateNew} />
 
         {/* Content Area */}
-        {showSkeleton && signatures.length === 0 ? (
-          <SignaturesListSkeleton title="My Signatures" />
-        ) : loadError ? (
+        {loadError ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50/50 p-10 text-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 text-red-600">
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -420,5 +424,19 @@ export default function MySignaturesPage() {
         className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] shadow-2xl animate-in slide-in-from-bottom-5 duration-200"
       />
     </div>
+  );
+}
+
+export default function MySignaturesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+          <SignaturesListSkeleton title="My Signatures" />
+        </div>
+      }
+    >
+      <MySignaturesContent />
+    </Suspense>
   );
 }

@@ -215,6 +215,72 @@ export default function Navbar() {
     prevOpenRef.current = mobileMenuOpen;
   }, [mobileMenuOpen]);
 
+  // Smooth anchor scrolling on landing page
+  const handleNavAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetId: string,
+    align: ScrollLogicalPosition = "start"
+  ) => {
+    if (typeof window === "undefined") return;
+
+    if (window.location.pathname !== "/" && window.location.pathname !== "") {
+      return;
+    }
+
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      return;
+    }
+
+    e.preventDefault();
+    setMobileMenuOpen(false);
+
+    if (targetId === "pricing") {
+      const cardsEl = document.getElementById("pricing-cards") || document.getElementById("pricing");
+      if (cardsEl) {
+        cardsEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        history.pushState(null, "", "#pricing");
+        return;
+      }
+    }
+
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: "smooth", block: align });
+      history.pushState(null, "", `#${targetId}`);
+    }
+  };
+
+  // Align hash anchor smoothly on direct load or hashchange
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleHash = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (hash === "pricing") {
+        const cardsEl = document.getElementById("pricing-cards") || document.getElementById("pricing");
+        if (cardsEl) {
+          cardsEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      } else if (hash === "features" || hash === "how-it-works") {
+        const el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    };
+
+    const timer1 = setTimeout(handleHash, 100);
+    const timer2 = setTimeout(handleHash, 500);
+    window.addEventListener("load", handleHash);
+    window.addEventListener("hashchange", handleHash);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      window.removeEventListener("load", handleHash);
+      window.removeEventListener("hashchange", handleHash);
+    };
+  }, []);
+
   return (
     <>
       {/* =========================================================================
@@ -319,21 +385,21 @@ export default function Navbar() {
               <nav className="flex flex-col">
                 <Link
                   href="/#features"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleNavAnchorClick(e, "features", "start")}
                   className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   Features
                 </Link>
                 <Link
                   href="/#how-it-works"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleNavAnchorClick(e, "how-it-works", "start")}
                   className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   How It Works
                 </Link>
                 <Link
                   href="/#pricing"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
                   className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   Pricing
@@ -495,18 +561,21 @@ export default function Navbar() {
           <nav className="flex items-center gap-10">
             <Link
               href="/#features"
+              onClick={(e) => handleNavAnchorClick(e, "features", "start")}
               className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] transition hover:text-brand min-h-[44px] flex items-center"
             >
               Features
             </Link>
             <Link
               href="/#how-it-works"
+              onClick={(e) => handleNavAnchorClick(e, "how-it-works", "start")}
               className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] transition hover:text-brand min-h-[44px] flex items-center"
             >
               How It Works
             </Link>
             <Link
               href="/#pricing"
+              onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
               className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] transition hover:text-brand min-h-[44px] flex items-center"
             >
               Pricing

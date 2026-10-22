@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import TeamSignaturesHeader from "@/components/team/TeamSignaturesHeader";
 import EmptyTeamState from "@/components/team/EmptyTeamState";
@@ -15,8 +15,7 @@ import DeleteMemberModal from "@/components/team/DeleteMemberModal";
 import RevokeInviteModal from "@/components/team/RevokeInviteModal";
 import DevInviteModal from "@/components/team/DevInviteModal";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
-import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
-import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import TeamSignaturesSkeleton from "@/components/skeletons/TeamSignaturesSkeleton";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 import {
   getTeam,
@@ -29,13 +28,11 @@ import { parseBackendTeam } from "@/types/team";
 import { renderTeamMemberHtml, renderTeamMemberPlainText } from "@/lib/team/render";
 import { copySignatureRich } from "@/lib/clipboard";
 
-export default function TeamSignaturesPage() {
+function TeamSignaturesContent() {
   const cachedTeam = getCachedRouteData<Team>("/team-signatures");
   const [team, setTeam] = useState<Team | null>(() => cachedTeam || null);
   const [isLoading, setIsLoading] = useState(!cachedTeam);
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  const showSkeleton = useDelayedLoading(isLoading);
 
   const [toastInfo, setToastInfo] = useState<{
     message: string;
@@ -215,8 +212,17 @@ export default function TeamSignaturesPage() {
   const memberLimit = team ? team.memberLimit : 3;
   const isLimitReached = memberCount >= memberLimit;
 
+  // Instant Skeleton Mount matching Templates benchmark
+  if (isLoading && !team && !loadError) {
+    return (
+      <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+        <TeamSignaturesSkeleton />
+      </div>
+    );
+  }
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8 xl:px-10 2xl:px-12 w-full">
+    <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
       <main className="flex flex-col gap-6 sm:gap-7 w-full">
         {/* Header */}
         <TeamSignaturesHeader
@@ -227,12 +233,7 @@ export default function TeamSignaturesPage() {
         />
 
         {/* Content Area */}
-        {showSkeleton && !team && !loadError ? (
-          <SignaturesListSkeleton
-            title="Team Signatures"
-            subtitle="Manage your team members and shared email signature templates."
-          />
-        ) : loadError ? (
+        {loadError ? (
           <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 flex items-center justify-between">
             <span>{loadError}</span>
             <button
@@ -395,5 +396,19 @@ export default function TeamSignaturesPage() {
         className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] shadow-2xl animate-in slide-in-from-bottom-5 duration-200"
       />
     </div>
+  );
+}
+
+export default function TeamSignaturesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+          <TeamSignaturesSkeleton />
+        </div>
+      }
+    >
+      <TeamSignaturesContent />
+    </Suspense>
   );
 }

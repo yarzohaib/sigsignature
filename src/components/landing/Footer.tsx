@@ -51,6 +51,33 @@ export default function Footer() {
     }
   }
 
+  function handleNavAnchorClick(
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetId: string,
+    align: ScrollLogicalPosition = "start"
+  ) {
+    if (typeof window === "undefined") return;
+    if (window.location.pathname !== "/" && window.location.pathname !== "") return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+    e.preventDefault();
+
+    if (targetId === "pricing") {
+      const cardsEl = document.getElementById("pricing-cards") || document.getElementById("pricing");
+      if (cardsEl) {
+        cardsEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        history.pushState(null, "", "#pricing");
+        return;
+      }
+    }
+
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: "smooth", block: align });
+      history.pushState(null, "", `#${targetId}`);
+    }
+  }
+
   return (
     <footer
       className="bg-[#FCFCFC] pt-14 sm:pt-16 lg:pt-20 font-body text-slate-600"
@@ -111,10 +138,18 @@ export default function Footer() {
               Products
             </h4>
             <div className="mt-2 flex flex-col items-start sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-7">
-              <Link href="/#features" className={linkHoverClasses}>
+              <Link
+                href="/#features"
+                onClick={(e) => handleNavAnchorClick(e, "features", "start")}
+                className={linkHoverClasses}
+              >
                 Features
               </Link>
-              <Link href="/#pricing" className={linkHoverClasses}>
+              <Link
+                href="/#pricing"
+                onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
+                className={linkHoverClasses}
+              >
                 Pricing
               </Link>
               <Link href="/login" className={linkHoverClasses}>
@@ -159,7 +194,11 @@ export default function Footer() {
               Resources
             </h4>
             <div className="mt-2 flex flex-col items-start sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-7">
-              <Link href="/#features" className={linkHoverClasses}>
+              <Link
+                href="/#features"
+                onClick={(e) => handleNavAnchorClick(e, "features", "start")}
+                className={linkHoverClasses}
+              >
                 Email Signature
               </Link>
               <Link href="/templates" className={linkHoverClasses}>

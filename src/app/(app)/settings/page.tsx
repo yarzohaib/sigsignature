@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import SettingsSkeleton from "@/components/skeletons/SettingsSkeleton";
-import { useDelayedLoading } from "@/hooks/useDelayedLoading";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 import ProfileCard from "@/components/settings/ProfileCard";
 import SignatureDefaultsCard from "@/components/settings/SignatureDefaultsCard";
@@ -48,14 +47,13 @@ interface FormState {
 
 const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
 
-export default function SettingsPage() {
+function SettingsContent() {
   const router = useRouter();
 
   // Loading & data states
   const cachedAccount = getCachedRouteData<AccountData>("/settings");
   const [accountData, setAccountData] = useState<AccountData | null>(() => cachedAccount || null);
   const [isLoading, setIsLoading] = useState(!cachedAccount);
-  const showSkeleton = useDelayedLoading(isLoading);
 
   // Form initial state for dirty checking & reset
   const [initialFormState, setInitialFormState] = useState<FormState>(() => {
@@ -435,7 +433,7 @@ export default function SettingsPage() {
 
   return (
     <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
-      {showSkeleton && !accountData ? (
+      {isLoading && !accountData ? (
         <SettingsSkeleton />
       ) : (
         <main className="flex flex-col gap-6 sm:gap-7 w-full">
@@ -446,7 +444,7 @@ export default function SettingsPage() {
                   className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-[#161E2E] leading-tight tracking-[-0.85px]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  Setting
+                  Settings
                 </h1>
                 <p
                   className="mt-1 text-[13px] sm:text-[14px] text-[#6B7280]"
@@ -632,5 +630,19 @@ export default function SettingsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+          <SettingsSkeleton />
+        </div>
+      }
+    >
+      <SettingsContent />
+    </Suspense>
   );
 }
