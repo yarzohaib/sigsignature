@@ -206,6 +206,29 @@ h1, h2, h3, h4, h5, h6 {
   background: #94A3B8;
 }
 
+/* Footer Social Icons matching Figma (30px circle, 1px linear gradient border, #FCFCFC background) */
+.footer-social-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: linear-gradient(#FCFCFC, #FCFCFC) padding-box, linear-gradient(180deg, #245FD4 0%, #022977 100%) border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #022977;
+  flex-shrink: 0;
+  position: relative;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.footer-social-btn:hover {
+  transform: scale(1.08);
+  opacity: 0.9;
+}
+.footer-social-btn:active {
+  transform: scale(0.95);
+}
+
 /* Fallback for environments with JavaScript disabled or slow hydration */
 @media (scripting: none) {
   [data-reveal],

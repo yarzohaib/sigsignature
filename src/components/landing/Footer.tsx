@@ -155,13 +155,13 @@ export default function Footer() {
           </motion.div>
         </motion.div>
 
-        {/* Social Media Icons (44px circles) */}
+        {/* Social Media Icons (30px circles matching Figma) */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={MOTION_VIEWPORT}
           transition={{ duration: 0.45, delay: shouldReduceMotion ? 0 : 0.25, ease: EASE_OUT_CUBIC }}
-          className="mt-10 flex justify-center gap-4 sm:mt-12"
+          className="mt-8 flex justify-center gap-[10px] sm:mt-10"
         >
           {/* Facebook */}
           <a
@@ -169,9 +169,14 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#C1C1C1] text-slate-700 transition hover:border-brand hover:text-brand hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="footer-social-btn before:absolute before:-inset-2 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
-            <span className="font-heading text-xs font-bold">f</span>
+            <span
+              className="font-heading text-[13px] font-bold leading-none select-none text-[#022977]"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              f
+            </span>
           </a>
 
           {/* Instagram */}
@@ -180,18 +185,18 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#C1C1C1] text-slate-700 transition hover:border-brand hover:text-brand hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="footer-social-btn before:absolute before:-inset-2 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             <svg
-              className="h-4 w-4"
+              className="h-3.5 w-3.5 text-[#022977]"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.8"
               stroke="currentColor"
             >
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor" stroke="none" />
             </svg>
           </a>
 
@@ -201,9 +206,14 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#C1C1C1] text-slate-700 transition hover:border-brand hover:text-brand hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="footer-social-btn before:absolute before:-inset-2 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
-            <span className="font-heading text-xs font-bold">in</span>
+            <span
+              className="font-heading text-[11px] font-bold leading-none tracking-tight select-none text-[#022977]"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              in
+            </span>
           </a>
         </motion.div>
       </div>
