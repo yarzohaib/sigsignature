@@ -1,59 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
-import { UserProfile, getCurrentUser, logoutUser } from "@/app/lib/api";
-import {
-  clearAuthSession,
-  getStoredRefreshToken,
-  getStoredUser,
-} from "@/app/lib/auth";
 
 export default function PricingPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function verifyAuth() {
-      const cachedUser = getStoredUser();
-      if (cachedUser) {
-        setUser(cachedUser);
-      }
-
-      try {
-        const freshUser = await getCurrentUser();
-        setUser(freshUser);
-      } catch (err) {
-        console.warn("Session expired or invalid, redirecting to login:", err);
-        clearAuthSession();
-        router.replace("/login?redirect=/pricing");
-        return;
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    verifyAuth();
-  }, [router]);
-
-  async function handleLogout() {
-    setIsLoggingOut(true);
-    try {
-      const refreshToken = getStoredRefreshToken();
-      await logoutUser(refreshToken || undefined);
-    } finally {
-      clearAuthSession();
-      router.replace("/login");
-      router.refresh();
-    }
-  }
 
   function handleGoPremium() {
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
@@ -62,28 +13,8 @@ export default function PricingPage() {
     }, 4000);
   }
 
-  const displayName = user?.firstName
-    ? `${user.firstName} ${user.lastName || ""}`.trim()
-    : "Member";
-
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
-          <p
-            className="text-base font-bold text-[#1E293B]"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            Loading pricing...
-          </p>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
+    <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white w-full">
       {/* Toast Notification */}
       {premiumToast && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-200">
@@ -101,33 +32,14 @@ export default function PricingPage() {
           <button
             type="button"
             onClick={() => setPremiumToast(null)}
-            className="text-slate-400 hover:text-slate-600 ml-2"
+            className="text-slate-400 hover:text-slate-600 ml-2 cursor-pointer"
           >
             &times;
           </button>
         </div>
       )}
 
-      {/* 256px Fixed Sidebar */}
-      <DashboardSidebar
-        mobileOpen={mobileMenuOpen}
-        onCloseMobile={() => setMobileMenuOpen(false)}
-      />
-
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Navigation Bar with Search and Profile */}
-        <DashboardTopBar
-          userName={displayName}
-          userEmail={user?.email}
-          onOpenMobileMenu={() => setMobileMenuOpen(true)}
-          onLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-        />
-
-        {/* Canvas: Single page without scroll on LG screens, vertically balanced and bounded on XL/2XL */}
-        <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white">
-          <main className="flex flex-1 flex-col justify-between w-full my-auto py-1">
+      <main className="flex flex-1 flex-col justify-between w-full my-auto py-1">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
@@ -465,8 +377,6 @@ export default function PricingPage() {
               </div>
             </div>
           </main>
-        </div>
-      </div>
     </div>
   );
 }

@@ -2,51 +2,46 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import SignaturesHeader from "@/components/signatures/SignaturesHeader";
 import SignatureCard from "@/components/signatures/SignatureCard";
 import DeleteSignatureModal from "@/components/signatures/DeleteSignatureModal";
 import EmptySignaturesState from "@/components/signatures/EmptySignaturesState";
 import Link from "next/link";
 import {
-  UserProfile,
-  getCurrentUser,
-  logoutUser,
   isSignatureLimitError,
   getTeam,
   createTeamFromSignature,
   updateTeam,
 } from "@/app/lib/api";
-import {
-  clearAuthSession,
-  getStoredRefreshToken,
-  getStoredUser,
-  getStoredSettings,
-} from "@/app/lib/auth";
+import { getStoredSettings } from "@/app/lib/auth";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { SavedSignature } from "@/types/signature";
 import type { StudioSignatureData } from "@/types/studio";
 import { autoBindStudioData } from "@/lib/team/autoBind";
 import { isStudioNameOrEmailUnlinked } from "@/lib/team/boundFields";
+import { getEditHref } from "@/lib/signatures/kind";
 import {
   renderSavedSignatureHtml,
   renderSavedSignaturePlainText,
 } from "@/lib/signatures/render";
-import { getEditHref } from "@/lib/signatures/kind";
 import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
+import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 
 export default function MySignaturesPage() {
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Signatures state: initialized from repository so saved templates display
-  const [signatures, setSignatures] = useState<SavedSignature[]>([]);
+  // Initial state from in-memory cache for Stale-While-Revalidate
+  const cachedSignatures = getCachedRouteData<SavedSignature[]>("/signatures");
+  const [signatures, setSignatures] = useState<SavedSignature[]>(() => cachedSignatures || []);
+  const [isLoading, setIsLoading] = useState(!cachedSignatures);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const showSkeleton = useDelayedLoading(isLoading);
+
+  // Modals and feedback state
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -60,43 +55,48 @@ export default function MySignaturesPage() {
 
   const loadSignatures = useCallback(async () => {
     try {
-      setLoadError(null);
       const repo = getSignatureRepository();
       const list = await repo.list();
       setSignatures(list);
+      setCachedRouteData("/signatures", list);
+      setLoadError(null);
     } catch (err: unknown) {
       console.error("Failed to load signatures:", err);
       const msg = err instanceof Error ? err.message : "Failed to load signatures.";
       setLoadError(msg);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    async function verifyAuth() {
-      const cachedUser = getStoredUser();
-      if (cachedUser) {
-        setUser(cachedUser);
-      }
-
+    let isCancelled = false;
+    async function init() {
       try {
-        const freshUser = await getCurrentUser();
-        setUser(freshUser);
-      } catch (err) {
-        console.warn("Session expired or invalid, redirecting to login:", err);
-        clearAuthSession();
-        router.replace("/login?redirect=/signatures");
-        return;
-      }
-
-      try {
-        await loadSignatures();
+        const repo = getSignatureRepository();
+        const list = await repo.list();
+        if (!isCancelled) {
+          setSignatures(list);
+          setCachedRouteData("/signatures", list);
+          setLoadError(null);
+        }
+      } catch (err: unknown) {
+        if (!isCancelled) {
+          console.error("Failed to load signatures:", err);
+          const msg = err instanceof Error ? err.message : "Failed to load signatures.";
+          setLoadError(msg);
+        }
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     }
-
-    verifyAuth();
-  }, [router, loadSignatures]);
+    init();
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     function handleCustomToast(event: Event) {
@@ -116,44 +116,20 @@ export default function MySignaturesPage() {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3000);
+    }, 4000);
   }
 
-  async function handleLogout() {
-    setIsLoggingOut(true);
-    try {
-      const refreshToken = getStoredRefreshToken();
-      await logoutUser(refreshToken || undefined);
-    } finally {
-      clearAuthSession();
-      router.replace("/login");
-      router.refresh();
-    }
-  }
+  const handleCreateNew = () => {
+    router.push("/templates?new=true");
+  };
 
-  function handleStartDelete(signature: SavedSignature) {
-    setDeletingSignature(signature);
-  }
+  const handleEdit = (id: string) => {
+    const target = signatures.find((s) => s.id === id);
+    if (!target) return;
+    router.push(getEditHref(target));
+  };
 
-  async function handleConfirmDelete() {
-    if (!deletingSignature) return;
-    const deletedName = deletingSignature.name;
-    try {
-      const repo = getSignatureRepository();
-      await repo.remove(deletingSignature.id);
-      await loadSignatures();
-      setDeletingSignature(null);
-      showToast(`"${deletedName}" was deleted.`);
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("sig_count_update"));
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to delete signature.";
-      showToast(msg);
-    }
-  }
-
-  async function handleDuplicate(id: string) {
+  const handleDuplicate = async (id: string) => {
     try {
       const repo = getSignatureRepository();
       const duplicated = await repo.duplicate(id);
@@ -170,9 +146,9 @@ export default function MySignaturesPage() {
         showToast(msg);
       }
     }
-  }
+  };
 
-  async function handleExport(id: string) {
+  const handleExport = async (id: string) => {
     const target = signatures.find((s) => s.id === id);
     if (!target) return;
 
@@ -190,16 +166,27 @@ export default function MySignaturesPage() {
     } catch {
       showToast(`Failed to copy "${target.name}". Please try again.`);
     }
-  }
+  };
 
-  function handleEdit(id: string) {
-    const target = signatures.find((s) => s.id === id);
-    if (target) {
-      router.push(getEditHref(target));
+  const handleConfirmDelete = async () => {
+    if (!deletingSignature) return;
+    const deletedName = deletingSignature.name;
+    try {
+      const repo = getSignatureRepository();
+      await repo.remove(deletingSignature.id);
+      await loadSignatures();
+      setDeletingSignature(null);
+      showToast(`"${deletedName}" was deleted.`);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("sig_count_update"));
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to delete signature.";
+      showToast(msg);
     }
-  }
+  };
 
-  async function handleStartCopyToTeam(signature: SavedSignature) {
+  const handleOpenCopyToTeam = async (signature: SavedSignature) => {
     setCopyToTeamSig(signature);
     setCopyToTeamError(null);
     setIsCheckingTeam(true);
@@ -212,12 +199,13 @@ export default function MySignaturesPage() {
     } finally {
       setIsCheckingTeam(false);
     }
-  }
+  };
 
-  async function handleConfirmCopyToTeam() {
+  const handleConfirmCopyToTeam = async () => {
     if (!copyToTeamSig) return;
     setIsCopyingToTeam(true);
     setCopyToTeamError(null);
+
     try {
       const createdTeam = await createTeamFromSignature({
         signatureId: copyToTeamSig.id,
@@ -244,146 +232,99 @@ export default function MySignaturesPage() {
     } finally {
       setIsCopyingToTeam(false);
     }
-  }
-
-  function handleCreateNew() {
-    router.push("/templates?new=true");
-  }
-
-  const displayName = user?.firstName
-    ? `${user.firstName} ${user.lastName || ""}`.trim()
-    : "Member";
-
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
-          <p
-            className="text-base font-bold text-[#1E293B]"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            Loading your signatures...
-          </p>
-        </div>
-      </main>
-    );
-  }
+  };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
-      {/* 256px Fixed Sidebar */}
-      <DashboardSidebar
-        mobileOpen={mobileMenuOpen}
-        onCloseMobile={() => setMobileMenuOpen(false)}
-      />
+    <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+      <main className="flex flex-col gap-6 sm:gap-7 w-full">
+        {/* Page Header */}
+        <SignaturesHeader onCreateClick={handleCreateNew} />
 
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Navigation Bar with Search and Profile */}
-        <DashboardTopBar
-          userName={displayName}
-          userEmail={user?.email}
-          onOpenMobileMenu={() => setMobileMenuOpen(true)}
-          onLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-        />
+        {/* Content Area */}
+        {showSkeleton && signatures.length === 0 ? (
+          <SignaturesListSkeleton title="My Signatures" />
+        ) : loadError ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50/50 p-10 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 text-red-600">
+              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <h3
+              className="text-base font-bold text-[#1E293B]"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              Could not load your signatures
+            </h3>
+            <p
+              className="mt-1 text-sm text-[#64748B] max-w-md"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              {loadError}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setIsLoading(true);
+                loadSignatures();
+              }}
+              className="mt-4 rounded-xl bg-[#245FD4] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-[#1E4FB0] transition cursor-pointer"
+            >
+              Retry
+            </button>
+          </div>
+        ) : signatures.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 w-full">
+            {signatures.map((sig) => (
+              <SignatureCard
+                key={sig.id}
+                signature={sig}
+                onEdit={handleEdit}
+                onDuplicate={handleDuplicate}
+                onExport={handleExport}
+                onDelete={setDeletingSignature}
+                onCopyToTeam={handleOpenCopyToTeam}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptySignaturesState onCreateClick={handleCreateNew} />
+        )}
+      </main>
 
-        {/* My Signatures Body Canvas */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12">
-          <main className="flex flex-col gap-6 sm:gap-7 w-full">
-            {/* Page Header with Title and Create New Signature Button */}
-            <SignaturesHeader onCreateClick={handleCreateNew} />
-
-            {/* Content: Error state with retry OR 3 per row on large screens OR Empty State */}
-            {loadError ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50/50 p-10 text-center">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 text-red-600">
-                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                </div>
-                <h3
-                  className="text-base font-bold text-[#1E293B]"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  Could not load your signatures
-                </h3>
-                <p
-                  className="mt-1 text-sm text-[#64748B] max-w-md"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  {loadError}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => loadSignatures()}
-                  className="mt-4 rounded-xl bg-[#245FD4] px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-blue-700 active:scale-95"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  Try Again
-                </button>
-              </div>
-            ) : signatures.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-5 2xl:gap-6">
-                {signatures.map((signature) => (
-                  <SignatureCard
-                    key={signature.id}
-                    signature={signature}
-                    onEdit={handleEdit}
-                    onDuplicate={handleDuplicate}
-                    onExport={handleExport}
-                    onDelete={handleStartDelete}
-                    onCopyToTeam={handleStartCopyToTeam}
-                  />
-                ))}
-              </div>
-            ) : (
-              <EmptySignaturesState onCreateClick={handleCreateNew} />
-            )}
-          </main>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Modal */}
+      {/* Delete Signature Modal */}
       <DeleteSignatureModal
-        isOpen={deletingSignature !== null}
+        isOpen={Boolean(deletingSignature)}
         signatureName={deletingSignature?.name || ""}
         onClose={() => setDeletingSignature(null)}
         onConfirm={handleConfirmDelete}
       />
 
-      {/* Copy to Team Confirmation / Conflict Modal */}
+      {/* Copy to Team Confirmation Modal */}
       {copyToTeamSig && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs overflow-y-auto"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl transition">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-150 border border-slate-100">
             {isCheckingTeam ? (
-              <div className="flex flex-col items-center justify-center py-8 gap-3">
+              <div className="flex flex-col items-center justify-center py-8">
                 <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
-                <p className="text-xs text-[#64748B]">Checking team status...</p>
+                <p className="mt-3 text-xs text-[#64748B]">Checking team status...</p>
               </div>
             ) : hasTeamAlready ? (
               <div>
                 <div className="flex items-start gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600">
                     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                      <line x1="12" y1="9" x2="12" y2="13" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-[#0B1A3D]">
-                      Team signature already exists
-                    </h3>
+                    <h3 className="text-base font-bold text-[#0B1A3D]">Team signature already exists</h3>
                     <p className="mt-1 text-xs sm:text-sm text-[#64748B] leading-relaxed">
-                      You already have a team signature. Delete it first to use a different design.
+                      Your team already has an active signature. You can only have 1 team signature.
                     </p>
                   </div>
                 </div>
@@ -472,7 +413,7 @@ export default function MySignaturesPage() {
         </div>
       )}
 
-      {/* Small Copied Alert matching Image 2 */}
+      {/* Small Copied Alert */}
       <SignatureCopiedAlert
         isOpen={showCopiedAlert}
         onClose={() => setShowCopiedAlert(false)}

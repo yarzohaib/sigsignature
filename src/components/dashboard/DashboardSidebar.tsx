@@ -219,6 +219,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                 <Link
                   key={item.name}
                   href={item.href}
+                  prefetch={true}
                   onClick={(e) => {
                     if (item.href.startsWith("#")) {
                       e.preventDefault();

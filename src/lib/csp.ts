@@ -23,7 +23,10 @@ function getOrigin(urlString: string | undefined, fallback: string): string {
 /**
  * Builds the array of CSP directives based on environment.
  */
-export function buildCspDirectives(isDev: boolean = process.env.NODE_ENV !== "production"): CspDirective[] {
+export function buildCspDirectives(
+  isDev: boolean = process.env.NODE_ENV !== "production",
+  isEnforced: boolean = process.env.CSP_ENFORCE === "true"
+): CspDirective[] {
   // Derive API and S3 upload hosts from environment variables (never hardcoded IPs)
   const apiOrigin = getOrigin(
     process.env.NEXT_PUBLIC_API_URL || process.env.API_URL,
@@ -64,7 +67,7 @@ export function buildCspDirectives(isDev: boolean = process.env.NODE_ENV !== "pr
       ],
     },
 
-    // 4. img-src: self, data:, blob:, S3 uploads host, OAuth avatar providers (Google, GitHub), and remotePatterns
+    // 4. img-src: self, data:, blob:, S3 uploads host, OAuth avatar providers (Google, GitHub), and Cloudinary
     {
       name: "img-src",
       values: [
@@ -75,8 +78,6 @@ export function buildCspDirectives(isDev: boolean = process.env.NODE_ENV !== "pr
         "https://*.googleusercontent.com",
         "https://*.githubusercontent.com",
         "https://res.cloudinary.com",
-        "https://cdn2.hubspot.net",
-        "https://cdn-icons-png.flaticon.com",
       ],
     },
 
@@ -135,22 +136,29 @@ export function buildCspDirectives(isDev: boolean = process.env.NODE_ENV !== "pr
       values: ["'self'"],
     },
 
-    // 11. frame-ancestors: Prevents clickjacking by embedding
-    {
-      name: "frame-ancestors",
-      values: ["'self'"],
-    },
+    // 11. frame-ancestors: Prevents clickjacking by embedding (only allowed in enforced policy; browsers reject in report-only)
+    ...(isEnforced
+      ? [
+          {
+            name: "frame-ancestors",
+            values: ["'self'"],
+          },
+        ]
+      : []),
 
-    // 12. upgrade-insecure-requests: Enforce HTTPS in production
-    ...(isDev ? [] : [{ name: "upgrade-insecure-requests", values: [] }]),
+    // 12. upgrade-insecure-requests: Enforce HTTPS in production (only allowed in enforced policy; browsers reject in report-only)
+    ...(isEnforced && !isDev ? [{ name: "upgrade-insecure-requests", values: [] }] : []),
   ];
 }
 
 /**
  * Serializes the CSP directive array into a single standard header string.
  */
-export function generateCsp(isDev: boolean = process.env.NODE_ENV !== "production"): string {
-  const directives = buildCspDirectives(isDev);
+export function generateCsp(
+  isDev: boolean = process.env.NODE_ENV !== "production",
+  isEnforced: boolean = process.env.CSP_ENFORCE === "true"
+): string {
+  const directives = buildCspDirectives(isDev, isEnforced);
   return directives
     .map((d) => (d.values.length > 0 ? `${d.name} ${d.values.join(" ")}` : d.name))
     .join("; ");
@@ -166,7 +174,7 @@ export function getCspHeader(isDev: boolean = process.env.NODE_ENV !== "producti
 } {
   const isEnforced = process.env.CSP_ENFORCE === "true";
   const key = isEnforced ? "Content-Security-Policy" : "Content-Security-Policy-Report-Only";
-  const value = generateCsp(isDev);
+  const value = generateCsp(isDev, isEnforced);
   return { key, value };
 }
 

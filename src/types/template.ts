@@ -13,7 +13,7 @@ export interface TemplateSignatureData {
   themeColor: string;
   fontFamily: string;
   layout: "two-column" | "horizontal" | "compact" | "single" | "corporate-card";
-  socialIconsStyle: "filled" | "outline" | "circle";
+  socialIconsStyle: "filled" | "outline" | "circle" | "minimal";
   socials: {
     linkedin: string;
     twitter: string;

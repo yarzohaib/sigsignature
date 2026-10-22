@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
+import SettingsSkeleton from "@/components/skeletons/SettingsSkeleton";
+import { useDelayedLoading } from "@/hooks/useDelayedLoading";
+import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 import ProfileCard from "@/components/settings/ProfileCard";
 import SignatureDefaultsCard from "@/components/settings/SignatureDefaultsCard";
 import NotificationsCard from "@/components/settings/NotificationsCard";
@@ -16,7 +17,6 @@ import {
   updateAccountProfile,
   updateAccountSettings,
   joinWaitlist,
-  logoutUser,
   AccountData,
   UpdateProfilePayload,
   UpdateSettingsPayload,
@@ -28,7 +28,6 @@ import {
   getStoredSettings,
   setStoredSettings,
   clearAuthSession,
-  getStoredRefreshToken,
   getStoredAvatarUrl,
   setStoredAvatarUrl,
 } from "@/app/lib/auth";
@@ -52,13 +51,11 @@ const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
 export default function SettingsPage() {
   const router = useRouter();
 
-  // Navigation shell state
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
   // Loading & data states
-  const [isLoading, setIsLoading] = useState(true);
-  const [accountData, setAccountData] = useState<AccountData | null>(null);
+  const cachedAccount = getCachedRouteData<AccountData>("/settings");
+  const [accountData, setAccountData] = useState<AccountData | null>(() => cachedAccount || null);
+  const [isLoading, setIsLoading] = useState(!cachedAccount);
+  const showSkeleton = useDelayedLoading(isLoading);
 
   // Form initial state for dirty checking & reset
   const [initialFormState, setInitialFormState] = useState<FormState>(() => {
@@ -140,6 +137,7 @@ export default function SettingsPage() {
         if (!isMounted) return;
 
         setAccountData(data);
+        setCachedRouteData("/settings", data);
         const serverAvatar = data.user.avatarUrl || null;
         const serverForm: FormState = {
           firstName: data.user.firstName || "",
@@ -432,68 +430,16 @@ export default function SettingsPage() {
     }
   };
 
-  // Logout handler for DashboardTopBar
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      const refreshToken = getStoredRefreshToken();
-      await logoutUser(refreshToken || undefined);
-    } finally {
-      clearAuthSession();
-      router.replace("/login");
-    }
-  };
-
-  // Display user name in TopBar
-  const displayName = accountData?.user?.firstName
-    ? `${accountData.user.firstName} ${accountData.user.lastName || ""}`.trim()
-    : formState.firstName
-    ? `${formState.firstName} ${formState.lastName || ""}`.trim()
-    : "Member";
-
   const displayEmail = accountData?.user?.email || "";
   const isWaitlisted = Boolean(accountData?.settings?.premiumWaitlistAt);
 
-  if (isLoading && !accountData) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
-          <p
-            className="text-base font-bold text-[#1E293B]"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            Loading account settings...
-          </p>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
-      {/* 256px Fixed Sidebar */}
-      <DashboardSidebar
-        mobileOpen={mobileMenuOpen}
-        onCloseMobile={() => setMobileMenuOpen(false)}
-      />
-
-      {/* Main Content Area */}
-      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        {/* Top Navigation Bar with Search and Profile */}
-        <DashboardTopBar
-          userName={displayName}
-          userEmail={displayEmail}
-          avatarUrl={avatarPreviewUrl}
-          onOpenMobileMenu={() => setMobileMenuOpen(true)}
-          onLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-        />
-
-        {/* Settings Body Canvas */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12">
-          <main className="flex flex-col gap-6 sm:gap-7 w-full">
-            {/* Header with Title, Subtitle, and Action Buttons matching Figma */}
+    <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+      {showSkeleton && !accountData ? (
+        <SettingsSkeleton />
+      ) : (
+        <main className="flex flex-col gap-6 sm:gap-7 w-full">
+          {/* Header with Title, Subtitle, and Action Buttons matching Figma */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1
@@ -648,8 +594,7 @@ export default function SettingsPage() {
               </div>
             </div>
           </main>
-        </div>
-      </div>
+        )}
 
       {/* Toast Notification */}
       {toast && (

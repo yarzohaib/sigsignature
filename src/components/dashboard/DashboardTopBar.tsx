@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getStoredAvatarUrl, getStoredRefreshToken, clearAuthSession, getStoredUser } from "@/app/lib/auth";
 import { logoutUser, UserProfile } from "@/app/lib/api";
+import { useOptionalUser } from "@/contexts/UserContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type TopBarProps = {
   userName?: string;
@@ -31,6 +33,7 @@ export default function DashboardTopBar({
   onSearchChange,
 }: TopBarProps) {
   const router = useRouter();
+  const optionalUser = useOptionalUser();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [internalLoggingOut, setInternalLoggingOut] = useState(false);
@@ -43,13 +46,14 @@ export default function DashboardTopBar({
 
   const resolvedUserName =
     userName ||
+    optionalUser?.displayName ||
     (storedUser
       ? [storedUser.firstName, storedUser.lastName].filter(Boolean).join(" ") ||
         storedUser.email?.split("@")[0]
       : "") ||
     "Member";
 
-  const resolvedUserEmail = userEmail || storedUser?.email || "";
+  const resolvedUserEmail = userEmail || optionalUser?.displayEmail || storedUser?.email || "";
 
   // Avatar state resolved from props or localStorage, synchronized across pages
   const [storedAvatar, setStoredAvatar] = useState<string | null>(() => getStoredAvatarUrl());
@@ -63,7 +67,7 @@ export default function DashboardTopBar({
     return () => window.removeEventListener("sig_avatar_update", handleAvatarUpdate);
   }, []);
 
-  const resolvedAvatar = avatarUrl || storedAvatar;
+  const resolvedAvatar = avatarUrl || optionalUser?.avatarUrl || storedAvatar;
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const displaySrc = resolvedAvatar && failedUrl !== resolvedAvatar ? resolvedAvatar : "/placeholder-avatar.svg";
 
@@ -81,6 +85,11 @@ export default function DashboardTopBar({
   const handleInternalLogout = async () => {
     if (onLogout) {
       onLogout();
+      return;
+    }
+    if (optionalUser?.logout) {
+      setProfileDropdownOpen(false);
+      await optionalUser.logout();
       return;
     }
     setInternalLoggingOut(true);
@@ -252,58 +261,65 @@ export default function DashboardTopBar({
 
         {/* User Profile Dropdown */}
         <div className="relative" ref={profileDropdownRef}>
-          <button
-            type="button"
-            onClick={() => setProfileDropdownOpen((prev) => !prev)}
-            aria-expanded={profileDropdownOpen}
-            aria-haspopup="true"
-            className="group flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1 transition hover:bg-slate-100 focus:outline-none cursor-pointer"
-            title="User menu"
-            aria-label="User menu"
-          >
-            {/* User Avatar: uses uploaded avatar preview or placeholder */}
-            <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
-              <Image
-                src={displaySrc}
-                alt={resolvedUserName || "Profile avatar"}
-                width={36}
-                height={36}
-                unoptimized
-                onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
-                className="h-full w-full object-cover"
-              />
+          {optionalUser?.isLoadingUser && !optionalUser.user ? (
+            <div className="flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1" aria-hidden="true">
+              <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+              <Skeleton className="hidden sm:inline-block h-4 w-20 rounded-md" />
             </div>
-
-            {/* User Name matching typography from Figma */}
-            <span
-              className="hidden sm:inline-block text-[#1E293B] transition group-hover:text-[#245FD4]"
-              style={{
-                fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "18.67px",
-                letterSpacing: "0%",
-                verticalAlign: "middle",
-              }}
+          ) : (
+            <button
+              type="button"
+              onClick={() => setProfileDropdownOpen((prev) => !prev)}
+              aria-expanded={profileDropdownOpen}
+              aria-haspopup="true"
+              className="group flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1 transition hover:bg-slate-100 focus:outline-none cursor-pointer"
+              title="User menu"
+              aria-label="User menu"
             >
-              {resolvedUserName}
-            </span>
+              {/* User Avatar: uses uploaded avatar preview or placeholder */}
+              <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
+                <Image
+                  src={displaySrc}
+                  alt={resolvedUserName || "Profile avatar"}
+                  width={36}
+                  height={36}
+                  unoptimized
+                  onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
+                  className="h-full w-full object-cover"
+                />
+              </div>
 
-            {/* Chevron indicator */}
-            <svg
-              className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-                profileDropdownOpen ? "rotate-180 text-[#245FD4]" : "group-hover:text-slate-600"
-              }`}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
+              {/* User Name matching typography from Figma */}
+              <span
+                className="hidden sm:inline-block text-[#1E293B] transition group-hover:text-[#245FD4]"
+                style={{
+                  fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  lineHeight: "18.67px",
+                  letterSpacing: "0%",
+                  verticalAlign: "middle",
+                }}
+              >
+                {resolvedUserName}
+              </span>
+
+              {/* Chevron indicator */}
+              <svg
+                className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+                  profileDropdownOpen ? "rotate-180 text-[#245FD4]" : "group-hover:text-slate-600"
+                }`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+          )}
 
           {/* Profile Dropdown Menu */}
           {profileDropdownOpen && (

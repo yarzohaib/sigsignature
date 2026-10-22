@@ -10,6 +10,7 @@
     "test": "tsx --test tests/**/*.test.ts",
     "verify:templates": "tsx scripts/verifyTemplates.ts",
     "icons:generate": "node scripts/generate-email-icons.mjs",
+    "check:icons": "tsx scripts/checkIcons.ts",
     "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js",
     "check:responsive": "tsx scripts/checkResponsive.ts"
   },
@@ -18,7 +19,8 @@
     "motion": "14.4.0",
     "next": "16.4.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
@@ -28,7 +30,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
     "playwright": "^1.64.1",
-    "sharp": "^0.35.5",
     "simple-icons": "^16.35.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",

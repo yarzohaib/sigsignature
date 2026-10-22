@@ -91,7 +91,7 @@ function generateDesignPage(title: string, subtitle: string, html: string): stri
   <meta charset="utf-8">
   <title>${title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Commissioner:wght@400;500;600&family=Trebuchet+MS&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Commissioner:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin:0; padding:0; }
     body { font-family: 'Commissioner', -apple-system, sans-serif; background: #F1F5F9; color: #1E293B; padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
