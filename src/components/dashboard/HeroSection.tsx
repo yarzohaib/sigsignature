@@ -5,7 +5,7 @@ export default function HeroSection() {
     <section className="text-left shrink-0">
       {/* Welcome Heading with wave emoji placed AFTER text */}
       <h1
-        className="flex items-center gap-2.5 text-[#1E293B] font-bold text-[30px] leading-[36px] 3xl:text-[clamp(36px,2vw,64px)] 3xl:leading-[1.2]"
+        className="flex items-center gap-2.5 text-[#1E293B] font-bold text-[24px] sm:text-[28px] xl:text-[30px] 3xl:text-[clamp(32px,1.8vw,46px)] leading-tight"
         style={{
           fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
           letterSpacing: "0%",
@@ -13,15 +13,15 @@ export default function HeroSection() {
         }}
       >
         <span>Welcome to Sig Signature!</span>
-        <span className="text-[28px] 3xl:text-[clamp(34px,1.9vw,60px)] select-none inline-block" role="img" aria-label="wave">
+        <span className="text-[24px] sm:text-[28px] xl:text-[30px] 3xl:text-[clamp(30px,1.7vw,42px)] select-none inline-block" role="img" aria-label="wave">
           👋
         </span>
       </h1>
 
-      {/* Subtitles matching Commissioner 18px typography with space after description */}
-      <div className="mt-2 3xl:mt-3 4xl:mt-4 space-y-1 3xl:space-y-1.5 pb-2 sm:pb-3 2xl:pb-4 3xl:pb-5 4xl:pb-6">
+      {/* Subtitles matching Commissioner typography */}
+      <div className="mt-1 sm:mt-1.5 space-y-0.5">
         <p
-          className="text-[#64748B] text-[18px] leading-[24px] 3xl:text-[clamp(19px,1.05vw,30px)] 3xl:leading-[1.4]"
+          className="text-[#64748B] text-[14px] sm:text-[16px] xl:text-[17px] 3xl:text-[clamp(16px,0.9vw,22px)] leading-snug"
           style={{
             fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
             fontWeight: 400,
@@ -32,7 +32,7 @@ export default function HeroSection() {
           Let&apos;s build your first professional email signature.
         </p>
         <p
-          className="text-[#64748B] text-[18px] leading-[24px] 3xl:text-[clamp(19px,1.05vw,30px)] 3xl:leading-[1.4]"
+          className="text-[#64748B] text-[14px] sm:text-[16px] xl:text-[17px] 3xl:text-[clamp(16px,0.9vw,22px)] leading-snug"
           style={{
             fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
             fontWeight: 400,
