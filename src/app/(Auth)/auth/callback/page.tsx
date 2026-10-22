@@ -10,11 +10,55 @@ function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
+  const errorParam = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const exchangedRef = useRef(false);
 
   useEffect(() => {
+    // If provider redirected back with an error (e.g., access_denied, oauth_cancelled)
+    if (errorParam) {
+      if (
+        typeof window !== "undefined" &&
+        window.opener &&
+        !window.opener.closed
+      ) {
+        try {
+          window.opener.postMessage(
+            {
+              type: "SIG_OAUTH_ERROR",
+              error: errorParam,
+              errorDescription,
+            },
+            window.location.origin
+          );
+          window.close();
+          return;
+        } catch {
+          // Ignore and fallback to redirect
+        }
+      }
+
+      let targetPage = "/login";
+      try {
+        const source = sessionStorage.getItem("sig_oauth_source");
+        if (source === "signup") {
+          targetPage = "/signup";
+        }
+      } catch {
+        // Ignore sessionStorage access errors
+      }
+
+      const target = new URL(targetPage, window.location.origin);
+      target.searchParams.set("error", errorParam);
+      if (errorDescription) {
+        target.searchParams.set("error_description", errorDescription);
+      }
+      router.replace(target.pathname + target.search);
+      return;
+    }
+
     // If no code is present in query parameters, redirect to /login
     if (!code) {
       router.replace("/login");
@@ -56,6 +100,26 @@ function AuthCallbackContent() {
           // Ignore sessionStorage access errors
         }
 
+        if (
+          typeof window !== "undefined" &&
+          window.opener &&
+          !window.opener.closed
+        ) {
+          try {
+            window.opener.postMessage(
+              {
+                type: "SIG_OAUTH_SUCCESS",
+                redirectTarget,
+              },
+              window.location.origin
+            );
+            window.close();
+            return;
+          } catch {
+            // Ignore and fallback to redirect
+          }
+        }
+
         router.replace(redirectTarget);
       } catch (err: unknown) {
         const message =
@@ -67,7 +131,7 @@ function AuthCallbackContent() {
     }
 
     handleExchange();
-  }, [code, router]);
+  }, [code, errorParam, errorDescription, router]);
 
   if (errorMessage) {
     return (

@@ -1,5 +1,21 @@
 import type { Metadata } from "next";
 
+export const CANONICAL_SITE_URL = "https://www.sigsignature.com";
+
+/**
+ * Returns canonical absolute URL for legal links (/terms, /privacy) to avoid 308 redirect hops
+ * from non-www apex domains or trailing-slash discrepancies. In local dev, returns the relative path.
+ */
+export function getCanonicalLegalUrl(path: "/terms" | "/privacy"): string {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".local")) {
+      return path;
+    }
+  }
+  return `${CANONICAL_SITE_URL}${path}`;
+}
+
 export function getSiteMetadata(
   isPreLaunch: boolean = process.env.NEXT_PUBLIC_PRE_LAUNCH === "true"
 ): Metadata {

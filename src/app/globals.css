@@ -264,18 +264,16 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(
     90deg,
     #F1F5F9 0%,
-    #E2E8F0 25%,
-    #F8FAFC 50%,
-    #E2E8F0 75%,
+    rgba(255, 255, 255, 0.8) 50%,
     #F1F5F9 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.6s ease-in-out infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-shimmer {
     animation: none !important;
-    background: #E2E8F0 !important;
+    background: #F1F5F9 !important;
   }
 }

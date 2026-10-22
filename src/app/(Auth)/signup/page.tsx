@@ -2,26 +2,30 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { signupUser, startOAuth, type OAuthProvider } from "@/app/lib/api";
+import { getCanonicalLegalUrl } from "@/lib/seo";
 
 function getOAuthErrorMessage(code: string | null): string | null {
   if (!code) return null;
   switch (code) {
+    case "access_denied":
+    case "user_cancelled":
+    case "cancelled":
     case "oauth_cancelled":
-      return "Sign in was cancelled. Please try again.";
+      return "Sign up was cancelled. Please try again.";
     case "oauth_failed":
-      return "Something went wrong while signing in. Please try again.";
+      return "Something went wrong while signing up. Please try again.";
     case "email_not_verified":
       return "Your account does not have a verified email address, so we cannot sign you in with it.";
     case "account_inactive":
       return "Your account is inactive. Please contact support.";
     default:
-      return "Something went wrong while signing in. Please try again.";
+      return "Something went wrong while signing up. Please try again.";
   }
 }
 
@@ -64,27 +68,105 @@ function SignupForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
 
-  function handleOAuth(provider: OAuthProvider) {
-    setOauthLoading(provider);
+  // If error query param changes, adjust state directly during render (React pattern)
+  const [prevErrorCode, setPrevErrorCode] = useState(errorCode);
+  if (errorCode !== prevErrorCode) {
+    setPrevErrorCode(errorCode);
+    setServerError(getOAuthErrorMessage(errorCode));
+    setOauthLoading(null);
+    setIsLoading(false);
+  }
 
-    try {
-      const rawRedirect = searchParams.get("redirect");
-      if (
-        rawRedirect &&
-        rawRedirect.startsWith("/") &&
-        !rawRedirect.startsWith("//")
-      ) {
-        sessionStorage.setItem("sig_oauth_redirect", rawRedirect);
+  // Reset button loading state and restore saved registration fields on pageshow (e.g. Back/Forward navigation)
+  useEffect(() => {
+    function handleRestore() {
+      setOauthLoading(null);
+      setIsLoading(false);
+
+      try {
+        const saved = sessionStorage.getItem("sig_signup_draft");
+        if (saved) {
+          const parsed = JSON.parse(saved) as Partial<SignupFormState>;
+          setForm((prev) => ({
+            firstName: typeof parsed.firstName === "string" ? parsed.firstName : prev.firstName,
+            lastName: typeof parsed.lastName === "string" ? parsed.lastName : prev.lastName,
+            email: typeof parsed.email === "string" ? parsed.email : prev.email,
+            password: typeof parsed.password === "string" ? parsed.password : prev.password,
+            agree: typeof parsed.agree === "boolean" ? parsed.agree : prev.agree,
+          }));
+        }
+      } catch {
+        // Ignore sessionStorage or JSON parsing errors
       }
-    } catch {
-      // Ignore sessionStorage access errors
     }
 
-    startOAuth(provider);
+    window.addEventListener("pageshow", handleRestore);
+    // Also restore on initial mount in case navigation was client-side
+    const timer = setTimeout(handleRestore, 0);
+
+    return () => {
+      window.removeEventListener("pageshow", handleRestore);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  async function handleOAuth(provider: OAuthProvider) {
+    try {
+      setIsLoading(true);
+      setOauthLoading(provider);
+      setServerError(null);
+
+      try {
+        const rawRedirect = searchParams.get("redirect");
+        if (
+          rawRedirect &&
+          rawRedirect.startsWith("/") &&
+          !rawRedirect.startsWith("//")
+        ) {
+          sessionStorage.setItem("sig_oauth_redirect", rawRedirect);
+        }
+        sessionStorage.setItem("sig_oauth_source", "signup");
+      } catch {
+        // Ignore sessionStorage access errors
+      }
+
+      await startOAuth(provider, {
+        onPopupClosed: () => {
+          setOauthLoading(null);
+          setIsLoading(false);
+        },
+        onError: (err) => {
+          setServerError(getOAuthErrorMessage(err));
+          setOauthLoading(null);
+          setIsLoading(false);
+        },
+        onSuccess: (target) => {
+          router.push(target || "/dashboard");
+          router.refresh();
+        },
+      });
+    } catch (err: unknown) {
+      setOauthLoading(null);
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong while signing up. Please try again.";
+      setServerError(message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function updateField<K extends keyof SignupFormState>(key: K, value: SignupFormState[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      try {
+        sessionStorage.setItem("sig_signup_draft", JSON.stringify(next));
+      } catch {
+        // Ignore sessionStorage quota / privacy errors
+      }
+      return next;
+    });
     if (errors[key]) {
       setErrors((prev) => ({ ...prev, [key]: undefined }));
     }
@@ -153,6 +235,11 @@ function SignupForm() {
 
       setRegisteredEmail(targetEmail);
       setShowSuccessModal(true);
+      try {
+        sessionStorage.removeItem("sig_signup_draft");
+      } catch {
+        // Ignore sessionStorage access errors
+      }
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -351,25 +438,38 @@ function SignupForm() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="flex items-center gap-2 text-sm text-slate-800">
+          <div className="flex items-center gap-2 text-sm text-slate-800">
             <input
+              id="signup-agree-terms"
               type="checkbox"
               checked={form.agree}
               disabled={isLoading}
               onChange={(e) => updateField("agree", e.target.checked)}
               className="h-4 w-4 rounded border-line accent-brand disabled:cursor-not-allowed"
             />
-            <span>
+            <label htmlFor="signup-agree-terms" className="cursor-pointer select-none">
               I agree with the{" "}
-              <Link href="/terms" target="_blank" className="font-semibold text-brand hover:underline">
+              <Link
+                href={getCanonicalLegalUrl("/terms")}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="font-semibold text-brand hover:underline"
+              >
                 Terms of Service
               </Link>{" "}
               &amp;{" "}
-              <Link href="/privacy" target="_blank" className="font-semibold text-brand hover:underline">
+              <Link
+                href={getCanonicalLegalUrl("/privacy")}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="font-semibold text-brand hover:underline"
+              >
                 Privacy Policy
               </Link>
-            </span>
-          </label>
+            </label>
+          </div>
           {errors.agree && <p className="text-sm text-red-600">{errors.agree}</p>}
         </div>
 

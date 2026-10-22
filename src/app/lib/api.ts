@@ -164,20 +164,128 @@ export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
 
 export type OAuthProvider = "google" | "github";
 
+export interface StartOAuthOptions {
+  /**
+   * If true, open OAuth in a centered popup window instead of full tab redirect.
+   */
+  popup?: boolean;
+  /**
+   * Callback fired if the popup is closed before completing authentication.
+   */
+  onPopupClosed?: () => void;
+  /**
+   * Callback fired if an OAuth error response or message is received.
+   */
+  onError?: (error: string) => void;
+  /**
+   * Callback fired upon successful OAuth flow.
+   */
+  onSuccess?: (redirectTarget?: string) => void;
+}
+
 /**
- * Initiates OAuth login by redirecting the browser to the backend OAuth provider endpoint.
+ * Initiates OAuth login by redirecting the browser to the backend OAuth provider endpoint,
+ * or opening a centered popup window if options.popup is true.
  */
-export function startOAuth(provider: OAuthProvider): void {
-  if (typeof window !== "undefined") {
-    const origin = window.location.origin;
-    const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}`;
-    try {
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      window.location.assign(targetUrl);
-    } catch {
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      window.location.href = targetUrl;
-    }
+export function startOAuth(
+  provider: OAuthProvider,
+  options?: StartOAuthOptions
+): Promise<void> | void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const origin = window.location.origin;
+  const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}`;
+
+  if (options?.popup) {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + Math.max(0, (window.outerWidth - width) / 2);
+        const top = window.screenY + Math.max(0, (window.outerHeight - height) / 2);
+
+        const popup = window.open(
+          targetUrl,
+          `sig_oauth_${provider}`,
+          `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,scrollbars=yes`
+        );
+
+        if (!popup) {
+          // Popup was blocked by browser settings; fall back to standard redirect
+          try {
+            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+            window.location.assign(targetUrl);
+          } catch {
+            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+            window.location.href = targetUrl;
+          }
+          resolve();
+          return;
+        }
+
+        popup.focus();
+
+        let finished = false;
+
+        const messageHandler = (event: MessageEvent) => {
+          if (event.origin !== window.location.origin) return;
+          if (event.data?.type === "SIG_OAUTH_SUCCESS") {
+            cleanup();
+            if (options.onSuccess) {
+              options.onSuccess(event.data.redirectTarget);
+            }
+            resolve();
+          } else if (event.data?.type === "SIG_OAUTH_ERROR") {
+            cleanup();
+            if (options.onError) {
+              options.onError(event.data.error || "oauth_failed");
+            }
+            if (options.onPopupClosed) {
+              options.onPopupClosed();
+            }
+            resolve();
+          }
+        };
+
+        const intervalId = window.setInterval(() => {
+          try {
+            if (popup.closed) {
+              cleanup();
+              if (options.onPopupClosed) {
+                options.onPopupClosed();
+              }
+              resolve();
+            }
+          } catch {
+            cleanup();
+            if (options.onPopupClosed) {
+              options.onPopupClosed();
+            }
+            resolve();
+          }
+        }, 500);
+
+        function cleanup() {
+          if (finished) return;
+          finished = true;
+          window.clearInterval(intervalId);
+          window.removeEventListener("message", messageHandler);
+        }
+
+        window.addEventListener("message", messageHandler);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  // Standard redirect flow
+  try {
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign(targetUrl);
+  } catch {
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = targetUrl;
   }

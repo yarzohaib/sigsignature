@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
@@ -12,6 +12,9 @@ import { setAuthSession } from "@/app/lib/auth";
 function getOAuthErrorMessage(code: string | null): string | null {
   if (!code) return null;
   switch (code) {
+    case "access_denied":
+    case "user_cancelled":
+    case "cancelled":
     case "oauth_cancelled":
       return "Sign in was cancelled. Please try again.";
     case "oauth_failed":
@@ -45,23 +48,88 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
 
-  function handleOAuth(provider: OAuthProvider) {
-    setOauthLoading(provider);
+  // If error query param changes, adjust state directly during render (React pattern)
+  const [prevErrorCode, setPrevErrorCode] = useState(errorCode);
+  if (errorCode !== prevErrorCode) {
+    setPrevErrorCode(errorCode);
+    setServerError(getOAuthErrorMessage(errorCode));
+    setOauthLoading(null);
+    setIsLoading(false);
+  }
 
-    try {
-      const rawRedirect = searchParams.get("redirect");
-      if (
-        rawRedirect &&
-        rawRedirect.startsWith("/") &&
-        !rawRedirect.startsWith("//")
-      ) {
-        sessionStorage.setItem("sig_oauth_redirect", rawRedirect);
-      }
-    } catch {
-      // Ignore sessionStorage access errors
+  // Reset button loading state on pageshow (e.g. Back/Forward cache restoration)
+  useEffect(() => {
+    function handlePageShow() {
+      setOauthLoading(null);
+      setIsLoading(false);
     }
 
-    startOAuth(provider);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
+
+  // Handle redirect back to signup if OAuth was originally initiated from signup
+  useEffect(() => {
+    if (errorCode) {
+      try {
+        const source = sessionStorage.getItem("sig_oauth_source");
+        if (source === "signup") {
+          sessionStorage.removeItem("sig_oauth_source");
+          router.replace(`/signup?error=${encodeURIComponent(errorCode)}`);
+        }
+      } catch {
+        // Ignore sessionStorage access errors
+      }
+    }
+  }, [errorCode, router]);
+
+  async function handleOAuth(provider: OAuthProvider) {
+    try {
+      setIsLoading(true);
+      setOauthLoading(provider);
+      setServerError(null);
+
+      try {
+        const rawRedirect = searchParams.get("redirect");
+        if (
+          rawRedirect &&
+          rawRedirect.startsWith("/") &&
+          !rawRedirect.startsWith("//")
+        ) {
+          sessionStorage.setItem("sig_oauth_redirect", rawRedirect);
+        }
+        sessionStorage.setItem("sig_oauth_source", "login");
+      } catch {
+        // Ignore sessionStorage access errors
+      }
+
+      await startOAuth(provider, {
+        onPopupClosed: () => {
+          setOauthLoading(null);
+          setIsLoading(false);
+        },
+        onError: (err) => {
+          setServerError(getOAuthErrorMessage(err));
+          setOauthLoading(null);
+          setIsLoading(false);
+        },
+        onSuccess: (target) => {
+          router.push(target || redirectTarget);
+          router.refresh();
+        },
+      });
+    } catch (err: unknown) {
+      setOauthLoading(null);
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong while signing in. Please try again.";
+      setServerError(message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleEmailChange(val: string) {
