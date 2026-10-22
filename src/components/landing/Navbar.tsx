@@ -150,7 +150,7 @@ export default function Navbar() {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
-          setScrolled(currentScrollY > 8);
+          setScrolled(currentScrollY > 20);
 
           // Fast scroll down detection below md
           const deltaY = currentScrollY - lastScrollY;
@@ -462,16 +462,15 @@ export default function Navbar() {
 
       {/* =========================================================================
           2. DESKTOP NAVBAR (>= 768px md)
-          - HARD RULE: At 768px and up (and especially 1024+), matches existing desktop exactly!
+          - Sticky scroll container with dynamic backdrop blur and border
          ========================================================================= */}
-      <header className="sticky top-0 z-50 hidden w-full md:block">
-        {/* Background layer: invisible at the top, fades in once scrolled */}
-        <div
-          aria-hidden
-          className={`pointer-events-none absolute inset-0 -z-10 border-b border-[#C1C1C1]/60 bg-[#FCFCFC]/90 backdrop-blur-md transition-opacity duration-300 ease-out motion-reduce:transition-none ${
-            scrolled ? "opacity-100" : "opacity-0"
-          }`}
-        />
+      <header
+        className={`sticky top-0 z-50 hidden w-full md:block transition-all duration-200 ease-in-out ${
+          scrolled
+            ? "bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
 
         <div className="mx-auto flex h-16 sm:h-18 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]">
           {/* Brand Logo pointing back to landing page */}
