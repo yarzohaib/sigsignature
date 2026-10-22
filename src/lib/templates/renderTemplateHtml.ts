@@ -1,5 +1,6 @@
 import { TemplateSignatureData } from "@/types/template";
 import { getTemplateRenderer } from "./designs";
+import { getSocialIconSvgDataUrl, SocialNetwork } from "@/lib/email-core";
 
 export * from "./designs";
 
@@ -8,9 +9,28 @@ export * from "./designs";
  * Strictly dispatches through the designs registry with fallback support for older saved signatures.
  * Output is an email-safe HTML fragment without <html>, <head>, <body>, or script tags.
  */
-export function generateTemplateHtml(data: TemplateSignatureData): string {
+export function generateTemplateHtml(
+  data: TemplateSignatureData,
+  options?: { preview?: boolean }
+): string {
   const renderer = getTemplateRenderer(data.templateId, data.layout);
-  return renderer(data);
+  let html = renderer(data);
+
+  if (options?.preview) {
+    // In preview mode (e.g. template gallery cards), replace network icon URLs with crisp vector SVG Data URIs
+    html = html.replace(
+      /(?:https?:\/\/[^"'\s]+)?\/api\/icons\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9]+)\/([a-zA-Z0-9_-]+)\.png/g,
+      (_match, style, color, network) => {
+        try {
+          return getSocialIconSvgDataUrl(style, `#${color}`, network as SocialNetwork);
+        } catch {
+          return _match;
+        }
+      }
+    );
+  }
+
+  return html;
 }
 
 /**

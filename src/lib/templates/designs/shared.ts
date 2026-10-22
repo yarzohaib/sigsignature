@@ -7,10 +7,11 @@ import {
   telHref,
   resolveEmailFont,
   emailIconUrl,
+  getSocialIconSvgDataUrl,
   SocialNetwork,
 } from "@/lib/email-core";
 
-export { escapeHtml, safeUrl, normalizeWebsite, telHref, resolveEmailFont, emailIconUrl };
+export { escapeHtml, safeUrl, normalizeWebsite, telHref, resolveEmailFont, emailIconUrl, getSocialIconSvgDataUrl };
 export type { SocialNetwork };
 
 /**

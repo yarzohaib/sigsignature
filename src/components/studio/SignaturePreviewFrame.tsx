@@ -83,6 +83,17 @@ export const SignaturePreviewFrame = forwardRef<
       padding: 0;
       width: max-content;
       min-width: max-content;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    /* Ensure small legal disclaimers maintain crisp typography and do not collapse into blurry micro-noise */
+    #sig-root [style*="font-size:8px"],
+    #sig-root [style*="font-size: 8px"],
+    #sig-root [style*="font-size:9px"],
+    #sig-root [style*="font-size: 9px"] {
+      font-size: 10px !important;
+      line-height: 1.35 !important;
     }
   </style>
 </head>

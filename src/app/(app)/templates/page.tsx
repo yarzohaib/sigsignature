@@ -21,9 +21,8 @@ function TemplatesContent() {
   const editId = searchParams.get("edit");
   const isNew = searchParams.get("new") === "true";
 
-  // Category sorting & filtering state
+  // Category filtering state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
-  const [sortOption, setSortOption] = useState("popular");
 
   // Active template being customized (null = gallery view)
   const [editingTemplate, setEditingTemplate] = useState<TemplateItem | null>(null);
@@ -90,23 +89,13 @@ function TemplatesContent() {
     };
   }, [editId, isNew, router]);
 
-  // Filter and sort templates by category and sortOption
+  // Filter templates by category
   const filteredTemplates = useMemo(() => {
-    let list = AVAILABLE_TEMPLATES.filter((tpl) => {
+    return AVAILABLE_TEMPLATES.filter((tpl) => {
       if (selectedCategory === "All") return true;
       return tpl.category === selectedCategory;
     });
-
-    if (sortOption === "popular") {
-      list = [...list].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
-    } else if (sortOption === "newest") {
-      list = [...list].reverse();
-    } else if (sortOption === "name") {
-      list = [...list].sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    return list;
-  }, [selectedCategory, sortOption]);
+  }, [selectedCategory]);
 
   const handleSelectTemplate = (template: TemplateItem) => {
     setEditingSignatureId(undefined);
@@ -201,46 +190,23 @@ function TemplatesContent() {
               </Link>
             </div>
 
-            {/* Filter & Sort Bar */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/80 pb-4 mb-8">
-              {/* Category Pills */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition shrink-0 cursor-pointer ${
-                      selectedCategory === cat
-                        ? "bg-[#245FD4] text-white shadow-xs"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
-                    }`}
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              {/* Sort By Dropdown */}
-              <div className="flex items-center gap-2 shrink-0">
-                <span
-                  className="text-xs text-slate-500"
+            {/* Category Filter Bar */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none border-b border-slate-200/80 pb-4 mb-8">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition shrink-0 cursor-pointer ${
+                    selectedCategory === cat
+                      ? "bg-[#245FD4] text-white shadow-xs"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                  }`}
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
-                  Sort by:
-                </span>
-                <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-xs focus:border-[#245FD4] focus:outline-none"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  <option value="popular">Most Popular</option>
-                  <option value="newest">Newest</option>
-                  <option value="name">Alphabetical</option>
-                </select>
-              </div>
+                  {cat}
+                </button>
+              ))}
             </div>
 
             {/* Template Cards Grid */}

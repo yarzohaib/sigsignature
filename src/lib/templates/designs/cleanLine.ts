@@ -114,9 +114,37 @@ export function render(data: TemplateSignatureData): string {
       !data.companyLogoUrl.trim().startsWith("data:")
   );
 
-  const logoRow = hasLogo
-    ? `<tr><td style="padding-bottom:6px;"><img src="${escapeHtml(data.companyLogoUrl!)}" alt="${escapeHtml(data.companyName || "Logo")}" width="75" height="26" style="display:block;border:0;outline:none;text-decoration:none;max-width:90px;height:auto;" /></td></tr>`
-    : "";
+  const hasAvatar = Boolean(
+    data.avatarUrl &&
+      data.avatarUrl.trim().length > 0 &&
+      !data.avatarUrl.trim().startsWith("javascript:") &&
+      !data.avatarUrl.trim().startsWith("data:")
+  );
+
+  function getInitials(name?: string): string {
+    if (!name?.trim()) return "VT";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  const visualElementCell = hasAvatar
+    ? `<td style="vertical-align:top;padding-right:14px;padding-top:2px;">
+        <img src="${escapeHtml(data.avatarUrl!)}" alt="${escapeHtml(data.fullName || "Photo")}" width="60" height="60" style="display:block;border:0;outline:none;text-decoration:none;border-radius:50%;width:60px;height:60px;object-fit:cover;" />
+      </td>`
+    : hasLogo
+    ? `<td style="vertical-align:top;padding-right:14px;padding-top:2px;">
+        <img src="${escapeHtml(data.companyLogoUrl!)}" alt="${escapeHtml(data.companyName || "Logo")}" width="60" height="60" style="display:block;border:0;outline:none;text-decoration:none;border-radius:8px;max-width:70px;height:auto;" />
+      </td>`
+    : `<td style="vertical-align:top;padding-right:14px;padding-top:2px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+          <tr>
+            <td width="52" height="52" bgcolor="${themeColor}" align="center" valign="middle" style="width:52px;height:52px;background-color:${themeColor};border-radius:50%;text-align:center;vertical-align:middle;font-family:${fontStack};font-size:16px;font-weight:bold;color:#FFFFFF;line-height:52px;">
+              ${escapeHtml(getInitials(data.fullName))}
+            </td>
+          </tr>
+        </table>
+      </td>`;
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;font-family:${fontStack};color:#1E293B;line-height:1.4;max-width:600px;">
   <tr>
@@ -124,10 +152,10 @@ export function render(data: TemplateSignatureData): string {
     <td width="3" bgcolor="${themeColor}" style="width:3px;background-color:${themeColor};font-size:1px;line-height:1px;">&nbsp;</td>
     <!-- Spacer -->
     <td width="14" style="width:14px;font-size:1px;line-height:1px;">&nbsp;</td>
+    ${visualElementCell}
     <!-- Main Content Area -->
     <td style="vertical-align:top;padding:0;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;">
-        ${logoRow}
         <!-- Name bold 16px -->
         <tr>
           <td style="padding:0;font-family:${fontStack};font-size:16px;font-weight:bold;color:#1E293B;line-height:1.2;">
