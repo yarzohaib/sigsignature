@@ -269,11 +269,11 @@ export default function HowItWorksTimeline({
       <div
         className={
           shouldReduceMotion
-            ? "mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]"
+            ? "mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]"
             : "sticky top-0 flex min-h-0 [@media(min-height:700px)]:min-h-[100svh] flex-col justify-center overflow-hidden py-6 sm:py-10 md:py-16"
         }
       >
-        <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]">
+        <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
           {/* Section Header */}
           {children}
 

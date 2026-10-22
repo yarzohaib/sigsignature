@@ -31,7 +31,7 @@ export default function HowItWorksSection() {
           <SectionBadge label="HOW IT WORKS" />
         </Reveal>
         <Reveal y={24} blur={8} delay={0.1}>
-          <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[54px] 3xl:text-[60px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.15] [text-wrap:balance]">
+          <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[54px] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.15] [text-wrap:balance]">
             From Zero to Signature in
             <br />
             <span className="text-[#1243A3]">3 Steps.</span>

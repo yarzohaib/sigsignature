@@ -472,7 +472,7 @@ export default function Navbar() {
         }`}
       >
 
-        <div className="mx-auto flex h-16 sm:h-18 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]">
+        <div className="mx-auto flex h-16 sm:h-18 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
           {/* Brand Logo pointing back to landing page */}
           <Link
             href="/"

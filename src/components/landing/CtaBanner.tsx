@@ -23,9 +23,9 @@ export default function CtaBanner() {
           duration: 0.6,
           ease: EASE_OUT_CUBIC,
         }}
-        className="mx-auto max-w-5xl 3xl:max-w-[1400px] px-4 sm:px-6 lg:px-8"
+        className="mx-auto max-w-5xl 2xl:max-w-[1300px] 3xl:max-w-[1500px] px-4 sm:px-6 lg:px-8"
       >
-        <h2 className="font-heading text-[clamp(1.375rem,1rem+1.8vw,2.375rem)] lg:text-[36px] xl:text-[38px] 3xl:text-[44px] font-semibold tracking-tight leading-tight sm:leading-[1.2] [text-wrap:balance]">
+        <h2 className="font-heading text-[clamp(1.375rem,1rem+1.8vw,2.375rem)] lg:text-[36px] xl:text-[38px] 2xl:text-[42px] 3xl:text-[48px] font-semibold tracking-tight leading-tight sm:leading-[1.2] [text-wrap:balance]">
           <span className="block whitespace-normal sm:whitespace-nowrap">
             Your Email Signature Is the Last Thing People See,
           </span>

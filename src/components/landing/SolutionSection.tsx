@@ -12,7 +12,7 @@ import {
 export default function SolutionSection() {
   return (
     <section className="bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 3xl:max-w-[1600px]">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Centered Section Badge at the top */}
         <div className="mb-10 sm:mb-14 lg:mb-16 flex justify-center">
           <Reveal y={16} blur={6}>
@@ -21,7 +21,7 @@ export default function SolutionSection() {
         </div>
 
         {/* 2-Column Content (Equal 50/50 width) */}
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-16">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-16 2xl:gap-20">
           {/* Left Column: Signature Preview Card with floating badges (slides from right on desktop, rises on mobile) */}
           <ColumnReveal
             direction="right"
@@ -35,11 +35,11 @@ export default function SolutionSection() {
             direction="left"
             className="mx-auto flex w-full flex-col items-start text-left"
           >
-            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.125rem)] lg:text-[46px] xl:text-[50px] 3xl:text-[56px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
+            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.125rem)] lg:text-[46px] xl:text-[50px] 2xl:text-[56px] 3xl:text-[62px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
               There&apos;s a <span className="text-[#1243A3]">Better Way.</span>
             </h2>
 
-            <p className="font-body mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-base xl:text-lg 3xl:text-[20px] leading-relaxed text-[#878787]">
+            <p className="font-body mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-base xl:text-lg 2xl:text-[20px] 3xl:text-[22px] leading-relaxed text-[#878787]">
               Sig Signature is a self-service email signature builder that lets
               anyone from freelancers to entire teams.
             </p>
