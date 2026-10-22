@@ -27,6 +27,8 @@ const columnVariants: Variants = {
   },
 };
 
+
+
 // Underline link styling with 44px tap row below 1024 and expanding left-to-right underline
 const linkHoverClasses =
   "group relative inline-flex min-h-[44px] min-w-[44px] items-center font-body text-[15px] sm:text-base lg:text-[18px] lg:min-h-0 lg:min-w-0 font-normal leading-[100%] tracking-normal text-[#353A3E] transition-colors hover:text-brand 3xl:text-[20px] after:absolute after:bottom-1.5 lg:after:bottom-[-2px] after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand";
@@ -36,6 +38,18 @@ const legalLinkHoverClasses =
 
 export default function Footer() {
   const shouldReduceMotion = useReducedMotion();
+
+  function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (typeof window !== "undefined" && window.location.pathname !== "/") return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+    e.preventDefault();
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
+    if (window.location.hash) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }
 
   return (
     <footer
@@ -55,6 +69,9 @@ export default function Footer() {
         >
           <Link
             href="/"
+            scroll
+            onClick={handleLogoClick}
+            aria-label="Sig Signature, back to top"
             className="inline-flex min-h-[44px] min-w-[44px] items-center gap-2.5 transition hover:opacity-90"
           >
             <Image

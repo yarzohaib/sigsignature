@@ -26,7 +26,7 @@ export default function DesignStudioLayout({
 }) {
   return (
     <div
-      className={`${fontInter.variable} ${fontRoboto.variable} ${fontDmSans.variable} ${fontAlata.variable} ${fontDmSerif.variable} ${fontPlayfair.variable} ${fontDuruSans.variable} h-screen w-full overflow-hidden`}
+      className={`${fontInter.variable} ${fontRoboto.variable} ${fontDmSans.variable} ${fontAlata.variable} ${fontDmSerif.variable} ${fontPlayfair.variable} ${fontDuruSans.variable} h-full flex-1 flex flex-col min-h-0 w-full overflow-hidden`}
     >
       {children}
     </div>

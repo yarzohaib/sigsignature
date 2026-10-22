@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test": "tsx --test tests/**/*.test.ts",
     "verify:templates": "tsx scripts/verifyTemplates.ts",
-    "icons:generate": "node scripts/generate-email-icons.mjs",
+    "icons:generate": "tsx scripts/generate-email-icons.mjs",
     "check:icons": "tsx scripts/checkIcons.ts",
     "db:delete-user": "node ../ERP-BACKEND/scripts/delete-user.js",
     "check:responsive": "tsx scripts/checkResponsive.ts"

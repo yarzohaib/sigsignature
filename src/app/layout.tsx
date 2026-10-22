@@ -1,6 +1,6 @@
 import type { Viewport } from "next";
 import { Montserrat, Commissioner } from "next/font/google";
-import { fontInter, fontRoboto, fontDmSans } from "./design-studio/fonts";
+import { fontInter, fontRoboto, fontDmSans } from "./(app)/design-studio/fonts";
 import { siteMetadata } from "@/lib/seo";
 import "./globals.css";
 
