@@ -171,11 +171,11 @@ export default function DashboardTopBar({
             className="ml-2.5 3xl:ml-3.5 w-full bg-transparent text-[14px] 3xl:text-[clamp(16px,0.9vw,22px)] text-[#1E293B] placeholder-[#94A3B8] focus:outline-none"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           />
-          <div className="hidden items-center sm:flex">
-            <kbd className="flex items-center rounded 3xl:rounded-lg border border-[#E2E8F0] bg-slate-50 px-1.5 py-0.5 3xl:px-2.5 3xl:py-1 text-[11px] 3xl:text-[clamp(13px,0.75vw,17px)] font-medium text-[#94A3B8]">
+          {/* <div className="hidden items-center sm:flex">
+             <kbd className="flex items-center rounded 3xl:rounded-lg border border-[#E2E8F0] bg-slate-50 px-1.5 py-0.5 3xl:px-2.5 3xl:py-1 text-[11px] 3xl:text-[clamp(13px,0.75vw,17px)] font-medium text-[#94A3B8]">
               ⌘ K
-            </kbd>
-          </div>
+            </kbd> 
+          </div> */}
         </div>
       </div>
 

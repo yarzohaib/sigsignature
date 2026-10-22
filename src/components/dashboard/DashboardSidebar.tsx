@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getSignatureRepository } from "@/lib/signatures/repository";
+import { getStoredRefreshToken, clearAuthSession } from "@/app/lib/auth";
+import { logoutUser } from "@/app/lib/api";
+import { useOptionalUser } from "@/contexts/UserContext";
 
 type SidebarProps = {
   mobileOpen?: boolean;
@@ -13,7 +16,10 @@ type SidebarProps = {
 
 export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const optionalUser = useOptionalUser();
   const [signatureCount, setSignatureCount] = useState<number>(0);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -190,7 +196,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
           </div>
 
           {/* Navigation Links */}
-          <nav className="mt-1 flex flex-col space-y-1 3xl:space-y-2" aria-label="Sidebar Navigation">
+          <nav className="mt-1 flex flex-col space-y-1 3xl:space-y-2 -mx-2 3xl:-mx-3" aria-label="Sidebar Navigation">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -212,7 +218,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                     }
                     onCloseMobile?.();
                   }}
-                  className={`flex items-center gap-3 3xl:gap-[clamp(14px,0.8vw,20px)] rounded-xl 3xl:rounded-2xl px-3 py-2 3xl:px-[clamp(14px,0.9vw,22px)] 3xl:py-[clamp(10px,0.6vw,16px)] transition-colors font-medium text-[15px] 3xl:text-[clamp(16px,0.95vw,22px)] ${
+                  className={`flex items-center gap-3 3xl:gap-[clamp(14px,0.8vw,20px)] rounded-xl 3xl:rounded-2xl px-2 py-2 3xl:px-[clamp(10px,0.7vw,18px)] 3xl:py-[clamp(10px,0.6vw,16px)] transition-colors font-medium text-[15px] 3xl:text-[clamp(16px,0.95vw,22px)] ${
                     isActive
                       ? "bg-[#EFF6FF] text-[#245FD4]"
                       : "text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]"
@@ -236,8 +242,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
         {/* Bottom Cards Section */}
         <div className="mt-auto flex flex-col gap-2.5 3xl:gap-4 pt-3 shrink-0">
           {/* Card 1: Unlock Premium Features */}
-          <div className="rounded-2xl 3xl:rounded-3xl bg-[#EFF6FF] p-3.5 3xl:p-[clamp(16px,1vw,26px)] text-left">
-            <div className="mb-2 flex h-6 w-6 3xl:h-[clamp(28px,1.5vw,38px)] 3xl:w-[clamp(28px,1.5vw,38px)] items-center justify-center rounded-lg 3xl:rounded-xl bg-[#245FD4] text-white shadow-xs">
+          <div className="rounded-2xl 3xl:rounded-3xl bg-[#EFF6FF] p-3.5 3xl:p-[clamp(16px,1vw,26px)] text-center">
+            <div className="mx-auto mb-2 flex h-6 w-6 3xl:h-[clamp(28px,1.5vw,38px)] 3xl:w-[clamp(28px,1.5vw,38px)] items-center justify-center rounded-lg 3xl:rounded-xl bg-[#245FD4] text-white shadow-xs">
               <svg className="h-3.5 w-3.5 3xl:h-[clamp(16px,0.9vw,22px)] 3xl:w-[clamp(16px,0.9vw,22px)]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
               </svg>
@@ -315,6 +321,47 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               </Link>
             </div>
           </div>
+
+          {/* Logout Button */}
+          <button
+            type="button"
+            disabled={isLoggingOut}
+            onClick={async () => {
+              if (optionalUser?.logout) {
+                await optionalUser.logout();
+                return;
+              }
+              setIsLoggingOut(true);
+              try {
+                const refreshToken = getStoredRefreshToken();
+                await logoutUser(refreshToken || undefined);
+              } catch (err) {
+                console.warn("Logout error:", err);
+              } finally {
+                clearAuthSession();
+                setIsLoggingOut(false);
+                router.replace("/login");
+                router.refresh();
+              }
+            }}
+            className="flex w-full items-center gap-2.5 3xl:gap-[clamp(12px,0.8vw,18px)] rounded-xl 3xl:rounded-2xl px-3 py-2 3xl:px-[clamp(14px,0.9vw,22px)] 3xl:py-[clamp(10px,0.6vw,16px)] text-xs 3xl:text-[clamp(14px,0.8vw,19px)] font-semibold text-rose-600 transition hover:bg-rose-50/80 disabled:opacity-60 cursor-pointer text-left"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg
+              className="h-4 w-4 3xl:h-[clamp(18px,1vw,26px)] 3xl:w-[clamp(18px,1vw,26px)] text-rose-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>{isLoggingOut ? "Logging out..." : "Log out"}</span>
+          </button>
         </div>
       </aside>
     </>
