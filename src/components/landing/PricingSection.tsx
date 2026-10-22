@@ -21,14 +21,15 @@ const premiumFeatures = [
   "Manage your entire team in one place",
   "Priority support & faster assistance",
   "Advanced customization tools",
+  "Remove SigSignature branding",
 ];
 
-// Premium enters first in the stagger
+// Premium card: Featured hero card enters first in the stagger
 const premiumCardVariants: Variants = {
   hidden: {
     opacity: 0,
     y: 24,
-    scale: 1,
+    scale: 0.98,
   },
   visible: {
     opacity: 1,
@@ -42,7 +43,7 @@ const premiumCardVariants: Variants = {
   },
 };
 
-// Recommended plan (Free) enters last with a slight scale up (1.02)
+// Free card enters with standard baseline scale
 const freeCardVariants: Variants = {
   hidden: {
     opacity: 0,
@@ -52,10 +53,10 @@ const freeCardVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1.02,
+    scale: 1,
     transition: {
       duration: 0.55,
-      delay: 0.22,
+      delay: 0.2,
       ease: EASE_OUT_CUBIC,
     },
   },
@@ -120,18 +121,18 @@ export default function PricingSection() {
           </Reveal>
         </div>
 
-        {/* Pricing Cards: Portrait rectangles, reduced heights, Premium taller than Free */}
-        <div className="mx-auto mt-10 sm:mt-14 lg:mt-16 flex flex-col items-center justify-center gap-7 md:flex-row md:items-stretch lg:gap-8">
-          {/* Free Plan Card: Vertical rectangle (min-h-[460px], max-w-[350px]) */}
+        {/* Pricing Cards: Portrait rectangles, elevated Premium hero card */}
+        <div className="mx-auto mt-12 sm:mt-16 lg:mt-20 flex flex-col items-center justify-center gap-7 md:flex-row md:items-center lg:gap-8 xl:gap-10">
+          {/* Free Plan Card: Vertical rectangle (standard baseline height, max-w-[420px]) */}
           <motion.div
             initial={shouldReduceMotion ? false : "hidden"}
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : freeCardVariants}
-            className="flex w-full max-w-[480px] md:max-w-[350px] mx-auto md:mx-0 justify-center md:self-stretch"
+            className="flex w-full max-w-[440px] md:max-w-[380px] lg:max-w-[420px] mx-auto md:mx-0 justify-center"
           >
             <div
-              className="relative flex w-full min-h-[460px] md:h-full flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
+              className="relative flex w-full min-h-[460px] md:min-h-[490px] lg:min-h-[500px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(196, 223, 251, 0.5) 50.81%, #FFFFFF 99.33%)",
@@ -196,16 +197,16 @@ export default function PricingSection() {
             </div>
           </motion.div>
 
-          {/* Premium Plan Card: Taller vertical rectangle (min-h-[520px], max-w-[370px]), glowing shadow */}
+          {/* Premium Plan Card: Hero card elevated vertically, taller (min-h-[577px], max-w-[463px]), frosted glowing shadow */}
           <motion.div
             initial={shouldReduceMotion ? false : "hidden"}
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : premiumCardVariants}
-            className="flex w-full max-w-[480px] md:max-w-[370px] mx-auto md:mx-0 justify-center md:self-stretch"
+            className="flex w-full max-w-[460px] md:max-w-[410px] lg:max-w-[463px] mx-auto md:mx-0 justify-center md:-mt-6 lg:-mt-8 z-10"
           >
             <div
-              className="relative flex w-full min-h-[520px] md:h-full flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-5 sm:p-8 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] [@media(hover:hover)]:hover:border-[#8A95F2]/70"
+              className="relative flex w-full min-h-[520px] md:min-h-[570px] lg:min-h-[577px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-6 sm:p-8 lg:p-9 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] [@media(hover:hover)]:hover:border-[#8A95F2]/70"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(138, 149, 242, 0.15) 50.81%, #FFFFFF 99.33%)",
@@ -217,7 +218,7 @@ export default function PricingSection() {
                   <span className="font-heading text-xl 3xl:text-2xl font-semibold text-slate-900">
                     Premium Plan
                   </span>
-                  <span className="rounded-full bg-slate-100 px-3 py-1 font-body text-xs font-semibold text-slate-600">
+                  <span className="rounded-full border border-[#8A95F2]/40 bg-white/80 px-3 py-1 font-body text-xs font-semibold text-[#4F46E5] shadow-xs backdrop-blur-xs">
                     Coming Soon
                   </span>
                 </div>
@@ -243,7 +244,7 @@ export default function PricingSection() {
                       variants={shouldReduceMotion ? undefined : itemVariants}
                       className="flex items-center gap-3"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#8A95F2] shrink-0" />
                       <span>{feat}</span>
                     </motion.li>
                   ))}
