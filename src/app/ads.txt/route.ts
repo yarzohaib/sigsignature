@@ -1,7 +1,7 @@
 export const dynamic = "force-static";
 
 export async function GET() {
-  const pubId = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID || "pub-0000000000000000";
+  const pubId = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID || "pub-2946217028626519";
   const content = `google.com, ${pubId}, DIRECT, f08c47fec0942fa0\n`;
 
   return new Response(content, {

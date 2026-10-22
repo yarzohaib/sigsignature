@@ -73,6 +73,14 @@ export function GoogleTracking({
           }}
         />
       )}
+
+      {/* 4. Google AdSense Code Snippet */}
+      <Script
+        id="google-adsense"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2946217028626519"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
     </>
   );
 }
