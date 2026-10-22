@@ -102,8 +102,8 @@ export default function DashboardPage() {
         />
 
         {/* Dashboard Body Canvas: responsive from laptop to extra large 2xl/4K screens */}
-        <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6 xl:px-10 xl:py-7 2xl:px-12 2xl:py-8">
-          <main className="mx-auto flex flex-1 lg:max-h-[860px] xl:max-h-[900px] 2xl:max-h-[960px] flex-col justify-between w-full max-w-[1240px] xl:max-w-[1360px] 2xl:max-w-[1440px]">
+        <div className="flex flex-1 flex-col overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-7 xl:px-10 xl:py-8 2xl:px-12">
+          <main className="mx-auto flex flex-1 flex-col justify-between gap-5 sm:gap-6 w-full max-w-none 3xl:max-w-[2100px]">
             {/* Welcome Heading Section */}
             <HeroSection />
 

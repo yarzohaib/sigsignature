@@ -290,7 +290,7 @@ export default function TeamSignaturesPage() {
           isLoggingOut={isLoggingOut}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1400px] w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 xl:px-10 2xl:px-12 max-w-none 3xl:max-w-[2100px] w-full mx-auto">
           {/* Header */}
           <TeamSignaturesHeader
             memberCount={memberCount}
@@ -323,8 +323,8 @@ export default function TeamSignaturesPage() {
                 onDeleteTeam={() => setIsDeleteTeamModalOpen(true)}
               />
 
-              {/* Grid: 3 cols on xl, 2 cols on md, 1 col on mobile */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {/* Grid: 3 cols on xl, 4-5 cols on 2xl/3xl, 2 cols on md, 1 col on mobile */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-5 2xl:gap-6">
                 {team.members.map((member) => (
                   <TeamMemberCard
                     key={member.id}

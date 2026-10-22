@@ -82,7 +82,7 @@ export default function CategoryCards() {
       <h2 id="help-categories-heading" className="sr-only">
         Help Categories
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 2xl:gap-6">
         {HELP_CATEGORIES.map((cat) => (
           <Link
             key={cat.slug}

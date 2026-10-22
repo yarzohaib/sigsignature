@@ -127,7 +127,7 @@ export default function PricingPage() {
 
         {/* Canvas: Single page without scroll on LG screens, vertically balanced and bounded on XL/2XL */}
         <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white">
-          <main className="mx-auto flex flex-1 flex-col justify-between w-full max-w-[1084px] xl:max-w-[1140px] 2xl:max-w-[1200px] lg:max-h-[750px] xl:max-h-[800px] 2xl:max-h-[850px] my-auto py-1">
+          <main className="mx-auto flex flex-1 flex-col justify-between w-full max-w-none 3xl:max-w-[2100px] my-auto py-1">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
@@ -160,7 +160,7 @@ export default function PricingPage() {
             <div className="my-2 xl:my-3 flex flex-col lg:flex-row items-stretch justify-between gap-4 xl:gap-6 w-full shrink-0">
               {/* Free Plan Card */}
               <div
-                className="flex flex-col justify-between w-full max-w-[530px] xl:max-w-[550px] 2xl:max-w-[580px] h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] shadow-2xs transition hover:shadow-xs"
+                className="flex flex-col justify-between flex-1 w-full max-w-none h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] shadow-2xs transition hover:shadow-xs"
                 style={{
                   width: "100%",
                   borderRadius: "12px",
@@ -250,7 +250,7 @@ export default function PricingPage() {
 
               {/* Premium Plan Card */}
               <div
-                className="flex flex-col justify-between w-full max-w-[530px] xl:max-w-[550px] 2xl:max-w-[580px] h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] shadow-2xs transition hover:shadow-xs"
+                className="flex flex-col justify-between flex-1 w-full max-w-none h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] shadow-2xs transition hover:shadow-xs"
                 style={{
                   width: "100%",
                   borderRadius: "12px",

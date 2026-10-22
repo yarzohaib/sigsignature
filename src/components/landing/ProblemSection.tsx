@@ -6,7 +6,7 @@ const problems = [
   {
     title: "Expensive",
     description:
-      "Hiring a developer costs $100 - $150 per signature. Need 10 for your team? That's $1,000+ just to look professional in your inbox.",
+      "Hiring a developer costs $100 - $120 per signature. Need 10 for your team? That's $1,000+ just to look professional in your inbox.",
     icon: "/ExpensiveIcon.svg",
     iconAlt: "Expensive cost icon",
   },

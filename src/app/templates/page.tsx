@@ -216,7 +216,7 @@ function TemplatesContent() {
 
         {/* Templates Body Canvas */}
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12">
-          <main className="mx-auto flex flex-col gap-6 sm:gap-7 w-full max-w-[1240px] xl:max-w-[1360px] 2xl:max-w-[1440px]">
+          <main className="mx-auto flex flex-col gap-6 sm:gap-7 w-full max-w-none 3xl:max-w-[2100px]">
             {/* If template not found, show friendly message */}
             {templateNotFound ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-[#E2E8F0] bg-white p-12 text-center shadow-xs">
@@ -335,9 +335,9 @@ function TemplatesContent() {
                   </div>
                 </div>
 
-                {/* Templates Grid matching 3 per line on large screen (for All, Minimal, Corporate, Creative, Bold) */}
+                {/* Templates Grid matching 3 per line on standard screens and 4-5 on ultra-wide */}
                 {filteredTemplates.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 2xl:gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-5 2xl:gap-6">
                     {filteredTemplates.map((template) => (
                       <TemplateGalleryCard
                         key={template.id}

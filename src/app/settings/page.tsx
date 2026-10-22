@@ -492,7 +492,7 @@ export default function SettingsPage() {
 
         {/* Settings Body Canvas */}
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12">
-          <main className="mx-auto flex flex-col gap-6 sm:gap-7 w-full max-w-[1140px]">
+          <main className="mx-auto flex flex-col gap-6 sm:gap-7 w-full max-w-none 3xl:max-w-[2100px]">
             {/* Header with Title, Subtitle, and Action Buttons matching Figma */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -540,10 +540,10 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Desktop Two-Column Layout (Left 780px, Right 340px, Gap 20px) */}
-            <div className="flex flex-col lg:flex-row items-start gap-5 w-full">
-              {/* Left Column (780px max-w, w-full) */}
-              <div className="flex-1 w-full flex flex-col gap-5 max-w-full lg:max-w-[780px]">
+            {/* Desktop Two-Column Layout (Left fluid, Right 340-380px) */}
+            <div className="flex flex-col lg:flex-row items-start gap-5 2xl:gap-6 w-full">
+              {/* Left Column (flex-1, expands dynamically on wide monitors & projectors) */}
+              <div className="flex-1 min-w-0 w-full flex flex-col gap-5">
                 {/* 1. Your profile card */}
                 <ProfileCard
                   firstName={formState.firstName}
@@ -608,8 +608,8 @@ export default function SettingsPage() {
                 </p>
               </div>
 
-              {/* Right Column (340px width, shrink-0) */}
-              <div className="w-full lg:w-[340px] shrink-0 flex flex-col gap-5">
+              {/* Right Column (fixed/comfortable width, shrink-0) */}
+              <div className="w-full lg:w-[320px] xl:w-[350px] 2xl:w-[380px] shrink-0 flex flex-col gap-5">
                 {/* 4. Plan & usage card */}
                 <PlanUsageCard
                   signatures={accountData?.usage?.signatures ?? 0}
