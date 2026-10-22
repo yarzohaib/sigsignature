@@ -58,6 +58,7 @@ import {
 } from "@/lib/studio/types";
 import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
 import PremiumLockedModal from "@/components/studio/PremiumLockedModal";
+import DesignStudioSkeleton from "@/components/skeletons/DesignStudioSkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
@@ -948,22 +949,6 @@ function DesignStudioContent() {
   const selectedElement = state.elements?.find((el) => el.id === selectedId);
   const fullSignatureHtml = generateFreeHtml(state, { preview: true });
 
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#F8FAFC] p-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
-          <p
-            className="text-base font-bold text-[#1E293B]"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            Loading Design Studio...
-          </p>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <div className="flex h-screen overflow-hidden bg-[#FCFCFC]">
       {/* Toast Feedback */}
@@ -1025,7 +1010,10 @@ function DesignStudioContent() {
         </div>
 
         {/* Studio Workspace: Split Left (Tools) and Right (Canvas) */}
-        <div className="flex flex-1 min-h-0 overflow-hidden relative">
+        {isLoading ? (
+          <DesignStudioSkeleton />
+        ) : (
+          <div className="flex flex-1 min-h-0 overflow-hidden relative">
           {/* ======================================================== */}
           {/* LEFT: TOOLS PANEL */}
           {/* ======================================================== */}
@@ -2332,35 +2320,38 @@ function DesignStudioContent() {
             </div>
           </main>
         </div>
+        )}
 
         {/* Sticky Bottom Bar on Small Screens (< lg) */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center gap-3 border-t border-[#E2E8F0] bg-white p-3 shadow-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <button
-            type="button"
-            onClick={() => setPreviewModalOpen(true)}
-            className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 text-xs font-semibold text-[#1E293B] shadow-2xs whitespace-nowrap hover:border-[#245FD4] transition"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span>Preview Signature</span>
-          </button>
+        {!isLoading && (
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center gap-3 border-t border-[#E2E8F0] bg-white p-3 shadow-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <button
+              type="button"
+              onClick={() => setPreviewModalOpen(true)}
+              className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 text-xs font-semibold text-[#1E293B] shadow-2xs whitespace-nowrap hover:border-[#245FD4] transition"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>Preview Signature</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={handleSaveSignature}
-            disabled={isSaving}
-            className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 text-xs font-semibold text-white shadow-xs whitespace-nowrap disabled:opacity-50 transition hover:opacity-95"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span>{isSaving ? "Saving..." : "Save & Continue"}</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={handleSaveSignature}
+              disabled={isSaving}
+              className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 text-xs font-semibold text-white shadow-xs whitespace-nowrap disabled:opacity-50 transition hover:opacity-95"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>{isSaving ? "Saving..." : "Save & Continue"}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Modals */}
@@ -2408,17 +2399,13 @@ export default function DesignStudioPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-screen items-center justify-center bg-[#FCFCFC] p-6">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />
-            <p
-              className="text-base font-bold text-[#1E293B]"
-              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-            >
-              Loading Design Studio...
-            </p>
+        <div className="flex h-screen overflow-hidden bg-[#FCFCFC]">
+          <DashboardSidebar mobileOpen={false} onCloseMobile={() => {}} />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <DashboardTopBar onOpenMobileMenu={() => {}} />
+            <DesignStudioSkeleton />
           </div>
-        </main>
+        </div>
       }
     >
       <DesignStudioContent />
