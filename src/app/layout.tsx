@@ -2,6 +2,8 @@ import type { Viewport } from "next";
 import { Montserrat, Commissioner } from "next/font/google";
 import { fontInter, fontRoboto, fontDmSans } from "./design-studio/fonts";
 import { siteMetadata } from "@/lib/seo";
+import { GoogleTracking, GtmNoScript } from "@/components/analytics/GoogleAnalytics";
+import CookieConsent from "@/components/common/CookieConsent";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -34,7 +36,12 @@ export default function RootLayout({
       lang="en"
       className={`scroll-smooth ${montserrat.variable} ${commissioner.variable} ${fontInter.variable} ${fontRoboto.variable} ${fontDmSans.variable}`}
     >
-      <body className="font-body antialiased">{children}</body>
+      <body className="font-body antialiased">
+        <GtmNoScript />
+        {children}
+        <CookieConsent />
+        <GoogleTracking />
+      </body>
     </html>
   );
 }

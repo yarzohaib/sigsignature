@@ -52,6 +52,45 @@ export function getSiteMetadata(
     },
     description:
       "SigSignature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
+    keywords: [
+      "email signature generator",
+      "html email signature",
+      "free email signature creator",
+      "gmail signature generator",
+      "outlook signature html",
+      "apple mail signature",
+      "email signature templates",
+      "sigsignature",
+    ],
+    authors: [{ name: "The Nevon", url: "https://www.thenevon.com" }],
+    creator: "The Nevon",
+    publisher: "SigSignature",
+    category: "Productivity",
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: "https://www.sigsignature.com",
+      siteName: "SigSignature",
+      title: "SigSignature | Professional HTML Email Signature Generator",
+      description:
+        "Design deliverability-focused, client-tested email signatures in under 2 minutes. Free templates for Gmail, Outlook, Apple Mail.",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "SigSignature Live Email Signature Generator",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "SigSignature | Professional HTML Email Signature Generator",
+      description:
+        "Design deliverability-focused, client-tested email signatures in under 2 minutes. Free templates for Gmail, Outlook, Apple Mail.",
+      images: ["/og-image.png"],
+      creator: "@sigsignature",
+    },
     icons: {
       icon: [
         { url: "/favicon.ico", sizes: "48x48" },

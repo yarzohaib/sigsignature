@@ -7,10 +7,12 @@ import FeaturesSection from "@/components/landing/FeaturesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import ComparisonSection from "@/components/landing/ComparisonSection";
 import PricingSection from "@/components/landing/PricingSection";
+import FaqSection from "@/components/landing/FaqSection";
 import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
 import FlashToast from "@/components/common/FlashToast";
 import LandingMotionConfig from "@/components/motion/LandingMotionConfig";
+import { WebApplicationJsonLd, OrganizationJsonLd } from "@/components/seo/StructuredData";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -41,6 +43,10 @@ export default function LandingPage() {
   </div>
       <Navbar />
 
+      {/* Structured Data for Search Engines & LLM scrapers */}
+      <WebApplicationJsonLd />
+      <OrganizationJsonLd />
+
       {/* Main Page Flow */}
       <main className="flex-1">
         <HeroSection />
@@ -50,6 +56,7 @@ export default function LandingPage() {
         <HowItWorksSection />
         <ComparisonSection />
         <PricingSection />
+        <FaqSection />
         <CtaBanner />
       </main>
 

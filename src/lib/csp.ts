@@ -47,12 +47,17 @@ export function buildCspDirectives(
 
     // 2. script-src: self + unsafe-inline (needed for Next.js hydration).
     //    'unsafe-eval' is ONLY enabled in development for HMR / hot-reload.
-    //    TODO: Move to strict nonces (via Next.js middleware) once dynamic nonces are supported without de-optimizing static page prerendering.
+    //    Whitelisted Google Tag Manager, Google Analytics, and AdSense endpoints.
     {
       name: "script-src",
       values: [
         "'self'",
         "'unsafe-inline'",
+        "https://www.googletagmanager.com",
+        "https://www.google-analytics.com",
+        "https://pagead2.googlesyndication.com",
+        "https://partner.googleadservices.com",
+        "https://tpc.googlesyndication.com",
         ...(isDev ? ["'unsafe-eval'"] : []),
       ],
     },
@@ -67,7 +72,7 @@ export function buildCspDirectives(
       ],
     },
 
-    // 4. img-src: self, data:, blob:, S3 uploads host, OAuth avatar providers (Google, GitHub), and Cloudinary
+    // 4. img-src: self, data:, blob:, S3 uploads host, OAuth avatar providers (Google, GitHub), Cloudinary, and Google Analytics/AdSense
     {
       name: "img-src",
       values: [
@@ -78,6 +83,10 @@ export function buildCspDirectives(
         "https://*.googleusercontent.com",
         "https://*.githubusercontent.com",
         "https://res.cloudinary.com",
+        "https://www.googletagmanager.com",
+        "https://www.google-analytics.com",
+        "https://*.google.com",
+        "https://pagead2.googlesyndication.com",
       ],
     },
 
@@ -91,7 +100,7 @@ export function buildCspDirectives(
       ],
     },
 
-    // 6. connect-src: self, API base URL, S3 upload host (PUT presigned uploads), font stylesheets, and dev servers
+    // 6. connect-src: self, API base URL, S3 upload host, fonts, dev servers, and Google Analytics/GTM/AdSense endpoints
     {
       name: "connect-src",
       values: [
@@ -100,6 +109,11 @@ export function buildCspDirectives(
         s3UploadOrigin,
         "https://fonts.googleapis.com",
         "https://fonts.gstatic.com",
+        "https://www.google-analytics.com",
+        "https://*.google-analytics.com",
+        "https://region1.google-analytics.com",
+        "https://*.googletagmanager.com",
+        "https://pagead2.googlesyndication.com",
         ...(isDev
           ? [
               "http://localhost:*",
@@ -112,10 +126,16 @@ export function buildCspDirectives(
       ],
     },
 
-    // 7. frame-src: Cloudflare Turnstile host (challenges.cloudflare.com) only if used on login/signup; otherwise 'none'
+    // 7. frame-src: GTM noscript fallback iframe, Google Ads, and Cloudflare Turnstile if needed
     {
       name: "frame-src",
-      values: ["'none'"],
+      values: [
+        "'self'",
+        "https://www.googletagmanager.com",
+        "https://googleads.g.doubleclick.net",
+        "https://pagead2.googlesyndication.com",
+        "https://tpc.googlesyndication.com",
+      ],
     },
 
     // 8. object-src: Restrict plugins like Flash or Java
