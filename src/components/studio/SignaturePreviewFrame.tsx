@@ -9,6 +9,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
+import { SIGNATURE_FONTS_HREF } from "@/lib/signatures/previewDocument";
 
 export interface SignaturePreviewFrameProps {
   html: string;
@@ -58,7 +59,7 @@ export const SignaturePreviewFrame = forwardRef<
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="${SIGNATURE_FONTS_HREF}" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
