@@ -4,6 +4,7 @@ import { fontInter, fontRoboto, fontDmSans } from "./design-studio/fonts";
 import { siteMetadata } from "@/lib/seo";
 import { GoogleTracking, GtmNoScript } from "@/components/analytics/GoogleAnalytics";
 import CookieConsent from "@/components/common/CookieConsent";
+import ScrollToTop from "@/components/common/ScrollToTop";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -40,6 +41,7 @@ export default function RootLayout({
         <GtmNoScript />
         {children}
         <CookieConsent />
+        <ScrollToTop />
         <GoogleTracking />
       </body>
     </html>

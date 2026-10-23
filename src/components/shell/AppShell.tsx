@@ -22,7 +22,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <DashboardTopBar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
           {/* Page Scroll Canvas */}
-          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+          <div
+            id="app-scroll-container"
+            data-scroll-container
+            className="flex-1 min-h-0 overflow-y-auto flex flex-col scroll-smooth"
+          >
             {children}
           </div>
         </div>

@@ -778,6 +778,7 @@ import {
 import { renderSignaturePng } from "@/lib/signatures/exportPng";
 import { buildDownloadDocument } from "@/lib/signatures/previewDocument";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
+import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
 
 interface SaveSuccessModalProps {
   isOpen: boolean;
@@ -1072,30 +1073,34 @@ export default function SaveSuccessModal({
           {/* Centered Blue Envelope & Signature Card Preview */}
           <div className="relative w-[340px] sm:w-[420px] max-w-[88vw] flex flex-col items-center">
             {/* Signature Card (Emerging out of the envelope) */}
-            <div className="relative z-10 w-[315px] sm:w-[380px] max-h-[220px] overflow-y-auto rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-3 sm:p-4 text-left shadow-lg">
-              {/* Green Checkmark Circle Badge (Top-Right) */}
-              <div className="absolute -top-3.5 -right-3.5 z-30 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#22C55E] text-white shadow-md border-2 border-white">
-                <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </div>
+<div className="relative z-10 w-[315px] sm:w-[380px] rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-3 pb-12 sm:p-4 sm:pb-14 text-left shadow-lg">
+  {/* Green Checkmark Circle Badge (Top-Right) */}
+  <div className="absolute -top-3.5 -right-3.5 z-30 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#22C55E] text-white shadow-md border-2 border-white">
+    <svg
+      className="w-5 h-5 sm:w-6 sm:h-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  </div>
+
+  {/* Real signature, scaled to fit the card so it never scrolls */}
+  <SignaturePreviewFrame html={previewHtml} aspectRatio="16 / 9" />
+</div>
 
               {/* Signature Card Content - Real Signature Markup */}
-              <div
+              {/* <div
                 className="w-full overflow-hidden text-left"
                 dangerouslySetInnerHTML={{
                   __html: previewHtml,
                 }}
               />
-            </div>
+            </div> */}
 
             {/* Front Envelope Pocket (Overlapping lower portion of card) */}
             <div className="relative -mt-10 sm:-mt-12 w-full z-20 pointer-events-none">
