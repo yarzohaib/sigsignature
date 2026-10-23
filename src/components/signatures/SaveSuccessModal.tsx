@@ -758,6 +758,7 @@ import { StudioSignatureData } from "@/types/studio";
 import { SavedSignature } from "@/types/signature";
 import { copySignatureRich, copyTextToClipboard } from "@/lib/email-core";
 import { getStoredSettings } from "@/app/lib/auth";
+import { useRouter } from "next/navigation";
 import {
   renderSavedSignatureHtml,
   renderSavedSignaturePlainText,
@@ -851,6 +852,7 @@ export default function SaveSuccessModal({
   preRenderedPlainText,
   signatureName,
 }: SaveSuccessModalProps) {
+  const router = useRouter();
   const [copiedSignature, setCopiedSignature] = useState(false);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [isDownloadingImage, setIsDownloadingImage] = useState(false);
@@ -1203,30 +1205,37 @@ export default function SaveSuccessModal({
             <span>Download HTML</span>
           </button>
 
-          {/* Button 3: Edit Signature */}
+          {/* Button 3: Navigate to My Signature */}
           <button
-            type="button"
-            onClick={onClose}
-            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95"
-            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-          >
-            <svg
-              className="w-4 h-4 shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 20h9" />
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-            </svg>
-            <span>Edit Signature</span>
-          </button>
+  type="button"
+  onClick={() => {
+    onClose();
+    router.push("/signatures");
+  }}
+  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95"
+  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+>
+  <svg
+    className="w-4 h-4 shrink-0"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="8" y1="6" x2="21" y2="6" />
+    <line x1="8" y1="12" x2="21" y2="12" />
+    <line x1="8" y1="18" x2="21" y2="18" />
+    <line x1="3" y1="6" x2="3.01" y2="6" />
+    <line x1="3" y1="12" x2="3.01" y2="12" />
+    <line x1="3" y1="18" x2="3.01" y2="18" />
+  </svg>
+  <span>My Signatures</span>
+</button>
         </div>
 
-        <button
+        {/* <button
           type="button"
           onClick={handleDownloadImage}
           disabled={isDownloadingImage}
@@ -1234,7 +1243,7 @@ export default function SaveSuccessModal({
           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
         >
           {isDownloadingImage ? "Preparing image..." : "Need a picture instead? Download as PNG"}
-        </button>
+        </button> */}
 
         {/* Small Copied Alert matching Image 2 */}
         <SignatureCopiedAlert
