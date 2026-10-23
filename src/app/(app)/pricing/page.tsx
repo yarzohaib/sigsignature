@@ -15,7 +15,7 @@ function PricingContent() {
   }
 
   return (
-    <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white w-full">
+    <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 3xl:px-[clamp(48px,3vw,80px)] 3xl:py-[clamp(24px,1.5vw,40px)] bg-white w-full">
       {/* Toast Notification */}
       {premiumToast && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-200">
@@ -40,11 +40,11 @@ function PricingContent() {
         </div>
       )}
 
-      <main className="flex flex-1 flex-col justify-between w-full my-auto py-1">
+      <main className="flex flex-1 flex-col justify-between w-full my-auto py-1 3xl:gap-[clamp(14px,0.9vw,26px)]">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
-                className="text-[#000000] text-[28px] sm:text-[32px] xl:text-[34px]"
+                className="text-[#000000] text-[28px] sm:text-[32px] xl:text-[34px] 3xl:text-[clamp(34px,2.1vw,56px)]"
                 style={{
                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                   fontWeight: 600,
@@ -56,7 +56,7 @@ function PricingContent() {
                 Simple Pricing. Powerful Signatures.
               </h1>
               <p
-                className="mt-1.5 text-[#000000] text-[14px] sm:text-[15px] xl:text-[16px]"
+                className="mt-1.5 3xl:mt-2.5 text-[#000000] text-[14px] sm:text-[15px] xl:text-[16px] 3xl:text-[clamp(16px,0.95vw,26px)] 3xl:leading-normal"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                   fontWeight: 400,
@@ -69,18 +69,15 @@ function PricingContent() {
               </p>
             </div>
 
-            {/* Plans Container: Free & Premium side-by-side with reduced card height */}
-            <div className="my-2 xl:my-3 flex flex-col lg:flex-row items-stretch justify-between gap-4 xl:gap-6 w-full shrink-0">
+            {/* Plans Container: Free & Premium side-by-side with fluid auto-adjusting card height */}
+            <div className="my-2 xl:my-3 3xl:my-[clamp(10px,0.7vw,22px)] flex flex-col lg:flex-row items-stretch justify-between gap-4 xl:gap-6 3xl:gap-[clamp(24px,1.5vw,44px)] w-full shrink-0">
               {/* Free Plan Card */}
               <div
-                className="flex flex-col justify-between flex-1 w-full max-w-none h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] shadow-2xs transition hover:shadow-xs"
+                className="flex flex-col justify-between flex-1 w-full max-w-none h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] 3xl:h-[clamp(385px,25vw,550px)] p-6 sm:p-7 3xl:p-[clamp(24px,1.5vw,44px)] rounded-xl 3xl:rounded-3xl shadow-2xs transition hover:shadow-xs"
                 style={{
                   width: "100%",
-                  borderRadius: "12px",
                   borderWidth: "0.5px",
                   borderColor: "#E2E8F0",
-                  padding: "24px 28px",
-                  gap: "10px",
                   opacity: 1,
                   background:
                     "linear-gradient(124.58deg, #FBFDFE 0%, rgba(196, 223, 251, 0.5) 47.18%, #F9FCFE 93.27%)",
@@ -90,13 +87,13 @@ function PricingContent() {
                   {/* Header Row: Title & Current Plan badge */}
                   <div className="flex items-center justify-between">
                     <h2
-                      className="text-[17px] xl:text-[19px] font-semibold text-[#0F172A]"
+                      className="text-[17px] xl:text-[19px] 3xl:text-[clamp(22px,1.25vw,36px)] font-semibold text-[#0F172A]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       Free Plan
                     </h2>
                     <span
-                      className="inline-flex items-center rounded-full bg-[#C4DFFB]/60 px-3 py-0.5 text-[11px] xl:text-[12px] font-medium text-[#1D4ED8]"
+                      className="inline-flex items-center rounded-full bg-[#C4DFFB]/60 px-3 py-0.5 3xl:px-4 3xl:py-1 text-[11px] xl:text-[12px] 3xl:text-[clamp(13px,0.75vw,20px)] font-medium text-[#1D4ED8]"
                       style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                     >
                       Current Plan
@@ -104,15 +101,15 @@ function PricingContent() {
                   </div>
 
                   {/* Price Row */}
-                  <div className="mt-1.5 flex items-baseline gap-1.5">
+                  <div className="mt-1.5 3xl:mt-2.5 flex items-baseline gap-1.5 3xl:gap-2.5">
                     <span
-                      className="text-[28px] sm:text-[32px] xl:text-[34px] font-bold text-[#0F172A]"
+                      className="text-[28px] sm:text-[32px] xl:text-[34px] 3xl:text-[clamp(36px,2.2vw,64px)] font-bold text-[#0F172A]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       $0
                     </span>
                     <span
-                      className="text-[13px] xl:text-[14px] text-[#94A3B8]"
+                      className="text-[13px] xl:text-[14px] 3xl:text-[clamp(15px,0.9vw,24px)] text-[#94A3B8]"
                       style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                     >
                       /month
@@ -121,7 +118,7 @@ function PricingContent() {
 
                   {/* Subtitle description */}
                   <p
-                    className="mt-0.5 text-[12px] xl:text-[13px] text-[#64748B]"
+                    className="mt-0.5 3xl:mt-1 text-[12px] xl:text-[13px] 3xl:text-[clamp(14px,0.8vw,22px)] text-[#64748B]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
                     Signature builder (templates + from scratch)
@@ -129,23 +126,23 @@ function PricingContent() {
 
                   {/* Features List */}
                   <ul
-                    className="mt-2.5 xl:mt-3 flex flex-col gap-1.5 xl:gap-2 text-[12.5px] xl:text-[13.5px] text-[#334155]"
+                    className="mt-2.5 xl:mt-3 3xl:mt-[clamp(14px,0.9vw,26px)] flex flex-col gap-1.5 xl:gap-2 3xl:gap-[clamp(8px,0.5vw,16px)] text-[12.5px] xl:text-[13.5px] 3xl:text-[clamp(15px,0.85vw,24px)] text-[#334155]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Live preview</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>HTML export</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Image export</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Save up to 3 signatures</span>
                     </li>
                   </ul>
@@ -154,7 +151,7 @@ function PricingContent() {
                 {/* Bottom Action Button */}
                 <Link
                   href="/templates"
-                  className="mt-3 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 xl:py-2.5 text-center text-[13px] xl:text-[14px] font-semibold text-white shadow-xs transition hover:opacity-95"
+                  className="mt-3 3xl:mt-[clamp(16px,1vw,28px)] block w-full rounded-xl 3xl:rounded-2xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 xl:py-2.5 3xl:py-[clamp(12px,0.7vw,18px)] text-center text-[13px] xl:text-[14px] 3xl:text-[clamp(16px,0.95vw,24px)] font-semibold text-white shadow-xs transition hover:opacity-95"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Get Started
@@ -163,14 +160,11 @@ function PricingContent() {
 
               {/* Premium Plan Card */}
               <div
-                className="flex flex-col justify-between flex-1 w-full max-w-none h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] shadow-2xs transition hover:shadow-xs"
+                className="flex flex-col justify-between flex-1 w-full max-w-none h-auto lg:h-[345px] xl:h-[365px] 2xl:h-[375px] 3xl:h-[clamp(385px,25vw,550px)] p-6 sm:p-7 3xl:p-[clamp(24px,1.5vw,44px)] rounded-xl 3xl:rounded-3xl shadow-2xs transition hover:shadow-xs"
                 style={{
                   width: "100%",
-                  borderRadius: "12px",
                   borderWidth: "0.5px",
                   borderColor: "#E2E8F0",
-                  padding: "24px 28px",
-                  gap: "10px",
                   opacity: 1,
                   background:
                     "linear-gradient(124.58deg, #FBFDFE 0%, rgba(138, 149, 242, 0.2) 47.18%, #F9FCFE 93.27%)",
@@ -180,7 +174,7 @@ function PricingContent() {
                   {/* Header Row: Title */}
                   <div className="flex items-center justify-between">
                     <h2
-                      className="text-[17px] xl:text-[19px] font-semibold text-[#0F172A]"
+                      className="text-[17px] xl:text-[19px] 3xl:text-[clamp(22px,1.25vw,36px)] font-semibold text-[#0F172A]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       Premium Plan
@@ -188,15 +182,15 @@ function PricingContent() {
                   </div>
 
                   {/* Price Row */}
-                  <div className="mt-1.5 flex items-baseline gap-1.5">
+                  <div className="mt-1.5 3xl:mt-2.5 flex items-baseline gap-1.5 3xl:gap-2.5">
                     <span
-                      className="text-[28px] sm:text-[32px] xl:text-[34px] font-bold text-[#0F172A]"
+                      className="text-[28px] sm:text-[32px] xl:text-[34px] 3xl:text-[clamp(36px,2.2vw,64px)] font-bold text-[#0F172A]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       $10
                     </span>
                     <span
-                      className="text-[13px] xl:text-[14px] text-[#94A3B8]"
+                      className="text-[13px] xl:text-[14px] 3xl:text-[clamp(15px,0.9vw,24px)] text-[#94A3B8]"
                       style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                     >
                       /month
@@ -205,27 +199,27 @@ function PricingContent() {
 
                   {/* Features List */}
                   <ul
-                    className="mt-2.5 xl:mt-3 flex flex-col gap-1.5 xl:gap-2 text-[12.5px] xl:text-[13.5px] text-[#334155]"
+                    className="mt-2.5 xl:mt-3 3xl:mt-[clamp(14px,0.9vw,26px)] flex flex-col gap-1.5 xl:gap-2 3xl:gap-[clamp(8px,0.5vw,16px)] text-[12.5px] xl:text-[13.5px] 3xl:text-[clamp(15px,0.85vw,24px)] text-[#334155]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Everything in the Free plan</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Unlimited signatures</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Premium templates</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Team signature management</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-[#334155]">&bull;</span>
+                    <li className="flex items-center gap-2 3xl:gap-3">
+                      <span className="text-[#334155] 3xl:text-[clamp(16px,0.9vw,24px)]">&bull;</span>
                       <span>Priority support</span>
                     </li>
                   </ul>
@@ -235,7 +229,7 @@ function PricingContent() {
                 <button
                   type="button"
                   onClick={handleGoPremium}
-                  className="mt-3 w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 xl:py-2.5 text-center text-[13px] xl:text-[14px] font-semibold text-white shadow-xs transition hover:opacity-95"
+                  className="mt-3 3xl:mt-[clamp(16px,1vw,28px)] w-full rounded-xl 3xl:rounded-2xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 xl:py-2.5 3xl:py-[clamp(12px,0.7vw,18px)] text-center text-[13px] xl:text-[14px] 3xl:text-[clamp(16px,0.95vw,24px)] font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Go Premium
@@ -244,9 +238,9 @@ function PricingContent() {
             </div>
 
             {/* Got Questions? We've Got Answers Section (Expanded for readability) */}
-            <div className="w-full text-left shrink-0 mt-1">
+            <div className="w-full text-left shrink-0 mt-1 3xl:mt-2">
               <h2
-                className="text-[#000000] text-[26px] sm:text-[30px] xl:text-[34px]"
+                className="text-[#000000] text-[26px] sm:text-[30px] xl:text-[34px] 3xl:text-[clamp(32px,1.9vw,52px)]"
                 style={{
                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                   fontWeight: 600,
@@ -258,7 +252,7 @@ function PricingContent() {
                 Got Questions? We&apos;ve Got Answers.
               </h2>
               <p
-                className="mt-1 text-[#000000] text-[13.5px] sm:text-[14.5px] xl:text-[16px]"
+                className="mt-1 3xl:mt-2 text-[#000000] text-[13.5px] sm:text-[14.5px] xl:text-[16px] 3xl:text-[clamp(16px,0.95vw,26px)] 3xl:leading-normal"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                   fontWeight: 400,
@@ -271,11 +265,11 @@ function PricingContent() {
               </p>
 
               {/* 2x2 FAQ Cards Grid - comfortable height & padding */}
-              <div className="mt-2.5 xl:mt-3.5 grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-3.5">
+              <div className="mt-2.5 xl:mt-3.5 3xl:mt-[clamp(14px,0.9vw,26px)] grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-3.5 3xl:gap-[clamp(16px,1vw,28px)]">
                 {/* FAQ 1 */}
-                <div className="rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
+                <div className="rounded-xl 3xl:rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 3xl:px-[clamp(20px,1.2vw,36px)] 3xl:py-[clamp(16px,0.9vw,26px)] flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
                   <h3
-                    className="text-[#000000] text-[13.5px] xl:text-[14.5px]"
+                    className="text-[#000000] text-[13.5px] xl:text-[14.5px] 3xl:text-[clamp(16px,0.95vw,24px)] 3xl:leading-snug"
                     style={{
                       fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                       fontWeight: 600,
@@ -286,7 +280,7 @@ function PricingContent() {
                     Q: Is it really free?
                   </h3>
                   <p
-                    className="mt-1 text-[#334155] text-[11px] xl:text-[12px]"
+                    className="mt-1 3xl:mt-1.5 text-[#334155] text-[11px] xl:text-[12px] 3xl:text-[clamp(13px,0.75vw,20px)] 3xl:leading-relaxed"
                     style={{
                       fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                       fontWeight: 400,
@@ -299,9 +293,9 @@ function PricingContent() {
                 </div>
 
                 {/* FAQ 2 */}
-                <div className="rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
+                <div className="rounded-xl 3xl:rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 3xl:px-[clamp(20px,1.2vw,36px)] 3xl:py-[clamp(16px,0.9vw,26px)] flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
                   <h3
-                    className="text-[#000000] text-[13.5px] xl:text-[14.5px]"
+                    className="text-[#000000] text-[13.5px] xl:text-[14.5px] 3xl:text-[clamp(16px,0.95vw,24px)] 3xl:leading-snug"
                     style={{
                       fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                       fontWeight: 600,
@@ -312,7 +306,7 @@ function PricingContent() {
                     Q: Can I edit my signature after saving it?
                   </h3>
                   <p
-                    className="mt-1 text-[#334155] text-[11px] xl:text-[12px]"
+                    className="mt-1 3xl:mt-1.5 text-[#334155] text-[11px] xl:text-[12px] 3xl:text-[clamp(13px,0.75vw,20px)] 3xl:leading-relaxed"
                     style={{
                       fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                       fontWeight: 400,
@@ -325,9 +319,9 @@ function PricingContent() {
                 </div>
 
                 {/* FAQ 3 */}
-                <div className="rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
+                <div className="rounded-xl 3xl:rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 3xl:px-[clamp(20px,1.2vw,36px)] 3xl:py-[clamp(16px,0.9vw,26px)] flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
                   <h3
-                    className="text-[#000000] text-[13.5px] xl:text-[14.5px]"
+                    className="text-[#000000] text-[13.5px] xl:text-[14.5px] 3xl:text-[clamp(16px,0.95vw,24px)] 3xl:leading-snug"
                     style={{
                       fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                       fontWeight: 600,
@@ -338,7 +332,7 @@ function PricingContent() {
                     Q: What email clients does the HTML work with?
                   </h3>
                   <p
-                    className="mt-1 text-[#334155] text-[11px] xl:text-[12px]"
+                    className="mt-1 3xl:mt-1.5 text-[#334155] text-[11px] xl:text-[12px] 3xl:text-[clamp(13px,0.75vw,20px)] 3xl:leading-relaxed"
                     style={{
                       fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                       fontWeight: 400,
@@ -351,9 +345,9 @@ function PricingContent() {
                 </div>
 
                 {/* FAQ 4 */}
-                <div className="rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
+                <div className="rounded-xl 3xl:rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 xl:px-5 xl:py-3.5 3xl:px-[clamp(20px,1.2vw,36px)] 3xl:py-[clamp(16px,0.9vw,26px)] flex flex-col justify-center shadow-2xs hover:border-slate-300 transition">
                   <h3
-                    className="text-[#000000] text-[13.5px] xl:text-[14.5px]"
+                    className="text-[#000000] text-[13.5px] xl:text-[14.5px] 3xl:text-[clamp(16px,0.95vw,24px)] 3xl:leading-snug"
                     style={{
                       fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                       fontWeight: 600,
@@ -364,7 +358,7 @@ function PricingContent() {
                     Q: Do I need to know how to code?
                   </h3>
                   <p
-                    className="mt-1 text-[#334155] text-[11px] xl:text-[12px]"
+                    className="mt-1 3xl:mt-1.5 text-[#334155] text-[11px] xl:text-[12px] 3xl:text-[clamp(13px,0.75vw,20px)] 3xl:leading-relaxed"
                     style={{
                       fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                       fontWeight: 400,
