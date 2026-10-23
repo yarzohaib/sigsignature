@@ -6,10 +6,42 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { getTeam } from "@/app/lib/api";
 
+const CACHE_SIG_KEY = "sig_cached_signatures_count";
+const CACHE_TEAMS_KEY = "sig_cached_teams_count";
+
 export default function QuickOverview() {
-  const [totalSignatures, setTotalSignatures] = useState<number>(0);
+  // Initialize with cached numbers from localStorage to prevent flashing '0' on page load / refresh
+  const [totalSignatures, setTotalSignatures] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(CACHE_SIG_KEY);
+        if (cached !== null) {
+          const parsed = parseInt(cached, 10);
+          if (!isNaN(parsed)) return parsed;
+        }
+      } catch {
+        // ignore localStorage access error
+      }
+    }
+    return 0;
+  });
+
   const [personalTemplatesCount, setPersonalTemplatesCount] = useState<number>(AVAILABLE_TEMPLATES.length);
-  const [teamsCount, setTeamsCount] = useState<number>(0);
+
+  const [teamsCount, setTeamsCount] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(CACHE_TEAMS_KEY);
+        if (cached !== null) {
+          const parsed = parseInt(cached, 10);
+          if (!isNaN(parsed)) return parsed;
+        }
+      } catch {
+        // ignore localStorage access error
+      }
+    }
+    return 0;
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -21,9 +53,14 @@ export default function QuickOverview() {
         const list = await repo.list();
         if (isMounted) {
           setTotalSignatures(list.length);
+          try {
+            localStorage.setItem(CACHE_SIG_KEY, list.length.toString());
+          } catch {
+            // ignore localStorage quota/disabled errors
+          }
         }
       } catch {
-        // keep fallback 0
+        // keep fallback or cached count
       }
 
       // 2. Personal Templates (Default to Available Templates count or user customized)
@@ -35,11 +72,16 @@ export default function QuickOverview() {
       try {
         const teamData = await getTeam();
         if (isMounted && teamData) {
-          // If user belongs to a team or has created one
-          setTeamsCount(teamData.members ? teamData.members.length : 1);
+          const count = teamData.members ? teamData.members.length : 1;
+          setTeamsCount(count);
+          try {
+            localStorage.setItem(CACHE_TEAMS_KEY, count.toString());
+          } catch {
+            // ignore localStorage errors
+          }
         }
       } catch {
-        // keep fallback 0
+        // keep fallback or cached count
       }
     }
 
@@ -60,12 +102,9 @@ export default function QuickOverview() {
     <section className="w-full shrink-0" aria-label="Quick Overview">
       {/* Heading: Quick Overview */}
       <h2
-        className="text-[#1E293B] mb-2 sm:mb-2.5"
+        className="text-[#1E293B] mb-2 sm:mb-2.5 font-bold text-[18px] sm:text-[20px]"
         style={{
-          fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-          fontWeight: 700,
-          fontStyle: "normal",
-          fontSize: "18px",
+          fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
           lineHeight: "100%",
           letterSpacing: "0%",
         }}
@@ -74,19 +113,19 @@ export default function QuickOverview() {
       </h2>
 
       {/* Overview Container Card */}
-      <div className="w-full rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 sm:px-6 sm:py-3.5 shadow-xs">
-        <div className="grid grid-cols-1 divide-y divide-[#E2E8F0] md:grid-cols-4 md:divide-y-0 md:divide-x md:divide-[#E2E8F0] items-center">
+      <div className="w-full rounded-2xl border border-[#B0B0B0] bg-[#C2C2C2] px-5 py-4 sm:px-7 sm:py-5 shadow-xs">
+        <div className="grid grid-cols-1 divide-y divide-[#A8A8A8] md:grid-cols-4 md:divide-y-0 md:divide-x md:divide-[#A8A8A8] items-center">
           
           {/* Item 1: Total Signatures */}
           <Link
             href="/signatures"
-            className="flex items-center justify-between py-2.5 md:py-0 md:pr-4 group transition hover:opacity-90"
+            className="flex items-center justify-between py-3 md:py-0 md:pr-5 group transition hover:opacity-90"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
               {/* Icon Container */}
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#245FD4]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
                 <svg
-                  className="h-5 w-5"
+                  className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -104,12 +143,9 @@ export default function QuickOverview() {
               {/* Text & Count */}
               <div>
                 <p
-                  className="text-[#64748B]"
+                  className="text-[#334155] font-medium text-[16px]"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                    fontWeight: 500,
-                    fontStyle: "normal",
-                    fontSize: "16px",
                     lineHeight: "100%",
                     letterSpacing: "0%",
                   }}
@@ -117,7 +153,7 @@ export default function QuickOverview() {
                   Total Signatures
                 </p>
                 <p
-                  className="mt-1 text-[#1E293B] font-bold text-[18px] leading-tight"
+                  className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {totalSignatures}
@@ -127,7 +163,7 @@ export default function QuickOverview() {
 
             {/* Chevron Right */}
             <svg
-              className="h-4 w-4 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
+              className="h-4.5 w-4.5 text-[#475569] transition-transform group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -143,13 +179,13 @@ export default function QuickOverview() {
           {/* Item 2: Personal Templates */}
           <Link
             href="/templates"
-            className="flex items-center justify-between py-2.5 md:py-0 md:px-4 group transition hover:opacity-90"
+            className="flex items-center justify-between py-3 md:py-0 md:px-5 group transition hover:opacity-90"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
               {/* Icon Container */}
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#245FD4]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
                 <svg
-                  className="h-5 w-5"
+                  className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -167,12 +203,9 @@ export default function QuickOverview() {
               {/* Text & Count */}
               <div>
                 <p
-                  className="text-[#64748B]"
+                  className="text-[#334155] font-medium text-[16px]"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                    fontWeight: 500,
-                    fontStyle: "normal",
-                    fontSize: "16px",
                     lineHeight: "100%",
                     letterSpacing: "0%",
                   }}
@@ -180,7 +213,7 @@ export default function QuickOverview() {
                   Personal Templates
                 </p>
                 <p
-                  className="mt-1 text-[#1E293B] font-bold text-[18px] leading-tight"
+                  className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {personalTemplatesCount}
@@ -190,7 +223,7 @@ export default function QuickOverview() {
 
             {/* Chevron Right */}
             <svg
-              className="h-4 w-4 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
+              className="h-4.5 w-4.5 text-[#475569] transition-transform group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -206,13 +239,13 @@ export default function QuickOverview() {
           {/* Item 3: Teams */}
           <Link
             href="/team-signatures"
-            className="flex items-center justify-between py-2.5 md:py-0 md:px-4 group transition hover:opacity-90"
+            className="flex items-center justify-between py-3 md:py-0 md:px-5 group transition hover:opacity-90"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3.5">
               {/* Icon Container */}
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#245FD4]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
                 <svg
-                  className="h-5 w-5"
+                  className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -231,12 +264,9 @@ export default function QuickOverview() {
               {/* Text & Count */}
               <div>
                 <p
-                  className="text-[#64748B]"
+                  className="text-[#334155] font-medium text-[16px]"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                    fontWeight: 500,
-                    fontStyle: "normal",
-                    fontSize: "16px",
                     lineHeight: "100%",
                     letterSpacing: "0%",
                   }}
@@ -244,7 +274,7 @@ export default function QuickOverview() {
                   Teams
                 </p>
                 <p
-                  className="mt-1 text-[#1E293B] font-bold text-[18px] leading-tight"
+                  className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {teamsCount}
@@ -254,7 +284,7 @@ export default function QuickOverview() {
 
             {/* Chevron Right */}
             <svg
-              className="h-4 w-4 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
+              className="h-4.5 w-4.5 text-[#475569] transition-transform group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -268,12 +298,12 @@ export default function QuickOverview() {
           </Link>
 
           {/* Item 4: Need Help? */}
-          <div className="flex items-center justify-between py-2.5 md:py-0 md:pl-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between py-3 md:py-0 md:pl-5">
+            <div className="flex items-center gap-3.5">
               {/* Star / Sparkle Icon Container */}
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#245FD4]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
                 <svg
-                  className="h-5 w-5"
+                  className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   aria-hidden="true"
@@ -284,15 +314,15 @@ export default function QuickOverview() {
 
               {/* Need help text */}
               <div>
-                <p className="text-[14px] font-bold text-[#1E293B] leading-tight" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>
+                <p className="text-[14.5px] font-bold text-[#0F172A] leading-tight" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>
                   Need help?
                 </p>
-                <p className="mt-0.5 text-[11px] text-[#64748B] leading-tight" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
+                <p className="mt-0.5 text-[11.5px] text-[#334155] leading-tight" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
                   Check out our guides or contact support.
                 </p>
                 <Link
                   href="/help"
-                  className="mt-0.5 inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#245FD4] hover:underline"
+                  className="mt-0.5 inline-flex items-center gap-0.5 text-[11.5px] font-semibold text-[#1D4ED8] hover:underline"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   <span>Visit Help Center</span>
