@@ -87,19 +87,6 @@ export default function TemplateGalleryCard({
             </span>
           )}
         </div>
-
-        <button
-          type="button"
-          onClick={() => (onPreview ? onPreview(template) : onUseTemplate(template))}
-          className="rounded p-1 text-slate-400 hover:text-slate-600 transition cursor-pointer"
-          aria-label="Options"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="5" r="1.5" />
-            <circle cx="12" cy="12" r="1.5" />
-            <circle cx="12" cy="19" r="1.5" />
-          </svg>
-        </button>
       </div>
     </div>
   );

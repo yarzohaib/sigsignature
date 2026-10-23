@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Team, TeamMember } from "@/types/team";
-import { renderTeamMemberHtml } from "@/lib/team/render";
-import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
+import TeamMemberThumbnail from "./TeamMemberThumbnail";
 
 interface TeamMemberCardProps {
   team: Team;
@@ -68,16 +67,6 @@ export default function TeamMemberCard({
     };
   }, [menuOpen]);
 
-  // Render HTML preview
-  const previewHtml = useMemo(() => {
-    try {
-      return renderTeamMemberHtml(team, member, { preview: true });
-    } catch (e) {
-      console.error("Failed to render team member preview:", e);
-      return `<div style="padding:16px;color:#94a3b8;font-size:12px;">Failed to render preview</div>`;
-    }
-  }, [team, member]);
-
   const templateName =
     team.kind === "studio"
       ? "Studio"
@@ -94,114 +83,82 @@ export default function TeamMemberCard({
   const isRevoked = member.status === "revoked";
 
   return (
-    <div className="flex flex-col justify-between rounded-[24px] border border-[#E4E9F4] bg-white p-4 shadow-2xs hover:shadow-md transition-shadow">
-      {/* Top area: preview frame */}
-      <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] border border-[#EBF0F7] p-2 flex items-center justify-center">
-        <SignaturePreviewFrame html={previewHtml} />
-      </div>
+    <div className="group flex flex-col justify-between rounded-[14px] border border-[#EEF0F4] bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+      style={{ boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.04)" }}
+    >
+      {/* Top area: thumbnail — Standard 350×174 aspect ratio */}
+      <div className="relative aspect-[350/174] min-h-[174px] w-full overflow-hidden rounded-t-[14px] bg-[#F8FAFC]">
+        <TeamMemberThumbnail team={team} member={member} />
 
-      {/* Middle info row */}
-      <div className="pt-3.5 pb-2">
-        <div className="flex items-center justify-between gap-2">
-          <h4
-            className="text-[15px] font-bold text-[#0B1A3D] truncate"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            {member.name}
-          </h4>
-
-          {/* Status badge matching Figma */}
-          {member.status === "sent" && (
-            <span className="inline-flex items-center rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[10px] font-semibold text-[#059669] border border-[#A7F3D0] shrink-0">
-              SENT
-            </span>
-          )}
-          {member.status === "draft" && (
-            <span className="inline-flex items-center rounded-full bg-[#F1F5F9] px-2 py-0.5 text-[10px] font-semibold text-[#475569] border border-[#E2E8F0] shrink-0">
-              DRAFT
-            </span>
-          )}
-          {member.status === "accepted" && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[10px] font-semibold text-[#059669] border border-[#A7F3D0] shrink-0">
-              <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              ACCEPTED
-            </span>
-          )}
-          {member.status === "expired" && (
-            <span className="inline-flex items-center rounded-full bg-[#FFFBEB] px-2 py-0.5 text-[10px] font-semibold text-[#D97706] border border-[#FDE68A] shrink-0">
-              EXPIRED
-            </span>
-          )}
-          {member.status === "revoked" && (
-            <span className="inline-flex items-center rounded-full bg-[#FEF2F2] px-2 py-0.5 text-[10px] font-semibold text-[#DC2626] border border-[#FECACA] shrink-0">
-              REVOKED
-            </span>
-          )}
-        </div>
-
-        <p
-          className="mt-0.5 text-[12px] text-[#94A3B8] truncate"
-          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-        >
-          {templateName} · Edited {relativeTime}
-        </p>
-      </div>
-
-      {/* Bottom actions row */}
-      <div className="flex items-center justify-between gap-1.5 pt-2 border-t border-[#F1F5F9]">
-        <div className="flex items-center gap-1.5">
-          {/* Edit button */}
+        {/* Hover action overlay */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center gap-2.5 bg-slate-900/40 p-4 opacity-0 backdrop-blur-2xs transition-opacity duration-150 group-hover:opacity-100">
           <button
             type="button"
             onClick={() => onEdit(member)}
-            className="flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-medium text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+            className="flex h-9 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
-            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
-            <span>Edit</span>
+            <span>Edit Member</span>
           </button>
+        </div>
+      </div>
 
-          {/* Copy button */}
-          <button
-            type="button"
-            onClick={() => onCopy(member)}
-            className="flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-medium text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+      {/* Middle info row */}
+      <div className="flex items-center justify-between border-t border-[#EEF0F4] px-4 py-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h4
+              className="text-[13px] font-bold text-[#1E293B] truncate"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              {member.name}
+            </h4>
+
+            {/* Status badge */}
+            {member.status === "sent" && (
+              <span className="inline-flex items-center rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[10px] font-semibold text-[#059669] border border-[#A7F3D0] shrink-0">
+                SENT
+              </span>
+            )}
+            {member.status === "draft" && (
+              <span className="inline-flex items-center rounded-full bg-[#F1F5F9] px-2 py-0.5 text-[10px] font-semibold text-[#475569] border border-[#E2E8F0] shrink-0">
+                DRAFT
+              </span>
+            )}
+            {member.status === "accepted" && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[10px] font-semibold text-[#059669] border border-[#A7F3D0] shrink-0">
+                <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                ACCEPTED
+              </span>
+            )}
+            {member.status === "expired" && (
+              <span className="inline-flex items-center rounded-full bg-[#FFFBEB] px-2 py-0.5 text-[10px] font-semibold text-[#D97706] border border-[#FDE68A] shrink-0">
+                EXPIRED
+              </span>
+            )}
+            {member.status === "revoked" && (
+              <span className="inline-flex items-center rounded-full bg-[#FEF2F2] px-2 py-0.5 text-[10px] font-semibold text-[#DC2626] border border-[#FECACA] shrink-0">
+                REVOKED
+              </span>
+            )}
+          </div>
+
+          <p
+            className="mt-0.5 text-[11px] text-[#94A3B8] truncate"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
-            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-            </svg>
-            <span>Copy</span>
-          </button>
-
-          {/* Send / Resend button */}
-          <button
-            type="button"
-            onClick={() => onSend(member)}
-            disabled={isRevoked}
-            className={`flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-medium transition cursor-pointer ${
-              isRevoked
-                ? "opacity-50 cursor-not-allowed text-slate-400"
-                : "text-[#245FD4] hover:bg-blue-50"
-            }`}
-            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-          >
-            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-            <span>{isResend ? "Resend" : "Send"}</span>
-          </button>
+            {templateName} · Edited {relativeTime}
+          </p>
         </div>
 
         {/* 3 dots More menu */}
-        <div className="relative" ref={menuRef}>
+        <div className="relative shrink-0 ml-2" ref={menuRef}>
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -252,6 +209,58 @@ export default function TeamMemberCard({
               </button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Bottom actions row */}
+      <div className="flex items-center justify-between gap-1.5 border-t border-[#EEF0F4] px-4 py-2.5">
+        <div className="flex items-center gap-2">
+          {/* Edit button */}
+          <button
+            type="button"
+            onClick={() => onEdit(member)}
+            className="flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            <span>Edit</span>
+          </button>
+
+          {/* Copy button */}
+          <button
+            type="button"
+            onClick={() => onCopy(member)}
+            className="flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <span>Copy</span>
+          </button>
+
+          {/* Send / Resend button */}
+          <button
+            type="button"
+            onClick={() => onSend(member)}
+            disabled={isRevoked}
+            className={`flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
+              isRevoked
+                ? "opacity-50 cursor-not-allowed text-slate-400"
+                : "text-[#245FD4] hover:bg-blue-50"
+            }`}
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+            <span>{isResend ? "Resend" : "Send"}</span>
+          </button>
         </div>
       </div>
     </div>
