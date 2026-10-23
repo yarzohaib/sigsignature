@@ -82,7 +82,7 @@ export default function GettingStartedSteps() {
 
                     {/* Final Tick Milestone Circle at the end of the container */}
                     <div
-                      className="absolute top-1/2 -translate-y-1/2 right-0 z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full bg-[#E2E8F0] text-[#64748B] ring-3 xl:ring-4 3xl:ring-6 ring-white shadow-xs"
+                      className="absolute top-1/2 -translate-y-1/2 right-0 z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full bg-[#163BA4] text-white ring-3 xl:ring-4 3xl:ring-6 ring-white shadow-xs"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                       aria-label="Completed milestone"
                     >
@@ -102,15 +102,15 @@ export default function GettingStartedSteps() {
                 )}
               </div>
 
-              {/* Description above title */}
+              {/* Description above title (fixed 2-line height so all titles align perfectly on the same line) */}
               <p
-                className="mt-1.5 xl:mt-2 3xl:mt-[clamp(8px,0.5vw,16px)] text-[11px] xl:text-[12px] 2xl:text-[13px] 3xl:text-[clamp(13px,0.8vw,22px)] leading-tight text-[#64748B] line-clamp-2"
+                className="mt-1.5 xl:mt-2 3xl:mt-[clamp(8px,0.5vw,16px)] text-[11px] xl:text-[12px] 2xl:text-[13px] 3xl:text-[clamp(13px,0.8vw,22px)] leading-tight text-[#64748B] line-clamp-2 min-h-[30px] xl:min-h-[34px] 2xl:min-h-[36px] flex items-start"
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
                 {step.subtext}
               </p>
 
-              {/* Title below description */}
+              {/* Title below description (aligned on the same baseline across all 5 steps) */}
               <h4
                 className="mt-0.5 xl:mt-1 3xl:mt-[clamp(4px,0.3vw,10px)] text-[13px] xl:text-[14px] 2xl:text-[15px] 3xl:text-[clamp(15px,0.95vw,26px)] font-bold text-[#1E293B] leading-tight"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
@@ -158,7 +158,7 @@ export default function GettingStartedSteps() {
           <div className="flex items-start gap-3.5">
             <div className="flex flex-col items-center">
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E2E8F0] text-[#64748B] text-xs font-bold ring-2 ring-white shadow-xs"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#163BA4] text-white text-xs font-bold ring-2 ring-white shadow-xs"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 aria-label="Completed milestone"
               >
