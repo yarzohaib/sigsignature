@@ -113,8 +113,8 @@ export default function QuickOverview() {
       </h2>
 
       {/* Overview Container Card */}
-      <div className="w-full rounded-2xl border border-[#B0B0B0] bg-[#C2C2C2] px-5 py-4 sm:px-7 sm:py-5 shadow-xs">
-        <div className="grid grid-cols-1 divide-y divide-[#A8A8A8] md:grid-cols-4 md:divide-y-0 md:divide-x md:divide-[#A8A8A8] items-center">
+      <div className="w-full rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] px-5 py-4 sm:px-7 sm:py-5 shadow-xs">
+        <div className="grid grid-cols-1 divide-y divide-[#E2E8F0] md:grid-cols-4 md:divide-y-0 md:divide-x md:divide-[#E2E8F0] items-center">
           
           {/* Item 1: Total Signatures */}
           <Link
@@ -123,7 +123,7 @@ export default function QuickOverview() {
           >
             <div className="flex items-center gap-3.5">
               {/* Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
                 <svg
                   className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
@@ -143,7 +143,7 @@ export default function QuickOverview() {
               {/* Text & Count */}
               <div>
                 <p
-                  className="text-[#334155] font-medium text-[16px]"
+                  className="text-[#64748B] font-medium text-[16px]"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                     lineHeight: "100%",
@@ -153,7 +153,7 @@ export default function QuickOverview() {
                   Total Signatures
                 </p>
                 <p
-                  className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-tight"
+                  className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {totalSignatures}
@@ -163,7 +163,7 @@ export default function QuickOverview() {
 
             {/* Chevron Right */}
             <svg
-              className="h-4.5 w-4.5 text-[#475569] transition-transform group-hover:translate-x-0.5"
+              className="h-4.5 w-4.5 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -183,7 +183,7 @@ export default function QuickOverview() {
           >
             <div className="flex items-center gap-3.5">
               {/* Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
                 <svg
                   className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
@@ -203,7 +203,7 @@ export default function QuickOverview() {
               {/* Text & Count */}
               <div>
                 <p
-                  className="text-[#334155] font-medium text-[16px]"
+                  className="text-[#64748B] font-medium text-[16px]"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                     lineHeight: "100%",
@@ -213,7 +213,7 @@ export default function QuickOverview() {
                   Personal Templates
                 </p>
                 <p
-                  className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-tight"
+                  className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {personalTemplatesCount}
@@ -223,7 +223,7 @@ export default function QuickOverview() {
 
             {/* Chevron Right */}
             <svg
-              className="h-4.5 w-4.5 text-[#475569] transition-transform group-hover:translate-x-0.5"
+              className="h-4.5 w-4.5 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -243,7 +243,7 @@ export default function QuickOverview() {
           >
             <div className="flex items-center gap-3.5">
               {/* Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
                 <svg
                   className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
@@ -264,7 +264,7 @@ export default function QuickOverview() {
               {/* Text & Count */}
               <div>
                 <p
-                  className="text-[#334155] font-medium text-[16px]"
+                  className="text-[#64748B] font-medium text-[16px]"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                     lineHeight: "100%",
@@ -274,7 +274,7 @@ export default function QuickOverview() {
                   Teams
                 </p>
                 <p
-                  className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-tight"
+                  className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {teamsCount}
@@ -284,7 +284,7 @@ export default function QuickOverview() {
 
             {/* Chevron Right */}
             <svg
-              className="h-4.5 w-4.5 text-[#475569] transition-transform group-hover:translate-x-0.5"
+              className="h-4.5 w-4.5 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -301,7 +301,7 @@ export default function QuickOverview() {
           <div className="flex items-center justify-between py-3 md:py-0 md:pl-5">
             <div className="flex items-center gap-3.5">
               {/* Star / Sparkle Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/70 text-[#245FD4] shadow-xs">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
                 <svg
                   className="h-5.5 w-5.5"
                   viewBox="0 0 24 24"
@@ -314,15 +314,15 @@ export default function QuickOverview() {
 
               {/* Need help text */}
               <div>
-                <p className="text-[14.5px] font-bold text-[#0F172A] leading-tight" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>
+                <p className="text-[14.5px] font-bold text-[#1E293B] leading-tight" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>
                   Need help?
                 </p>
-                <p className="mt-0.5 text-[11.5px] text-[#334155] leading-tight" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
+                <p className="mt-0.5 text-[11.5px] text-[#64748B] leading-tight" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
                   Check out our guides or contact support.
                 </p>
                 <Link
                   href="/help"
-                  className="mt-0.5 inline-flex items-center gap-0.5 text-[11.5px] font-semibold text-[#1D4ED8] hover:underline"
+                  className="mt-0.5 inline-flex items-center gap-0.5 text-[11.5px] font-semibold text-[#245FD4] hover:underline"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   <span>Visit Help Center</span>
