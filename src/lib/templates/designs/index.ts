@@ -1,5 +1,10 @@
 import { TemplateSignatureData } from "@/types/template";
+import { render as renderMinimalClean } from "./minimalClean";
+import { render as renderModernDark } from "./modernDark";
+import { render as renderPastelCreative } from "./pastelCreative";
+import { render as renderCorporateElegant } from "./corporateElegant";
 import { render as renderProfessionalMinimal } from "./professionalMinimal";
+import { render as renderBoldGradient } from "./boldGradient";
 import { render as renderExecutiveCorporate } from "./executiveCorporate";
 import { render as renderCleanLine } from "./cleanLine";
 import { render as renderCenteredMinimal } from "./centeredMinimal";
@@ -22,7 +27,12 @@ export type TemplateRenderer = (data: TemplateSignatureData) => string;
  * Registry mapping templateId to its specific HTML renderer.
  */
 export const TEMPLATE_REGISTRY: Record<string, TemplateRenderer> = {
+  "minimal-clean": renderMinimalClean,
+  "modern-dark": renderModernDark,
+  "pastel-creative": renderPastelCreative,
+  "corporate-elegant": renderCorporateElegant,
   "professional-minimal": renderProfessionalMinimal,
+  "bold-gradient": renderBoldGradient,
   "executive-corporate": renderExecutiveCorporate,
   "preston-corporate": renderExecutiveCorporate,
   "clean-line": renderCleanLine,
@@ -74,7 +84,12 @@ export function getTemplateRenderer(
 }
 
 export {
+  renderMinimalClean,
+  renderModernDark,
+  renderPastelCreative,
+  renderCorporateElegant,
   renderProfessionalMinimal,
+  renderBoldGradient,
   renderExecutiveCorporate,
   renderCleanLine,
   renderCenteredMinimal,

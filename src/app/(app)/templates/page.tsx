@@ -11,6 +11,8 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
 import { getStoredSettings } from "@/app/lib/auth";
 import TemplatesGallerySkeleton from "@/components/skeletons/TemplatesGallerySkeleton";
+import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
+import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
 type CategoryTab = (typeof CATEGORIES)[number];
@@ -30,6 +32,9 @@ function TemplatesContent() {
   const [editingSignatureId, setEditingSignatureId] = useState<string | undefined>(undefined);
   const [templateNotFound, setTemplateNotFound] = useState(false);
   const [isLoadingEdit, setIsLoadingEdit] = useState(Boolean(editId));
+
+  // Preview modal state
+  const [previewingTemplate, setPreviewingTemplate] = useState<TemplateItem | null>(null);
 
   // Reactive edit query param handler
   useEffect(() => {
@@ -160,65 +165,126 @@ function TemplatesContent() {
           />
         ) : (
           <div>
-            {/* Gallery Header Row */}
+            {/* Gallery Header Row matching Figma */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
               <div>
                 <h1
                   className="text-[28px] sm:text-[34px] font-bold text-[#1E293B] tracking-tight leading-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  Template Gallery
+                  Choose a Template.
                 </h1>
                 <p
                   className="mt-1 text-[14px] sm:text-[15px] text-[#64748B]"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
-                  Choose a professionally designed layout, customize your info, and export ready-to-use HTML.
+                  Pick a template to get started. You can customize everything.
                 </p>
               </div>
 
-              {/* Design from scratch Link */}
+              {/* Build From Scratch Link matching Figma */}
               <Link
                 href="/design-studio"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition shrink-0"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                <span>Create From Scratch</span>
                 <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                 </svg>
+                <span>Build From Scratch</span>
               </Link>
             </div>
 
-            {/* Category Filter Bar */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none border-b border-slate-200/80 pb-4 mb-8">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition shrink-0 cursor-pointer ${
-                    selectedCategory === cat
-                      ? "bg-[#245FD4] text-white shadow-xs"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
-                  }`}
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  {cat}
-                </button>
-              ))}
+            {/* Category Filter Bar with Most Popular on Right matching Figma */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4 mb-8">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`rounded-full px-4 py-1.5 text-xs sm:text-sm font-semibold transition shrink-0 cursor-pointer ${
+                      selectedCategory === cat
+                        ? "bg-[#245FD4] text-white shadow-xs"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                    }`}
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Sort indicator matching Figma */}
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition shrink-0">
+                <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="15" y2="12" />
+                  <line x1="3" y1="18" x2="9" y2="18" />
+                </svg>
+                <span>Most Popular</span>
+                <svg className="h-3.5 w-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
 
-            {/* Template Cards Grid */}
+            {/* Template Cards Grid: Standard 3-column Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.map((template) => (
                 <TemplateGalleryCard
                   key={template.id}
                   template={template}
                   onUseTemplate={handleSelectTemplate}
+                  onPreview={setPreviewingTemplate}
                 />
               ))}
             </div>
+
+            {/* Bottom "Can't find what you're looking for?" Banner matching Figma */}
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xs">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#245FD4]">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3
+                    className="text-base sm:text-lg font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Can&apos;t find what you&apos;re looking for?
+                  </h3>
+                  <p
+                    className="mt-0.5 text-xs sm:text-sm text-[#64748B]"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    Build your own unique signature exactly the way you want.
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/design-studio"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-xs hover:opacity-95 transition shrink-0"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                <span>Build From Scratch</span>
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </Link>
+            </div>
+
+            {/* Signature Preview Modal */}
+            {previewingTemplate && (
+              <PreviewSignatureModal
+                isOpen={Boolean(previewingTemplate)}
+                onClose={() => setPreviewingTemplate(null)}
+                html={generateTemplateHtml(previewingTemplate.defaultData, { preview: true })}
+              />
+            )}
           </div>
         )}
       </main>
