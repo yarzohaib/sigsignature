@@ -1,9 +1,16 @@
+/**
+ * One shared HTML document wrapper for every place a signature is shown or exported:
+ * the editor preview, the My Signatures thumbnails and the HTML download.
+ * Using the same wrapper (same fonts, same reset) keeps them looking identical.
+ */
+
 export const SIGNATURE_FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap";
 
 const BASE_RESET =
   "* { box-sizing: border-box; } img { border: 0; outline: none; text-decoration: none; }";
 
+/** Document used by iframes (editor preview). */
 export function buildPreviewDocument(
   signatureHtml: string,
   options?: { padding?: number }
@@ -26,7 +33,11 @@ ${BASE_RESET}
 </html>`;
 }
 
-export function buildDownloadDocument(signatureHtml: string, title: string): string {
+/** Standalone .html file the user can open in a browser or paste from. */
+export function buildDownloadDocument(
+  signatureHtml: string,
+  title: string
+): string {
   const safeTitle = title.replace(/[<>&"]/g, "");
   return `<!DOCTYPE html>
 <html lang="en">
@@ -46,4 +57,24 @@ ${signatureHtml}
 </body>
 </html>
 `;
+}
+
+/**
+ * Document used only for the PNG export. Same fonts and reset as the HTML download,
+ * but the signature sits in a shrink wrapped white box so the image is cropped to it.
+ */
+export function buildExportDocument(signatureHtml: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="${SIGNATURE_FONTS_HREF}" rel="stylesheet">
+<style>
+html, body { margin: 0; padding: 0; background-color: #ffffff; }
+${BASE_RESET}
+#sig-export { display: inline-block; padding: 24px; background-color: #ffffff; text-align: left; }
+</style>
+</head>
+<body><div id="sig-export">${signatureHtml}</div></body>
+</html>`;
 }

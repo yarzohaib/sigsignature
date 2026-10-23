@@ -27,6 +27,14 @@ function allowedHosts(): Set<string> {
   return hosts;
 }
 
+/** Public S3 virtual hosted bucket URLs, e.g. my-bucket.s3.ap-southeast-2.amazonaws.com */
+const S3_HOST_PATTERN = /^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]\.s3[.-][a-z0-9-]+\.amazonaws\.com$/;
+
+function isAllowedHost(host: string): boolean {
+  const lower = host.toLowerCase();
+  return allowedHosts().has(lower) || S3_HOST_PATTERN.test(lower);
+}
+
 /**
  * Same origin image proxy used only by the PNG export. It lets the browser
  * read signature images (profile photo, logo, social icons) without CORS errors.
@@ -44,7 +52,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid url" }, { status: 400 });
   }
 
-  if (target.protocol !== "https:" || !allowedHosts().has(target.host.toLowerCase())) {
+  if (target.protocol !== "https:" || !isAllowedHost(target.host)) {
     return NextResponse.json({ error: "Host not allowed" }, { status: 403 });
   }
 

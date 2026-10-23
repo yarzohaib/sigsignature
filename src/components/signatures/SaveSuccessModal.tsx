@@ -752,8 +752,7 @@
 
 "use client";
 
-import { useState, useRef } from "react";
-import { toPng } from "html-to-image";
+import { useState } from "react";
 import { TemplateSignatureData } from "@/types/template";
 import { StudioSignatureData } from "@/types/studio";
 import { SavedSignature } from "@/types/signature";
@@ -775,6 +774,7 @@ import {
   generateFreeHtml,
   generateFreePlainText,
 } from "@/lib/studio/free/renderFreeHtml";
+import { renderSignaturePng } from "@/lib/signatures/exportPng";
 import { buildDownloadDocument } from "@/lib/signatures/previewDocument";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 
@@ -786,104 +786,6 @@ interface SaveSuccessModalProps {
   preRenderedHtml?: string;
   preRenderedPlainText?: string;
   signatureName?: string;
-}
-
-/**
- * Calculates canvas dimensions from studio signature data or canvas element bounds.
- */
-function getCanvasDimensions(
-  signature?: SavedSignature,
-  signatureData?: TemplateSignatureData | StudioSignatureData
-): { width?: number; height?: number } {
-  let w: number | undefined;
-  let h: number | undefined;
-
-  const studioData =
-    signature?.kind === "studio"
-      ? signature.data
-      : signatureData &&
-        ("extras" in signatureData ||
-          "elements" in signatureData ||
-          "canvas" in signatureData ||
-          (signatureData as StudioSignatureData).layout === "single")
-      ? (signatureData as StudioSignatureData)
-      : undefined;
-
-  if (studioData) {
-    if (studioData.canvas?.width && Number.isFinite(studioData.canvas.width)) {
-      w = Number(studioData.canvas.width);
-    }
-    if (studioData.canvas?.height && Number.isFinite(studioData.canvas.height)) {
-      h = Number(studioData.canvas.height);
-    }
-    if (Array.isArray(studioData.elements)) {
-      for (const el of studioData.elements) {
-        if (typeof el.x === "number" && typeof el.w === "number") {
-          w = Math.max(w || 0, el.x + el.w);
-        }
-        if (typeof el.y === "number" && typeof el.h === "number") {
-          h = Math.max(h || 0, el.y + el.h);
-        }
-      }
-    }
-  }
-
-  return { width: w, height: h };
-}
-
-/**
- * Pre-inlines all <img> tags inside a container as base64 data URLs.
- * Avoids CORS / foreignObject cross-origin tainting when rasterizing with html-to-image.
- */
-async function inlineImages(container: HTMLElement): Promise<void> {
-  const images = Array.from(container.querySelectorAll<HTMLImageElement>("img"));
-  if (images.length === 0) return;
-
-  await Promise.all(
-    images.map(async (img) => {
-      const src = img.getAttribute("src");
-      if (!src || src.startsWith("data:") || src.startsWith("blob:")) {
-        return;
-      }
-
-      try {
-        // Load through our same origin proxy so S3 / www vs apex CORS rules cannot block it
-        const absolute = new URL(src, window.location.href);
-        const sameOrigin = absolute.origin === window.location.origin;
-        const fetchUrl = sameOrigin
-          ? absolute.toString()
-          : `/api/image-proxy?url=${encodeURIComponent(absolute.toString())}`;
-        const response = await fetch(fetchUrl, { credentials: "omit" });
-        if (!response.ok) return;
-
-        const blob = await response.blob();
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            if (typeof reader.result === "string") {
-              resolve(reader.result);
-            } else {
-              reject(new Error("FileReader did not produce a string"));
-            }
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-
-        img.setAttribute("src", base64);
-        img.src = base64;
-
-        if (!img.complete) {
-          await new Promise<void>((resolve) => {
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-          });
-        }
-      } catch (err) {
-        console.warn("Could not pre-inline image:", src, err);
-      }
-    })
-  );
 }
 
 /**
@@ -953,7 +855,6 @@ export default function SaveSuccessModal({
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [isDownloadingImage, setIsDownloadingImage] = useState(false);
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
-  const signatureDownloadRef = useRef<HTMLDivElement>(null);
 
   function getHtmlAndPlainText(): {
     html: string;
@@ -1005,7 +906,6 @@ export default function SaveSuccessModal({
   }
 
   const { html, previewHtml, plainText } = getHtmlAndPlainText();
-  const canvasDimensions = getCanvasDimensions(signature, signatureData);
 
   if (!isOpen) return null;
 
@@ -1033,7 +933,7 @@ export default function SaveSuccessModal({
     }
   }
 
-  // 2. Download as Image (PNG via html-to-image)
+  // 2. Download as Image (PNG of the exact same document as the HTML download)
   async function handleDownloadImage() {
     setIsDownloadingImage(true);
     const fileName = (signatureName || signatureData?.fullName || "my_signature")
@@ -1041,126 +941,14 @@ export default function SaveSuccessModal({
       .replace(/\s+/g, "_");
 
     try {
-      const target = signatureDownloadRef.current;
-      if (!target) {
-        throw new Error("Download element not available");
-      }
+      const dataUrl = await renderSignaturePng(html || previewHtml);
 
-      // Step 1: Pre-inline all external / S3 / relative images as data URLs
-      await inlineImages(target);
-
-      // Step 2: Ensure fonts are loaded before rasterization
-      if (typeof document !== "undefined" && document.fonts?.ready) {
-        try {
-          await document.fonts.ready;
-        } catch (fontErr) {
-          console.warn("document.fonts.ready error:", fontErr);
-        }
-      }
-
-      // Step 3: Wait two animation frames to allow DOM layout to settle
-      await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            resolve();
-          });
-        });
-      });
-
-      // Step 4: Calculate exact export dimensions
-      const targetRect = target.getBoundingClientRect();
-      const contentWidth = canvasDimensions.width || 600;
-      const exportWidth = Math.ceil(
-        Math.max(
-          contentWidth + 48,
-          target.scrollWidth,
-          target.offsetWidth,
-          targetRect.width
-        )
-      );
-      const exportHeight = Math.ceil(
-        Math.max(
-          canvasDimensions.height ? canvasDimensions.height + 48 : 0,
-          target.scrollHeight,
-          target.offsetHeight,
-          targetRect.height
-        )
-      );
-
-      // Step 5: Warm-up call to html-to-image to prime font and CSS caches
-      try {
-        await toPng(target, {
-          pixelRatio: 1,
-          skipFonts: false,
-          width: exportWidth,
-          height: exportHeight,
-          style: {
-            position: "static",
-            left: "0",
-            top: "0",
-            transform: "none",
-            margin: "0",
-          },
-        });
-      } catch (warmupErr) {
-        console.warn("toPng warmup warning:", warmupErr);
-      }
-
-      // Step 6: Wait double rAF again after warm-up
-      await new Promise<void>((resolve) => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            resolve();
-          });
-        });
-      });
-
-      // Step 7: Final high-resolution capture at 2.5x pixel ratio
-      let dataUrl: string;
-      try {
-        dataUrl = await toPng(target, {
-          pixelRatio: 2.5,
-          backgroundColor: "#FFFFFF",
-          cacheBust: false,
-          width: exportWidth,
-          height: exportHeight,
-          style: {
-            position: "static",
-            left: "0",
-            top: "0",
-            transform: "none",
-            margin: "0",
-          },
-        });
-      } catch (firstAttemptErr) {
-        console.warn("toPng initial attempt failed, retrying with skipFonts: true", firstAttemptErr);
-        dataUrl = await toPng(target, {
-          pixelRatio: 2.5,
-          backgroundColor: "#FFFFFF",
-          cacheBust: false,
-          skipFonts: true,
-          width: exportWidth,
-          height: exportHeight,
-          style: {
-            position: "static",
-            left: "0",
-            top: "0",
-            transform: "none",
-            margin: "0",
-          },
-        });
-      }
-
-      // Step 8: Validate that the exported image is not blank white
-      const blank = await isImageBlank(dataUrl);
-      if (blank) {
-        console.warn("Generated signature image is blank white, triggering fallback HTML download");
+      if (await isImageBlank(dataUrl)) {
         showToast("Image generation resulted in a blank image. Downloading HTML instead.");
-        fallbackHtmlDownload();
+        downloadHtmlFile("Downloaded signature HTML file!");
         return;
       }
 
-      // Step 9: Trigger download
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `${fileName}_signature.png`;
@@ -1169,9 +957,9 @@ export default function SaveSuccessModal({
       document.body.removeChild(a);
       showToast("Signature image downloaded!");
     } catch (err) {
-      console.warn("toPng failed, using fallback:", err);
+      console.warn("PNG export failed, using HTML instead:", err);
       showToast("Image generation failed. Downloading HTML instead.");
-      fallbackHtmlDownload();
+      downloadHtmlFile("Downloaded signature HTML file!");
     } finally {
       setIsDownloadingImage(false);
     }
@@ -1192,10 +980,6 @@ export default function SaveSuccessModal({
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast(message);
-  }
-
-  function fallbackHtmlDownload() {
-    downloadHtmlFile("Downloaded signature HTML file!");
   }
 
   return (
@@ -1474,46 +1258,6 @@ export default function SaveSuccessModal({
             <span>{feedbackToast}</span>
           </div>
         )}
-
-        {/* Hidden capture sandbox for PNG export */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            left: 0,
-            top: 0,
-            width: 0,
-            height: 0,
-            overflow: "hidden",
-            zIndex: -1,
-            pointerEvents: "none",
-            opacity: 1,
-            visibility: "visible",
-          }}
-        >
-          <div
-            ref={signatureDownloadRef}
-            style={{
-              position: "relative",
-              display: "inline-block",
-              boxSizing: "border-box",
-              backgroundColor: "#FFFFFF",
-              padding: "24px",
-              borderRadius: "12px",
-              overflow: "visible",
-              width: `${(canvasDimensions.width || 600) + 48}px`,
-              minWidth: `${(canvasDimensions.width || 600) + 48}px`,
-              ...(canvasDimensions.height
-                ? {
-                    minHeight: `${canvasDimensions.height + 48}px`,
-                  }
-                : {}),
-            }}
-            dangerouslySetInnerHTML={{
-              __html: previewHtml,
-            }}
-          />
-        </div>
       </div>
     </div>
   );
