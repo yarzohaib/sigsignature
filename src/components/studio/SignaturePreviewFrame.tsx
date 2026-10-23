@@ -20,6 +20,10 @@ export interface SignaturePreviewFrameProps {
    * Defaults to "16 / 9". Set to false to disable scaling and render full height.
    */
   aspectRatio?: string | false;
+  /**
+   * Optional inner padding percentage (default: 0.92 for 8% breathing room around edges)
+   */
+  fitPadding?: number;
 }
 
 export interface SignaturePreviewFrameHandle {
@@ -31,7 +35,7 @@ export const SignaturePreviewFrame = forwardRef<
   SignaturePreviewFrameHandle,
   SignaturePreviewFrameProps
 >(function SignaturePreviewFrame(
-  { html, className = "", minHeight = 120, aspectRatio = "16 / 9" },
+  { html, className = "", minHeight = 120, aspectRatio = "16 / 9", fitPadding = 0.92 },
   ref
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -236,9 +240,12 @@ export const SignaturePreviewFrame = forwardRef<
       return { scale: 1, left: 0, top: 0 };
     }
 
+    const availableWidth = panelSize.width * fitPadding;
+    const availableHeight = panelSize.height * fitPadding;
+
     const s = Math.min(
-      panelSize.width / contentSize.width,
-      panelSize.height / contentSize.height,
+      availableWidth / contentSize.width,
+      availableHeight / contentSize.height,
       1
     );
 
@@ -248,7 +255,7 @@ export const SignaturePreviewFrame = forwardRef<
     const t = Math.max(0, (panelSize.height - scaledHeight) / 2);
 
     return { scale: s, left: l, top: t };
-  }, [aspectRatio, panelSize, contentSize]);
+  }, [aspectRatio, panelSize, contentSize, fitPadding]);
 
   // Non-aspectRatio mode (e.g. PreviewSignatureModal)
   if (aspectRatio === false) {
