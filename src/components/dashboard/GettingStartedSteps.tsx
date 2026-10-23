@@ -63,21 +63,42 @@ export default function GettingStartedSteps() {
                   }`}
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  {step.completed ? (
-                    <svg className="h-4 w-4 3xl:h-[clamp(20px,1.2vw,34px)] 3xl:w-[clamp(20px,1.2vw,34px)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  ) : (
-                    step.number
-                  )}
+                  {step.number}
                 </div>
 
-                {/* Dashed connector line to next circle (only between steps 1-4, stops at step 5) */}
-                {idx < steps.length - 1 && (
+                {/* Dashed connector line between circles (continued throughout all steps and after 5) */}
+                {idx < steps.length - 1 ? (
                   <div
                     className="absolute top-1/2 -translate-y-1/2 left-3.5 xl:left-4 2xl:left-5 3xl:left-[clamp(20px,1.25vw,35px)] w-full z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
                     aria-hidden="true"
                   />
+                ) : (
+                  <>
+                    {/* Dashed connector line continuing past step 5 to the end tick */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 left-3.5 xl:left-4 2xl:left-5 3xl:left-[clamp(20px,1.25vw,35px)] right-3.5 xl:right-4 2xl:right-5 3xl:right-[clamp(20px,1.25vw,35px)] z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
+                      aria-hidden="true"
+                    />
+
+                    {/* Final Tick Milestone Circle at the end of the container */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 right-0 z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full bg-[#E2E8F0] text-[#64748B] ring-3 xl:ring-4 3xl:ring-6 ring-white shadow-xs"
+                      style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                      aria-label="Completed milestone"
+                    >
+                      <svg
+                        className="h-4 w-4 3xl:h-[clamp(20px,1.2vw,34px)] 3xl:w-[clamp(20px,1.2vw,34px)]"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -102,7 +123,7 @@ export default function GettingStartedSteps() {
 
         {/* Mobile Layout (stacked / list) */}
         <div className="flex flex-col space-y-4 md:hidden">
-          {steps.map((step, idx) => (
+          {steps.map((step) => (
             <div key={step.number} className="flex items-start gap-3.5">
               <div className="flex flex-col items-center">
                 <div
@@ -111,17 +132,10 @@ export default function GettingStartedSteps() {
                   }`}
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  {step.completed ? (
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  ) : (
-                    step.number
-                  )}
+                  {step.number}
                 </div>
-                {idx < steps.length - 1 && (
-                  <div className="my-1 h-5 w-0.5 border-l-2 border-dashed border-[#E2E8F0]" />
-                )}
+                {/* Vertical dashed connector line continued throughout */}
+                <div className="my-1 h-5 w-0.5 border-l-2 border-dashed border-[#E2E8F0]" />
               </div>
               <div className="pt-0.5">
                 <h4
@@ -139,6 +153,29 @@ export default function GettingStartedSteps() {
               </div>
             </div>
           ))}
+
+          {/* Final Tick Milestone Circle on mobile */}
+          <div className="flex items-start gap-3.5">
+            <div className="flex flex-col items-center">
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E2E8F0] text-[#64748B] text-xs font-bold ring-2 ring-white shadow-xs"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                aria-label="Completed milestone"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+            </div>
+            <div className="pt-1.5">
+              <h4
+                className="text-[13px] font-bold text-[#64748B]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                All Done!
+              </h4>
+            </div>
+          </div>
         </div>
       </div>
     </section>
