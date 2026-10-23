@@ -856,7 +856,7 @@ export default function SaveSuccessModal({
   const router = useRouter();
   const [copiedSignature, setCopiedSignature] = useState(false);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
-  const [isDownloadingImage, setIsDownloadingImage] = useState(false);
+  const [, setIsDownloadingImage] = useState(false);
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
   function getHtmlAndPlainText(): {
@@ -937,36 +937,6 @@ export default function SaveSuccessModal({
   }
 
   // 2. Download as Image (PNG of the exact same document as the HTML download)
-  async function handleDownloadImage() {
-    setIsDownloadingImage(true);
-    const fileName = (signatureName || signatureData?.fullName || "my_signature")
-      .trim()
-      .replace(/\s+/g, "_");
-
-    try {
-      const dataUrl = await renderSignaturePng(html || previewHtml);
-
-      if (await isImageBlank(dataUrl)) {
-        showToast("Image generation resulted in a blank image. Downloading HTML instead.");
-        downloadHtmlFile("Downloaded signature HTML file!");
-        return;
-      }
-
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `${fileName}_signature.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast("Signature image downloaded!");
-    } catch (err) {
-      console.warn("PNG export failed, using HTML instead:", err);
-      showToast("Image generation failed. Downloading HTML instead.");
-      downloadHtmlFile("Downloaded signature HTML file!");
-    } finally {
-      setIsDownloadingImage(false);
-    }
-  }
 
   function downloadHtmlFile(message = "Signature HTML file downloaded!") {
     const fileName = (signatureName || signatureData?.fullName || "my_signature")

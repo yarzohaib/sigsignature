@@ -50,39 +50,33 @@ export default function GettingStartedSteps() {
       {/* Steps Container */}
       <div className="mt-2.5 sm:mt-3 xl:mt-3.5 3xl:mt-[clamp(14px,0.8vw,26px)]">
         {/* Desktop / Tablet layout with connecting dashed lines */}
-        <div className="hidden md:grid md:grid-cols-5 md:gap-3 lg:gap-4 xl:gap-6 2xl:gap-8 3xl:gap-[clamp(32px,2vw,60px)]">
-          {steps.map((step, idx) => (
-            <div key={step.number} className="flex flex-col items-start text-left">
-              {/* Step Badge row with connector to next step */}
-              <div className="relative flex w-full items-center">
-                <div
-                  className={`relative z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full text-[12px] xl:text-[13px] 2xl:text-[14px] 3xl:text-[clamp(15px,0.95vw,26px)] font-bold shadow-xs ${
-                    step.completed
-                      ? "bg-[#163BA4] text-white ring-3 xl:ring-4 3xl:ring-6 ring-white"
-                      : "bg-[#E2E8F0] text-[#64748B] ring-3 xl:ring-4 3xl:ring-6 ring-white"
-                  }`}
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  {step.number}
-                </div>
+        <div className="relative hidden md:block">
+          {/* Continuous dashed line spanning across all circles from Step 1 center to Final Tick center */}
+          <div
+            className="pointer-events-none absolute top-4 xl:top-[18px] 2xl:top-5 3xl:top-[clamp(22px,1.25vw,35px)] -translate-y-1/2 left-4 xl:left-[18px] 2xl:left-5 3xl:left-[clamp(22px,1.25vw,35px)] right-4 xl:right-[18px] 2xl:right-5 3xl:right-[clamp(22px,1.25vw,35px)] z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
+            aria-hidden="true"
+          />
 
-                {/* Dashed connector line between circles — starts from centre of badge, runs to the right edge of the column */}
-                {idx < steps.length - 1 ? (
+          <div className="grid md:grid-cols-5 md:gap-3 lg:gap-4 xl:gap-6 2xl:gap-8 3xl:gap-[clamp(32px,2vw,60px)]">
+            {steps.map((step, idx) => (
+              <div key={step.number} className="flex flex-col items-start text-left">
+                {/* Step Badge row */}
+                <div className="relative flex w-full items-center">
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 left-4 xl:left-[18px] 2xl:left-5 3xl:left-[clamp(20px,1.25vw,35px)] right-0 z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <>
-                    {/* Dashed connector line continuing past step 5 to the end tick */}
-                    <div
-                      className="absolute top-1/2 -translate-y-1/2 left-3.5 xl:left-4 2xl:left-5 3xl:left-[clamp(20px,1.25vw,35px)] right-3.5 xl:right-4 2xl:right-5 3xl:right-[clamp(20px,1.25vw,35px)] z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
-                      aria-hidden="true"
-                    />
+                    className={`relative z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full text-[12px] xl:text-[13px] 2xl:text-[14px] 3xl:text-[clamp(15px,0.95vw,26px)] font-bold shadow-xs ${
+                      step.completed
+                        ? "bg-[#163BA4] text-white ring-4 xl:ring-4 3xl:ring-6 ring-white"
+                        : "bg-[#E2E8F0] text-[#64748B] ring-4 xl:ring-4 3xl:ring-6 ring-white"
+                    }`}
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    {step.number}
+                  </div>
 
-                    {/* Final Tick Milestone Circle at the end of the container */}
+                  {/* For the last column (step 5), render the final tick milestone at the right edge */}
+                  {idx === steps.length - 1 && (
                     <div
-                      className="absolute top-1/2 -translate-y-1/2 right-0 z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full bg-[#163BA4] text-white ring-3 xl:ring-4 3xl:ring-6 ring-white shadow-xs"
+                      className="absolute top-1/2 -translate-y-1/2 right-0 z-10 flex h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 3xl:h-[clamp(44px,2.5vw,70px)] 3xl:w-[clamp(44px,2.5vw,70px)] shrink-0 items-center justify-center rounded-full bg-[#163BA4] text-white ring-4 xl:ring-4 3xl:ring-6 ring-white shadow-xs"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                       aria-label="Completed milestone"
                     >
@@ -98,27 +92,27 @@ export default function GettingStartedSteps() {
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>
-                  </>
-                )}
+                  )}
+                </div>
+
+                {/* Description above title (fixed 2-line height so all titles align perfectly on the same line) */}
+                <p
+                  className="mt-1.5 xl:mt-2 3xl:mt-[clamp(8px,0.5vw,16px)] text-[11px] xl:text-[12px] 2xl:text-[13px] 3xl:text-[clamp(13px,0.8vw,22px)] leading-tight text-[#64748B] line-clamp-2 min-h-[30px] xl:min-h-[34px] 2xl:min-h-[36px] flex items-start"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  {step.subtext}
+                </p>
+
+                {/* Title below description (aligned on the same baseline across all 5 steps) */}
+                <h4
+                  className="mt-0.5 xl:mt-1 3xl:mt-[clamp(4px,0.3vw,10px)] text-[13px] xl:text-[14px] 2xl:text-[15px] 3xl:text-[clamp(15px,0.95vw,26px)] font-bold text-[#1E293B] leading-tight"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  {step.title}
+                </h4>
               </div>
-
-              {/* Description above title (fixed 2-line height so all titles align perfectly on the same line) */}
-              <p
-                className="mt-1.5 xl:mt-2 3xl:mt-[clamp(8px,0.5vw,16px)] text-[11px] xl:text-[12px] 2xl:text-[13px] 3xl:text-[clamp(13px,0.8vw,22px)] leading-tight text-[#64748B] line-clamp-2 min-h-[30px] xl:min-h-[34px] 2xl:min-h-[36px] flex items-start"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                {step.subtext}
-              </p>
-
-              {/* Title below description (aligned on the same baseline across all 5 steps) */}
-              <h4
-                className="mt-0.5 xl:mt-1 3xl:mt-[clamp(4px,0.3vw,10px)] text-[13px] xl:text-[14px] 2xl:text-[15px] 3xl:text-[clamp(15px,0.95vw,26px)] font-bold text-[#1E293B] leading-tight"
-                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-              >
-                {step.title}
-              </h4>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Mobile Layout (stacked / list) */}
