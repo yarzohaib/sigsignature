@@ -137,7 +137,7 @@ export default function TermsPage() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
                 <SectionBadge label="LEGAL AGREEMENT" />
@@ -167,7 +167,7 @@ export default function TermsPage() {
 
         {/* TERMS SECTIONS */}
         <section className="py-8 pb-20 sm:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl space-y-8">
               {termsSections.map((sec) => (
                 <div

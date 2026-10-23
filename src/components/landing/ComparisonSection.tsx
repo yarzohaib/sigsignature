@@ -38,7 +38,7 @@ const rows = [
 export default function ComparisonSection() {
   return (
     <section className="bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
           <Reveal y={16} blur={6} className="mb-3 sm:mb-4 inline-block">

@@ -120,7 +120,7 @@ export default function AboutPage() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
                 <SectionBadge label="ABOUT US" />
@@ -150,7 +150,7 @@ export default function AboutPage() {
 
         {/* THE PROBLEM WE SOLVE (AEO & GEO Authority) */}
         <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-3xl text-center">
               <SectionBadge label="TECHNICAL APPROACH" className="mb-4" />
               <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[46px] lg:leading-[1.15]">
@@ -264,7 +264,7 @@ export default function AboutPage() {
 
         {/* CORE ENGINEERING PRINCIPLES */}
         <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-3xl text-center">
               <SectionBadge label="CORE PRINCIPLES" className="mb-4" />
               <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[46px] lg:leading-[1.15]">
@@ -311,7 +311,7 @@ export default function AboutPage() {
 
         {/* ORGANIZATION & GOVERNANCE */}
         <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             {/* Centered badge outside the box */}
             <div className="mb-8 flex items-center justify-center">
               <SectionBadge label="ORGANIZATION & GOVERNANCE" />

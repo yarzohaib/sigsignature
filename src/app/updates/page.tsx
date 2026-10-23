@@ -119,7 +119,7 @@ export default function UpdatesPage() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
                 <SectionBadge label="PRODUCT UPDATES" />
@@ -140,7 +140,7 @@ export default function UpdatesPage() {
 
         {/* VERSION 1.0.0 RELEASE */}
         <section className="py-12 sm:py-16">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-5xl">
               {/* Release Header Banner */}
               <div className="rounded-3xl border border-[#245FD4]/30 bg-gradient-to-b from-white to-blue-50/30 p-8 shadow-xs sm:p-10">
@@ -196,7 +196,7 @@ export default function UpdatesPage() {
 
         {/* ROADMAP SECTION */}
         <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-3xl text-center">
               <SectionBadge label="ROADMAP" className="mb-4" />
               <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[46px] lg:leading-[1.15]">

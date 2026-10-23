@@ -3,11 +3,11 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="relative flex flex-col overflow-hidden pt-12 pb-12 sm:pt-16 sm:pb-16 lg:pt-16 lg:pb-20 xl:pt-20 xl:pb-24 2xl:pt-24 2xl:pb-28">
+    <section className="relative flex min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-4.5rem)] lg:min-h-[calc(100vh-5rem)] flex-col justify-between overflow-hidden pt-4 pb-4 sm:pt-6 sm:pb-6 lg:pt-4 lg:pb-6">
       {/* Top right light gradient blur (#C4DFFB at 50% opacity, blur ~324px as in Figma Ellipse 68) */}
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-between px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Main Grid: Left Copy & Right LivePreview */}
-        <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-14 2xl:gap-16">
+        <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-14 2xl:gap-16 my-auto py-2 sm:py-4">
           {/* Left Column: Copy & Actions */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left lg:col-span-6">
             <p className="font-heading text-sm font-semibold tracking-wide text-[#1243A3] sm:text-base mb-3 sm:mb-4 lg:mb-5 xl:text-lg 2xl:text-xl text-center lg:text-left">
@@ -181,7 +181,7 @@ export default function HeroSection() {
         </div>
 
         {/* Social Proof Line (No border, transparent background matching section) */}
-        <div className="mt-10 sm:mt-12 lg:mt-14 xl:mt-16 2xl:mt-20 flex justify-center">
+        <div className="mt-auto pt-4 flex justify-center pb-2 sm:pb-3">
           <div className="inline-flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
             {/* Avatars cluster from People.svg */}
             <Image

@@ -85,7 +85,7 @@ export default function Footer() {
         paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))",
       }}
     >
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Brand Header: Left-aligned on mobile & tablet, centered on desktop (>=1024) */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
@@ -278,7 +278,7 @@ export default function Footer() {
       <div className="mt-10 sm:mt-12 w-full border-t border-[#D7D7D7]" />
 
       {/* Bottom Legal & Copyright Bar: stacked on phones, split on tablets & desktop */}
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs sm:text-sm text-[#878787]">
           <p>© 2026 Sig Signature. All rights reserved.</p>
           <div className="flex items-center gap-6">

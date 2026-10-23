@@ -123,7 +123,7 @@ export default function TeamPage() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-14 sm:pt-16 sm:pb-16 lg:pt-20 lg:pb-20">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
                 <SectionBadge label="A PRODUCT BY THE NEVON" />
@@ -145,7 +145,7 @@ export default function TeamPage() {
 
         {/* TEAM CARDS SECTION */}
         <section className="pb-20 sm:pb-24 lg:pb-28">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-5xl space-y-6 sm:space-y-8">
               {/* Leader Card: Sardar M. Nadir */}
               <div className="rounded-3xl border border-[#C1C1C1]/80 bg-white p-7 shadow-xs transition-all duration-200 hover:border-blue-300 hover:shadow-sm sm:p-9 lg:p-10">

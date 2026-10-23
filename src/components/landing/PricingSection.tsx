@@ -107,7 +107,7 @@ export default function PricingSection() {
 
   return (
     <section id="pricing" className="scroll-mt-18 sm:scroll-mt-20 bg-[#FCFCFC] pt-8 sm:pt-10 lg:pt-12 pb-14 sm:pb-16 lg:pb-20 3xl:pb-24">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
           <Reveal y={16} blur={6} className="mb-2.5 sm:mb-3 inline-block">

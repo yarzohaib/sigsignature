@@ -121,7 +121,7 @@ export default function ContactPage() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
                 <SectionBadge label="CONTACT US" />
@@ -144,7 +144,7 @@ export default function ContactPage() {
 
         {/* DIRECT CONTACT CHANNELS */}
         <section className="py-12 sm:py-16">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {contactChannels.map((item) => (
                 <div
@@ -194,7 +194,7 @@ export default function ContactPage() {
 
         {/* DIRECT INQUIRY FORM */}
         <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-3xl text-center">
               <SectionBadge label="DIRECT INQUIRY" className="mb-4" />
               <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[46px] lg:leading-[1.15]">

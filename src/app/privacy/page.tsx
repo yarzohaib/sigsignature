@@ -47,7 +47,7 @@ export default function PrivacyPage() {
       <main className="flex-1">
         {/* HERO SECTION */}
         <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
                 <SectionBadge label="DATA GOVERNANCE" />
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
 
         {/* POLICY SECTIONS */}
         <section className="py-8 pb-20 sm:pb-24">
-          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl space-y-8">
               {/* 1. Information We Collect */}
               <div className="rounded-3xl border border-[#C1C1C1]/80 bg-white p-7 shadow-xs sm:p-10">
