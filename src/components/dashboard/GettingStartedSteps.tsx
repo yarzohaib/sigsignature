@@ -66,10 +66,10 @@ export default function GettingStartedSteps() {
                   {step.number}
                 </div>
 
-                {/* Dashed connector line between circles (continued throughout all steps and after 5) */}
+                {/* Dashed connector line between circles — starts from centre of badge, runs to the right edge of the column */}
                 {idx < steps.length - 1 ? (
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 left-3.5 xl:left-4 2xl:left-5 3xl:left-[clamp(20px,1.25vw,35px)] w-full z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
+                    className="absolute top-1/2 -translate-y-1/2 left-4 xl:left-[18px] 2xl:left-5 3xl:left-[clamp(20px,1.25vw,35px)] right-0 z-0 border-t-2 3xl:border-t-3 border-dashed border-[#E2E8F0]"
                     aria-hidden="true"
                   />
                 ) : (
