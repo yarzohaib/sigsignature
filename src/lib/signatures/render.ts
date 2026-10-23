@@ -24,7 +24,7 @@ export function renderSavedSignatureHtml(
   }
   const templateId = sig.templateId || sig.data.templateId;
   const data = templateId ? { ...sig.data, templateId } : sig.data;
-  return generateTemplateHtml(data);
+  return generateTemplateHtml(data, options);
 }
 
 export function renderSavedSignaturePlainText(sig: SavedSignature): string {
