@@ -66,6 +66,10 @@ import FloatingToolbar, { CanvasAlignment, TeamFieldBind } from "@/components/st
 import EditDetailsModal from "@/components/studio/EditDetailsModal";
 import FreeCanvas from "@/components/studio/FreeCanvas";
 
+function generateUniqueId(prefix: string): string {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+}
+
 function DesignStudioContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -266,13 +270,26 @@ function DesignStudioContent() {
         try {
           const savedDraft = localStorage.getItem(draftKey);
           if (savedDraft) {
-            let parsed = JSON.parse(savedDraft);
+            const parsed = JSON.parse(savedDraft);
             if (parsed && typeof parsed === "object") {
-              if (!parsed.elements) {
-                parsed = migrateFlowToFree(parsed);
+              const elements = Array.isArray(parsed.elements) ? parsed.elements : [];
+              const isOnlyAutoMigrated =
+                elements.length > 0 &&
+                elements.every(
+                  (el: FreeElement) =>
+                    typeof el.id === "string" && el.id.startsWith("el_")
+                );
+
+              if (isOnlyAutoMigrated) {
+                try {
+                  localStorage.removeItem(draftKey);
+                } catch {
+                  // ignore
+                }
+              } else if (elements.length > 0) {
+                loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
+                hasSavedDraft = true;
               }
-              loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
-              hasSavedDraft = true;
             }
           }
         } catch {
@@ -296,8 +313,9 @@ function DesignStudioContent() {
               ? mapToValidTemplateFont(storedSettings.signatureFont)
               : INITIAL_STUDIO_DATA.fontFamily,
             avatarUrl: userAvatar,
+            elements: [],
+            canvas: { width: 600, height: 200 },
           };
-          loadedData = migrateFlowToFree(loadedData);
         }
 
         dispatch({ type: "SET_FULL_STATE", payload: loadedData });
@@ -323,13 +341,19 @@ function DesignStudioContent() {
       ? `sig_studio_draft_${userId}_${editingSignatureId}`
       : `sig_studio_draft_${userId}`;
 
+    const isCanvasEmpty = !editingSignatureId && (!state.elements || state.elements.length === 0);
+
     const savingTimer = setTimeout(() => {
       setSaveStatus("saving");
     }, 0);
 
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem(draftKey, JSON.stringify(state));
+        if (isCanvasEmpty) {
+          localStorage.removeItem(draftKey);
+        } else {
+          localStorage.setItem(draftKey, JSON.stringify(state));
+        }
         setSaveStatus("saved");
       } catch {
         setSaveStatus("saved");
@@ -361,24 +385,81 @@ function DesignStudioContent() {
       showToast("Maximum of 40 elements reached.");
       return;
     }
+
+    const elements = state.elements || [];
     const canvas = state.canvas || { width: 600, height: 200 };
-    const spot = findFreeSpot({ w: 240, h: 24 }, state.elements || [], canvas);
-    const id = `txt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
+    // Resolve user account details
+    const userFullName =
+      `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+      state.fullName?.trim() ||
+      "";
+    const userEmail = user?.email?.trim() || state.email?.trim() || "";
+
+    const hasNameOnCanvas = Boolean(
+      userFullName &&
+        elements.some(
+          (el) =>
+            el.type === "text" &&
+            ((el as FreeTextElement).bind === "name" ||
+              (el as FreeTextElement).text?.trim().toLowerCase() === userFullName.toLowerCase())
+        )
+    );
+
+    const hasEmailOnCanvas = Boolean(
+      userEmail &&
+        elements.some(
+          (el) =>
+            el.type === "text" &&
+            ((el as FreeTextElement).bind === "email" ||
+              (el as FreeTextElement).text?.trim().toLowerCase() === userEmail.toLowerCase())
+        )
+    );
+
+    let text = "Your text here";
+    let size: "sm" | "md" | "lg" = "md";
+    let bold = false;
+    let bind: "name" | "email" | undefined = undefined;
+    let w = 240;
+    let h = 24;
+    let toastMsg = "Text added";
+
+    if (userFullName && !hasNameOnCanvas) {
+      text = userFullName;
+      size = "lg";
+      bold = true;
+      bind = "name";
+      w = Math.max(180, Math.min(320, userFullName.length * 11 + 24));
+      h = 24;
+      toastMsg = "Name added from your account";
+    } else if (userEmail && !hasEmailOnCanvas) {
+      text = userEmail;
+      size = "sm";
+      bold = false;
+      bind = "email";
+      w = Math.max(200, Math.min(320, userEmail.length * 8 + 24));
+      h = 20;
+      toastMsg = "Email added from your account";
+    }
+
+    const spot = findFreeSpot({ w, h }, elements, canvas);
+    const id = generateUniqueId("txt");
     const newEl: FreeElement = {
       id,
       type: "text",
-      text: "Your text here",
-      size: "md",
-      bold: false,
+      text,
+      size,
+      bold,
       align: "left",
       x: spot.x,
       y: spot.y,
-      w: 240,
-      h: 24,
+      w,
+      h,
+      ...(bind ? { bind } : {}),
     };
     dispatch({ type: "ADD_ELEMENT", payload: newEl });
     setSelectedId(id);
-    showToast("Text added");
+    showToast(toastMsg);
   }
 
   // 2. Add Image
@@ -387,7 +468,152 @@ function DesignStudioContent() {
       showToast("Maximum of 40 elements reached.");
       return;
     }
+
+    const storedAvatar = getStoredAvatarUrl();
+    const accountAvatar =
+      storedAvatar?.trim() ||
+      user?.avatarUrl?.trim() ||
+      (state.avatarUrl?.trim() &&
+      state.avatarUrl.trim() !== "/daniel-wilson.png" &&
+      !state.avatarUrl.trim().endsWith("/daniel-wilson.png")
+        ? state.avatarUrl.trim()
+        : "");
+
+    const elements = state.elements || [];
+    const hasAccountPhotoOnCanvas = Boolean(
+      accountAvatar &&
+        elements.some(
+          (el) =>
+            el.type === "image" &&
+            ((el as FreeImageElement).url === accountAvatar ||
+              (el as FreeImageElement).bind === "photo")
+        )
+    );
+
+    // If user has a saved avatar on their account and it's not yet on canvas, insert it
+    if (accountAvatar && !hasAccountPhotoOnCanvas) {
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const w = 72;
+      const h = 72;
+      const spot = findFreeSpot({ w, h }, elements, canvas);
+      const id = generateUniqueId("img");
+      const newEl: FreeElement = {
+        id,
+        type: "image",
+        url: accountAvatar,
+        x: spot.x,
+        y: spot.y,
+        w,
+        h,
+        bind: "photo",
+      };
+      dispatch({ type: "ADD_ELEMENT", payload: newEl });
+      setSelectedId(id);
+      showToast("Photo added from your account");
+      return;
+    }
+
     imageUploadInputRef.current?.click();
+  }
+
+  // Helper to add a specific team field element to the canvas
+  function handleAddTeamField(field: TeamFieldBind) {
+    if ((state.elements?.length || 0) >= 40) {
+      showToast("Maximum of 40 elements reached.");
+      return;
+    }
+
+    const elements = state.elements || [];
+    const canvas = state.canvas || { width: 600, height: 200 };
+
+    if (field === "photo") {
+      const storedAvatar = getStoredAvatarUrl();
+      const accountAvatar =
+        storedAvatar?.trim() ||
+        user?.avatarUrl?.trim() ||
+        (state.avatarUrl?.trim() &&
+        state.avatarUrl.trim() !== "/daniel-wilson.png" &&
+        !state.avatarUrl.trim().endsWith("/daniel-wilson.png")
+          ? state.avatarUrl.trim()
+          : "");
+
+      if (accountAvatar) {
+        const spot = findFreeSpot({ w: 72, h: 72 }, elements, canvas);
+        const id = generateUniqueId("img");
+        const newEl: FreeElement = {
+          id,
+          type: "image",
+          url: accountAvatar,
+          x: spot.x,
+          y: spot.y,
+          w: 72,
+          h: 72,
+          bind: "photo",
+        };
+        dispatch({ type: "ADD_ELEMENT", payload: newEl });
+        setSelectedId(id);
+        showToast("Photo added from your account");
+      } else {
+        imageUploadInputRef.current?.click();
+      }
+      return;
+    }
+
+    let text = "";
+    let size: "sm" | "md" | "lg" = "md";
+    let bold = false;
+    let w = 220;
+    let h = 20;
+
+    if (field === "name") {
+      const userFullName =
+        `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+        state.fullName?.trim() ||
+        "";
+      text = userFullName || "Full Name";
+      size = "lg";
+      bold = true;
+      w = Math.max(180, Math.min(320, text.length * 11 + 24));
+      h = 24;
+    } else if (field === "email") {
+      text = user?.email?.trim() || state.email?.trim() || "hello@example.com";
+      size = "sm";
+      bold = false;
+      w = Math.max(200, Math.min(320, text.length * 8 + 24));
+      h = 20;
+    } else if (field === "jobTitle") {
+      text = state.jobTitle?.trim() || "Job Title";
+      size = "md";
+      bold = false;
+      w = Math.max(160, Math.min(280, text.length * 8 + 24));
+      h = 20;
+    } else if (field === "phone") {
+      text = state.phone?.trim() || "+1 (555) 000-0000";
+      size = "sm";
+      bold = false;
+      w = 160;
+      h = 20;
+    }
+
+    const spot = findFreeSpot({ w, h }, elements, canvas);
+    const id = generateUniqueId("txt");
+    const newEl: FreeElement = {
+      id,
+      type: "text",
+      text,
+      size,
+      bold,
+      align: "left",
+      x: spot.x,
+      y: spot.y,
+      w,
+      h,
+      bind: field,
+    };
+
+    dispatch({ type: "ADD_ELEMENT", payload: newEl });
+    setSelectedId(id);
+    showToast(`${field.charAt(0).toUpperCase() + field.slice(1)} added`);
   }
 
   async function handleImageFileSelected(e: ChangeEvent<HTMLInputElement>) {
@@ -1859,14 +2085,33 @@ function DesignStudioContent() {
                           key={field.key}
                           type="button"
                           onClick={() => {
-                            if (!state.elements || state.elements.length === 0) {
-                              dispatch({ type: "MIGRATE_FLOW_TO_FREE" });
-                            }
                             if (linked) {
                               setSelectedId(linked.id);
-                            } else {
-                              showToast("Select an element and use Link to team field");
+                              return;
                             }
+                            if (selectedId) {
+                              const selectedEl = (state.elements || []).find(
+                                (el) => el.id === selectedId
+                              );
+                              if (selectedEl) {
+                                if (field.key === "photo" && selectedEl.type === "image") {
+                                  dispatch({
+                                    type: "LINK_TEAM_FIELD",
+                                    payload: { id: selectedId, field: "photo" },
+                                  });
+                                  showToast(`Linked to ${field.label}`);
+                                  return;
+                                } else if (field.key !== "photo" && selectedEl.type === "text") {
+                                  dispatch({
+                                    type: "LINK_TEAM_FIELD",
+                                    payload: { id: selectedId, field: field.key },
+                                  });
+                                  showToast(`Linked to ${field.label}`);
+                                  return;
+                                }
+                              }
+                            }
+                            handleAddTeamField(field.key);
                           }}
                           className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium transition cursor-pointer border ${
                             isSelected

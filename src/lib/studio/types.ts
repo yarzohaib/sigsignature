@@ -512,14 +512,10 @@ export function studioReducer(
     }
 
     case "LINK_TEAM_FIELD": {
-      let stateToUse = state;
-      if (!stateToUse.elements || stateToUse.elements.length === 0) {
-        stateToUse = migrateFlowToFree(stateToUse);
-      }
-      const currentElements = stateToUse.elements || [];
+      const currentElements = state.elements || [];
       const { id, field } = action.payload;
       const target = currentElements.find((el) => el.id === id);
-      if (!target) return stateToUse;
+      if (!target) return state;
 
       const nextElements: FreeElement[] = currentElements.map((el) => {
         if (el.id === id) {
@@ -547,7 +543,7 @@ export function studioReducer(
       });
 
       return {
-        ...stateToUse,
+        ...state,
         elements: nextElements,
       };
     }
