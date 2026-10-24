@@ -210,7 +210,7 @@ export default function QuickOverview() {
                     letterSpacing: "0%",
                   }}
                 >
-                  Personal Templates
+                  TotalTemplates
                 </p>
                 <p
                   className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
