@@ -328,6 +328,7 @@ export default function FloatingToolbar({
         createPortal(
           <div
             ref={toolbarRef}
+            data-floating-toolbar
             role="toolbar"
             aria-label="Selection toolbar"
             style={{

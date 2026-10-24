@@ -129,6 +129,25 @@ function DesignStudioContent() {
   // Canvas container ref
   const canvasAreaRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!selectedId) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (
+        target.closest("[data-signature-canvas]") ||
+        target.closest("[data-floating-toolbar]")
+      ) {
+        return;
+      }
+      setSelectedId(null);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [selectedId]);
+
   // Collapsible Tool Sections (all open by default)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     fonts: true,
@@ -2424,7 +2443,13 @@ function DesignStudioContent() {
               />
 
               {/* Portaled FloatingToolbar when an element is selected */}
-              {selectedElement && !previewModalOpen && (
+              {selectedElement &&
+                !previewModalOpen &&
+                !isNameDialogOpen &&
+                !isEditDetailsOpen &&
+                !limitModalOpen &&
+                !premiumModalOpen &&
+                !savedSignatureRecord && (
                 <FloatingToolbar
                   elementType={selectedElement.type}
                   bold={selectedElement.type === "text" ? selectedElement.bold : false}

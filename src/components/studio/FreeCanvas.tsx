@@ -589,6 +589,7 @@ export default function FreeCanvas({
         {/* Canvas Card */}
         <div
           ref={canvasRef}
+          data-signature-canvas
           role="region"
           aria-label="Email signature canvas"
           onClick={() => onSelect(null)}
