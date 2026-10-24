@@ -324,7 +324,10 @@ const isAuthenticated =
       {/* Bottom Legal & Copyright Bar: stacked on phones, split on tablets & desktop */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs sm:text-sm text-[#878787]">
-          <p>© 2026 Sig Signature. All rights reserved.</p>
+          <p>© 2026 Sig Signature. All rights reserved.  |  Powered by &nbsp;
+          <Link href="https://www.thenevon.com" target="_blank" rel="noopener noreferrer" className="text-[#1243A3] hover:text-[#022977]">
+            @The Nevon
+          </Link></p>
           <div className="flex items-center gap-6">
             <Link href="/terms" className={legalLinkHoverClasses}>
               Terms of Service
