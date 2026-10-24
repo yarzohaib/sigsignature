@@ -103,7 +103,7 @@ export default function SignatureCard({
       style={{ boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.04)" }}
     >
       {/* Top Preview Section — Standard 350×174 aspect ratio */}
-      <div className="relative aspect-[350/174] min-h-[174px] w-full overflow-hidden rounded-t-[14px] bg-[#F8FAFC]">
+      <div className="relative aspect-[350/174] min-h-[174px] max-h-[220px] w-full overflow-hidden rounded-t-[14px] bg-[#F8FAFC]">
         <SavedSignatureThumbnail signature={signature} />
 
         {/* Hover Action Overlay */}

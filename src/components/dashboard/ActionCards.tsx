@@ -5,12 +5,12 @@ import Image from "next/image";
 
 export default function ActionCards() {
   return (
-    <section className="grid grid-cols-1 gap-3.5 sm:gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 lg:grid-cols-2 w-full" aria-label="Signature Creation Options">
+    <section className="mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-3.5 sm:gap-4 lg:grid-cols-2 lg:gap-4 xl:gap-5 2xl:gap-6" aria-label="Signature Creation Options">
       {/* Card 1: Start From a Template */}
       <div className="flex flex-col rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4 xl:p-5 2xl:p-6 shadow-xs transition hover:shadow-md">
         <div className="flex flex-col">
           {/* Top Illustration: Frame.svg with flexible auto-adjusting height and proportional max-height */}
-          <div className="flex aspect-[463/190] w-full items-center justify-center overflow-hidden rounded-xl 2xl:rounded-2xl bg-[#F8FAFC] p-2">
+          <div className="flex h-[135px] w-full items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 sm:h-[155px] 2xl:h-[190px] 2xl:rounded-2xl">
             <Image
               src="/Frame.svg"
               alt="Templates preview"
@@ -79,7 +79,7 @@ export default function ActionCards() {
       <div className="flex flex-col rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4 xl:p-5 2xl:p-6 shadow-xs transition hover:shadow-md">
         <div className="flex flex-col">
           {/* Top Illustration: signature.svg with flexible auto-adjusting height and proportional max-height */}
-          <div className="flex aspect-[463/190] w-full items-center justify-center overflow-hidden rounded-xl 2xl:rounded-2xl bg-[#F8FAFC] p-2">
+          <div className="flex h-[135px] w-full items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 sm:h-[155px] 2xl:h-[190px] 2xl:rounded-2xl">
             <Image
               src="/signature.svg"
               alt="Designing signature editor preview"

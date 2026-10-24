@@ -39,7 +39,7 @@ export default function TemplateGalleryCard({
       }}
     >
       {/* Signature Preview Area: Standard Dimension aspect-[350/174], min-h-[174px] */}
-      <div className="relative aspect-[350/174] min-h-[174px] w-full overflow-hidden bg-[#F8FAFC]">
+      <div className="relative aspect-[350/174] min-h-[174px] max-h-[220px] w-full overflow-hidden bg-[#F8FAFC]">
         <TemplateSignatureThumbnail template={template} />
 
         {/* Hover Action Overlay with "Use This Template >" and "Preview" buttons matching Figma */}
