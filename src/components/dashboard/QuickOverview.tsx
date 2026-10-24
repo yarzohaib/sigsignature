@@ -113,7 +113,7 @@ export default function QuickOverview() {
       </h2>
 
       {/* Overview Container Card */}
-      <div className="w-full rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] px-5 py-4 sm:px-7 sm:py-5 shadow-xs">
+      <div className="w-full rounded-2xl bg-[#F8FAFC] px-5 py-4 sm:px-7 sm:py-5">
         <div className="grid grid-cols-1 divide-y divide-[#E2E8F0] md:grid-cols-4 md:divide-y-0 md:divide-x md:divide-[#E2E8F0] items-center">
           
           {/* Item 1: Total Signatures */}
