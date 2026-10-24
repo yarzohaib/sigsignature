@@ -441,8 +441,7 @@ function SettingsContent() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1
-                  className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold text-[#161E2E] leading-tight tracking-[-0.85px]"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  className="page-heading text-[#161E2E]"
                 >
                   Settings
                 </h1>

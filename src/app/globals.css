@@ -76,6 +76,20 @@ html, body {
   color: #0f172a;
 }
 
+.page-heading {
+  font-family: var(--font-montserrat), Montserrat, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 640px) {
+  .page-heading {
+    font-size: 32px;
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-montserrat), sans-serif;
 }

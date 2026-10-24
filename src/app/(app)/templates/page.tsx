@@ -169,8 +169,7 @@ function TemplatesContent() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
               <div>
                 <h1
-                  className="text-[28px] sm:text-[34px] font-bold text-[#1E293B] tracking-tight leading-tight"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  className="page-heading text-[#1E293B]"
                 >
                   Choose a Template.
                 </h1>

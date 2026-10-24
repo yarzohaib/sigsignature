@@ -5,8 +5,7 @@ export default function HelpHero() {
     <section aria-labelledby="help-hero-heading" className="flex flex-col">
       <h1
         id="help-hero-heading"
-        className="text-[28px] sm:text-[32px] md:text-[36px] font-bold tracking-tight text-[#0B1A3D] leading-tight"
-        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+        className="page-heading text-[#0B1A3D]"
       >
         <span>A Little Help. </span>
         <span className="text-[#245FD4]">A Great Signature.</span>

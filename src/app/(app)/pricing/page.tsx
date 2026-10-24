@@ -44,12 +44,8 @@ function PricingContent() {
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
-                className="text-[#000000] text-[28px] sm:text-[32px] xl:text-[34px] 3xl:text-[clamp(34px,2.1vw,56px)]"
+                className="page-heading text-[#000000]"
                 style={{
-                  fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                  fontWeight: 600,
-                  lineHeight: "1.2",
-                  letterSpacing: "0%",
                   color: "#000000",
                 }}
               >

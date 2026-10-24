@@ -5,15 +5,10 @@ export default function HeroSection() {
     <section className="text-left shrink-0">
       {/* Welcome Heading with wave emoji placed AFTER text */}
       <h1
-        className="flex items-center gap-2.5 text-[#1E293B] font-bold text-[24px] sm:text-[28px] xl:text-[30px] 2xl:text-[32px] leading-tight"
-        style={{
-          fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-          letterSpacing: "0%",
-          verticalAlign: "middle",
-        }}
+        className="page-heading flex items-center gap-2.5 text-[#1E293B]"
       >
         <span>Welcome to Sig Signature!</span>
-        <span className="text-[24px] sm:text-[28px] xl:text-[30px] 2xl:text-[32px] select-none inline-block" role="img" aria-label="wave">
+        <span className="text-[28px] sm:text-[32px] select-none inline-block" role="img" aria-label="wave">
           👋
         </span>
       </h1>

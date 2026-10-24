@@ -12,8 +12,7 @@ export default function SignaturesHeader({ onCreateClick }: SignaturesHeaderProp
       {/* Title & Subtitle */}
       <div>
         <h1
-          className="text-[24px] sm:text-[28px] font-bold text-[#1E293B] leading-tight"
-          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+          className="page-heading text-[#1E293B]"
         >
           My Signatures
         </h1>

@@ -39,8 +39,7 @@ export default function TeamSignaturesHeader({
             </svg>
           </div>
           <h1
-            className="text-2xl sm:text-[28px] font-semibold text-[#0B1A3D] tracking-tight"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            className="page-heading text-[#0B1A3D]"
           >
             Team Signature
           </h1>
