@@ -110,6 +110,8 @@ function DesignStudioContent() {
 
   // Save Signature Flow
   const [isSaving, setIsSaving] = useState(false);
+  const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
+  const [signatureName, setSignatureName] = useState("");
   const [savedSignatureRecord, setSavedSignatureRecord] = useState<SavedSignature | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
   const [allSignatures, setAllSignatures] = useState<SavedSignature[]>([]);
@@ -228,6 +230,7 @@ function DesignStudioContent() {
           }
 
           setEditingSignatureId(stored.id);
+          setSignatureName(stored.name || "My Signature");
           currentEditingIdRef.current = stored.id;
 
           // Check if there is an existing edit-session draft for this signature
@@ -952,7 +955,12 @@ function DesignStudioContent() {
   }
 
   // Save Signature to API Repository
-  async function handleSaveSignature() {
+  async function handleSaveSignature(nameOverride?: string) {
+    if (!editingSignatureId && nameOverride === undefined) {
+      setSignatureName((current) => current || "My Signature");
+      setIsNameDialogOpen(true);
+      return;
+    }
     setIsSaving(true);
     try {
       const repo = getSignatureRepository();
@@ -960,11 +968,12 @@ function DesignStudioContent() {
         (el): el is FreeTextElement => el.type === "text" && Boolean(el.text.trim())
       );
       const firstText = firstTextEl?.text;
-      const sigName = state.fullName?.trim()
+      const suggestedName = state.fullName?.trim()
         ? `${state.fullName.trim()}'s Signature`
         : firstText?.trim()
         ? `${firstText.trim()}'s Signature`
         : "My Signature";
+      const sigName = nameOverride?.trim() || signatureName.trim() || suggestedName;
 
       const firstImageEl = state.elements?.find(
         (el): el is FreeImageElement => el.type === "image" && Boolean(el.url?.trim())
@@ -1007,6 +1016,7 @@ function DesignStudioContent() {
       }
 
       setEditingSignatureId(saved.id);
+      setSignatureName(saved.name || sigName);
       currentEditingIdRef.current = saved.id;
       const fullSavedRecord: StudioSavedSignature = {
         id: saved.id,
@@ -1055,11 +1065,11 @@ function DesignStudioContent() {
         (el): el is FreeTextElement => el.type === "text" && Boolean(el.text.trim())
       );
       const firstText = firstTextEl?.text;
-      const sigName = state.fullName?.trim()
+      const sigName = signatureName.trim() || (state.fullName?.trim()
         ? `${state.fullName.trim()}'s Signature`
         : firstText?.trim()
         ? `${firstText.trim()}'s Signature`
-        : "My Signature";
+        : "My Signature");
 
       const firstImageEl = state.elements?.find(
         (el): el is FreeImageElement => el.type === "image" && Boolean(el.url?.trim())
@@ -2600,6 +2610,44 @@ function DesignStudioContent() {
       </div>
 
       {/* Modals */}
+      {isNameDialogOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150" role="dialog" aria-modal="true" aria-labelledby="signature-name-title">
+          <div className="w-full max-w-[400px] rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-150" onClick={(event) => event.stopPropagation()}>
+            <h2 id="signature-name-title" className="text-lg font-bold text-[#1E293B]" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>Name your signature</h2>
+            <p className="mt-1 text-sm text-[#64748B]" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>Choose a name to help you find this design in My Signatures.</p>
+            <input
+              autoFocus
+              maxLength={80}
+              value={signatureName}
+              onChange={(event) => setSignatureName(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && signatureName.trim()) {
+                  setIsNameDialogOpen(false);
+                  void handleSaveSignature(signatureName.trim());
+                }
+              }}
+              placeholder="e.g. Modern business signature"
+              className="mt-4 h-11 w-full rounded-lg border border-[#E2E8F0] px-3 text-sm text-[#1E293B] outline-none focus:border-[#245FD4] focus:ring-2 focus:ring-blue-100"
+            />
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" onClick={() => setIsNameDialogOpen(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>Cancel</button>
+              <button
+                type="button"
+                disabled={!signatureName.trim() || isSaving}
+                onClick={() => {
+                  setIsNameDialogOpen(false);
+                  void handleSaveSignature(signatureName.trim());
+                }}
+                className="rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 disabled:opacity-50"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                {isSaving ? "Saving…" : "Save signature"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <PreviewSignatureModal
         isOpen={previewModalOpen}
         onClose={() => setPreviewModalOpen(false)}

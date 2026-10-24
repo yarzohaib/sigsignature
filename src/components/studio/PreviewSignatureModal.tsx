@@ -203,6 +203,7 @@ export default function PreviewSignatureModal({
                       isColliding={false}
                       isDragging={false}
                       isResizing={false}
+                      showEditorOverlays={false}
                       onSelect={() => {}}
                       onStartDrag={() => {}}
                       onStartResize={() => {}}

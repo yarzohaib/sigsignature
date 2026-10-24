@@ -35,6 +35,7 @@ interface FreeElementViewProps {
   onTextChange: (id: string, text: string) => void;
   onTextGrowth?: (id: string, deltaH: number) => void;
   domRef?: (node: HTMLDivElement | null) => void;
+  showEditorOverlays?: boolean;
 }
 
 const HANDLE_CURSORS: Record<ResizeHandle, string> = {
@@ -72,6 +73,7 @@ export default function FreeElementView({
   onTextChange,
   onTextGrowth,
   domRef,
+  showEditorOverlays = true,
 }: FreeElementViewProps) {
   const [isEditingText, setIsEditingText] = useState(false);
   const currentElementText = element.type === "text" ? element.text : "";
@@ -398,7 +400,7 @@ export default function FreeElementView({
       )}
 
       {/* Linked Team Field Badge */}
-      {"bind" in element && element.bind && (
+      {showEditorOverlays && "bind" in element && element.bind && (
         <div
           data-team-field-badge={element.bind}
           className="absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded bg-[#449AFA] px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none"
