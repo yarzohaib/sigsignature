@@ -1,14 +1,10 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  useMotionValueEvent,
-  useReducedMotion,
-} from "motion/react";
+import React, { useRef, useEffect, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export interface StepItem {
   step: string;
@@ -21,218 +17,29 @@ export interface HowItWorksTimelineProps {
   children?: React.ReactNode;
 }
 
-const LINE_BLEED = 3000; // px the line extends past the track on both sides (full-bleed)
-const END_AT = 0.8; // progress at which the last step becomes active / travel ends
-const SIDE_PAD = "max(32px, calc((100vw - 1200px) / 2))";
-
-const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-const travel = (p: number) => clamp01(p / END_AT);
-
-interface StepViewProps {
-  item: StepItem;
-  isActive: boolean;
-  circleRef?: React.Ref<HTMLDivElement>;
-  className?: string;
-  style?: React.CSSProperties;
-  mobile?: boolean;
-}
-
-function StepItemView({
-  item,
-  isActive,
-  circleRef,
-  className = "",
-  style,
-  mobile = false,
-}: StepViewProps) {
-  return (
-    <div
-      style={style}
-      className={`relative flex ${
-        mobile ? "flex-row items-start gap-4" : "flex-col shrink-0"
-      } ${className}`}
-    >
-      <div
-        ref={circleRef}
-        className={`relative z-10 flex shrink-0 items-center justify-center ${
-          mobile ? "h-[40px] w-[40px]" : "h-[74px] w-[74px]"
-        }`}
-      >
-        <motion.div
-          data-timeline-circle
-          style={{
-            background: "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
-          }}
-          animate={{
-            scale: isActive && !mobile ? 1.18 : 1,
-            boxShadow: isActive
-              ? "0 0 0 8px rgba(36, 95, 212, 0.2), 0 0 24px rgba(36, 95, 212, 0.28)"
-              : "0 0 0 0px rgba(36, 95, 212, 0)",
-          }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className={`flex items-center justify-center rounded-full border border-[#C1C1C1] ${
-            mobile ? "h-[40px] w-[40px]" : "h-[74px] w-[74px]"
-          }`}
-        >
-          <span
-            className={`font-heading font-bold text-white ${
-              mobile ? "text-[15px]" : "text-[28px]"
-            }`}
-          >
-            {item.step}
-          </span>
-        </motion.div>
-      </div>
-
-      <div data-timeline-content className="flex-1 md:flex-none">
-        <h3
-          className={`font-heading font-semibold text-slate-900 ${
-            mobile ? "text-lg sm:text-xl" : "mt-8 text-xl lg:text-2xl"
-          }`}
-        >
-          {item.title}
-        </h3>
-        <p className="font-body mt-2 text-sm leading-relaxed text-[#878787] sm:mt-3 sm:text-base">
-          {item.description}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 /**
- * HowItWorksTimeline
- * - Section stays pinned (sticky) while vertical scroll drives progress.
- * - Desktop: full-bleed horizontal line (gray track + blue fill). The whole
- *   track (line + steps) slides left as you scroll, so the line runs
- *   end to end and the steps travel across the screen.
- * - Active step's circle scales up with a glow once the fill reaches it.
- * - Mobile: vertical line + stacked steps.
- * - Reduced motion: static, unpinned layout with all steps active.
+ * HowItWorksTimeline (GSAP ScrollTrigger version)
+ * - Section is pinned while scroll progress is scrubbed.
+ * - Desktop: horizontal line fills (scaleX); the active step lifts and scales.
+ * - Mobile: vertical line fills (scaleY) between first and last circle.
+ * - Active step = round(progress * (steps - 1)).
+ * - Reduced motion: no pin, lines fully filled, all steps active.
  */
-export default function HowItWorksTimeline({
-  steps,
-  children,
-}: HowItWorksTimelineProps) {
-  const outerTrackRef = useRef<HTMLDivElement>(null);
+export default function HowItWorksTimeline({ steps, children }: HowItWorksTimelineProps) {
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const desktopCircleRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mobileCircleRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const metrics = useRef({
-  maxShift: 0,
-  first: 0,
-  last: 0,
-  end: 0,
-  centers: [] as number[],
-});
+  const hLineRef = useRef<HTMLDivElement>(null);
+  const vLineRef = useRef<HTMLDivElement>(null);
+  const circleRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const shouldReduceMotion = useReducedMotion();
-  const [activeStep, setActiveStep] = useState(0);
-  const [mobileActiveStep, setMobileActiveStep] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [verticalLine, setVerticalLine] = useState({ top: 20, height: 420 });
 
-  // ---- Scroll progress (declared before the effects that use it) ----
-  const { scrollYProgress } = useScroll({
-    target: outerTrackRef,
-    offset: ["start start", "end end"],
-  });
-
-  const clampedProgress = useTransform(scrollYProgress, clamp01);
-const smoothProgress = useSpring(clampedProgress, {
-  stiffness: 260,
-  damping: 40,
-  restDelta: 0.0005,
-});
-
-  // Slide the whole track left as progress increases
-  const trackX = useTransform(
-    smoothProgress,
-    (p) => -metrics.current.maxShift * travel(p)
-  );
-
-  // Blue fill head: starts at circle 1, ends at the right edge of the screen
-const fillWidth = useTransform(smoothProgress, (p) => {
-  const m = metrics.current;
-  return LINE_BLEED + m.first + (m.end - m.first) * travel(p);
-});
-
-useMotionValueEvent(smoothProgress, "change", (p) => {
-  if (isMobile) return;
-  const m = metrics.current;
-  const pos = m.first + (m.end - m.first) * travel(p);
-  let active = 0;
-  m.centers.forEach((c, i) => {
-    if (c <= pos + 1) active = i;
-  });
-  setActiveStep(active);
-});
-
+  // Measure vertical line (mobile) between first and last circle
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  // Measure the horizontal track (desktop)
-  useEffect(() => {
-    if (isMobile || shouldReduceMotion) return;
-
-    const measure = () => {
-      const track = trackRef.current;
-      if (!track) return;
-      const trackRect = track.getBoundingClientRect();
-      const centers = desktopCircleRefs.current.map((el) => {
-        if (!el) return 0;
-        const r = el.getBoundingClientRect();
-        return r.left + r.width / 2 - trackRect.left;
-      });
-      metrics.current = {
-  maxShift: Math.max(0, track.offsetWidth - window.innerWidth),
-  first: centers[0] ?? 0,
-  last: centers[centers.length - 1] ?? 0,
-  end: track.offsetWidth, // right edge of the track = right edge of the screen at the end
-  centers,
-};
-      // Re-run derived values (trackX, fillWidth, activeStep) with new numbers
-      smoothProgress.jump(smoothProgress.get());
-    };
-
-    measure();
-    const t = setTimeout(measure, 300); // after fonts/layout settle
-    window.addEventListener("resize", measure);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("resize", measure);
-    };
-  }, [isMobile, shouldReduceMotion, steps.length, smoothProgress]);
-
-  // Mobile: active step = circle that passed the vertical middle
-  useEffect(() => {
-    if (!isMobile) return;
-    const onScroll = () => {
-      const midY = window.innerHeight * 0.5;
-      let active = 0;
-      mobileCircleRefs.current.forEach((el, idx) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top + rect.height / 2 <= midY) active = idx;
-      });
-      setMobileActiveStep(active);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isMobile]);
-
-  // Mobile vertical line geometry
-  useEffect(() => {
-    if (!isMobile) return;
     const update = () => {
-      const first = mobileCircleRefs.current[0];
-      const last = mobileCircleRefs.current[steps.length - 1];
+      const first = circleRefs.current[0];
+      const last = circleRefs.current[steps.length - 1];
       const container = containerRef.current;
       if (!first || !last || !container) return;
       const c = container.getBoundingClientRect();
@@ -245,130 +52,184 @@ useMotionValueEvent(smoothProgress, "change", (p) => {
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [isMobile, steps.length]);
+  }, [steps.length]);
 
-  /* ---------- Reduced motion: static layout ---------- */
-  if (shouldReduceMotion) {
-    return (
-      <section
-        id="how-it-works"
-        className="scroll-mt-24 overflow-x-clip bg-[#FCFCFC] py-14 sm:py-16 lg:py-24"
-      >
-        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
-          {children}
-          <div className="relative mx-auto mt-10 grid max-w-[1200px] grid-cols-1 gap-8 sm:mt-14 md:mt-16 md:grid-cols-3 md:gap-14">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-0 right-0 top-[36px] hidden h-[2px] bg-[#245FD4] md:block"
-            />
-            {steps.map((item) => (
-              <StepItemView key={item.step} item={item} isActive />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const setActive = (active: number, animateSteps: boolean) => {
+      circleRefs.current.forEach((el, i) => {
+        if (el) el.dataset.active = i <= active || !animateSteps ? "true" : "false";
+      });
+      if (animateSteps) {
+        // desktop: only the current step is "on", others step back
+        circleRefs.current.forEach((el, i) => {
+          if (el) el.dataset.active = i === active ? "true" : "false";
+        });
+        stepRefs.current.forEach((el, i) => {
+          if (!el) return;
+          gsap.to(el, {
+            scale: i === active ? 1.06 : 0.96,
+            y: i === active ? -10 : 0,
+            duration: 0.4,
+            ease: "power2.out",
+            transformOrigin: "center top",
+            overwrite: "auto",
+          });
+        });
+      }
+    };
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          desktop: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+          mobile: "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+          reduce: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { desktop, mobile, reduce } = context.conditions as {
+            desktop: boolean;
+            mobile: boolean;
+            reduce: boolean;
+          };
+
+          if (reduce) {
+            gsap.set([hLineRef.current, vLineRef.current], { scale: 1 });
+            circleRefs.current.forEach((el) => {
+              if (el) el.dataset.active = "true";
+            });
+            return;
+          }
+
+          const isDesktop = desktop && !mobile;
+
+          // initial state
+          gsap.set(hLineRef.current, { scaleX: 0 });
+          gsap.set(vLineRef.current, { scaleY: 0 });
+          setActive(0, isDesktop);
+
+          let lastActive = 0;
+
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: () => `+=${Math.round(window.innerHeight * 1.2)}`,
+                scrub: 0.8,
+                pin: true,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
+                onUpdate: (self) => {
+                  const active = Math.round(self.progress * (steps.length - 1));
+                  if (active !== lastActive) {
+                    lastActive = active;
+                    setActive(active, isDesktop);
+                  }
+                },
+              },
+            })
+            .to(isDesktop ? hLineRef.current : vLineRef.current, {
+              ...(isDesktop ? { scaleX: 1 } : { scaleY: 1 }),
+              ease: "none",
+            });
+
+          return () => {
+            const stepElements = stepRefs.current.filter(
+              (element): element is HTMLDivElement => element !== null
+            );
+            if (stepElements.length > 0) {
+              gsap.set(stepElements, { clearProps: "all" });
+            }
+          };
+        }
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, [steps.length]);
 
   return (
     <section
       id="how-it-works"
-      ref={outerTrackRef}
-      className={`relative scroll-mt-24 bg-[#FCFCFC] ${
-        isMobile ? "h-auto py-14" : "h-[240svh]"
-      }`}
+      ref={sectionRef}
+      className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-x-clip bg-[#FCFCFC] py-6 sm:py-10 md:py-16"
     >
-      <div
-        className={
-          isMobile
-            ? ""
-            : "sticky top-0 flex min-h-[100svh] flex-col justify-center overflow-hidden py-10 md:py-16"
-        }
-      >
-        {/* Header */}
-        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
-          {children}
-        </div>
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
+        {/* Section Header */}
+        {children}
 
-        {isMobile ? (
-          /* ---------- Mobile: vertical ---------- */
-          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6">
-            <div ref={containerRef} className="relative mt-10 sm:mt-14">
+        {/* Steps */}
+        <div
+          ref={containerRef}
+          className="relative mt-10 w-full sm:mt-14 md:mt-16"
+        >
+          {/* Desktop horizontal line */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-[96px] hidden h-[2px] w-screen -translate-x-1/2 bg-[#C1C1C1] md:block"
+          />
+          <div
+            ref={hLineRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-[96px] hidden h-[2px] w-screen -translate-x-1/2 origin-left bg-[#245FD4] md:block"
+          />
+
+          {/* Mobile vertical line */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[19px] w-[2px] bg-[#C1C1C1] md:hidden"
+            style={{ top: verticalLine.top, height: verticalLine.height }}
+          />
+          <div
+            ref={vLineRef}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[19px] w-[2px] origin-top bg-[#245FD4] md:hidden"
+            style={{ top: verticalLine.top, height: verticalLine.height }}
+          />
+
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3 md:gap-8 lg:gap-14 xl:gap-16">
+            {steps.map((item, index) => (
               <div
-                aria-hidden="true"
-                className="pointer-events-none absolute left-[19px] w-[2px] bg-[#C1C1C1]"
-                style={{ top: verticalLine.top, height: verticalLine.height }}
-              />
-              <motion.div
-                aria-hidden="true"
-                className="pointer-events-none absolute left-[19px] w-[2px] origin-top bg-[#245FD4]"
-                style={{ top: verticalLine.top, height: verticalLine.height }}
-                animate={{
-                  scaleY:
-                    mobileActiveStep === 0
-                      ? 0.05
-                      : mobileActiveStep === 1
-                      ? 0.5
-                      : 1,
+                key={item.step}
+                ref={(el) => {
+                  stepRefs.current[index] = el;
                 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
-              <div className="grid grid-cols-1 gap-6 sm:gap-8">
-                {steps.map((item, i) => (
-                  <StepItemView
-                    key={item.step}
-                    item={item}
-                    mobile
-                    isActive={i <= mobileActiveStep}
-                    circleRef={(el) => {
-                      mobileCircleRefs.current[i] = el;
+                className="relative flex flex-row items-start gap-4 md:flex-col md:items-center md:gap-0"
+              >
+                <div className="relative z-10 flex h-[40px] w-[40px] shrink-0 items-center justify-center md:h-[74px] md:w-[74px]">
+                  <div
+                    ref={(el) => {
+                      circleRefs.current[index] = el;
                     }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* ---------- Desktop: full-bleed horizontal sliding track ---------- */
-          <div className="relative mt-12 w-full lg:mt-16">
-            <motion.div
-              ref={trackRef}
-              style={{
-                x: trackX,
-                paddingLeft: SIDE_PAD,
-                paddingRight: SIDE_PAD,
-                columnGap: "clamp(40px, 5vw, 80px)",
-              }}
-              className="relative flex w-max items-start will-change-transform"
-            >
-              {/* Gray track (bleeds past both edges) */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute top-[36px] h-[2px] bg-[#C1C1C1]"
-                style={{ left: -LINE_BLEED, right: -LINE_BLEED }}
-              />
-              {/* Blue fill */}
-              <motion.div
-                aria-hidden="true"
-                data-timeline-line
-                className="pointer-events-none absolute top-[36px] h-[2px] bg-[#245FD4]"
-                style={{ left: -LINE_BLEED, width: fillWidth }}
-              />
+                    data-active="false"
+                    style={{
+                      background: "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
+                    }}
+                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] shadow-xs transition-shadow duration-300 ease-out md:h-[74px] md:w-[74px] data-[active=true]:shadow-[0_0_0_8px_rgba(36,95,212,0.2),0_0_24px_rgba(36,95,212,0.28)]"
+                  >
+                    <span className="font-heading text-[15px] font-bold text-white md:text-[28px]">
+                      {item.step}
+                    </span>
+                  </div>
+                </div>
 
-              {steps.map((item, i) => (
-                <StepItemView
-                  key={item.step}
-                  item={item}
-                  isActive={i <= activeStep}
-                  style={{ width: "clamp(300px, 28vw, 440px)" }}
-                  circleRef={(el) => {
-                    desktopCircleRefs.current[i] = el;
-                  }}
-                />
-              ))}
-            </motion.div>
+                <div className="flex-1 md:flex-none md:text-center">
+                  <h3 className="font-heading mt-0 text-lg font-semibold text-slate-900 sm:text-xl md:mt-11 md:text-xl lg:text-2xl">
+                    {item.title}
+                  </h3>
+                  <p className="font-body mt-2 text-sm leading-relaxed text-[#878787] sm:mt-3 sm:text-base">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

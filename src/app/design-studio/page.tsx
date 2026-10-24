@@ -2424,7 +2424,7 @@ function DesignStudioContent() {
               />
 
               {/* Portaled FloatingToolbar when an element is selected */}
-              {selectedElement && (
+              {selectedElement && !previewModalOpen && (
                 <FloatingToolbar
                   elementType={selectedElement.type}
                   bold={selectedElement.type === "text" ? selectedElement.bold : false}
