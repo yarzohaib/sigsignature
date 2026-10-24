@@ -956,6 +956,7 @@ function DesignStudioContent() {
 
   // Save Signature to API Repository
   async function handleSaveSignature(nameOverride?: string) {
+    if (!state.elements?.length) return;
     if (!editingSignatureId && nameOverride === undefined) {
       setSignatureName((current) => current || "My Signature");
       setIsNameDialogOpen(true);
@@ -2277,8 +2278,8 @@ function DesignStudioContent() {
 
                 <button
                   type="button"
-                  onClick={handleSaveSignature}
-                  disabled={isSaving}
+                  onClick={() => void handleSaveSignature()}
+                  disabled={isSaving || !state.elements?.length}
                   className="flex h-[36px] items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#245FD4] to-[#022977] px-[14px] text-xs font-semibold text-white shadow-xs transition hover:opacity-95 disabled:opacity-50 whitespace-nowrap shrink-0"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
@@ -2595,8 +2596,8 @@ function DesignStudioContent() {
 
             <button
               type="button"
-              onClick={handleSaveSignature}
-              disabled={isSaving}
+              onClick={() => void handleSaveSignature()}
+              disabled={isSaving || !state.elements?.length}
               className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 text-xs font-semibold text-white shadow-xs whitespace-nowrap disabled:opacity-50 transition hover:opacity-95"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
