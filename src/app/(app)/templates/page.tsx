@@ -195,7 +195,7 @@ function TemplatesContent() {
               </Link>
             </div>
 
-            {/* Category Filter Bar with Most Popular on Right matching Figma */}
+            {/* Category Filter Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4 mb-8">
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
                 {CATEGORIES.map((cat) => (
@@ -215,18 +215,6 @@ function TemplatesContent() {
                 ))}
               </div>
 
-              {/* Sort indicator matching Figma */}
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition shrink-0">
-                <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="15" y2="12" />
-                  <line x1="3" y1="18" x2="9" y2="18" />
-                </svg>
-                <span>Most Popular</span>
-                <svg className="h-3.5 w-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
             </div>
 
             {/* Template Cards Grid: Standard 3-column Layout */}
