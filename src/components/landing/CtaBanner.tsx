@@ -67,7 +67,7 @@ export default function CtaBanner() {
               background:
                 "linear-gradient(180deg, #FFFFFF 0%, #D9F4FD 50%, #FDFEFF 100%)",
             }}
-            className="group relative inline-flex h-[46px] w-full max-w-[360px] sm:w-[275px] sm:max-w-none items-center justify-center overflow-hidden rounded-full font-body text-sm sm:text-[15px] font-semibold text-[#00359F] animate-cta-idle-glow transition-[transform,box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00359F] [@media(hover:hover)]:hover:-translate-y-[2px] [@media(hover:hover)]:hover:shadow-[0_8px_24px_rgba(255,255,255,0.4)] active:scale-[0.98]"
+            className="group relative inline-flex h-[46px] w-full max-w-[360px] sm:w-[275px] sm:max-w-none items-center justify-center overflow-hidden rounded-full font-body text-sm sm:text-[15px] font-semibold text-[#00359F] animate-cta-idle-glow transition-[box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00359F]  [@media(hover:hover)]:hover:shadow-[0_8px_24px_rgba(255,255,255,0.4)] active:scale-[0.98]"
           >
             {/* Soft diagonal shine sweep across the button on hover */}
             <span

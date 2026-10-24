@@ -135,7 +135,7 @@ export default function PricingSection() {
             className="flex w-full max-w-[440px] md:max-w-[380px] lg:max-w-[420px] mx-auto md:mx-0 justify-center"
           >
             <div
-              className="relative flex w-full min-h-[440px] md:min-h-[470px] lg:min-h-[480px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-6 lg:p-7 shadow-xs transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
+              className="relative flex w-full min-h-[440px] md:min-h-[470px] lg:min-h-[480px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-6 lg:p-7 shadow-xs transition-[box-shadow,border-color] duration-200 ease-out  [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(196, 223, 251, 0.5) 50.81%, #FFFFFF 99.33%)",
@@ -209,7 +209,7 @@ export default function PricingSection() {
             className="flex w-full max-w-[460px] md:max-w-[410px] lg:max-w-[463px] mx-auto md:mx-0 justify-center md:-mt-5 lg:-mt-7 z-10"
           >
             <div
-              className="relative flex w-full min-h-[500px] md:min-h-[540px] lg:min-h-[550px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-6 sm:p-7 lg:p-8 shadow-pricing-premium transition-[transform,box-shadow,border-color] duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1.5 [@media(hover:hover)]:hover:!shadow-[0_24px_48px_-12px_rgba(138,149,242,0.45),0_0_20px_0_rgba(138,149,242,0.35)] [@media(hover:hover)]:hover:border-[#8A95F2]/70"
+              className="relative flex w-full min-h-[500px] md:min-h-[540px] lg:min-h-[550px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-6 sm:p-7 lg:p-8 shadow-pricing-premium transition-[box-shadow,border-color] duration-200 ease-out  "
               style={{
                 background:
                   "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(138, 149, 242, 0.15) 50.81%, #FFFFFF 99.33%)",

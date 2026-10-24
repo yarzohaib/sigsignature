@@ -27,7 +27,7 @@ export default function SolutionSection() {
             direction="right"
             className="flex w-full max-w-full items-center justify-center overflow-hidden"
           >
-            <SignaturePreview floating />
+            <SignaturePreview floating className="!shadow-none" />
           </ColumnReveal>
 
           {/* Right Column: Left-aligned Heading & Checklist (slides from left on desktop, rises on mobile) */}

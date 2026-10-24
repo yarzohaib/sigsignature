@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "motion/react";
@@ -36,8 +37,38 @@ const linkHoverClasses =
 const legalLinkHoverClasses =
   "group relative inline-flex min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 items-center hover:text-brand transition-colors 3xl:text-[15px] after:absolute after:bottom-1 lg:after:bottom-[-2px] after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand";
 
+function subscribeAuth(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("sig_user_update", callback);
+  window.addEventListener("sig_avatar_update", callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener("sig_user_update", callback);
+    window.removeEventListener("sig_avatar_update", callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getAuthSnapshot(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const token = localStorage.getItem("sig_access_token");
+    const user = localStorage.getItem("sig_user");
+    return token && user ? "1" : "";
+  } catch {
+    return "";
+  }
+}
+
+function getAuthServerSnapshot(): string {
+  return "";
+}
+
 export default function Footer() {
   const shouldReduceMotion = useReducedMotion();
+
+const isAuthenticated =
+  useSyncExternalStore(subscribeAuth, getAuthSnapshot, getAuthServerSnapshot) === "1";
 
   function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
     if (typeof window !== "undefined" && window.location.pathname !== "/") return;
@@ -152,12 +183,25 @@ export default function Footer() {
               >
                 Pricing
               </Link>
-              <Link href="/login" className={linkHoverClasses}>
-                Login
-              </Link>
-              <Link href="/signup" className={linkHoverClasses}>
-                Sign Up
-              </Link>
+              {isAuthenticated ? (
+  <>
+    <Link href="/dashboard" className={linkHoverClasses}>
+      Dashboard
+    </Link>
+    <Link href="/design-studio" className={linkHoverClasses}>
+      Design
+    </Link>
+  </>
+) : (
+  <>
+    <Link href="/login" className={linkHoverClasses}>
+      Login
+    </Link>
+    <Link href="/signup" className={linkHoverClasses}>
+      Sign Up
+    </Link>
+  </>
+)}
             </div>
           </motion.div>
 

@@ -49,7 +49,7 @@ export default function ProblemSection() {
           {problems.map((problem, idx) => (
             <Reveal key={problem.title} staggerIndex={idx} className="h-full max-w-[600px] mx-auto lg:max-w-none w-full">
               <div
-                className="flex h-full flex-col rounded-[20px] border border-[#C1C1C1]/80 bg-white p-6 shadow-none transition-[transform,box-shadow,border-color] duration-200 ease-out focus-within:ring-2 focus-within:ring-brand [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:border-blue-300 [@media(hover:hover)]:hover:shadow-[0_16px_32px_-8px_rgba(2,41,119,0.12)] sm:p-8"
+                className="flex h-full flex-col rounded-[20px] border border-[#C1C1C1]/80 bg-white p-6 shadow-none transition-[box-shadow,border-color] duration-200 ease-out focus-within:ring-2 focus-within:ring-brand [@media(hover:hover)]:hover:border-blue-300 [@media(hover:hover)]:hover:shadow-[0_16px_32px_-8px_rgba(2,41,119,0.12)] sm:p-8"
               >
                 <div className="flex h-full flex-col sm:flex-row sm:gap-5 sm:items-start">
                   {/* Blue icon container circle matching How It Works gradient */}
