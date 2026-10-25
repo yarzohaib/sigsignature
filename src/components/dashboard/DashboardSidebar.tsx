@@ -14,11 +14,24 @@ type SidebarProps = {
   onCloseMobile?: () => void;
 };
 
+const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count";
+
+function getCachedSignatureCount(): number {
+  if (typeof window === "undefined") return 0;
+
+  try {
+    const cached = Number.parseInt(localStorage.getItem(CACHED_SIGNATURE_COUNT_KEY) || "", 10);
+    return Number.isFinite(cached) && cached >= 0 ? cached : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const optionalUser = useOptionalUser();
-  const [signatureCount, setSignatureCount] = useState<number>(0);
+  const [signatureCount, setSignatureCount] = useState<number>(getCachedSignatureCount);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
@@ -28,7 +41,13 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted) {
-          setSignatureCount(list.length);
+          const count = list.length;
+          setSignatureCount(count);
+          try {
+            localStorage.setItem(CACHED_SIGNATURE_COUNT_KEY, String(count));
+          } catch {
+            // Keep the live count even if browser storage is unavailable.
+          }
         }
       } catch {
         // Silently keep default 0 on error / unauthenticated
@@ -302,7 +321,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               <div
                 className="h-full rounded-full bg-[#245FD4] transition-all duration-300"
                 style={{
-                  width: `${Math.min(100, Math.max(12, (signatureCount / 3) * 100))}%`,
+                  width: `${Math.min(100, Math.max(0, (signatureCount / 3) * 100))}%`,
                 }}
               />
             </div>
