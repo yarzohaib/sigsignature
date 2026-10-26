@@ -255,13 +255,13 @@ const isAuthenticated =
           </motion.div>
         </motion.div>
 
-        {/* Social Media Icons (30px circles matching Figma) */}
+        {/* Social Media Icons */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={MOTION_VIEWPORT}
           transition={{ duration: 0.45, delay: shouldReduceMotion ? 0 : 0.25, ease: EASE_OUT_CUBIC }}
-          className="mt-8 flex justify-center gap-[10px] sm:mt-10"
+          className="mt-8 flex justify-center gap-3 sm:mt-10"
         >
           {/* Facebook */}
           <a
@@ -272,7 +272,7 @@ const isAuthenticated =
             className="footer-social-btn before:absolute before:-inset-2 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             <span
-              className="font-heading text-[13px] font-bold leading-none select-none text-[#022977]"
+              className="font-heading text-base font-bold leading-none select-none text-[#022977]"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               f
@@ -288,7 +288,7 @@ const isAuthenticated =
             className="footer-social-btn before:absolute before:-inset-2 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             <svg
-              className="h-3.5 w-3.5 text-[#022977]"
+              className="h-5 w-5 text-[#022977]"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.8"
@@ -309,7 +309,7 @@ const isAuthenticated =
             className="footer-social-btn before:absolute before:-inset-2 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             <span
-              className="font-heading text-[11px] font-bold leading-none tracking-tight select-none text-[#022977]"
+              className="font-heading text-sm font-bold leading-none tracking-tight select-none text-[#022977]"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               in
