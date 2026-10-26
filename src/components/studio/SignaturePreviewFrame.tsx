@@ -24,7 +24,7 @@ export interface SignaturePreviewFrameProps {
    * Optional inner padding percentage (default: 0.92 for 8% breathing room around edges)
    */
   fitPadding?: number;
-  /** Allow aspect-ratio previews to scale up when the content is smaller than its panel. */
+  /** Allow aspect-ratio previews to scale up when their content is smaller than the panel. */
   allowUpscale?: boolean;
   /**
    * Target container width when aspectRatio is false, used to auto-scale content down if it exceeds the viewport.
