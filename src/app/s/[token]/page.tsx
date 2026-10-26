@@ -326,17 +326,17 @@ export default function PublicInvitePage() {
   // Header Component
   const HeaderLogo = (
     <header className="flex items-center justify-center pt-8 pb-6 sm:pb-8">
-      <Link href="/" className="inline-flex items-center gap-2.5 group">
+      <Link href="/" className="inline-flex items-center gap-2.5 group transition-opacity hover:opacity-95">
         <Image
           src="/logo.svg"
           alt="Sig Signature logo"
           width={36}
           height={36}
-          className="h-8 w-auto transition-transform group-hover:scale-105"
+          className="h-9 w-auto transition-transform group-hover:scale-105"
           priority
         />
         <span
-          className="font-bold text-lg text-[#0B1A3D]"
+          className="font-bold text-xl text-[#0B1A3D] tracking-tight"
           style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
         >
           Sig Signature
@@ -348,22 +348,22 @@ export default function PublicInvitePage() {
   // 1. Loading Skeleton State
   if (state === "loading") {
     return (
-      <div className="min-h-screen pb-16">
+      <div className="min-h-screen bg-[#F8FAFC] pb-16 flex flex-col justify-between">
         {HeaderLogo}
-        <main className="max-w-2xl mx-auto px-4">
-          <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-xs p-6 sm:p-10 animate-pulse">
+        <main className="max-w-2xl mx-auto px-4 w-full">
+          <div className="bg-white rounded-3xl border border-[#EEF0F4] shadow-xs p-6 sm:p-10 animate-pulse">
             <div className="text-center space-y-3 mb-8">
               <div className="h-7 w-3/4 bg-slate-200 rounded-lg mx-auto" />
               <div className="h-4 w-1/2 bg-slate-100 rounded-md mx-auto" />
             </div>
 
-            <div className="w-full aspect-[16/9] rounded-2xl bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] border border-[#E2E8F0] p-4 flex items-center justify-center">
+            <div className="w-full aspect-[350/174] min-h-[174px] rounded-2xl bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] border border-[#EEF0F4] p-4 flex items-center justify-center">
               <div className="w-full max-w-sm h-36 bg-slate-200/60 rounded-xl" />
             </div>
 
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <div className="h-11 w-full sm:w-40 bg-slate-200 rounded-xl" />
-              <div className="h-11 w-full sm:w-40 bg-slate-100 rounded-xl" />
+              <div className="h-11 w-full sm:w-44 bg-slate-200 rounded-xl" />
+              <div className="h-11 w-full sm:w-44 bg-slate-100 rounded-xl" />
             </div>
 
             <div className="mt-8 pt-8 border-t border-[#F1F5F9] space-y-3">
@@ -377,6 +377,9 @@ export default function PublicInvitePage() {
             </div>
           </div>
         </main>
+        <footer className="text-center text-xs text-[#94A3B8] pb-6">
+          &copy; {new Date().getFullYear()} Sig Signature. All rights reserved.
+        </footer>
       </div>
     );
   }
@@ -407,15 +410,15 @@ export default function PublicInvitePage() {
       title = "Unable to connect";
       message =
         "We had trouble connecting to the server. Please check your internet connection and try again.";
-      iconColor = "text-blue-600 bg-blue-50 border border-blue-100";
+      iconColor = "text-brand bg-blue-50 border border-blue-100";
       showRetry = true;
     }
 
     return (
-      <div className="min-h-screen pb-16 flex flex-col justify-between">
+      <div className="min-h-screen bg-[#F8FAFC] pb-16 flex flex-col justify-between">
         {HeaderLogo}
         <main className="max-w-md mx-auto px-4 w-full my-auto">
-          <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm p-6 sm:p-8 text-center">
+          <div className="bg-white rounded-3xl border border-[#EEF0F4] shadow-xs p-6 sm:p-8 text-center">
             <div
               className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl mb-4 ${iconColor}`}
             >
@@ -467,7 +470,7 @@ export default function PublicInvitePage() {
                 <button
                   type="button"
                   onClick={handleRetry}
-                  className="rounded-xl bg-[#245FD4] hover:bg-[#1D4ED8] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white transition cursor-pointer shadow-xs"
+                  className="rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 cursor-pointer"
                 >
                   Retry
                 </button>
@@ -484,31 +487,38 @@ export default function PublicInvitePage() {
 
   // 3. Ready State
   return (
-    <div className="min-h-screen pb-16 flex flex-col justify-between">
+    <div className="min-h-screen bg-[#F8FAFC] pb-16 flex flex-col justify-between">
       {HeaderLogo}
 
       <main className="max-w-2xl mx-auto px-4 w-full">
-        <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm p-5 sm:p-8">
+        <div
+          className="bg-white rounded-3xl border border-[#EEF0F4] p-6 sm:p-9"
+          style={{ boxShadow: "0px 1px 3px rgba(16, 24, 40, 0.04)" }}
+        >
           {/* Heading and subtext */}
           <div className="text-center mb-6">
             <h1
-              className="text-2xl sm:text-3xl font-bold text-[#0B1A3D] tracking-tight"
+              className="text-2xl sm:text-[30px] font-bold text-[#1E293B] tracking-tight leading-tight"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               Your new email signature is ready
             </h1>
             <p
-              className="mt-2 text-xs sm:text-sm text-[#64748B]"
+              className="mt-2 text-xs sm:text-[14px] text-[#64748B]"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              <span className="font-semibold text-[#0B1A3D]">{teamName}</span> set this up for you ({maskedEmail})
+              <span className="font-semibold text-[#1E293B]">{teamName}</span> set this up for you ({maskedEmail})
             </p>
           </div>
 
-          {/* Signature Preview Panel */}
-          <div className="relative w-full rounded-2xl bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] border border-[#E2E8F0] p-3 sm:p-5 flex items-center justify-center overflow-hidden shadow-2xs">
-            <div className="w-full bg-white rounded-xl shadow-xs border border-[#EBF0F7] p-2 overflow-hidden">
-              <SignaturePreviewFrame html={previewHtml} />
+          {/* Signature Preview Panel — Standard aspect ratio & centered styling matching website */}
+          <div className="relative w-full rounded-2xl bg-[#F8FAFC] border border-[#EEF0F4] p-3 sm:p-5 flex items-center justify-center overflow-hidden">
+            <div className="w-full bg-white rounded-xl shadow-xs border border-[#EEF0F4] p-3 flex items-center justify-center overflow-hidden">
+              <SignaturePreviewFrame
+                html={previewHtml}
+                aspectRatio="350 / 174"
+                fitPadding={0.92}
+              />
             </div>
           </div>
 
@@ -517,11 +527,12 @@ export default function PublicInvitePage() {
             <button
               type="button"
               onClick={handleCopySignature}
-              className={`w-full sm:w-auto min-w-[170px] inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-xs sm:text-sm font-semibold text-white shadow-xs transition cursor-pointer ${
+              className={`w-full sm:w-auto min-w-[180px] inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-xs transition active:scale-95 cursor-pointer ${
                 copiedHtml
                   ? "bg-[#059669] hover:bg-[#047857]"
-                  : "bg-[#245FD4] hover:bg-[#1D4ED8]"
+                  : "bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] hover:opacity-95"
               }`}
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
               {copiedHtml ? (
                 <>
@@ -548,7 +559,8 @@ export default function PublicInvitePage() {
             <button
               type="button"
               onClick={handleCopyPlainText}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-[#CBD5E1] bg-white px-5 py-3 text-xs sm:text-sm font-medium text-[#1E293B] hover:bg-slate-50 transition cursor-pointer shadow-2xs"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-xs sm:text-sm font-medium text-[#1E293B] hover:bg-slate-50 transition active:scale-95 cursor-pointer shadow-2xs"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
               {copiedPlainText ? (
                 <>
@@ -568,48 +580,54 @@ export default function PublicInvitePage() {
           </div>
 
           {/* "How to add it" Section with Tabs */}
-          <div className="mt-8 pt-8 border-t border-[#F1F5F9]">
+          <div className="mt-8 pt-8 border-t border-[#EEF0F4]">
             <h2
-              className="text-base sm:text-lg font-bold text-[#0B1A3D] mb-4 text-center sm:text-left"
+              className="text-base sm:text-lg font-bold text-[#1E293B] mb-4 text-center sm:text-left"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               How to add it
             </h2>
 
             {/* Tab navigation */}
-            <div className="flex border-b border-[#E2E8F0] gap-4 sm:gap-8">
+            <div className="flex border-b border-[#EEF0F4] gap-4 sm:gap-8">
               <button
                 type="button"
                 onClick={() => setActiveTab("gmail")}
-                className={`pb-2.5 text-xs sm:text-sm transition cursor-pointer border-b-2 -mb-px ${
+                className={`pb-2.5 text-xs sm:text-sm transition cursor-pointer border-b-2 -mb-px flex items-center gap-2 ${
                   activeTab === "gmail"
                     ? "border-[#245FD4] text-[#245FD4] font-semibold"
-                    : "border-transparent text-[#64748B] hover:text-[#0B1A3D] font-medium"
+                    : "border-transparent text-[#64748B] hover:text-[#1E293B] font-medium"
                 }`}
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
-                Gmail
+                <Image src="/icons/gmail.svg" alt="Gmail" width={16} height={16} className="h-4 w-4 object-contain" />
+                <span>Gmail</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("outlook")}
-                className={`pb-2.5 text-xs sm:text-sm transition cursor-pointer border-b-2 -mb-px ${
+                className={`pb-2.5 text-xs sm:text-sm transition cursor-pointer border-b-2 -mb-px flex items-center gap-2 ${
                   activeTab === "outlook"
                     ? "border-[#245FD4] text-[#245FD4] font-semibold"
-                    : "border-transparent text-[#64748B] hover:text-[#0B1A3D] font-medium"
+                    : "border-transparent text-[#64748B] hover:text-[#1E293B] font-medium"
                 }`}
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
-                Outlook
+                <Image src="/icons/outlook.svg" alt="Outlook" width={16} height={16} className="h-4 w-4 object-contain" />
+                <span>Outlook</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("apple")}
-                className={`pb-2.5 text-xs sm:text-sm transition cursor-pointer border-b-2 -mb-px ${
+                className={`pb-2.5 text-xs sm:text-sm transition cursor-pointer border-b-2 -mb-px flex items-center gap-2 ${
                   activeTab === "apple"
                     ? "border-[#245FD4] text-[#245FD4] font-semibold"
-                    : "border-transparent text-[#64748B] hover:text-[#0B1A3D] font-medium"
+                    : "border-transparent text-[#64748B] hover:text-[#1E293B] font-medium"
                 }`}
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
-                Apple Mail
+                <Image src="/icons/apple.svg" alt="Apple Mail" width={16} height={16} className="h-4 w-4 object-contain" />
+                <span>Apple Mail</span>
               </button>
             </div>
 
@@ -617,10 +635,16 @@ export default function PublicInvitePage() {
             <ol className="mt-5 space-y-3">
               {stepIndices.map((idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4] font-bold text-[11px] mt-0.5">
+                  <span
+                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#245FD4] font-bold text-[11px] mt-0.5"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
                     {idx + 1}
                   </span>
-                  <span className="text-xs sm:text-sm text-[#334155] leading-relaxed">
+                  <span
+                    className="text-xs sm:text-sm text-[#475569] leading-relaxed"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
                     {renderStepContent(activeTab, idx)}
                   </span>
                 </li>
@@ -629,22 +653,27 @@ export default function PublicInvitePage() {
           </div>
 
           {/* Accept Section */}
-          <div className="mt-8 pt-6 border-t border-[#F1F5F9] flex flex-col items-center">
+          <div className="mt-8 pt-6 border-t border-[#EEF0F4] flex flex-col items-center">
             {acceptError && (
-              <div className="w-full mb-3 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 text-center">
+              <div className="w-full mb-3 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 text-center font-medium">
                 {acceptError}
               </div>
             )}
 
             {isAccepted ? (
-              <div className="w-full flex items-center justify-center gap-2.5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] p-4 text-[#065F46] shadow-2xs">
-                <svg className="h-5 w-5 text-[#059669] shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <div
+                className="w-full flex items-center justify-center gap-2.5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] p-4 text-[#065F46] shadow-2xs"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#10B981] text-white">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
                 <span className="text-xs sm:text-sm font-semibold">
                   All set. {teamName} has been notified.
                 </span>
@@ -655,7 +684,8 @@ export default function PublicInvitePage() {
                   type="button"
                   onClick={handleAccept}
                   disabled={isAccepting}
-                  className="w-full sm:w-auto min-w-[200px] flex items-center justify-center gap-2 rounded-xl bg-[#059669] hover:bg-[#047857] px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto min-w-[220px] flex items-center justify-center gap-2 rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 py-3 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   {isAccepting ? (
                     <>
@@ -675,7 +705,10 @@ export default function PublicInvitePage() {
                     </>
                   )}
                 </button>
-                <p className="text-[11px] text-[#94A3B8] text-center">
+                <p
+                  className="text-[12px] text-[#94A3B8] text-center"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
                   Let your team admin know you have installed your signature.
                 </p>
               </div>
@@ -684,7 +717,10 @@ export default function PublicInvitePage() {
         </div>
       </main>
 
-      <footer className="text-center text-xs text-[#94A3B8] pt-8">
+      <footer
+        className="text-center text-xs text-[#94A3B8] pt-8"
+        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+      >
         &copy; {new Date().getFullYear()} Sig Signature. All rights reserved.
       </footer>
     </div>
