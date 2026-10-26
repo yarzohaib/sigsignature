@@ -185,11 +185,18 @@ export class LocalSignatureRepository implements SignatureRepository {
 
     if (existingIndex >= 0) {
       const existing = existingList[existingIndex];
+      // Strictly lock identity (fullName & companyName)
+      const dataToSave = {
+        ...input.data,
+        fullName: existing.data.fullName,
+        companyName: existing.data.companyName,
+      };
+
       const base = {
         id: existing.id,
         templateId: input.templateId,
         templateVersion: 1,
-        name: input.name.trim() || input.data.fullName.trim() || "My Signature",
+        name: input.name.trim() || existing.data.fullName.trim() || "My Signature",
         createdAt: existing.createdAt,
         updatedAt: now,
       };
@@ -198,13 +205,13 @@ export class LocalSignatureRepository implements SignatureRepository {
         savedItem = {
           ...base,
           kind: "studio",
-          data: input.data as StudioSignatureData,
+          data: dataToSave as StudioSignatureData,
         };
       } else {
         savedItem = {
           ...base,
           kind: "template",
-          data: input.data as TemplateSignatureData,
+          data: dataToSave as TemplateSignatureData,
         };
       }
 
@@ -212,6 +219,16 @@ export class LocalSignatureRepository implements SignatureRepository {
       updatedList[existingIndex] = savedItem;
       this.writeRaw(storageKey, updatedList);
     } else {
+      const lifetimeKey = `${storageKey}_lifetime_count`;
+      const currentLifetime = Math.max(
+        Number.parseInt(localStorage.getItem(lifetimeKey) || "0", 10) || 0,
+        existingList.length
+      );
+      if (currentLifetime >= 3) {
+        throw new Error("You have reached the maximum signature limit (3) for your Free account.");
+      }
+      localStorage.setItem(lifetimeKey, String(currentLifetime + 1));
+
       const newId = input.id && input.id.startsWith("sig_") ? input.id : `sig_${crypto.randomUUID()}`;
       const base = {
         id: newId,
@@ -253,6 +270,17 @@ export class LocalSignatureRepository implements SignatureRepository {
   async duplicate(id: string): Promise<SavedSignature> {
     const storageKey = this.getStorageKey();
     const existingList = await this.list();
+
+    const lifetimeKey = `${storageKey}_lifetime_count`;
+    const currentLifetime = Math.max(
+      Number.parseInt(localStorage.getItem(lifetimeKey) || "0", 10) || 0,
+      existingList.length
+    );
+    if (currentLifetime >= 3) {
+      throw new Error("You have reached the maximum signature limit (3) for your Free account.");
+    }
+    localStorage.setItem(lifetimeKey, String(currentLifetime + 1));
+
     const target = existingList.find((s) => s.id === id);
 
     if (!target) {

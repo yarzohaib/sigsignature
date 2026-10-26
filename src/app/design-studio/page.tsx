@@ -114,7 +114,6 @@ function DesignStudioContent() {
   const [signatureName, setSignatureName] = useState("");
   const [savedSignatureRecord, setSavedSignatureRecord] = useState<SavedSignature | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
-  const [allSignatures, setAllSignatures] = useState<SavedSignature[]>([]);
 
   // Canvas Selection & Details Popover
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -1060,102 +1059,13 @@ function DesignStudioContent() {
       }
     } catch (err: unknown) {
       if (isSignatureLimitError(err)) {
-        try {
-          const repo = getSignatureRepository();
-          const list = await repo.list();
-          setAllSignatures(list);
-          setLimitModalOpen(true);
-        } catch {
-          showToast("You have reached the maximum signature limit.");
-        }
+        setLimitModalOpen(true);
       } else {
         const msg = err instanceof Error ? err.message : "Failed to save signature.";
         showToast(msg);
       }
     } finally {
       setIsSaving(false);
-    }
-  }
-
-  // Overwrite Target Signature on Limit
-  async function handleSelectOverwrite(target: SavedSignature) {
-    try {
-      const repo = getSignatureRepository();
-      const firstTextEl = state.elements?.find(
-        (el): el is FreeTextElement => el.type === "text" && Boolean(el.text.trim())
-      );
-      const firstText = firstTextEl?.text;
-      const sigName = signatureName.trim() || (state.fullName?.trim()
-        ? `${state.fullName.trim()}'s Signature`
-        : firstText?.trim()
-        ? `${firstText.trim()}'s Signature`
-        : "My Signature");
-
-      const firstImageEl = state.elements?.find(
-        (el): el is FreeImageElement => el.type === "image" && Boolean(el.url?.trim())
-      );
-      const firstLogoEl = state.elements?.find(
-        (el): el is FreeLogoElement => el.type === "logo" && Boolean(el.url?.trim())
-      );
-      const trimmedAvatar = state.avatarUrl?.trim() || firstImageEl?.url?.trim() || "";
-      const avatarUrl =
-        trimmedAvatar === "/daniel-wilson.png" || trimmedAvatar.endsWith("/daniel-wilson.png")
-          ? ""
-          : trimmedAvatar;
-      const companyLogoUrl = state.companyLogoUrl?.trim() || firstLogoEl?.url?.trim() || "";
-
-      const payloadData: StudioSignatureData = {
-        ...state,
-        fullName: state.fullName?.trim() || firstText?.trim() || "",
-        avatarUrl,
-        companyLogoUrl,
-        extras: [],
-      };
-
-      const updated = await repo.save({
-        id: target.id,
-        name: sigName,
-        templateId: "design-studio",
-        data: payloadData,
-      });
-
-      if (user?.id) {
-        const activeDraftKey = editingSignatureId
-          ? `sig_studio_draft_${user.id}_${editingSignatureId}`
-          : `sig_studio_draft_${user.id}`;
-        try {
-          localStorage.removeItem(activeDraftKey);
-        } catch {
-          // ignore
-        }
-      }
-
-      setLimitModalOpen(false);
-      setEditingSignatureId(updated.id);
-      currentEditingIdRef.current = updated.id;
-      const fullUpdatedRecord: StudioSavedSignature = {
-        id: updated.id,
-        kind: "studio",
-        templateId: "design-studio",
-        templateVersion: updated.templateVersion ?? 1,
-        name: updated.name || sigName,
-        createdAt: updated.createdAt,
-        updatedAt: updated.updatedAt,
-        data: {
-          ...payloadData,
-          ...(updated.kind === "studio" ? updated.data : {}),
-          canvas: payloadData.canvas,
-          elements: payloadData.elements,
-          design: payloadData.design,
-        },
-      };
-      setSavedSignatureRecord(fullUpdatedRecord);
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("sig_count_update"));
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to overwrite signature.";
-      showToast(msg);
     }
   }
 
@@ -2440,6 +2350,7 @@ function DesignStudioContent() {
                 dispatch={dispatch}
                 zoom={zoom}
                 onToast={showToast}
+                isEditingSavedSignature={Boolean(editingSignatureId || editId)}
               />
 
               {/* Portaled FloatingToolbar when an element is selected */}
@@ -2541,6 +2452,20 @@ function DesignStudioContent() {
                     dispatch({ type: "DUPLICATE_ELEMENT", payload: { id: selectedId! } })
                   }
                   onDelete={() => {
+                    const isLocked =
+                      Boolean(editingSignatureId || editId) &&
+                      selectedElement.type === "text" &&
+                      (("bind" in selectedElement &&
+                        (selectedElement.bind === "name" || selectedElement.bind === "company")) ||
+                        selectedElement.id === "el-name" ||
+                        selectedElement.id === "el-company");
+
+                    if (isLocked) {
+                      showToast(
+                        "Full Name and Company Name cannot be deleted to preserve signature identity on the Free plan."
+                      );
+                      return;
+                    }
                     dispatch({ type: "REMOVE_ELEMENT", payload: { id: selectedId! } });
                     setSelectedId(null);
                     showToast("Element deleted");
@@ -2574,6 +2499,20 @@ function DesignStudioContent() {
                       : undefined
                   }
                   onBindChange={(newBind) => {
+                    const isLocked =
+                      Boolean(editingSignatureId || editId) &&
+                      selectedElement.type === "text" &&
+                      (("bind" in selectedElement &&
+                        (selectedElement.bind === "name" || selectedElement.bind === "company")) ||
+                        selectedElement.id === "el-name" ||
+                        selectedElement.id === "el-company");
+
+                    if (isLocked) {
+                      showToast(
+                        "Full Name and Company Name bindings are locked on the Free plan."
+                      );
+                      return;
+                    }
                     if (selectedId) {
                       dispatch({
                         type: "LINK_TEAM_FIELD",
@@ -2689,6 +2628,7 @@ function DesignStudioContent() {
         dispatch={dispatch}
         initialSection={editDetailsSection}
         onToast={showToast}
+        isEditingSavedSignature={Boolean(editingSignatureId || editId)}
       />
 
       {savedSignatureRecord && (
@@ -2702,8 +2642,6 @@ function DesignStudioContent() {
       <LimitOverwriteModal
         isOpen={limitModalOpen}
         onClose={() => setLimitModalOpen(false)}
-        signatures={allSignatures}
-        onSelectOverwrite={handleSelectOverwrite}
       />
 
       <PremiumLockedModal

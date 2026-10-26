@@ -14,7 +14,7 @@ import { createPortal } from "react-dom";
 
 export type CanvasAlignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
-export type TeamFieldBind = "name" | "jobTitle" | "email" | "phone" | "photo";
+export type TeamFieldBind = "name" | "jobTitle" | "email" | "phone" | "photo" | "company";
 
 interface FloatingToolbarProps {
   elementType?: "text" | "image" | "logo" | "banner" | "divider" | "cta" | "social";

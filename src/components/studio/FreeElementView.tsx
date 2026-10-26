@@ -36,6 +36,8 @@ interface FreeElementViewProps {
   onTextGrowth?: (id: string, deltaH: number) => void;
   domRef?: (node: HTMLDivElement | null) => void;
   showEditorOverlays?: boolean;
+  isEditingSavedSignature?: boolean;
+  onToast?: (msg: string, isError?: boolean) => void;
 }
 
 const HANDLE_CURSORS: Record<ResizeHandle, string> = {
@@ -74,6 +76,8 @@ export default function FreeElementView({
   onTextGrowth,
   domRef,
   showEditorOverlays = true,
+  isEditingSavedSignature = false,
+  onToast,
 }: FreeElementViewProps) {
   const [isEditingText, setIsEditingText] = useState(false);
   const currentElementText = element.type === "text" ? element.text : "";
@@ -127,6 +131,16 @@ export default function FreeElementView({
 
   function handleDoubleClick(e: React.MouseEvent) {
     if (element.type === "text" && !element.locked) {
+      if (
+        isEditingSavedSignature &&
+        (("bind" in element && (element.bind === "name" || element.bind === "company")) ||
+          element.id === "el-name" ||
+          element.id === "el-company")
+      ) {
+        e.stopPropagation();
+        onToast?.("Full name and company name are locked to preserve signature identity on the Free plan.");
+        return;
+      }
       e.stopPropagation();
       setIsEditingText(true);
     }

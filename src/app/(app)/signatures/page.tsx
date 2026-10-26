@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import SignaturesHeader from "@/components/signatures/SignaturesHeader";
 import SignatureCard from "@/components/signatures/SignatureCard";
 import DeleteSignatureModal from "@/components/signatures/DeleteSignatureModal";
+import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import EmptySignaturesState from "@/components/signatures/EmptySignaturesState";
 import Link from "next/link";
 import {
@@ -42,6 +43,7 @@ function MySignaturesContent() {
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
 
   // Copy to team state
   const [copyToTeamSig, setCopyToTeamSig] = useState<SavedSignature | null>(null);
@@ -117,6 +119,20 @@ function MySignaturesContent() {
   }
 
   const handleCreateNew = () => {
+    let lifetime = 0;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("sig_lifetime_signatures_count");
+        if (raw) lifetime = Number.parseInt(raw, 10) || 0;
+      } catch {
+        // ignore
+      }
+    }
+    const totalCount = Math.max(signatures.length, lifetime);
+    if (totalCount >= 3) {
+      setIsLimitModalOpen(true);
+      return;
+    }
     router.push("/templates?new=true");
   };
 
@@ -137,7 +153,7 @@ function MySignaturesContent() {
       }
     } catch (err: unknown) {
       if (isSignatureLimitError(err)) {
-        showToast("You have reached the limit of 3 signatures on the Free plan.");
+        setIsLimitModalOpen(true);
       } else {
         const msg = err instanceof Error ? err.message : "Failed to duplicate signature.";
         showToast(msg);
@@ -304,6 +320,12 @@ function MySignaturesContent() {
         signatureName={deletingSignature?.name || ""}
         onClose={() => setDeletingSignature(null)}
         onConfirm={handleConfirmDelete}
+      />
+
+      {/* Signature Limit Modal */}
+      <LimitOverwriteModal
+        isOpen={isLimitModalOpen}
+        onClose={() => setIsLimitModalOpen(false)}
       />
 
       {/* Copy to Team Confirmation Modal */}

@@ -132,7 +132,7 @@ export type StudioAction =
       type: "LINK_TEAM_FIELD";
       payload: {
         id: string;
-        field?: "name" | "jobTitle" | "email" | "phone" | "photo";
+        field?: "name" | "jobTitle" | "email" | "phone" | "photo" | "company";
       };
     }
   | { type: "MIGRATE_FLOW_TO_FREE" };

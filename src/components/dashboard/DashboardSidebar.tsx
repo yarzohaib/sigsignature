@@ -21,7 +21,12 @@ function getCachedSignatureCount(): number {
 
   try {
     const cached = Number.parseInt(localStorage.getItem(CACHED_SIGNATURE_COUNT_KEY) || "", 10);
-    return Number.isFinite(cached) && cached >= 0 ? cached : 0;
+    const lifetime = Number.parseInt(localStorage.getItem("sig_lifetime_signatures_count") || "", 10);
+    const maxCount = Math.max(
+      Number.isFinite(cached) && cached >= 0 ? cached : 0,
+      Number.isFinite(lifetime) && lifetime >= 0 ? lifetime : 0
+    );
+    return Math.min(3, maxCount);
   } catch {
     return 0;
   }
@@ -41,7 +46,15 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted) {
-          const count = list.length;
+          const listCount = list.length;
+          let lifetime = 0;
+          try {
+            const rawLifetime = localStorage.getItem("sig_lifetime_signatures_count");
+            if (rawLifetime) lifetime = Number.parseInt(rawLifetime, 10) || 0;
+          } catch {
+            // ignore
+          }
+          const count = Math.min(3, Math.max(listCount, lifetime));
           setSignatureCount(count);
           try {
             localStorage.setItem(CACHED_SIGNATURE_COUNT_KEY, String(count));

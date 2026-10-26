@@ -75,7 +75,7 @@ export type FreeTextElement = FreeBase & {
   size: "sm" | "md" | "lg";
   bold: boolean;
   align: "left" | "center" | "right";
-  bind?: "name" | "jobTitle" | "email" | "phone";
+  bind?: "name" | "jobTitle" | "email" | "phone" | "company";
 };
 
 export type FreeImageElement = FreeBase & {

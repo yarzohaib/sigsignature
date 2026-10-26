@@ -811,10 +811,22 @@ export async function fetchSignatures(): Promise<BackendSavedSignature[]> {
       },
     });
 
-    return await handleSignatureApiResponse<BackendSavedSignature[]>(
-      response,
-      "Failed to load signatures"
-    );
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      const message = result?.message || `Failed to load signatures (HTTP ${response.status})`;
+      const code = result?.code;
+      throw new ApiError(message, response.status, code);
+    }
+
+    if (result?.meta?.lifetimeCreated !== undefined && typeof window !== "undefined") {
+      try {
+        localStorage.setItem("sig_lifetime_signatures_count", String(result.meta.lifetimeCreated));
+      } catch {
+        // ignore storage errors
+      }
+    }
+
+    return (result?.data ?? []) as BackendSavedSignature[];
   } catch (networkErr: unknown) {
     if (networkErr instanceof ApiError) throw networkErr;
     const errorDetail =

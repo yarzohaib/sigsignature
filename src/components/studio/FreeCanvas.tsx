@@ -23,6 +23,7 @@ interface FreeCanvasProps {
   dispatch: (action: StudioAction) => void;
   zoom: number;
   onToast: (msg: string, isError?: boolean) => void;
+  isEditingSavedSignature?: boolean;
 }
 
 interface DragState {
@@ -70,6 +71,7 @@ export default function FreeCanvas({
   dispatch,
   zoom,
   onToast,
+  isEditingSavedSignature = false,
 }: FreeCanvasProps) {
   const canvasWidth = data.canvas?.width || 600;
   const canvasHeight = data.canvas?.height || 200;
@@ -693,6 +695,8 @@ export default function FreeCanvas({
                   });
                 }}
                 onTextGrowth={handleTextGrowth}
+                isEditingSavedSignature={isEditingSavedSignature}
+                onToast={onToast}
               />
             );
           })}

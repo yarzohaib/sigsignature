@@ -3,7 +3,6 @@
 import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
-import { SavedSignature } from "@/types/signature";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
@@ -43,6 +42,7 @@ export default function TemplateEditor({
 
   // Current signature ID being edited (persisted after first save)
   const [currentSignatureId, setCurrentSignatureId] = useState<string | undefined>(editingSignatureId);
+  const isEditing = Boolean(currentSignatureId);
 
   // Form data state: map legacy/unrecognized fonts to Arial; apply user defaults ONLY for new signatures
   const [formData, setFormData] = useState<TemplateSignatureData>(() => {
@@ -115,9 +115,8 @@ export default function TemplateEditor({
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
-  // Limit overwrite modal state
+  // Limit modal state
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
-  const [existingSignaturesForLimit, setExistingSignaturesForLimit] = useState<SavedSignature[]>([]);
   // Photo uploading state
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   // Logo uploading state
@@ -353,17 +352,7 @@ export default function TemplateEditor({
       setIsSavedModalOpen(true);
     } catch (err: unknown) {
       if (isSignatureLimitError(err)) {
-        try {
-          const list = await getSignatureRepository().list();
-          setExistingSignaturesForLimit(list);
-          setIsLimitModalOpen(true);
-        } catch {
-          showToast(
-            "Limit reached",
-            "You have reached the limit of 3 signatures on the Free plan.",
-            true
-          );
-        }
+        setIsLimitModalOpen(true);
       } else {
         const message = err instanceof Error ? err.message : "Failed to save signature.";
         showToast("Save failed", message, true);
@@ -371,24 +360,6 @@ export default function TemplateEditor({
     } finally {
       setIsSaving(false);
     }
-  }
-
-  // Handle overwrite choice when user is at 3-signature limit
-  async function handleSelectOverwrite(target: SavedSignature) {
-    const dataToSave = prepareDataForSave();
-    const saved = await getSignatureRepository().save({
-      id: target.id,
-      templateId: template.id,
-      name: formData.fullName || target.name || template.name || "My Signature",
-      data: dataToSave,
-    });
-    setCurrentSignatureId(saved.id);
-    setIsLimitModalOpen(false);
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("sig_count_update"));
-    }
-    setIsSavedModalOpen(true);
-    showToast("Signature updated!", `Replaced "${target.name}" with your new signature.`);
   }
 
   // User Company Logo Upload Handler
@@ -720,16 +691,37 @@ export default function TemplateEditor({
                 {/* Text input fields (2-column grid matching Figma) */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">
-                      Full Name <span className="text-blue-600">*</span>
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Full Name <span className="text-blue-600">*</span>
+                      </label>
+                      {isEditing && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                          <svg className="w-2.5 h-2.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                          Locked
+                        </span>
+                      )}
+                    </div>
                     <input
                       type="text"
                       value={formData.fullName}
                       onChange={(e) => handleInputChange("fullName", e.target.value)}
+                      disabled={isEditing}
                       placeholder="e.g. Daniel Wilson"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium shadow-2xs transition ${
+                        isEditing
+                          ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
+                          : "border-slate-200 text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
+                      }`}
                     />
+                    {isEditing && (
+                      <p className="mt-1 text-[10px] text-slate-400">
+                        Locked to preserve signature identity on the Free plan.
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -746,16 +738,37 @@ export default function TemplateEditor({
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">
-                      Company Name <span className="text-blue-600">*</span>
-                    </label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Company Name <span className="text-blue-600">*</span>
+                      </label>
+                      {isEditing && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                          <svg className="w-2.5 h-2.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                          Locked
+                        </span>
+                      )}
+                    </div>
                     <input
                       type="text"
                       value={formData.companyName}
                       onChange={(e) => handleInputChange("companyName", e.target.value)}
+                      disabled={isEditing}
                       placeholder="e.g. Acme Corp"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium shadow-2xs transition ${
+                        isEditing
+                          ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
+                          : "border-slate-200 text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
+                      }`}
                     />
+                    {isEditing && (
+                      <p className="mt-1 text-[10px] text-slate-400">
+                        Locked to preserve signature identity on the Free plan.
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -1165,12 +1178,10 @@ export default function TemplateEditor({
         signatureName={formData.fullName || template.name}
       />
 
-      {/* Signature Plan Limit Overwrite Modal */}
+      {/* Signature Plan Limit Modal */}
       <LimitOverwriteModal
         isOpen={isLimitModalOpen}
         onClose={() => setIsLimitModalOpen(false)}
-        signatures={existingSignaturesForLimit}
-        onSelectOverwrite={handleSelectOverwrite}
       />
     </div>
   );
