@@ -9,14 +9,6 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- Core Studio & Signature Builder - High Priority -->
-  <url>
-    <loc>https://www.sigsignature.com/design-studio</loc>
-    <lastmod>2026-10-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
   <!-- Authentication Pages -->
   <url>
     <loc>https://www.sigsignature.com/login</loc>
