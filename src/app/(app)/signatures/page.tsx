@@ -29,6 +29,10 @@ import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
+import {
+  isSignatureLimitReached,
+  syncLifetimeSignatureCount,
+} from "@/lib/signatures/lifetimeTracker";
 
 function MySignaturesContent() {
   const router = useRouter();
@@ -56,6 +60,7 @@ function MySignaturesContent() {
     try {
       const repo = getSignatureRepository();
       const list = await repo.list();
+      syncLifetimeSignatureCount(list.length);
       setSignatures(list);
       setCachedRouteData("/signatures", list);
       setLoadError(null);
@@ -119,17 +124,7 @@ function MySignaturesContent() {
   }
 
   const handleCreateNew = () => {
-    let lifetime = 0;
-    if (typeof window !== "undefined") {
-      try {
-        const raw = localStorage.getItem("sig_lifetime_signatures_count");
-        if (raw) lifetime = Number.parseInt(raw, 10) || 0;
-      } catch {
-        // ignore
-      }
-    }
-    const totalCount = Math.max(signatures.length, lifetime);
-    if (totalCount >= 3) {
+    if (isSignatureLimitReached(signatures.length)) {
       setIsLimitModalOpen(true);
       return;
     }
@@ -185,6 +180,8 @@ function MySignaturesContent() {
     if (!deletingSignature) return;
     const deletedName = deletingSignature.name;
     try {
+      // Pin current signatures count as lifetime minimum before deletion
+      syncLifetimeSignatureCount(signatures.length);
       const repo = getSignatureRepository();
       await repo.remove(deletingSignature.id);
       await loadSignatures();

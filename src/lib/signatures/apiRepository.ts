@@ -16,6 +16,11 @@ import { StudioSignatureData } from "@/types/studio";
 import { SignatureRepository } from "./repository";
 import { LocalSignatureRepository } from "./localRepository";
 import { getSignatureKind } from "./kind";
+import {
+  syncLifetimeSignatureCount,
+  recordSignatureCreated,
+  isSignatureLimitReached,
+} from "./lifetimeTracker";
 
 function showToastNotification(message: string): void {
   if (typeof window === "undefined") return;
@@ -140,7 +145,9 @@ export class ApiSignatureRepository implements SignatureRepository {
     }
 
     const items = await fetchSignatures();
-    return items.map(toSavedSignature);
+    const mapped = items.map(toSavedSignature);
+    syncLifetimeSignatureCount(mapped.length, user?.id);
+    return mapped;
   }
 
   async get(id: string): Promise<SavedSignature | null> {
@@ -156,6 +163,8 @@ export class ApiSignatureRepository implements SignatureRepository {
   }
 
   async save(input: SaveSignatureInput): Promise<SavedSignature> {
+    const user = getStoredUser();
+
     if (input.id) {
       const updated = await updateSignature(input.id, {
         name: input.name,
@@ -166,12 +175,21 @@ export class ApiSignatureRepository implements SignatureRepository {
       return toSavedSignature(updated);
     }
 
+    if (isSignatureLimitReached(0, user?.id)) {
+      throw new ApiError(
+        "You have reached the maximum signature limit (3) for your Free account. Deleting signatures does not grant additional slots. Please upgrade your plan.",
+        403,
+        "SIGNATURE_LIMIT_REACHED"
+      );
+    }
+
     const created = await createSignature({
       name: input.name,
       templateId: input.templateId,
       templateVersion: 1,
       data: input.data,
     });
+    recordSignatureCreated(user?.id);
     return toSavedSignature(created);
   }
 
@@ -180,7 +198,17 @@ export class ApiSignatureRepository implements SignatureRepository {
   }
 
   async duplicate(id: string): Promise<SavedSignature> {
+    const user = getStoredUser();
+    if (isSignatureLimitReached(0, user?.id)) {
+      throw new ApiError(
+        "You have reached the maximum signature limit (3) for your Free account. Deleting signatures does not grant additional slots. Please upgrade your plan.",
+        403,
+        "SIGNATURE_LIMIT_REACHED"
+      );
+    }
+
     const duplicated = await duplicateSignature(id);
+    recordSignatureCreated(user?.id);
     return toSavedSignature(duplicated);
   }
 }

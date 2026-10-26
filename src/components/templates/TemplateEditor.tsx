@@ -7,6 +7,7 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { isSignatureLimitError } from "@/app/lib/api";
+import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
 import {
   getStoredSettings,
   getStoredUser,
@@ -336,6 +337,11 @@ export default function TemplateEditor({
 
   // Save the signature to user's signatures list
   async function handleSaveSignature() {
+    if (!currentSignatureId && isSignatureLimitReached()) {
+      setIsLimitModalOpen(true);
+      return;
+    }
+
     try {
       setIsSaving(true);
       const dataToSave = prepareDataForSave();

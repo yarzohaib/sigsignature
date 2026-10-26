@@ -8,6 +8,10 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getStoredRefreshToken, clearAuthSession } from "@/app/lib/auth";
 import { logoutUser } from "@/app/lib/api";
 import { useOptionalUser } from "@/contexts/UserContext";
+import {
+  getLifetimeSignatureCount,
+  syncLifetimeSignatureCount,
+} from "@/lib/signatures/lifetimeTracker";
 
 type SidebarProps = {
   mobileOpen?: boolean;
@@ -20,13 +24,8 @@ function getCachedSignatureCount(): number {
   if (typeof window === "undefined") return 0;
 
   try {
-    const cached = Number.parseInt(localStorage.getItem(CACHED_SIGNATURE_COUNT_KEY) || "", 10);
-    const lifetime = Number.parseInt(localStorage.getItem("sig_lifetime_signatures_count") || "", 10);
-    const maxCount = Math.max(
-      Number.isFinite(cached) && cached >= 0 ? cached : 0,
-      Number.isFinite(lifetime) && lifetime >= 0 ? lifetime : 0
-    );
-    return Math.min(3, maxCount);
+    const lifetime = getLifetimeSignatureCount();
+    return Math.min(3, lifetime);
   } catch {
     return 0;
   }
@@ -46,15 +45,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted) {
-          const listCount = list.length;
-          let lifetime = 0;
-          try {
-            const rawLifetime = localStorage.getItem("sig_lifetime_signatures_count");
-            if (rawLifetime) lifetime = Number.parseInt(rawLifetime, 10) || 0;
-          } catch {
-            // ignore
-          }
-          const count = Math.min(3, Math.max(listCount, lifetime));
+          const lifetime = syncLifetimeSignatureCount(list.length, optionalUser?.user?.id);
+          const count = Math.min(3, Math.max(list.length, lifetime));
           setSignatureCount(count);
           try {
             localStorage.setItem(CACHED_SIGNATURE_COUNT_KEY, String(count));
@@ -78,7 +70,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
       isMounted = false;
       window.removeEventListener("sig_count_update", handleUpdate);
     };
-  }, [pathname]);
+  }, [pathname, optionalUser?.user?.id]);
 
   const navItems = [
     {
@@ -449,7 +441,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
 //       isMounted = false;
 //       window.removeEventListener("sig_count_update", handleUpdate);
 //     };
-//   }, [pathname]);
+//   }, [pathname, optionalUser?.user?.id]);
 
 //   const navItems = [
 //     {

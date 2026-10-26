@@ -18,6 +18,7 @@ import {
   logoutUser,
   isSignatureLimitError,
 } from "@/app/lib/api";
+import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
 import {
   clearAuthSession,
   getStoredRefreshToken,
@@ -975,6 +976,10 @@ function DesignStudioContent() {
   // Save Signature to API Repository
   async function handleSaveSignature(nameOverride?: string) {
     if (!state.elements?.length) return;
+    if (!editingSignatureId && !editId && isSignatureLimitReached()) {
+      setLimitModalOpen(true);
+      return;
+    }
     if (!editingSignatureId && nameOverride === undefined) {
       setSignatureName((current) => current || "My Signature");
       setIsNameDialogOpen(true);

@@ -12,7 +12,9 @@ import { getEditHref } from "@/lib/signatures/kind";
 import { getStoredSettings } from "@/app/lib/auth";
 import TemplatesGallerySkeleton from "@/components/skeletons/TemplatesGallerySkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
+import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
+import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
 
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
 type CategoryTab = (typeof CATEGORIES)[number];
@@ -35,6 +37,7 @@ function TemplatesContent() {
 
   // Preview modal state
   const [previewingTemplate, setPreviewingTemplate] = useState<TemplateItem | null>(null);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
 
   // Reactive edit query param handler
   useEffect(() => {
@@ -45,6 +48,10 @@ function TemplatesContent() {
         setTemplateNotFound(false);
         setIsLoadingEdit(false);
         if (isNew && !isCancelled) {
+          if (isSignatureLimitReached()) {
+            setIsLimitModalOpen(true);
+            return;
+          }
           const settings = getStoredSettings();
           const targetId = settings?.defaultTemplateId || "professional-minimal";
           const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === targetId) || AVAILABLE_TEMPLATES[0];
@@ -103,6 +110,10 @@ function TemplatesContent() {
   }, [selectedCategory]);
 
   const handleSelectTemplate = (template: TemplateItem) => {
+    if (isSignatureLimitReached()) {
+      setIsLimitModalOpen(true);
+      return;
+    }
     setEditingSignatureId(undefined);
     setEditingSignatureData(undefined);
     setEditingTemplate(template);
@@ -272,6 +283,12 @@ function TemplatesContent() {
                 html={generateTemplateHtml(previewingTemplate.defaultData, { preview: true })}
               />
             )}
+
+            {/* Signature Limit Modal */}
+            <LimitOverwriteModal
+              isOpen={isLimitModalOpen}
+              onClose={() => setIsLimitModalOpen(false)}
+            />
           </div>
         )}
       </main>

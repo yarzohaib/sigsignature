@@ -11,6 +11,7 @@ import PlanUsageCard from "@/components/settings/PlanUsageCard";
 import SecurityCard from "@/components/settings/SecurityCard";
 import StartingPointCard from "@/components/settings/StartingPointCard";
 import DataPrivacyCard from "@/components/settings/DataPrivacyCard";
+import { getLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import {
   fetchAccount,
   updateAccountProfile,
@@ -555,7 +556,10 @@ function SettingsContent() {
               <div className="w-full lg:w-[320px] xl:w-[350px] 2xl:w-[380px] shrink-0 flex flex-col gap-5">
                 {/* 4. Plan & usage card */}
                 <PlanUsageCard
-                  signatures={accountData?.usage?.signatures ?? 0}
+                  signatures={Math.min(
+                    accountData?.usage?.signatureLimit ?? 3,
+                    Math.max(accountData?.usage?.signatures ?? 0, getLifetimeSignatureCount())
+                  )}
                   signatureLimit={accountData?.usage?.signatureLimit ?? 3}
                   isWaitlisted={isWaitlisted}
                   isJoiningWaitlist={isJoiningWaitlist}

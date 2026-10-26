@@ -4,6 +4,7 @@ import { TemplateSignatureData } from "@/types/template";
 import { StudioSignatureData } from "@/types/studio";
 import { SignatureRepository } from "./repository";
 import { getSignatureKind } from "./kind";
+import { isSignatureLimitReached, recordSignatureCreated } from "./lifetimeTracker";
 
 const LEGACY_STORAGE_KEY = "sig_user_signatures";
 
@@ -219,15 +220,10 @@ export class LocalSignatureRepository implements SignatureRepository {
       updatedList[existingIndex] = savedItem;
       this.writeRaw(storageKey, updatedList);
     } else {
-      const lifetimeKey = `${storageKey}_lifetime_count`;
-      const currentLifetime = Math.max(
-        Number.parseInt(localStorage.getItem(lifetimeKey) || "0", 10) || 0,
-        existingList.length
-      );
-      if (currentLifetime >= 3) {
+      if (isSignatureLimitReached(existingList.length)) {
         throw new Error("You have reached the maximum signature limit (3) for your Free account.");
       }
-      localStorage.setItem(lifetimeKey, String(currentLifetime + 1));
+      recordSignatureCreated();
 
       const newId = input.id && input.id.startsWith("sig_") ? input.id : `sig_${crypto.randomUUID()}`;
       const base = {
@@ -271,15 +267,10 @@ export class LocalSignatureRepository implements SignatureRepository {
     const storageKey = this.getStorageKey();
     const existingList = await this.list();
 
-    const lifetimeKey = `${storageKey}_lifetime_count`;
-    const currentLifetime = Math.max(
-      Number.parseInt(localStorage.getItem(lifetimeKey) || "0", 10) || 0,
-      existingList.length
-    );
-    if (currentLifetime >= 3) {
+    if (isSignatureLimitReached(existingList.length)) {
       throw new Error("You have reached the maximum signature limit (3) for your Free account.");
     }
-    localStorage.setItem(lifetimeKey, String(currentLifetime + 1));
+    recordSignatureCreated();
 
     const target = existingList.find((s) => s.id === id);
 
