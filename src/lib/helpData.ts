@@ -135,5 +135,5 @@ export const SUPPORT_INFO: SupportInfo = {
   description: "Tell us what you're trying to do. A screenshot or email client name helps.",
   buttonText: "Contact Support",
   href: "/contact",
-  fallbackEmail: "teams@thenevon.com",
+  fallbackEmail: "team@thenevon.com",
 };

@@ -337,7 +337,7 @@ export default function AboutPage() {
 
                 <div className="flex shrink-0">
                   <a
-                    href="mailto:teams@thenevon.com"
+                    href="mailto:team@thenevon.com"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
                     <span>Contact Us</span>

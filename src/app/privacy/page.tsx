@@ -202,8 +202,8 @@ export default function PrivacyPage() {
                   <p className="pt-2">
                     To exercise any of these rights, manage your account directly via Settings or contact our Data
                     Privacy team at:{" "}
-                    <a href="mailto:teams@thenevon.com" className="font-semibold text-[#1243A3] underline">
-                      teams@thenevon.com
+                    <a href="mailto:team@thenevon.com" className="font-semibold text-[#1243A3] underline">
+                      team@thenevon.com
                     </a>
                     .
                   </p>
@@ -220,7 +220,7 @@ export default function PrivacyPage() {
                 </p>
                 <div className="mt-6 flex justify-center">
                   <a
-                    href="mailto:teams@thenevon.com"
+                    href="mailto:team@thenevon.com"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
                     <span>Contact Privacy Team</span>

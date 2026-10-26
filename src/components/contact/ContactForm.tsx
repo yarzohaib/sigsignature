@@ -159,7 +159,7 @@ export default function ContactForm() {
       <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-body text-xs text-slate-500">
           Prefer direct email? You can also{" "}
-          <a href="mailto:teams@thenevon.com" className="font-semibold text-[#1243A3] underline">
+          <a href="mailto:team@thenevon.com" className="font-semibold text-[#1243A3] underline">
             reach our team directly
           </a>
           .

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const contactChannels = [
   {
     department: "Product & Support",
-    email: "teams@thenevon.com",
+    email: "team@thenevon.com",
     scope: "Assistance with signature setup, formatting, client compatibility, and bug inquiries.",
     actionText: "Contact Support Team",
     icon: (

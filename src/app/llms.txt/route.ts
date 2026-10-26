@@ -31,7 +31,7 @@ SigSignature (developed by The Nevon) is a modern web application that generates
 
 ## Contact & Developer
 - Organization: The Nevon (https://www.thenevon.com)
-- Support Email: teams@thenevon.com
+- Support Email: team@thenevon.com
 `;
 
   return new Response(content, {
