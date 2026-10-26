@@ -253,11 +253,16 @@ function MySignaturesContent() {
     );
   }
 
+  const isLimitReached = isSignatureLimitReached(signatures.length);
+
   return (
     <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
       <main className="flex flex-col gap-6 sm:gap-7 w-full">
         {/* Page Header */}
-        <SignaturesHeader onCreateClick={handleCreateNew} />
+        <SignaturesHeader
+          onCreateClick={handleCreateNew}
+          isLimitReached={isLimitReached}
+        />
 
         {/* Content Area */}
         {loadError ? (
@@ -307,7 +312,10 @@ function MySignaturesContent() {
             ))}
           </div>
         ) : (
-          <EmptySignaturesState onCreateClick={handleCreateNew} />
+          <EmptySignaturesState
+            onCreateClick={handleCreateNew}
+            isLimitReached={isLimitReached}
+          />
         )}
       </main>
 

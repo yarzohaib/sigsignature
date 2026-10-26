@@ -4,10 +4,12 @@ import Link from "next/link";
 
 interface EmptySignaturesStateProps {
   onCreateClick?: () => void;
+  isLimitReached?: boolean;
 }
 
 export default function EmptySignaturesState({
   onCreateClick,
+  isLimitReached = false,
 }: EmptySignaturesStateProps) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-[#E2E8F0] bg-white px-6 py-16 sm:py-20 text-center shadow-xs">
@@ -34,7 +36,7 @@ export default function EmptySignaturesState({
         className="text-[20px] font-bold text-[#1E293B]"
         style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
       >
-        No signatures yet.
+        {isLimitReached ? "Signatures limit reached" : "No signatures yet."}
       </h3>
 
       {/* Subtext */}
@@ -42,22 +44,41 @@ export default function EmptySignaturesState({
         className="mt-1.5 text-[14px] text-[#64748B]"
         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
       >
-        Create your first one to get started.
+        {isLimitReached
+          ? "You have reached your 3 free signatures. Upgrade to Pro to create more signatures."
+          : "Create your first one to get started."}
       </p>
 
       {/* Action CTA Button */}
       <div className="mt-6 flex items-center justify-center">
-        <Link
-          href="/templates"
-          onClick={onCreateClick}
-          className="flex h-[46px] items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 text-center text-[15px] font-medium text-white shadow-xs transition hover:opacity-95 active:scale-98"
-          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-        >
-          <span>Create Your First Signature</span>
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </Link>
+        {isLimitReached ? (
+          <Link
+            href="/pricing"
+            className="flex h-[46px] items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 text-center text-[15px] font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-98"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg
+              className="h-4 w-4 text-amber-300 shrink-0"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <span>Upgrade to Pro</span>
+          </Link>
+        ) : (
+          <Link
+            href="/templates"
+            onClick={onCreateClick}
+            className="flex h-[46px] items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 text-center text-[15px] font-medium text-white shadow-xs transition hover:opacity-95 active:scale-98"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <span>Create Your First Signature</span>
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+        )}
       </div>
     </div>
   );

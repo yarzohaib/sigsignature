@@ -72,28 +72,16 @@ export default function TeamSignaturesHeader({
 
         {/* Action Button */}
         {isLimitReached ? (
-          <div className="relative group">
-            <button
-              type="button"
-              onClick={onNewSignature}
-              className="flex items-center gap-2 rounded-xl bg-slate-200 px-4 py-2.5 text-sm font-medium text-slate-500 hover:bg-slate-300 transition cursor-pointer"
-              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              <span> New Signature</span>
-            </button>
-            <div className="absolute right-0 top-full mt-2 hidden group-hover:flex flex-col items-center z-20">
-              <div className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs text-white shadow-lg whitespace-nowrap">
-                Limit reached ({memberLimit} max).{" "}
-                <Link href="/pricing" className="text-[#60A5FA] underline hover:text-white ml-1 font-semibold">
-                  Upgrade
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Link
+            href="/pricing"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:opacity-95"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg className="h-4 w-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <span>Upgrade to Pro</span>
+          </Link>
         ) : (
           <button
             type="button"
