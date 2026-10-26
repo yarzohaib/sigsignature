@@ -993,13 +993,14 @@ export default function SaveSuccessModal({
         </p>
 
         {/* Central Graphic Container with Dashed Trajectory, Envelope Icon, and Center Preview */}
-        <div className="relative w-full max-w-[640px] my-4 sm:my-6 min-h-[240px] sm:min-h-[270px] flex items-center justify-center">
+        <div className="relative my-4 h-[270px] w-full max-w-[640px] sm:my-6">
           {/* Background SVG Dashed Curve Line */}
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox="0 0 640 270"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
           >
             {/* Dashed line connecting left envelope icon, curving around center, and looping to top-right paper airplane */}
             <path
@@ -1014,7 +1015,7 @@ export default function SaveSuccessModal({
           </svg>
 
           {/* Left End: Envelope Icon Badge */}
-          <div className="absolute left-2 sm:left-4 bottom-8 sm:bottom-12 z-20 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-[#EBF3FF] border border-[#BFDBFE] shadow-xs">
+          <div className="absolute left-[8.125%] top-[69.63%] z-20 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#BFDBFE] bg-[#EBF3FF] shadow-xs sm:h-12 sm:w-12">
             <svg
               className="w-5 h-5 text-[#245FD4]"
               viewBox="0 0 24 24"
@@ -1030,9 +1031,9 @@ export default function SaveSuccessModal({
           </div>
 
           {/* Right End: Paper Airplane / Arrow Head */}
-          <div className="absolute right-3 sm:right-6 top-3 sm:top-5 z-20">
+          <div className="absolute left-[93.75%] top-[11.85%] z-20 -translate-x-1/2 -translate-y-1/2">
             <svg
-              className="w-7 h-7 sm:w-8 sm:h-8 text-[#245FD4] rotate-[-10deg] drop-shadow-xs"
+              className="h-7 w-7 rotate-[-32deg] text-[#245FD4] drop-shadow-xs sm:h-8 sm:w-8"
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -1041,39 +1042,30 @@ export default function SaveSuccessModal({
           </div>
 
           {/* Centered Blue Envelope & Signature Card Preview */}
-          <div className="relative w-[340px] sm:w-[420px] max-w-[88vw] flex flex-col items-center">
-            {/* Signature Card (Emerging out of the envelope) */}
-<div className="relative z-10 w-[315px] sm:w-[380px] rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-3 pb-12 sm:p-4 sm:pb-14 text-left shadow-lg">
-  {/* Green Checkmark Circle Badge (Top-Right) */}
-  <div className="absolute -top-3.5 -right-3.5 z-30 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#22C55E] text-white shadow-md border-2 border-white">
-    <svg
-      className="w-5 h-5 sm:w-6 sm:h-6"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  </div>
+          <div className="absolute inset-x-0 top-0 z-10 flex justify-center">
+            {/* Signature card sits behind the envelope pocket, with its lower edge tucked inside. */}
+            <div className="relative z-10 w-[315px] max-w-[88vw] rounded-xl border border-slate-200 bg-white p-3 pb-12 text-left shadow-lg sm:w-[380px] sm:rounded-2xl sm:p-4 sm:pb-14">
+              {/* Green Checkmark Circle Badge (Top-Right) */}
+              <div className="absolute -top-3.5 -right-3.5 z-30 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#22C55E] text-white shadow-md sm:h-10 sm:w-10">
+                <svg
+                  className="h-5 w-5 sm:h-6 sm:w-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
 
-  {/* Real signature, scaled to fit the card so it never scrolls */}
-  <SignaturePreviewFrame html={previewHtml} aspectRatio="16 / 9" />
-</div>
+              {/* Real signature, scaled to fit the card so it never scrolls */}
+              <SignaturePreviewFrame html={previewHtml} aspectRatio="16 / 9" />
+            </div>
 
-              {/* Signature Card Content - Real Signature Markup */}
-              {/* <div
-                className="w-full overflow-hidden text-left"
-                dangerouslySetInnerHTML={{
-                  __html: previewHtml,
-                }}
-              />
-            </div> */}
-
-            {/* Front Envelope Pocket (Overlapping lower portion of card) */}
-            <div className="relative -mt-10 sm:-mt-12 w-full z-20 pointer-events-none">
+            {/* Front envelope pocket overlays more of the card so it appears tucked inside. */}
+            <div className="pointer-events-none absolute bottom-0 left-1/2 z-20 w-[min(420px,94vw)] -translate-x-1/2">
               <svg
                 viewBox="0 0 420 125"
                 className="w-full h-auto drop-shadow-md"
@@ -1224,7 +1216,7 @@ export default function SaveSuccessModal({
         <SignatureCopiedAlert
           isOpen={showCopiedAlert}
           onClose={() => setShowCopiedAlert(false)}
-          className="mt-4 w-full max-w-[440px] animate-in fade-in slide-in-from-top-2 duration-200"
+          className="animate-in fade-in slide-in-from-bottom-2 duration-200"
         />
 
         {/* Inline Feedback Toast */}

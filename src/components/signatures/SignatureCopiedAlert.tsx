@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface SignatureCopiedAlertProps {
   isOpen: boolean;
@@ -27,13 +28,14 @@ export default function SignatureCopiedAlert({
     return () => clearTimeout(timer);
   }, [isOpen, autoCloseMs, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <div
       role="status"
       aria-live="polite"
-      className={`flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] text-left ${className}`}
+      className={`fixed bottom-5 right-5 z-[100] flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 text-left shadow-[0_10px_30px_rgba(0,0,0,0.08)] sm:bottom-6 sm:right-6 ${className}`}
+      style={{ width: "min(440px, calc(100vw - 2.5rem))" }}
     >
       {/* Green Checkmark Circle Badge matching Image 2 */}
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBF8EE] text-[#22C55E]">
@@ -87,6 +89,7 @@ export default function SignatureCopiedAlert({
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
-    </div>
+    </div>,
+    document.body
   );
 }
