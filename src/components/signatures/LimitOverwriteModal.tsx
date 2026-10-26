@@ -7,6 +7,11 @@ import { SavedSignature } from "@/types/signature";
 export interface LimitOverwriteModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
+  description?: string;
+  infoText?: string;
+  secondaryLinkText?: string;
+  secondaryLinkHref?: string;
   signatures?: SavedSignature[];
   onSelectOverwrite?: (targetSignature: SavedSignature) => Promise<void>;
 }
@@ -14,6 +19,11 @@ export interface LimitOverwriteModalProps {
 export default function LimitOverwriteModal({
   isOpen,
   onClose,
+  title = "Signature Limit Reached (3/3)",
+  description = "Free accounts can create up to 3 email signatures in total. You have used all 3 free signature slots. Deleting signatures does not restore creation slots.",
+  infoText = "You can continue editing your existing signatures at any time. To create additional signatures or share with your team, upgrade to Pro.",
+  secondaryLinkText = "My Signatures",
+  secondaryLinkHref = "/signatures",
 }: LimitOverwriteModalProps) {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -54,14 +64,14 @@ export default function LimitOverwriteModal({
           className="text-lg font-bold text-[#1E293B]"
           style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
         >
-          Signature Limit Reached (3/3)
+          {title}
         </h3>
 
         <p
           className="mt-2 text-xs leading-relaxed text-[#64748B]"
           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
         >
-          Free accounts can create up to 3 email signatures in total. You have used all 3 free signature slots. Deleting signatures does not restore creation slots.
+          {description}
         </p>
 
         <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200/70 p-3 text-left">
@@ -69,7 +79,7 @@ export default function LimitOverwriteModal({
             className="text-[11px] text-slate-600 leading-normal"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
-            💡 <span className="font-semibold text-slate-800">You can continue editing your existing signatures</span> at any time. To create additional signatures or share with your team, upgrade to Pro.
+            💡 <span className="font-semibold text-slate-800">{infoText}</span>
           </p>
         </div>
 
@@ -85,14 +95,16 @@ export default function LimitOverwriteModal({
           </Link>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/signatures"
-              onClick={onClose}
-              className="flex-1 rounded-xl border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 text-center"
-              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-            >
-              My Signatures
-            </Link>
+            {secondaryLinkHref ? (
+              <Link
+                href={secondaryLinkHref}
+                onClick={onClose}
+                className="flex-1 rounded-xl border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 text-center"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                {secondaryLinkText}
+              </Link>
+            ) : null}
             <button
               type="button"
               onClick={onClose}

@@ -56,7 +56,7 @@ export default function TeamSignaturesHeader({
       <div className="flex items-center gap-3 self-start sm:self-auto">
         {/* Progress pill matching Figma */}
         <div className="flex items-center gap-2.5 rounded-full border border-[#E2E8F0] bg-white px-3.5 py-1.5 text-xs text-[#64748B] shadow-2xs">
-          <span className="font-medium text-[#475569]">Signatures</span>
+          <span className="font-medium text-[#475569]">Team Signatures</span>
           <div className="h-1.5 w-14 overflow-hidden rounded-full bg-[#E2E8F0]">
             <div
               className={`h-full rounded-full transition-all duration-300 ${
@@ -75,8 +75,8 @@ export default function TeamSignaturesHeader({
           <div className="relative group">
             <button
               type="button"
-              disabled
-              className="flex items-center gap-2 rounded-xl bg-slate-200 px-4 py-2.5 text-sm font-medium text-slate-400 cursor-not-allowed"
+              onClick={onNewSignature}
+              className="flex items-center gap-2 rounded-xl bg-slate-200 px-4 py-2.5 text-sm font-medium text-slate-500 hover:bg-slate-300 transition cursor-pointer"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

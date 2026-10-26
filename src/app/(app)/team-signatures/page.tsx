@@ -16,6 +16,11 @@ import RevokeInviteModal from "@/components/team/RevokeInviteModal";
 import DevInviteModal from "@/components/team/DevInviteModal";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import TeamSignaturesSkeleton from "@/components/skeletons/TeamSignaturesSkeleton";
+import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
+import {
+  getTeamLifetimeMemberCount,
+  syncTeamLifetimeMemberCount,
+} from "@/lib/signatures/lifetimeTracker";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 import {
   getTeam,
@@ -43,6 +48,7 @@ function TeamSignaturesContent() {
   // Modals state
   const [isChooseModalOpen, setIsChooseModalOpen] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [sendingMember, setSendingMember] = useState<TeamMember | null>(null);
   const [revokingMember, setRevokingMember] = useState<TeamMember | null>(null);
@@ -84,6 +90,12 @@ function TeamSignaturesContent() {
       if (backendTeam) {
         const parsed = parseBackendTeam(backendTeam);
         setTeam(parsed);
+        syncTeamLifetimeMemberCount(
+          parsed.members.length,
+          parsed.id,
+          parsed.ownerId,
+          parsed.lifetimeMemberCount
+        );
         setCachedRouteData("/team-signatures", parsed);
       } else {
         setTeam(null);
@@ -108,6 +120,12 @@ function TeamSignaturesContent() {
           if (backendTeam) {
             const parsed = parseBackendTeam(backendTeam);
             setTeam(parsed);
+            syncTeamLifetimeMemberCount(
+              parsed.members.length,
+              parsed.id,
+              parsed.ownerId,
+              parsed.lifetimeMemberCount
+            );
             setCachedRouteData("/team-signatures", parsed);
           } else {
             setTeam(null);
@@ -171,6 +189,10 @@ function TeamSignaturesContent() {
     if (!deletingMember) return;
     setIsDeletingMember(true);
     try {
+      // Pin current member count in lifetime tracker before deletion
+      if (team) {
+        syncTeamLifetimeMemberCount(team.members.length, team.id, team.ownerId);
+      }
       await removeTeamMember(deletingMember.id);
       setDeletingMember(null);
       await loadTeamData();
@@ -199,18 +221,26 @@ function TeamSignaturesContent() {
     }
   };
 
+  const activeMemberCount = team ? team.members.length : 0;
+  const lifetimeMemberCount = team
+    ? getTeamLifetimeMemberCount(team.id, team.ownerId)
+    : 0;
+  const memberLimit = team ? team.memberLimit : 3;
+  const effectiveMemberCount = Math.min(memberLimit, Math.max(activeMemberCount, lifetimeMemberCount));
+  const isLimitReached = Boolean(team && effectiveMemberCount >= memberLimit);
+
   const handleNewSignatureClick = () => {
     if (!team) {
       setIsChooseModalOpen(true);
       return;
     }
+    if (isLimitReached) {
+      setIsLimitModalOpen(true);
+      return;
+    }
     setEditingMember(null);
     setIsMemberModalOpen(true);
   };
-
-  const memberCount = team ? team.members.length : 0;
-  const memberLimit = team ? team.memberLimit : 3;
-  const isLimitReached = memberCount >= memberLimit;
 
   // Instant Skeleton Mount matching Templates benchmark
   if (isLoading && !team && !loadError) {
@@ -226,10 +256,10 @@ function TeamSignaturesContent() {
       <main className="flex flex-col gap-6 sm:gap-7 w-full">
         {/* Header */}
         <TeamSignaturesHeader
-          memberCount={memberCount}
+          memberCount={effectiveMemberCount}
           memberLimit={memberLimit}
           onNewSignature={handleNewSignatureClick}
-          isLimitReached={Boolean(team && isLimitReached)}
+          isLimitReached={isLimitReached}
         />
 
         {/* Content Area */}
@@ -277,12 +307,9 @@ function TeamSignaturesContent() {
 
               {/* Trailing Dashed New Signature Card */}
               <AddMemberCard
-                memberCount={memberCount}
+                memberCount={effectiveMemberCount}
                 memberLimit={memberLimit}
-                onAddMember={() => {
-                  setEditingMember(null);
-                  setIsMemberModalOpen(true);
-                }}
+                onAddMember={handleNewSignatureClick}
               />
             </div>
           </div>
@@ -312,6 +339,17 @@ function TeamSignaturesContent() {
           showToast={showToast}
         />
       )}
+
+      {/* Team Member Limit Modal (3/3) */}
+      <LimitOverwriteModal
+        isOpen={isLimitModalOpen}
+        onClose={() => setIsLimitModalOpen(false)}
+        title="Team Member Limit Reached (3/3)"
+        description="Free accounts can add up to 3 team members in total. You have used all 3 free member slots. Deleting members does not grant additional creation slots."
+        infoText="You can continue editing details for your existing team members at any time. To add more members to your team, upgrade to Pro."
+        secondaryLinkText="Team Signatures"
+        secondaryLinkHref="/team-signatures"
+      />
 
       {/* Send Confirmation Modal */}
       {sendingMember && (

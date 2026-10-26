@@ -9,6 +9,10 @@ import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { renderTeamMemberHtml } from "@/lib/team/render";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
+import {
+  isTeamMemberLimitReached,
+  recordTeamMemberCreated,
+} from "@/lib/signatures/lifetimeTracker";
 
 import {
   TEAM_SOCIAL_PLATFORMS,
@@ -276,6 +280,14 @@ export default function MemberModal({
     e.preventDefault();
     if (!validateForm()) return;
 
+    if (!isEditing && isTeamMemberLimitReached(team.members.length, team.id, team.ownerId, team.memberLimit)) {
+      setIsLimitError(true);
+      setGlobalError(
+        `You have reached the maximum limit of ${team.memberLimit} team members allowed on your plan. Deleting members does not grant additional creation slots. Please upgrade your plan.`
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     setGlobalError(null);
     setIsLimitError(false);
@@ -288,15 +300,17 @@ export default function MemberModal({
 
     try {
       if (isEditing && member) {
+        // Full Name Lock: Always preserve original member.name when editing
+        const lockedName = (member.name && member.name.trim()) ? member.name.trim() : name.trim();
         await updateTeamMember(member.id, {
-          name: name.trim(),
+          name: lockedName,
           email: email.trim().toLowerCase(),
           jobTitle: jobTitle.trim(),
           phone: phone.trim(),
           photoUrl: photoUrl.trim(),
           socials: cleanSocials,
         });
-        showToast(`Updated "${name.trim()}".`);
+        showToast(`Updated "${lockedName}".`);
       } else {
         await addTeamMember({
           name: name.trim(),
@@ -306,6 +320,7 @@ export default function MemberModal({
           photoUrl: photoUrl.trim(),
           socials: cleanSocials,
         });
+        recordTeamMemberCreated(team.id, team.ownerId);
         showToast(`Added "${name.trim()}" to team signatures.`);
       }
 
@@ -393,9 +408,20 @@ export default function MemberModal({
           >
             {/* Full Name */}
             <div>
-              <label className="block text-xs font-semibold text-[#0B1A3D] mb-1">
-                Full name <span className="text-rose-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-[#0B1A3D]">
+                  Full name <span className="text-rose-500">*</span>
+                </label>
+                {isEditing && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                    <svg className="w-2.5 h-2.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    Locked
+                  </span>
+                )}
+              </div>
               <input
                 type="text"
                 value={name}
@@ -403,18 +429,25 @@ export default function MemberModal({
                   setName(e.target.value);
                   if (nameError) setNameError(null);
                 }}
+                disabled={isEditing}
                 placeholder="e.g. Sara Ahmed"
                 maxLength={100}
-                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#0B1A3D] placeholder-[#94A3B8] transition focus:outline-none focus:ring-2 ${
-                  nameError
-                    ? "border-rose-300 focus:border-rose-400 focus:ring-rose-200"
-                    : "border-[#E2E8F0] focus:border-[#245FD4] focus:ring-[#245FD4]/20"
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition focus:outline-none focus:ring-2 ${
+                  isEditing
+                    ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
+                    : nameError
+                    ? "border-rose-300 focus:border-rose-400 focus:ring-rose-200 text-[#0B1A3D]"
+                    : "border-[#E2E8F0] focus:border-[#245FD4] focus:ring-[#245FD4]/20 text-[#0B1A3D]"
                 }`}
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               />
-              {nameError && (
+              {isEditing ? (
+                <p className="mt-1 text-xs text-slate-400">
+                  Full name is locked to preserve member identity on the Free plan.
+                </p>
+              ) : nameError ? (
                 <p className="mt-1 text-xs text-rose-500">{nameError}</p>
-              )}
+              ) : null}
             </div>
 
             {/* Email */}

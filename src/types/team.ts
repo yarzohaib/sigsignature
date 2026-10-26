@@ -40,6 +40,7 @@ export interface Team {
   templateVersion: number;
   data: TeamData;
   memberLimit: number;
+  lifetimeMemberCount?: number;
   createdAt: string;
   updatedAt: string;
   members: TeamMember[];
@@ -49,6 +50,14 @@ export interface Team {
  * Parses and normalizes a BackendTeam response into a frontend Team structure.
  */
 export function parseBackendTeam(backend: BackendTeam): Team {
+  const rawData = (backend.data ?? {}) as Record<string, unknown>;
+  const backendLifetime =
+    typeof rawData.lifetimeMemberCount === "number"
+      ? rawData.lifetimeMemberCount
+      : typeof (backend as unknown as Record<string, unknown>).lifetimeMemberCount === "number"
+      ? ((backend as unknown as Record<string, unknown>).lifetimeMemberCount as number)
+      : undefined;
+
   return {
     id: backend.id,
     ownerId: backend.ownerId,
@@ -58,6 +67,7 @@ export function parseBackendTeam(backend: BackendTeam): Team {
     templateVersion: backend.templateVersion,
     data: (backend.data ?? {}) as TeamData,
     memberLimit: backend.memberLimit,
+    lifetimeMemberCount: backendLifetime,
     createdAt: backend.createdAt,
     updatedAt: backend.updatedAt,
     members: (backend.members || []).map((m: BackendTeamMember) => ({
