@@ -15,6 +15,8 @@ import {
   TeamMemberSocial,
   TeamMemberSocialPlatform,
   SOCIAL_PLATFORM_LABELS,
+  SOCIAL_PLATFORM_EXAMPLES,
+  validateSocialUrl,
   teamHasSocialElement,
 } from "@/lib/team/socials";
 
@@ -154,7 +156,7 @@ export default function MemberModal({
   }
 
   function handleAddSocialLink() {
-    if (socials.length >= 6) return;
+    if (socials.length >= 4) return;
     const used = new Set(socials.map((s) => s.platform));
     const available = TEAM_SOCIAL_PLATFORMS.find((p) => !used.has(p));
     if (!available) return;
@@ -167,6 +169,21 @@ export default function MemberModal({
       copy[index] = { ...copy[index], platform: newPlatform };
       return copy;
     });
+
+    // Revalidate url against new platform if already entered
+    const currentUrl = socials[index]?.url;
+    if (currentUrl && currentUrl.trim()) {
+      const err = validateSocialUrl(newPlatform, currentUrl);
+      setSocialErrors((prev) => {
+        const next = { ...prev };
+        if (err) {
+          next[index] = err;
+        } else {
+          delete next[index];
+        }
+        return next;
+      });
+    }
   }
 
   function handleUrlChange(index: number, newUrl: string) {
@@ -176,13 +193,19 @@ export default function MemberModal({
       return copy;
     });
 
-    // Inline validation: must start with https://
+    const platform = socials[index]?.platform || "linkedin";
     const trimmed = newUrl.trim();
-    if (trimmed && !trimmed.startsWith("https://")) {
-      setSocialErrors((prev) => ({
-        ...prev,
-        [index]: "URL must start with https://",
-      }));
+    if (trimmed) {
+      const err = validateSocialUrl(platform, trimmed);
+      setSocialErrors((prev) => {
+        const next = { ...prev };
+        if (err) {
+          next[index] = err;
+        } else {
+          delete next[index];
+        }
+        return next;
+      });
     } else {
       setSocialErrors((prev) => {
         const next = { ...prev };
@@ -231,16 +254,13 @@ export default function MemberModal({
       isValid = false;
     }
 
-    // Validate social links: must start with https://
+    // Validate social links: must match specific platform URL
     let hasSocialErr = false;
     const newSocialErrors: Record<number, string> = {};
     socials.forEach((item, idx) => {
-      const trimmed = item.url.trim();
-      if (!trimmed) {
-        newSocialErrors[idx] = "URL cannot be empty";
-        hasSocialErr = true;
-      } else if (!trimmed.startsWith("https://")) {
-        newSocialErrors[idx] = "URL must start with https://";
+      const err = validateSocialUrl(item.platform, item.url);
+      if (err) {
+        newSocialErrors[idx] = err;
         hasSocialErr = true;
       }
     });
@@ -462,7 +482,7 @@ export default function MemberModal({
                 <label className="block text-xs font-semibold text-[#0B1A3D]">
                   Social links <span className="font-normal text-[#64748B]">(optional)</span>
                 </label>
-                {socials.length < 6 && (
+                {socials.length < 4 && (
                   <button
                     type="button"
                     onClick={handleAddSocialLink}
@@ -525,7 +545,7 @@ export default function MemberModal({
                             type="url"
                             value={item.url}
                             onChange={(e) => handleUrlChange(index, e.target.value)}
-                            placeholder="https://"
+                            placeholder={SOCIAL_PLATFORM_EXAMPLES[item.platform] || "https://"}
                             maxLength={300}
                             className={`flex-1 min-w-0 rounded-xl border px-3 py-2 text-xs text-[#0B1A3D] placeholder-[#94A3B8] transition focus:outline-none focus:ring-2 ${
                               error

@@ -174,7 +174,11 @@ export default function PreviewSignatureModal({
 
                 {/* Rendered Signature HTML in iframe */}
                 <div className="mt-4 pt-4 border-t border-slate-100">
-                  <SignaturePreviewFrame html={html} aspectRatio={false} />
+                  <SignaturePreviewFrame
+                    html={html}
+                    aspectRatio={false}
+                    targetWidth={device === "mobile" ? 320 : undefined}
+                  />
                 </div>
               </div>
             </div>

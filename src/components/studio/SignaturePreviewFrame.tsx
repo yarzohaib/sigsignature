@@ -24,6 +24,10 @@ export interface SignaturePreviewFrameProps {
    * Optional inner padding percentage (default: 0.92 for 8% breathing room around edges)
    */
   fitPadding?: number;
+  /**
+   * Target container width when aspectRatio is false, used to auto-scale content down if it exceeds the viewport.
+   */
+  targetWidth?: number;
 }
 
 export interface SignaturePreviewFrameHandle {
@@ -35,7 +39,14 @@ export const SignaturePreviewFrame = forwardRef<
   SignaturePreviewFrameHandle,
   SignaturePreviewFrameProps
 >(function SignaturePreviewFrame(
-  { html, className = "", minHeight = 120, aspectRatio = "16 / 9", fitPadding = 0.92 },
+  {
+    html,
+    className = "",
+    minHeight = 120,
+    aspectRatio = "16 / 9",
+    fitPadding = 0.92,
+    targetWidth,
+  },
   ref
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -259,6 +270,45 @@ export const SignaturePreviewFrame = forwardRef<
 
   // Non-aspectRatio mode (e.g. PreviewSignatureModal)
   if (aspectRatio === false) {
+    const rawContentWidth = contentSize.width > 0 ? contentSize.width : 600;
+    const shouldScale =
+      typeof targetWidth === "number" &&
+      targetWidth > 0 &&
+      rawContentWidth > targetWidth;
+    const scale = shouldScale ? targetWidth / rawContentWidth : 1;
+    const scaledHeight = Math.ceil(unscaledHeight * scale);
+
+    if (shouldScale) {
+      return (
+        <div
+          style={{
+            width: "100%",
+            height: `${scaledHeight}px`,
+            position: "relative",
+            overflow: "hidden",
+          }}
+          className={className}
+        >
+          <iframe
+            ref={iframeRef}
+            sandbox="allow-same-origin"
+            srcDoc={srcDoc}
+            onLoad={setupIframeListeners}
+            className="border-0 transition-all"
+            style={{
+              width: `${rawContentWidth}px`,
+              height: `${unscaledHeight}px`,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+              display: "block",
+              overflow: "hidden",
+            }}
+            title="Email Signature Preview"
+          />
+        </div>
+      );
+    }
+
     return (
       <iframe
         ref={iframeRef}
