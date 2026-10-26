@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import {
   StudioSignatureData,
@@ -14,6 +14,11 @@ import {
 import { StudioAction } from "@/lib/studio/types";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
+import {
+  validateSocialUrl,
+  TeamMemberSocialPlatform,
+  SOCIAL_PLATFORM_EXAMPLES,
+} from "@/lib/team/socials";
 
 interface EditDetailsModalProps {
   isOpen: boolean;
@@ -37,6 +42,26 @@ export default function EditDetailsModal({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const socialsRef = useRef<HTMLDivElement>(null);
+
+  // Compute social validation errors directly during render without cascading setState effects
+  const socialErrors = useMemo<Record<string, string>>(() => {
+    if (!isOpen) return {};
+    const errs: Record<string, string> = {};
+    const mapping: Record<string, TeamMemberSocialPlatform> = {
+      linkedin: "linkedin",
+      twitter: "x",
+      facebook: "facebook",
+      instagram: "instagram",
+    };
+    Object.entries(mapping).forEach(([key, plat]) => {
+      const val = state.socials?.[key as keyof typeof state.socials];
+      if (val && val.trim()) {
+        const err = validateSocialUrl(plat, val);
+        if (err) errs[key] = err;
+      }
+    });
+    return errs;
+  }, [isOpen, state]);
 
   // Close on Escape
   useEffect(() => {
@@ -150,47 +175,62 @@ export default function EditDetailsModal({
                 {[
                   {
                     key: "linkedin" as const,
+                    platform: "linkedin" as const,
                     label: "LinkedIn Profile",
-                    placeholder: "https://linkedin.com/in/username (optional)",
+                    placeholder: SOCIAL_PLATFORM_EXAMPLES.linkedin,
                   },
                   {
                     key: "twitter" as const,
+                    platform: "x" as const,
                     label: "Twitter / X Profile",
-                    placeholder: "https://x.com/username (optional)",
+                    placeholder: SOCIAL_PLATFORM_EXAMPLES.x,
                   },
                   {
                     key: "facebook" as const,
+                    platform: "facebook" as const,
                     label: "Facebook Profile",
-                    placeholder: "https://facebook.com/username (optional)",
+                    placeholder: SOCIAL_PLATFORM_EXAMPLES.facebook,
                   },
                   {
                     key: "instagram" as const,
+                    platform: "instagram" as const,
                     label: "Instagram Profile",
-                    placeholder: "https://instagram.com/username (optional)",
+                    placeholder: SOCIAL_PLATFORM_EXAMPLES.instagram,
                   },
-                ].map(({ key, label, placeholder }) => (
-                  <div key={key}>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      {label}
-                    </label>
-                    <input
-                      type="url"
-                      value={state.socials?.[key] || ""}
-                      onChange={(e) => {
-                        dispatch({
-                          type: "UPDATE_SIGNATURE_FIELD",
-                          field: "socials",
-                          value: {
-                            ...state.socials,
-                            [key]: e.target.value,
-                          },
-                        });
-                      }}
-                      placeholder={placeholder}
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:border-[#245FD4] focus:outline-none focus:ring-1 focus:ring-[#245FD4] transition"
-                    />
-                  </div>
-                ))}
+                ].map(({ key, label, placeholder }) => {
+                  const error = socialErrors[key];
+                  return (
+                    <div key={key}>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        {label}
+                      </label>
+                      <input
+                        type="url"
+                        value={state.socials?.[key] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          dispatch({
+                            type: "UPDATE_SIGNATURE_FIELD",
+                            field: "socials",
+                            value: {
+                              ...state.socials,
+                              [key]: val,
+                            },
+                          });
+                        }}
+                        placeholder={placeholder}
+                        className={`w-full rounded-xl border px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 transition focus:outline-none focus:ring-1 ${
+                          error
+                            ? "border-rose-300 focus:border-rose-500 focus:ring-rose-200"
+                            : "border-slate-300 focus:border-[#245FD4] focus:ring-[#245FD4]"
+                        }`}
+                      />
+                      {error && (
+                        <p className="mt-1 text-[11px] text-rose-500">{error}</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -415,7 +455,13 @@ export default function EditDetailsModal({
         <div className="flex items-center justify-end border-t border-[#E2E8F0] px-6 py-3 bg-slate-50/70">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              if (Object.keys(socialErrors).length > 0) {
+                onToast("Please fix the invalid social profile URLs.", true);
+                return;
+              }
+              onClose();
+            }}
             className="rounded-xl bg-[#245FD4] px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition shadow-xs"
           >
             Done
