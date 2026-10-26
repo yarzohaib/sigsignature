@@ -15,7 +15,7 @@ function PricingContent() {
   }
 
   return (
-    <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 3xl:px-[clamp(48px,3vw,80px)] 3xl:py-[clamp(24px,1.5vw,40px)] bg-white w-full">
+    <div className="flex flex-1 flex-col justify-start overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8 xl:px-12 2xl:px-16 3xl:px-[clamp(48px,3vw,80px)] 3xl:py-[clamp(24px,1.5vw,40px)] bg-white w-full">
       {/* Toast Notification */}
       {premiumToast && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-200">
@@ -40,7 +40,7 @@ function PricingContent() {
         </div>
       )}
 
-      <main className="flex flex-1 flex-col justify-between w-full my-auto py-1 3xl:gap-[clamp(14px,0.9vw,26px)]">
+      <main className="flex flex-1 flex-col justify-between w-full py-1 3xl:gap-[clamp(14px,0.9vw,26px)]">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
