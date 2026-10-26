@@ -1,0 +1,47 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { DETAILED_GUIDES } from "@/lib/guidesData";
+import GuideArticle from "@/components/help/GuideArticle";
+
+interface GuidePageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: GuidePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const guide = DETAILED_GUIDES[slug];
+
+  if (!guide) {
+    return {
+      title: "Guide Not Found | SigSignature",
+      description: "The requested email signature guide could not be found.",
+    };
+  }
+
+  return {
+    title: `${guide.title} | SigSignature Help`,
+    description: guide.subtitle,
+    openGraph: {
+      title: `${guide.title} | SigSignature Help`,
+      description: guide.subtitle,
+      type: "article",
+    },
+  };
+}
+
+export default async function GuidePage({ params }: GuidePageProps) {
+  const { slug } = await params;
+  const guide = DETAILED_GUIDES[slug];
+
+  if (!guide) {
+    notFound();
+  }
+
+  return (
+    <div className="flex-1 w-full py-4 sm:py-6 lg:py-8 bg-[#F8FAFC]">
+      <GuideArticle guide={guide} />
+    </div>
+  );
+}
