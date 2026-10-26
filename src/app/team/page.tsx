@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
@@ -18,11 +19,27 @@ interface TeamMember {
   role: string;
   bio: string;
   focusAreas: string[];
+  imageUrl: string;
   linkedinUrl?: string;
+}
+
+function TeamAvatar({ member, className }: { member: TeamMember; className: string }) {
+  return (
+    <div className={`shrink-0 overflow-hidden rounded-2xl bg-[#DCEBFF] ${className}`}>
+      <Image
+        src={member.imageUrl}
+        alt={`${member.name} profile photo`}
+        width={128}
+        height={128}
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
 }
 
 const leadershipMember: TeamMember = {
   initials: "SN",
+  imageUrl: "/nadir.png",
   name: "Sardar M. Nadir",
   role: "CEO AND FOUNDER",
   bio: "Visionary entrepreneur and tech leader driving the strategic direction of The Nevon. Nadir is focused on building high-utility, deliverability-first SaaS products and scaling high-agency engineering teams.",
@@ -32,12 +49,13 @@ const leadershipMember: TeamMember = {
     "Executive Leadership",
     "Venture Growth",
   ],
-  linkedinUrl: "https://linkedin.com",
+  linkedinUrl: "https://www.linkedin.com/in/nadir1214/",
 };
 
 const teamMembers: TeamMember[] = [
   {
     initials: "MZ",
+    imageUrl: "/zohaib.jpeg",
     name: "Muhammad Zohaib",
     role: "LEAD FULL-STACK DEVELOPER",
     bio: "Full-stack systems engineer who architected and built Sig Signature end-to-end. Zohaib engineered the core dual-viewport studio, reactive editor, and the strict HTML table compilation engine that ensures zero Outlook distortion.",
@@ -47,10 +65,11 @@ const teamMembers: TeamMember[] = [
       "Next.js & React",
       "Tailwind CSS",
     ],
-    linkedinUrl: "https://linkedin.com",
+    linkedinUrl: "https://www.linkedin.com/in/zohaib-yar/",
   },
   {
     initials: "AM",
+    imageUrl: "/moiz.png",
     name: "Abdul Moiz Shahzad",
     role: "HEAD OF SEO, AEO & GEO",
     bio: "Organic growth and search intelligence strategist who engineered Sig Signature's complete SEO, AEO (Answer Engine Optimization), and GEO framework. Abdul Moiz ensures the platform dominates high-intent discovery and AI search engines.",
@@ -60,10 +79,11 @@ const teamMembers: TeamMember[] = [
       "Entity Optimization",
       "Organic Growth",
     ],
-    linkedinUrl: "https://linkedin.com",
+    linkedinUrl: "https://www.linkedin.com/in/abdul-moiz-shahzad-92b240441/",
   },
   {
     initials: "AA",
+    imageUrl: "/ali.png",
     name: "Ali Aun",
     role: "QA & SOCIAL OPERATIONS",
     bio: "Rigorous quality assurance engineer dedicated to end-to-end testing, edge-case validation, and email client deliverability. Ali tests Sig Signature across legacy Outlook engines and mobile viewports, while also managing social media operations and brand engagement.",
@@ -73,10 +93,11 @@ const teamMembers: TeamMember[] = [
       "Social Media Ops",
       "Deliverability QA",
     ],
-    linkedinUrl: "https://linkedin.com",
+    linkedinUrl: "https://www.linkedin.com/in/ali-aun/",
   },
   {
     initials: "M",
+    imageUrl: "/mishal.png",
     name: "Mishal",
     role: "UI/UX DESIGNER",
     bio: "Product designer crafting clean, functional, and accessible digital interfaces. Mishal established Sig Signature's frosted glass aesthetic, typography hierarchy, and minimal executive signature templates.",
@@ -86,7 +107,7 @@ const teamMembers: TeamMember[] = [
       "Responsive Layouts",
       "Visual Hierarchy",
     ],
-    linkedinUrl: "https://linkedin.com",
+    linkedinUrl: "https://www.linkedin.com/in/mishal-rajpoot-79323741b",
   },
 ];
 
@@ -153,9 +174,7 @@ export default function TeamPage() {
                   {/* Top Header: Avatar + Title + LinkedIn */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4 sm:gap-5">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#DCEBFF] font-heading text-lg font-bold text-[#245FD4] sm:h-16 sm:w-16 sm:text-xl">
-                        {leadershipMember.initials}
-                      </div>
+                      <TeamAvatar member={leadershipMember} className="h-14 w-14 sm:h-16 sm:w-16" />
                       <div>
                         <h2 className="font-heading text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-[26px]">
                           {leadershipMember.name}
@@ -207,9 +226,7 @@ export default function TeamPage() {
                       {/* Avatar + Name + LinkedIn */}
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3.5 sm:gap-4">
-                          <div className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-[#DCEBFF] font-heading text-base font-bold text-[#245FD4] sm:h-14 sm:w-14 sm:text-lg">
-                            {member.initials}
-                          </div>
+                          <TeamAvatar member={member} className="h-13 w-13 sm:h-14 sm:w-14" />
                           <div>
                             <h3 className="font-heading text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
                               {member.name}
