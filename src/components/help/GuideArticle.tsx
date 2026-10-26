@@ -9,6 +9,25 @@ interface GuideArticleProps {
 export default function GuideArticle({ guide }: GuideArticleProps) {
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+      {/* Top Left: Back to Help Center Link */}
+      <div className="mb-4 sm:mb-6">
+        <Link
+          href="/help"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-brand transition group font-body"
+        >
+          <svg
+            className="w-4 h-4 transition-transform group-hover:-translate-x-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          <span>Back to Help Center</span>
+        </Link>
+      </div>
+
       {/* Main White Container (matches crushsvg style in screenshot) */}
       <article className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 md:p-12 shadow-xs">
         {/* Eyebrow badge */}
@@ -263,18 +282,8 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
           </div>
         )}
 
-        {/* Back & Next Navigation */}
-        <div className="mt-10 pt-6 border-t border-slate-200 flex items-center justify-between flex-wrap gap-4 font-body">
-          <Link
-            href="/help"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-brand transition"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            <span>Back to Help Center</span>
-          </Link>
-
+        {/* Bottom Action: Open Design Studio */}
+        <div className="mt-10 pt-6 border-t border-slate-200 flex items-center justify-end font-body">
           <Link
             href="/design-studio"
             className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-brand-dark transition active:scale-98"

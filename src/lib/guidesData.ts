@@ -28,7 +28,7 @@ export interface DetailedGuide {
   id: string;
   slug: string;
   title: string;
-  eyebrow: string; // e.g. "GETTING STARTED", "INSTALLATION", "EXPORT & INTEGRATION", "TROUBLESHOOTING"
+  eyebrow: string; // e.g. "GETTING STARTED GUIDE", "INSTALLATION GUIDE", "EXPORT & INTEGRATION GUIDE", "TROUBLESHOOTING GUIDE"
   category: string;
   readTime: string;
   appliesTo: string;
@@ -55,14 +55,14 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
     appliesTo: "All Plans & Templates",
     author: "SigSignature Deliverability Team",
     subtitle:
-      "A step-by-step walkthrough to design, customize, and preview a bulletproof HTML email signature tailored for your personal brand or team.",
+      "A step-by-step walkthrough to design, customize, preview, and save a bulletproof HTML email signature tailored for your personal brand or team.",
     overview: [
-      "An email signature is not a graphic banner; it is a critical deliverability asset. Unlike standard web pages, email clients (especially Microsoft Outlook and Gmail) use legacy HTML rendering engines.",
+      "An email signature is not a graphic banner; it is a critical deliverability asset. Unlike standard web pages, email clients (especially Microsoft Outlook and Gmail) use legacy rendering engines.",
       "SigSignature automatically compiles your visual design into email-safe nested tables, 100% inline CSS, and Outlook MSO conditionals to guarantee consistent rendering across every inbox.",
     ],
     prerequisites: [
       "Ensure you are logged into your SigSignature account at sigsignature.com.",
-      "Free accounts can generate, customize, and export signatures immediately with zero credit card required.",
+      "Free accounts can generate, customize, and save up to 3 active signatures with zero credit card required.",
     ],
     sections: [
       {
@@ -70,9 +70,9 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
         steps: [
           {
             number: 1,
-            title: "Select a Foundation Template",
+            title: "Select a Starting Template",
             description:
-              "Navigate to Templates from your dashboard sidebar. Browse through our curated layout archetypes:",
+              "Navigate to Templates from your sidebar or dashboard. Browse through our curated design archetypes:",
             substeps: [
               "Executive / Corporate: Formal horizontal layout featuring high-contrast typography, company credentials, and legal disclaimers.",
               "Modern Minimal: Compact two-column design optimized for short correspondence and mobile readability.",
@@ -80,47 +80,60 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
             ],
             callout: {
               type: "tip",
-              text: "Click 'Use Template' to load your chosen foundation into the Design Studio editor.",
+              text: "Click 'Use Template' on any card to load your selection directly into the Design Studio canvas.",
             },
           },
           {
             number: 2,
-            title: "Enter Personal & Company Details",
-            description: "In the left-hand editor sidebar, populate your core identity fields:",
+            title: "Customize Personal & Company Details",
+            description:
+              "Click on any text element on the canvas or open the left-hand editor drawer to populate your core identity fields:",
             substeps: [
               "Full Name & Job Title: Keep titles under 45 characters to avoid awkward line wrapping on smartphone screens.",
               "Company Name & Department: Optionally add your business URL with proper https:// protocols.",
-              "Contact Information: Phone number, direct email, office address, and calendar booking link (e.g., Calendly, Cal.com).",
+              "Contact Information: Direct phone number, email address, physical office location, and calendar booking link (e.g., Calendly, Cal.com).",
             ],
           },
           {
             number: 3,
             title: "Upload Your Avatar Photo or Company Logo",
-            description: "Click on the Images tab in the editor sidebar:",
+            description: "Click on the photo or logo placeholder on the canvas, or select the Images tab:",
             substeps: [
               "File Formats: Use PNG or JPEG. Avoid SVGs as Gmail and Outlook strip SVG images for security.",
-              "Resolution: Upload at 2x resolution (e.g., 160×160px for an 80×80px display) for crisp Retina sharpness.",
-              "Cropping & Shape: Choose between Circular, Rounded Rect (8px radius), or Sharp Square.",
+              "Resolution (The 2x Rule): Upload at 2x resolution (e.g., 160×160px for an 80×80px display) for crisp Retina display sharpness.",
+              "Cropping & Shape: Choose between Circular, Rounded Rectangle (8px radius), or Sharp Square. Use the built-in 1:1 square crop tool to prevent oval distortion.",
             ],
           },
           {
             number: 4,
             title: "Configure Social Icons & Action CTAs",
             description:
-              "Connect your professional touchpoints: LinkedIn, X (Twitter), GitHub, YouTube, or your website. Select from 4 icon visual styles (Filled Circle, Minimal Outline, Square, or Brand Colors). Ensure every link is tested and active.",
+              "Connect your professional touchpoints: LinkedIn, X (Twitter), GitHub, YouTube, or your personal website. Select from 4 icon visual styles (Filled Circle, Minimal Outline, Square, or Brand Colors). Ensure every link is tested and active.",
           },
           {
             number: 5,
             title: "Inspect Live Preview (Desktop & Mobile)",
-            description: "Click the Preview Signature button in the top navigation bar. Toggle between:",
+            description:
+              "Click the 'Preview Signature' button in the top toolbar to inspect your signature before publishing. Toggle between:",
             substeps: [
               "Desktop (600px): Simulates standard widescreen Outlook, Apple Mail, and Gmail desktop views.",
-              "Mobile (360px): Verifies how horizontal columns stack on iOS Mail and Android Gmail apps.",
+              "Mobile (360px): Verifies how columns stack and scale on iOS Mail and Android Gmail apps.",
             ],
             callout: {
               type: "note",
-              text: "Pro Tip for Deliverability: Keep your total HTML file size under 10KB and total image payload under 150KB. Heavy signatures increase spam score triggers on corporate email firewalls (Proofpoint, Mimecast).",
+              text: "Pro Tip: Keep total image payload under 150KB. Overly heavy assets increase spam score triggers on corporate email firewalls (Proofpoint, Mimecast).",
             },
+          },
+          {
+            number: 6,
+            title: "Save & Export Your Signature",
+            description:
+              "Click 'Save & Continue' in the top-right corner. Enter a name for your signature (e.g., 'Work Official'). Once saved:",
+            substeps: [
+              "Click 'Copy Signature' from the modal to copy the formatted visual signature directly to your clipboard for instant pasting into Gmail or Outlook.",
+              "Or click 'Download HTML' to download the standalone production-grade HTML file.",
+              "Your signature is saved in your 'My Signatures' library so you can edit, duplicate, or re-copy it at any time.",
+            ],
           },
         ],
       },
@@ -180,30 +193,30 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
             number: 1,
             title: "Copy the Signature from SigSignature",
             description:
-              "In your SigSignature dashboard, open your finalized signature and click 'Copy Visual Signature' (or click 'Copy Signature to Clipboard'). Do not copy raw HTML text for Gmail Web; copy the rendered visual output.",
+              "In your SigSignature dashboard or Design Studio, click 'Copy Signature' (or click 'Copy' on your card in My Signatures). This copies the rendered visual rich text to your clipboard. Do not paste raw HTML code into Gmail Web; paste the visual rich text output.",
           },
           {
             number: 2,
             title: "Open Gmail Settings",
             description:
-              "Open Gmail in Chrome, Safari, or Edge. Click the Settings Gear icon (⚙) in the top-right corner, then click 'See all settings'.",
+              "Open Gmail in Chrome, Safari, Edge, or Brave. Click the Settings Gear icon (⚙) in the top-right corner, then click 'See all settings'.",
           },
           {
             number: 3,
             title: "Navigate to the Signature Section",
             description:
-              "Under the General tab, scroll down to the Signature section. Click '+ Create new' and name your signature (e.g., 'Work Official' or 'SigSignature').",
+              "Under the 'General' tab, scroll down to the 'Signature' section. Click '+ Create new' and name your signature (e.g., 'Work Official' or 'SigSignature').",
           },
           {
             number: 4,
             title: "Paste and Assign Defaults",
             description:
-              "Click inside the white signature text box. Paste your signature using keyboard shortcuts:",
+              "Click inside the white signature text box. Paste your signature using your keyboard shortcut:",
             substeps: [
-              "Windows: Ctrl + V",
-              "Mac: Cmd + V",
-              "Under Signature defaults, configure FOR NEW EMAILS USE: Select your new signature name.",
-              "Under ON REPLY/FORWARD USE: Select your new signature name.",
+              "Windows / Linux: Press Ctrl + V",
+              "Mac: Press Cmd + V",
+              "Under Signature defaults, configure 'FOR NEW EMAILS USE': Select your new signature name.",
+              "Under 'ON REPLY/FORWARD USE': Select your new signature name.",
             ],
           },
           {
@@ -220,10 +233,10 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
             number: 6,
             title: "Save Changes",
             description:
-              "Scroll down to the bottom of the page and click 'Save Changes'. Compose a new email to verify.",
+              "Scroll down to the bottom of the page and click 'Save Changes'. Open a new compose window to test and verify your signature.",
             callout: {
               type: "note",
-              text: "Gmail Mobile App Limitation: The official Gmail app for iOS and Android has a built-in plaintext-only mobile signature setting. To send HTML signatures from mobile, disable the 'Mobile Signature' toggle in Gmail App Settings; Gmail will then automatically inherit your desktop HTML signature via Google Workspace cloud sync.",
+              text: "Gmail Mobile App Tip: The official Gmail app for iOS and Android has a built-in plaintext-only mobile signature setting. To send HTML signatures from mobile, simply turn OFF the 'Mobile Signature' toggle in Gmail App Settings; Gmail will then automatically inherit your desktop HTML signature via Google Workspace cloud sync.",
             },
           },
         ],
@@ -250,7 +263,7 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
       ],
     },
     keyTakeaways: [
-      "Always copy via 'Copy Visual Signature' for direct paste into Gmail Web.",
+      "Always copy via 'Copy Signature' for direct paste into Gmail Web.",
       "Ensure the 'Insert signature before quoted text' checkbox is enabled.",
       "Verify by composing a new email and sending a live test to an external inbox.",
     ],
@@ -278,7 +291,7 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
           {
             number: 1,
             title: "Copy Signature",
-            description: "In SigSignature, click 'Copy Visual Signature'.",
+            description: "In SigSignature, click 'Copy Signature' (or 'Copy' from My Signatures).",
           },
           {
             number: 2,
@@ -301,22 +314,22 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
             number: 1,
             title: "Open Signatures Panel",
             description:
-              "In Outlook Desktop, click File > Options > Mail, then click the 'Signatures...' button. (Alternatively: Open a new message, click Signature in the ribbon, and select Signatures...).",
+              "In Outlook Desktop, click File > Options > Mail, then click the 'Signatures...' button. (Alternatively: Open a new message, click 'Signature' in the ribbon toolbar, and select 'Signatures...').",
           },
           {
             number: 2,
             title: "Create & Paste",
             description:
-              "Click 'New', enter a name, and paste your copied visual signature into the 'Edit signature' field.",
+              "Click 'New', enter a name, and paste your copied visual signature into the 'Edit signature' field with Ctrl+V.",
           },
           {
             number: 3,
             title: "Configure Default Accounts",
             description:
-              "Under 'Choose default signature', select your email account and assign your new signature to both New messages and Replies/forwards. Click OK.",
+              "Under 'Choose default signature', select your email account and assign your new signature to both 'New messages' and 'Replies/forwards'. Click OK.",
             callout: {
               type: "tip",
-              text: "High-DPI / 4K Monitor Note: If your photo appears gigantic in Outlook, Outlook ignored CSS dimensions because the image tag lacked an explicit HTML width=\"\" attribute. All SigSignature exports include hardcoded physical HTML width and height attributes to lock dimensions in the Word MSO engine.",
+              text: "High-DPI / 4K Monitor Note: If your photo appears gigantic in Outlook, Outlook ignored CSS dimensions because the image tag lacked an explicit HTML width=\"\" attribute. All SigSignature exports include hardcoded physical HTML width and height attributes to lock dimensions in Word MSO engine.",
             },
           },
         ],
@@ -333,7 +346,7 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
             number: 2,
             title: "Paste & Select Default",
             description:
-              "Click the '+' button, paste your signature into the right panel, close the window, and choose your default signature under Choose default signature.",
+              "Click the '+' button, paste your signature into the right panel with Cmd+V, close the window, and choose your default signature under 'Choose default signature'.",
           },
         ],
       },
@@ -359,7 +372,7 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
       ],
     },
     keyTakeaways: [
-      "Use 'Copy Visual Signature' for direct paste into Outlook Web and Desktop.",
+      "Use 'Copy Signature' for direct visual paste into Outlook Web and Desktop.",
       "Always assign your signature to both 'New messages' and 'Replies/forwards' in Outlook defaults.",
       "SigSignature's built-in MSO conditional tables ensure 100% layout lock on Word engine versions.",
     ],
@@ -386,21 +399,21 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
         steps: [
           {
             number: 1,
-            title: "Copy Visual Signature (Clipboard)",
+            title: "Copy Signature (Rich-Text Clipboard)",
             description:
-              "Best for direct visual pasting into webmail clients (Gmail, Outlook Web, Yahoo Mail, Thunderbird). Copies rich text and rendered table binaries directly to system clipboard.",
+              "Best for direct visual pasting into webmail clients (Gmail, Outlook Web, Yahoo Mail, Apple Mail). Copies rich text and rendered table binaries directly to system clipboard.",
           },
           {
             number: 2,
-            title: "Copy HTML Source Code",
+            title: "Download HTML File (.html)",
             description:
-              "Best for CRM templates (HubSpot, Salesforce Lightning, Zoho Mail) and web developers. Copies clean, minified HTML with inline styles and MSO tags.",
+              "Available immediately upon saving from the 'What's Next?' modal. Downloads a standalone .html file containing minified HTML with 100% inline styles and Outlook MSO conditional tags.",
           },
           {
             number: 3,
-            title: "Download HTML File (.html)",
+            title: "Raw HTML Source Code",
             description:
-              "Downloads a standalone .html file suitable for local archiving, Apple Mail configuration, or programmatic distribution.",
+              "Open the downloaded .html file in any text editor (VS Code, TextEdit, Notepad) to copy raw HTML source code for CRM templates (HubSpot, Salesforce Lightning, Zoho Mail) or developer integration.",
           },
         ],
       },
@@ -411,22 +424,22 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
             number: 1,
             title: "HubSpot CRM",
             description:
-              "In HubSpot, navigate to Settings (⚙) > General > Email. In the 'Email signature' box, click the HTML source code button (</>). Paste the minified HTML code exported from SigSignature and click Save.",
+              "In HubSpot, navigate to Settings (⚙) > General > Email. In the 'Email signature' box, click the HTML source code button (</>). Paste the HTML code exported from SigSignature and click Save.",
           },
           {
             number: 2,
             title: "Salesforce Lightning",
             description:
-              "In Salesforce, click your Profile avatar > Settings > Email > My Email Settings. Paste the raw HTML into the Email Signature text area. Check the box to apply to outgoing emails and click Save.",
+              "In Salesforce, click your Profile avatar > Settings > Email > My Email Settings. Paste the raw HTML into the 'Email Signature' text area. Check the box to apply to outgoing emails and click Save.",
           },
           {
             number: 3,
             title: "Apple Mail (macOS .mailsignature method)",
             description: "Apple Mail requires replacing the internal binary signature file:",
             substeps: [
-              "1. In Apple Mail, create a placeholder signature under Settings > Signatures.",
-              "2. Close Apple Mail. Open Terminal and navigate to ~/Library/Mail/V10/MailData/Signatures/.",
-              "3. Identify the newest .mailsignature file. Open it in a text editor, replace the body HTML with your exported SigSignature HTML, and lock the file (chflags uchg filename) to prevent Apple Mail from overwriting it.",
+              "1. In Apple Mail, create a temporary placeholder signature under Settings > Signatures.",
+              "2. Close Apple Mail completely. Open Terminal and navigate to ~/Library/Mail/V10/MailData/Signatures/ (or current macOS version).",
+              "3. Identify the newest .mailsignature file. Open it in a text editor, replace the body HTML with your exported SigSignature HTML, and lock the file (chflags uchg filename) so Apple Mail preserves the formatting.",
             ],
           },
         ],
@@ -453,7 +466,7 @@ export const DETAILED_GUIDES: Record<string, DetailedGuide> = {
       },
     ],
     keyTakeaways: [
-      "Use Copy HTML Source Code when integrating into CRM systems (HubSpot, Salesforce).",
+      "Use Copy Signature for webmail clients (Gmail, Outlook) and raw HTML for CRMs (HubSpot, Salesforce).",
       "Never paste raw HTML code into rich-text fields; always toggle the code (</>) mode first.",
       "SigSignature's inline code complies with RFC 5322 email body standards.",
     ],
