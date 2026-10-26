@@ -24,6 +24,8 @@ export interface SignaturePreviewFrameProps {
    * Optional inner padding percentage (default: 0.92 for 8% breathing room around edges)
    */
   fitPadding?: number;
+  /** Allow aspect-ratio previews to scale up when the content is smaller than its panel. */
+  allowUpscale?: boolean;
   /**
    * Target container width when aspectRatio is false, used to auto-scale content down if it exceeds the viewport.
    */
@@ -45,6 +47,7 @@ export const SignaturePreviewFrame = forwardRef<
     minHeight = 120,
     aspectRatio = "16 / 9",
     fitPadding = 0.92,
+    allowUpscale = false,
     targetWidth,
   },
   ref
@@ -257,7 +260,7 @@ export const SignaturePreviewFrame = forwardRef<
     const s = Math.min(
       availableWidth / contentSize.width,
       availableHeight / contentSize.height,
-      1
+      allowUpscale ? Number.POSITIVE_INFINITY : 1
     );
 
     const scaledWidth = contentSize.width * s;
@@ -266,7 +269,7 @@ export const SignaturePreviewFrame = forwardRef<
     const t = Math.max(0, (panelSize.height - scaledHeight) / 2);
 
     return { scale: s, left: l, top: t };
-  }, [aspectRatio, panelSize, contentSize, fitPadding]);
+  }, [aspectRatio, panelSize, contentSize, fitPadding, allowUpscale]);
 
   // Non-aspectRatio mode (e.g. PreviewSignatureModal)
   if (aspectRatio === false) {
