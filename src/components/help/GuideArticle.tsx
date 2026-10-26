@@ -9,43 +9,7 @@ interface GuideArticleProps {
 export default function GuideArticle({ guide }: GuideArticleProps) {
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-      {/* 1. Breadcrumb navigation */}
-      <nav aria-label="Breadcrumb" className="mb-4 sm:mb-6">
-        <ol className="flex items-center flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-500 font-body">
-          <li>
-            <Link
-              href="/"
-              className="text-slate-500 hover:text-brand transition-colors"
-            >
-              Home
-            </Link>
-          </li>
-          <li aria-hidden="true" className="text-slate-400">/</li>
-          <li>
-            <Link
-              href="/help"
-              className="text-slate-500 hover:text-brand transition-colors"
-            >
-              Help &amp; Support
-            </Link>
-          </li>
-          <li aria-hidden="true" className="text-slate-400">/</li>
-          <li>
-            <Link
-              href="/help#popular-guides"
-              className="text-slate-500 hover:text-brand transition-colors"
-            >
-              Guides
-            </Link>
-          </li>
-          <li aria-hidden="true" className="text-slate-400">/</li>
-          <li className="font-medium text-slate-800 line-clamp-1 max-w-[240px] sm:max-w-none">
-            {guide.title}
-          </li>
-        </ol>
-      </nav>
-
-      {/* 2. Main White Container (matches crushsvg style in screenshot) */}
+      {/* Main White Container (matches crushsvg style in screenshot) */}
       <article className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 md:p-12 shadow-xs">
         {/* Eyebrow badge */}
         <div className="mb-3">
