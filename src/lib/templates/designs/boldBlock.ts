@@ -140,7 +140,7 @@ export function render(data: TemplateSignatureData): string {
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#111827" style="max-width:600px;background-color:#111827;border-collapse:collapse;border-radius:12px;overflow:hidden;color:#FFFFFF;mso-table-lspace:0pt;mso-table-rspace:0pt;font-family:${fontStack};">
   <tr>
-    <td bgcolor="#111827" style="background-color:#111827;padding:20px;vertical-align:top;">
+    <td bgcolor="#111827" style="background-color:#111827;padding:20px 10px;vertical-align:top;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
         <tr>
           <td valign="top" style="vertical-align:top;padding:0;">

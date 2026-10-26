@@ -101,7 +101,7 @@ export function render(data: TemplateSignatureData): string {
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#FFFFFF;background-color:#0B132B;border-radius:14px;width:100%;max-width:350px;">
     <tr>
-      <td style="padding:18px 20px;">
+      <td style="padding:18px 10px;">
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;">
           <tr>
             ${photoCell}
