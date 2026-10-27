@@ -102,11 +102,37 @@ const itemVariants: Variants = {
 };
 
 export default function PricingSection() {
-  const [waitlistJoined, setWaitlistJoined] = useState(false);
+  const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  function handleGoPremium() {
+    setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
+    window.setTimeout(() => setPremiumToast(null), 4000);
+  }
 
   return (
     <section id="pricing" className="scroll-mt-18 sm:scroll-mt-20 bg-[#FCFCFC] pt-8 sm:pt-10 lg:pt-12 pb-14 sm:pb-16 lg:pb-20 3xl:pb-24">
+      {premiumToast && (
+        <div
+          role="status"
+          className="fixed right-6 top-6 z-[60] flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-lg"
+        >
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]" aria-hidden="true">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-xs font-medium text-[#1E293B] sm:text-sm">{premiumToast}</p>
+          <button
+            type="button"
+            onClick={() => setPremiumToast(null)}
+            className="ml-2 cursor-pointer text-slate-400 hover:text-slate-600"
+            aria-label="Dismiss message"
+          >
+            &times;
+          </button>
+        </div>
+      )}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
@@ -221,9 +247,6 @@ export default function PricingSection() {
                   <span className="font-heading text-xl 3xl:text-2xl font-semibold text-slate-900">
                     Premium Plan
                   </span>
-                  <span className="rounded-full border border-[#8A95F2]/40 bg-white/80 px-3 py-1 font-body text-xs font-semibold text-[#4F46E5] shadow-xs backdrop-blur-xs">
-                    Coming Soon
-                  </span>
                 </div>
 
                 {/* Price */}
@@ -232,7 +255,7 @@ export default function PricingSection() {
                     $10
                   </span>
                   <span className="font-body text-sm font-normal text-[#878787]">
-                    / project
+                    / month
                   </span>
                 </div>
 
@@ -254,14 +277,14 @@ export default function PricingSection() {
                 </motion.ul>
               </div>
 
-              {/* Waitlist Button */}
+              {/* Premium plan action */}
               <div className="mt-5 pt-1 sm:mt-6 sm:pt-2">
                 <button
                   type="button"
-                  onClick={() => setWaitlistJoined(true)}
+                  onClick={handleGoPremium}
                   className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
                 >
-                  {waitlistJoined ? "Added to Waitlist!" : "Join the Waitlist"}
+                  Go Premium
                 </button>
               </div>
             </div>

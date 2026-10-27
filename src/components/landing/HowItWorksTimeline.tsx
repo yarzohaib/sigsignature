@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -21,38 +21,15 @@ export interface HowItWorksTimelineProps {
  * HowItWorksTimeline (GSAP ScrollTrigger version)
  * - Section is pinned while scroll progress is scrubbed.
  * - Desktop: horizontal line fills (scaleX); the active step lifts and scales.
- * - Mobile: vertical line fills (scaleY) between first and last circle.
+ * - Mobile: steps activate as the user scrolls through the unpinned timeline.
  * - Active step = round(progress * (steps - 1)).
- * - Reduced motion: no pin, lines fully filled, all steps active.
+ * - Reduced motion: no pin, all steps active.
  */
 export default function HowItWorksTimeline({ steps, children }: HowItWorksTimelineProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const hLineRef = useRef<HTMLDivElement>(null);
-  const vLineRef = useRef<HTMLDivElement>(null);
   const circleRefs = useRef<(HTMLDivElement | null)[]>([]);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const [verticalLine, setVerticalLine] = useState({ top: 20, height: 420 });
-
-  // Measure vertical line (mobile) between first and last circle
-  useEffect(() => {
-    const update = () => {
-      const first = circleRefs.current[0];
-      const last = circleRefs.current[steps.length - 1];
-      const container = containerRef.current;
-      if (!first || !last || !container) return;
-      const c = container.getBoundingClientRect();
-      const f = first.getBoundingClientRect();
-      const l = last.getBoundingClientRect();
-      const top = f.top - c.top + f.height / 2;
-      const bottom = l.top - c.top + l.height / 2;
-      setVerticalLine({ top, height: Math.max(0, bottom - top) });
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [steps.length]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -60,13 +37,14 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
 
     const setActive = (active: number, animateSteps: boolean) => {
       circleRefs.current.forEach((el, i) => {
-        if (el) el.dataset.active = i <= active || !animateSteps ? "true" : "false";
+        if (el) el.dataset.active = i === active ? "true" : "false";
       });
-      if (animateSteps) {
-        // desktop: only the current step is "on", others step back
-        circleRefs.current.forEach((el, i) => {
-          if (el) el.dataset.active = i === active ? "true" : "false";
+      if (!animateSteps) {
+        stepRefs.current.forEach((el, i) => {
+          if (el) el.dataset.active = i <= active ? "true" : "false";
         });
+      }
+      if (animateSteps) {
         stepRefs.current.forEach((el, i) => {
           if (!el) return;
           gsap.to(el, {
@@ -98,8 +76,11 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
           };
 
           if (reduce) {
-            gsap.set([hLineRef.current, vLineRef.current], { scale: 1 });
+            gsap.set(hLineRef.current, { scale: 1 });
             circleRefs.current.forEach((el) => {
+              if (el) el.dataset.active = "true";
+            });
+            stepRefs.current.forEach((el) => {
               if (el) el.dataset.active = "true";
             });
             return;
@@ -109,7 +90,6 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
 
           // initial state
           gsap.set(hLineRef.current, { scaleX: 0 });
-          gsap.set(vLineRef.current, { scaleY: 0 });
           setActive(0, isDesktop);
 
           let lastActive = 0;
@@ -118,11 +98,14 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
             .timeline({
               scrollTrigger: {
                 trigger: section,
-                start: "top top",
-                end: () => `+=${Math.round(window.innerHeight * 1.2)}`,
+                start: isDesktop ? "top top" : "top 70%",
+                end: () =>
+                  isDesktop
+                    ? `+=${Math.round(window.innerHeight * 1.2)}`
+                    : "bottom 65%",
                 scrub: 0.8,
-                pin: true,
-                anticipatePin: 1,
+                pin: isDesktop,
+                anticipatePin: isDesktop ? 1 : 0,
                 invalidateOnRefresh: true,
                 onUpdate: (self) => {
                   const active = Math.round(self.progress * (steps.length - 1));
@@ -133,10 +116,10 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                 },
               },
             })
-            .to(isDesktop ? hLineRef.current : vLineRef.current, {
-              ...(isDesktop ? { scaleX: 1 } : { scaleY: 1 }),
-              ease: "none",
-            });
+            .to(
+              isDesktop ? hLineRef.current : {},
+              isDesktop ? { scaleX: 1, ease: "none" } : { duration: 1 }
+            );
 
           return () => {
             const stepElements = stepRefs.current.filter(
@@ -157,7 +140,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
     <section
       id="how-it-works"
       ref={sectionRef}
-      className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-x-clip bg-[#FCFCFC] py-6 sm:py-10 md:py-16"
+      className="relative flex min-h-0 scroll-mt-24 flex-col justify-start overflow-x-clip bg-[#FCFCFC] py-8 sm:py-10 md:min-h-[100svh] md:justify-center md:py-16"
     >
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Section Header */}
@@ -165,8 +148,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
 
         {/* Steps */}
         <div
-          ref={containerRef}
-          className="relative mt-10 w-full sm:mt-14 md:mt-16"
+          className="relative mt-6 w-full sm:mt-10 md:mt-16"
         >
           {/* Desktop horizontal line */}
           <div
@@ -179,27 +161,15 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
             className="pointer-events-none absolute left-1/2 top-[96px] hidden h-[2px] w-screen -translate-x-1/2 origin-left bg-[#245FD4] md:block"
           />
 
-          {/* Mobile vertical line */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute left-[19px] w-[2px] bg-[#C1C1C1] md:hidden"
-            style={{ top: verticalLine.top, height: verticalLine.height }}
-          />
-          <div
-            ref={vLineRef}
-            aria-hidden="true"
-            className="pointer-events-none absolute left-[19px] w-[2px] origin-top bg-[#245FD4] md:hidden"
-            style={{ top: verticalLine.top, height: verticalLine.height }}
-          />
-
-          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3 md:gap-8 lg:gap-14 xl:gap-16">
+          <div className="grid grid-cols-1 gap-9 sm:gap-8 md:grid-cols-3 md:gap-8 lg:gap-14 xl:gap-16">
             {steps.map((item, index) => (
               <div
                 key={item.step}
                 ref={(el) => {
                   stepRefs.current[index] = el;
                 }}
-                className="relative flex flex-row items-start gap-4 md:flex-col md:items-center md:gap-0"
+                data-active="false"
+                className="relative flex flex-col items-start gap-3 opacity-55 transition-[opacity,transform] duration-500 ease-out data-[active=true]:translate-x-0 data-[active=true]:opacity-100 data-[active=false]:translate-x-1 md:flex-col md:items-center md:gap-0 md:opacity-100 md:transition-none md:transform-none"
               >
                 <div className="relative z-10 flex h-[40px] w-[40px] shrink-0 items-center justify-center md:h-[74px] md:w-[74px]">
                   <div
@@ -207,10 +177,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                       circleRefs.current[index] = el;
                     }}
                     data-active="false"
-                    style={{
-                      background: "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
-                    }}
-                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] shadow-xs transition-shadow duration-300 ease-out md:h-[74px] md:w-[74px] data-[active=true]:shadow-[0_0_0_8px_rgba(36,95,212,0.2),0_0_24px_rgba(36,95,212,0.28)]"
+                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] bg-gradient-to-b from-[#245FD4] to-[#022977] text-white shadow-xs transition-[background,color,box-shadow,transform] duration-300 ease-out data-[active=true]:scale-110 data-[active=true]:border-transparent data-[active=true]:shadow-[0_0_0_6px_rgba(36,95,212,0.14),0_0_18px_rgba(36,95,212,0.22)] md:h-[74px] md:w-[74px] md:data-[active=true]:scale-100 md:data-[active=true]:shadow-[0_0_0_8px_rgba(36,95,212,0.2),0_0_24px_rgba(36,95,212,0.28)]"
                   >
                     <span className="font-heading text-[15px] font-bold text-white md:text-[28px]">
                       {item.step}

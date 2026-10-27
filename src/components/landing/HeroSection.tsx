@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function HeroSection() {
   return (
-    <section className="relative flex min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-4.5rem)] lg:min-h-[calc(100vh-5rem)] flex-col justify-between overflow-hidden pt-4 pb-4 sm:pt-6 sm:pb-6 lg:pt-4 lg:pb-6">
+    <section className="relative flex min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-4.5rem)] lg:min-h-[calc(100vh-5rem)] flex-col justify-between overflow-hidden pt-[calc(88px+env(safe-area-inset-top,0px))] pb-4 sm:pt-[calc(92px+env(safe-area-inset-top,0px))] sm:pb-6 md:pt-4 lg:pb-6">
       {/* Top right light gradient blur (#C4DFFB at 50% opacity, blur ~324px as in Figma Ellipse 68) */}
       <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-between px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Main Grid: Left Copy & Right LivePreview */}
@@ -195,13 +195,13 @@ export default function HeroSection() {
 
             <div className="flex flex-col items-center justify-center gap-1.5 text-center font-body text-xs text-[#878787] sm:flex-row sm:flex-wrap sm:gap-2 sm:text-sm xl:text-base 2xl:text-lg">
               <span className="inline-flex items-center gap-1.5">
-                <span className="text-slate-400">✦</span>
+                <span className="hidden text-slate-400 sm:inline">✦</span>
                 <span className="font-medium text-slate-800">Used by 500+ professionals</span>
                 <span className="hidden text-slate-400 sm:inline">✦</span>
               </span>
-              <span>Works with Gmail, Outlook &amp; more</span>
+              <span className="hidden sm:inline">Works with Gmail, Outlook &amp; more</span>
               <span className="hidden text-slate-400 sm:inline">✦</span>
-              <span>Production-ready HTML every time</span>
+              <span className="hidden sm:inline">Production-ready HTML every time</span>
             </div>
           </div>
         </div>
