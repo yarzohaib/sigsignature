@@ -53,33 +53,20 @@ export default function ComparisonTable({ rows }: ComparisonTableProps) {
   return (
     <>
       {/* Mobile card view: one card per criteria, shown below md */}
-      <ul className="mt-8 md:hidden space-y-3.5">
+      <ul className="mt-5 space-y-3 md:hidden">
         {rows.map((row) => (
-          <li key={row.criteria} className="rounded-[20px] border border-[#D7D7D7] bg-white overflow-hidden shadow-xs">
-            <div className="border-b border-slate-100 bg-slate-50/70 px-4 py-3 sm:px-5 sm:py-3.5">
-              <span className="font-heading text-base font-semibold text-slate-900">{row.criteria}</span>
-            </div>
-            <div className="divide-y divide-slate-100">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5">
-                <span className="text-xs font-semibold text-slate-500 sm:w-[130px] shrink-0">Hiring a developer</span>
-                <span className="font-body text-[15px] leading-[1.6] text-slate-800">{row.developer}</span>
+          <li key={row.criteria} className="rounded-[20px] border border-[#E1E8F5] bg-white p-3 shadow-[0_3px_10px_rgba(20,45,90,0.06)]">
+            <h3 className="mb-2 font-heading text-[10px] font-bold uppercase tracking-[0.12em] text-[#1646C8]">
+              {row.criteria}
+            </h3>
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="min-h-[78px] rounded-[14px] bg-[#F1F2F5] p-2.5">
+                <span className="block font-body text-[9px] font-medium text-slate-500">Developer</span>
+                <span className="mt-1 block font-heading text-[12px] font-semibold leading-[1.3] text-[#25324C]">{row.developer}</span>
               </div>
-              <div
-                className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 px-4 py-3 sm:px-5 sm:py-3.5"
-                style={{ background: "linear-gradient(135deg, rgba(36,95,212,0.06) 0%, rgba(2,41,119,0.06) 100%)" }}
-              >
-                <span className="text-xs font-semibold text-brand sm:w-[130px] shrink-0">Sig Signature</span>
-                <span
-                  className="font-body text-[15px] leading-[1.6] font-medium"
-                  style={{
-                    background: "linear-gradient(90deg, #245FD4 0%, #022977 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  {row.sigSignature}
-                </span>
+              <div className="min-h-[78px] rounded-[14px] bg-gradient-to-br from-[#315EEA] to-[#163B9D] p-2.5">
+                <span className="block font-body text-[9px] font-medium text-white/85">Sig Signature</span>
+                <span className="mt-1 block font-heading text-[12px] font-semibold leading-[1.3] text-white">{row.sigSignature}</span>
               </div>
             </div>
           </li>

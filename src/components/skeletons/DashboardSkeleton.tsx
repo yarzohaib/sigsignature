@@ -15,29 +15,29 @@ export function DashboardSkeleton() {
       </div>
 
       {/* 3. Action Cards (Start from template / Create from scratch) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 lg:flex-1 lg:min-h-0 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 w-full shrink-0">
         {[1, 2].map((cardIdx) => (
           <div
             key={cardIdx}
-            className="flex flex-col justify-between lg:flex-1 lg:min-h-0 rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-4.5 sm:p-5.5 lg:p-4 xl:p-5 2xl:p-6 shadow-xs"
+            className="flex flex-col xl:flex-row items-stretch rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4 xl:p-5 2xl:p-6 shadow-xs gap-3.5 sm:gap-4 xl:gap-5 2xl:gap-6"
           >
-            <div className="flex flex-col lg:flex-1 lg:min-h-0">
-              {/* Top illustration skeleton */}
-              <Skeleton className="h-[130px] sm:h-[145px] lg:h-auto lg:flex-1 lg:min-h-[110px] w-full rounded-xl 2xl:rounded-2xl" />
+            {/* Top / Left illustration skeleton */}
+            <Skeleton className="h-[135px] sm:h-[155px] xl:h-auto xl:w-[210px] 2xl:w-[240px] 3xl:w-[270px] xl:self-stretch w-full rounded-xl 2xl:rounded-2xl shrink-0" />
 
-              {/* Icon + Title/Desc */}
-              <div className="mt-3.5 sm:mt-4 lg:mt-2.5 xl:mt-3.5 flex items-start gap-3.5 xl:gap-3.5 shrink-0">
-                <Skeleton className="w-12 h-12 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 rounded-xl shrink-0" />
-                <div className="space-y-1.5 flex-1">
+            {/* Right / Content Column */}
+            <div className="flex flex-1 flex-col justify-between min-w-0">
+              <div className="flex items-start gap-3 xl:block">
+                <Skeleton className="w-10 h-10 rounded-xl shrink-0 xl:hidden" />
+                <div className="space-y-1.5 flex-1 min-w-0">
                   <Skeleton className="h-5 w-44 rounded-md" />
                   <Skeleton className="h-3.5 w-full max-w-[260px] rounded-md" />
                 </div>
               </div>
-            </div>
 
-            {/* Bottom Button */}
-            <div className="mt-4 sm:mt-5 lg:mt-2.5 xl:mt-3.5 shrink-0">
-              <Skeleton className="h-[44px] sm:h-[46px] lg:h-10 xl:h-11 2xl:h-12 w-full rounded-full" />
+              {/* Bottom Button */}
+              <div className="mt-4 xl:mt-3 shrink-0">
+                <Skeleton className="h-10 xl:h-11 2xl:h-12 w-full rounded-full" />
+              </div>
             </div>
           </div>
         ))}
