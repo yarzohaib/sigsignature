@@ -7,7 +7,14 @@ export function DashboardSkeleton() {
       {/* 1. Welcome Banner Header (Matching new gradient HeroSection banner card geometry) */}
       <Skeleton className="w-full h-[180px] sm:h-[190px] lg:h-[200px] rounded-[20px] sm:rounded-[22px] shrink-0" />
 
-      {/* 2. Action Cards (Start from template / Create from scratch) */}
+      {/* 2. Quick Overview Cards Skeleton (4 cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 shrink-0">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-[84px] w-full rounded-2xl" />
+        ))}
+      </div>
+
+      {/* 3. Action Cards (Start from template / Create from scratch) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 lg:flex-1 lg:min-h-0 w-full">
         {[1, 2].map((cardIdx) => (
           <div

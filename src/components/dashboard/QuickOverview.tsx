@@ -23,10 +23,12 @@ export default function QuickOverview() {
         // ignore localStorage access error
       }
     }
-    return 0;
+    return 1;
   });
 
-  const [personalTemplatesCount, setPersonalTemplatesCount] = useState<number>(AVAILABLE_TEMPLATES.length);
+  const [personalTemplatesCount, setPersonalTemplatesCount] = useState<number>(
+    AVAILABLE_TEMPLATES.length || 17
+  );
 
   const [teamsCount, setTeamsCount] = useState<number>(() => {
     if (typeof window !== "undefined") {
@@ -40,7 +42,7 @@ export default function QuickOverview() {
         // ignore localStorage access error
       }
     }
-    return 0;
+    return 1;
   });
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function QuickOverview() {
         // keep fallback or cached count
       }
 
-      // 2. Personal Templates (Default to Available Templates count or user customized)
+      // 2. Personal Templates
       if (isMounted) {
         setPersonalTemplatesCount(AVAILABLE_TEMPLATES.length);
       }
@@ -99,240 +101,270 @@ export default function QuickOverview() {
   }, []);
 
   return (
-    <section className="w-full shrink-0" aria-label="Quick Overview">
-      {/* Heading: Quick Overview */}
+    <section className="w-full shrink-0" aria-label="Quick overview">
+      {/* Heading: Quick overview */}
       <h2
-        className="text-[#1E293B] mb-2 sm:mb-2.5 font-bold text-[18px] sm:text-[20px]"
+        className="text-[#1E293B] mb-3 sm:mb-3.5 font-bold text-[18px] sm:text-[20px] tracking-tight"
         style={{
           fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
           lineHeight: "100%",
-          letterSpacing: "0%",
         }}
       >
-        Quick Overview
+        Quick overview
       </h2>
 
-      {/* Overview Container Card */}
-      <div className="w-full rounded-2xl bg-[#F8FAFC] px-5 py-4 sm:px-7 sm:py-5">
-        <div className="grid grid-cols-1 divide-y divide-[#E2E8F0] md:grid-cols-4 md:divide-y-0 md:divide-x md:divide-[#E2E8F0] items-center">
-          
-          {/* Item 1: Total Signatures */}
-          <Link
-            href="/signatures"
-            className="flex items-center justify-between py-3 md:py-0 md:pr-5 group transition hover:opacity-90"
-          >
-            <div className="flex items-center gap-3.5">
-              {/* Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
-                <svg
-                  className="h-5.5 w-5.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <circle cx="8.5" cy="8.5" r="1.5" />
-                  <polyline points="21 15 16 10 5 21" />
-                </svg>
-              </div>
-
-              {/* Text & Count */}
-              <div>
-                <p
-                  className="text-[#64748B] font-medium text-[16px]"
-                  style={{
-                    fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                    lineHeight: "100%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  Total Signatures
-                </p>
-                <p
-                  className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  {totalSignatures}
-                </p>
-              </div>
+      {/* 4 Separate Overview Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 xl:gap-5 w-full">
+        {/* Card 1: Signatures */}
+        <Link
+          href="/signatures"
+          className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs hover:shadow-md hover:border-[#CBD5E1] transition-all group"
+        >
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            {/* Soft Blue Icon Container */}
+            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#EFF6FF] text-[#245FD4]">
+              <svg
+                className="h-5.5 w-5.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 19.5h16" />
+                <path d="M4 15.5C6 14 7.5 8 9.5 8s2.5 7 4 7 2-4 3.5-4c1 0 1.5 2.5 3 2.5" />
+              </svg>
             </div>
 
-            {/* Chevron Right */}
-            <svg
-              className="h-4.5 w-4.5 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </Link>
-
-          {/* Item 2: Personal Templates */}
-          <Link
-            href="/templates"
-            className="flex items-center justify-between py-3 md:py-0 md:px-5 group transition hover:opacity-90"
-          >
-            <div className="flex items-center gap-3.5">
-              {/* Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
-                <svg
-                  className="h-5.5 w-5.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                  <polyline points="2 17 12 22 22 17" />
-                  <polyline points="2 12 12 17 22 12" />
-                </svg>
-              </div>
-
-              {/* Text & Count */}
-              <div>
-                <p
-                  className="text-[#64748B] font-medium text-[16px]"
-                  style={{
-                    fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                    lineHeight: "100%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  Total Templates
-                </p>
-                <p
-                  className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  {personalTemplatesCount}
-                </p>
-              </div>
-            </div>
-
-            {/* Chevron Right */}
-            <svg
-              className="h-4.5 w-4.5 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </Link>
-
-          {/* Item 3: Teams */}
-          <Link
-            href="/team-signatures"
-            className="flex items-center justify-between py-3 md:py-0 md:px-5 group transition hover:opacity-90"
-          >
-            <div className="flex items-center gap-3.5">
-              {/* Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
-                <svg
-                  className="h-5.5 w-5.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-
-              {/* Text & Count */}
-              <div>
-                <p
-                  className="text-[#64748B] font-medium text-[16px]"
-                  style={{
-                    fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
-                    lineHeight: "100%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  Teams
-                </p>
-                <p
-                  className="mt-1 text-[#1E293B] font-bold text-[20px] sm:text-[22px] leading-tight"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  {teamsCount}
-                </p>
-              </div>
-            </div>
-
-            {/* Chevron Right */}
-            <svg
-              className="h-4.5 w-4.5 text-[#94A3B8] transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </Link>
-
-          {/* Item 4: Need Help? */}
-          <div className="flex items-center justify-between py-3 md:py-0 md:pl-5">
-            <div className="flex items-center gap-3.5">
-              {/* Star / Sparkle Icon Container */}
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] shadow-xs">
-                <svg
-                  className="h-5.5 w-5.5"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M12 2L14.2 9.8L22 12L14.2 14.2L12 22L9.8 14.2L2 12L9.8 9.8L12 2Z" />
-                </svg>
-              </div>
-
-              {/* Need help text */}
-              <div>
-                <p className="text-[14.5px] font-bold text-[#1E293B] leading-tight" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>
-                  Need help?
-                </p>
-                <p className="mt-0.5 text-[11.5px] text-[#64748B] leading-tight" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
-                  Check out our guides or contact support.
-                </p>
-                <Link
-                  href="/help"
-                  className="mt-0.5 inline-flex items-center gap-0.5 text-[11.5px] font-semibold text-[#245FD4] hover:underline"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  <span>Visit Help Center</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
+            {/* Content: Label -> Value -> Subtitle */}
+            <div className="flex flex-col min-w-0">
+              <span
+                className="text-[#64748B] font-medium text-[12.5px] sm:text-[13px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Signatures
+              </span>
+              <span
+                className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-none truncate"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                {totalSignatures}
+              </span>
+              <span
+                className="mt-1 text-[#94A3B8] text-[11px] sm:text-[11.5px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                of 3 on the Free plan
+              </span>
             </div>
           </div>
 
-        </div>
+          {/* Chevron Right */}
+          <svg
+            className="h-4 w-4 shrink-0 text-[#94A3B8] group-hover:text-[#64748B] transition-transform group-hover:translate-x-0.5 ml-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </Link>
+
+        {/* Card 2: Templates */}
+        <Link
+          href="/templates"
+          className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs hover:shadow-md hover:border-[#CBD5E1] transition-all group"
+        >
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            {/* Soft Purple Icon Container */}
+            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#F5F3FF] text-[#8B5CF6]">
+              <svg
+                className="h-5.5 w-5.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="4" />
+                <path d="M3 9h18" />
+                <path d="M9 21V9" />
+              </svg>
+            </div>
+
+            {/* Content: Label -> Value -> Subtitle */}
+            <div className="flex flex-col min-w-0">
+              <span
+                className="text-[#64748B] font-medium text-[12.5px] sm:text-[13px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Templates
+              </span>
+              <span
+                className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-none truncate"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                {personalTemplatesCount}
+              </span>
+              <span
+                className="mt-1 text-[#94A3B8] text-[11px] sm:text-[11.5px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Ready to customize
+              </span>
+            </div>
+          </div>
+
+          {/* Chevron Right */}
+          <svg
+            className="h-4 w-4 shrink-0 text-[#94A3B8] group-hover:text-[#64748B] transition-transform group-hover:translate-x-0.5 ml-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </Link>
+
+        {/* Card 3: Team members */}
+        <Link
+          href="/team-signatures"
+          className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs hover:shadow-md hover:border-[#CBD5E1] transition-all group"
+        >
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            {/* Soft Green Icon Container */}
+            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#ECFDF5] text-[#10B981]">
+              <svg
+                className="h-5.5 w-5.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </div>
+
+            {/* Content: Label -> Value -> Subtitle */}
+            <div className="flex flex-col min-w-0">
+              <span
+                className="text-[#64748B] font-medium text-[12.5px] sm:text-[13px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Team members
+              </span>
+              <span
+                className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-none truncate"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                {teamsCount}
+              </span>
+              <span
+                className="mt-1 text-[#94A3B8] text-[11px] sm:text-[11.5px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Invite people to your team
+              </span>
+            </div>
+          </div>
+
+          {/* Chevron Right */}
+          <svg
+            className="h-4 w-4 shrink-0 text-[#94A3B8] group-hover:text-[#64748B] transition-transform group-hover:translate-x-0.5 ml-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </Link>
+
+        {/* Card 4: Help center */}
+        <Link
+          href="/help"
+          className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs hover:shadow-md hover:border-[#CBD5E1] transition-all group"
+        >
+          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+            {/* Soft Amber Icon Container */}
+            <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#FFFBEB] text-[#D97706]">
+              <svg
+                className="h-5.5 w-5.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="4" />
+                <line x1="4.93" y1="4.93" x2="9.17" y2="9.17" />
+                <line x1="14.83" y1="9.17" x2="19.07" y2="4.93" />
+                <line x1="14.83" y1="14.83" x2="19.07" y2="19.07" />
+                <line x1="4.93" y1="19.07" x2="9.17" y2="14.83" />
+              </svg>
+            </div>
+
+            {/* Content: Label -> Value -> Subtitle */}
+            <div className="flex flex-col min-w-0">
+              <span
+                className="text-[#64748B] font-medium text-[12.5px] sm:text-[13px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Help center
+              </span>
+              <span
+                className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-none truncate"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                Guides
+              </span>
+              <span
+                className="mt-1 text-[#94A3B8] text-[11px] sm:text-[11.5px] leading-tight truncate"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Setup and troubleshooting
+              </span>
+            </div>
+          </div>
+
+          {/* Chevron Right */}
+          <svg
+            className="h-4 w-4 shrink-0 text-[#94A3B8] group-hover:text-[#64748B] transition-transform group-hover:translate-x-0.5 ml-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </Link>
       </div>
     </section>
   );
