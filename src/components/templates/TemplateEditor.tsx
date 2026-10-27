@@ -102,6 +102,9 @@ export default function TemplateEditor({
       fullName,
       companyName,
       email,
+      socials: isNewSignature
+        ? { linkedin: "", twitter: "", facebook: "", instagram: "" }
+        : base.socials,
     };
   });
 
@@ -965,7 +968,7 @@ export default function TemplateEditor({
                     value={formData.socials.linkedin}
                     onChange={(e) => handleSocialChange("linkedin", e.target.value)}
                     placeholder="https://linkedin.com/in/..."
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -975,7 +978,7 @@ export default function TemplateEditor({
                     value={formData.socials.twitter}
                     onChange={(e) => handleSocialChange("twitter", e.target.value)}
                     placeholder="https://x.com/..."
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -985,7 +988,7 @@ export default function TemplateEditor({
                     value={formData.socials.facebook}
                     onChange={(e) => handleSocialChange("facebook", e.target.value)}
                     placeholder="https://facebook.com/..."
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -995,7 +998,7 @@ export default function TemplateEditor({
                     value={formData.socials.instagram || ""}
                     onChange={(e) => handleSocialChange("instagram", e.target.value)}
                     placeholder="https://instagram.com/... or @handle"
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
                   />
                 </div>
               </div>

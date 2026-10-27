@@ -42,6 +42,7 @@ interface SignatureCardProps {
   onExport: (id: string) => void;
   onDelete: (signature: SavedSignature) => void;
   onCopyToTeam?: (signature: SavedSignature) => void;
+  onPreview?: (signature: SavedSignature) => void;
 }
 
 export default function SignatureCard({
@@ -51,6 +52,7 @@ export default function SignatureCard({
   onExport,
   onDelete,
   onCopyToTeam,
+  onPreview,
 }: SignatureCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
@@ -120,6 +122,16 @@ export default function SignatureCard({
             </svg>
             <span>Edit</span>
           </button>
+          {onPreview && (
+            <button
+              type="button"
+              onClick={() => onPreview(signature)}
+              className="flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              Preview
+            </button>
+          )}
         </div>
       </div>
 

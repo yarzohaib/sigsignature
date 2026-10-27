@@ -28,6 +28,7 @@ import {
 import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import { markOnboardingStep } from "@/lib/onboarding";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
+import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
 import {
@@ -46,6 +47,7 @@ function MySignaturesContent() {
 
   // Modals and feedback state
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
+  const [previewingSignature, setPreviewingSignature] = useState<SavedSignature | null>(null);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
@@ -310,6 +312,7 @@ function MySignaturesContent() {
                 onExport={handleExport}
                 onDelete={setDeletingSignature}
                 onCopyToTeam={handleOpenCopyToTeam}
+                onPreview={setPreviewingSignature}
               />
             ))}
           </div>
@@ -320,6 +323,15 @@ function MySignaturesContent() {
           />
         )}
       </main>
+
+      {previewingSignature && (
+        <PreviewSignatureModal
+          isOpen={Boolean(previewingSignature)}
+          onClose={() => setPreviewingSignature(null)}
+          html={renderSavedSignatureHtml(previewingSignature, { preview: true })}
+          showCanvasTab={false}
+        />
+      )}
 
       {/* Delete Signature Modal */}
       <DeleteSignatureModal

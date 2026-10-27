@@ -16,6 +16,7 @@ import RevokeInviteModal from "@/components/team/RevokeInviteModal";
 import DevInviteModal from "@/components/team/DevInviteModal";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import TeamSignaturesSkeleton from "@/components/skeletons/TeamSignaturesSkeleton";
+import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import {
   getTeamLifetimeMemberCount,
@@ -50,6 +51,7 @@ function TeamSignaturesContent() {
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [previewingMember, setPreviewingMember] = useState<TeamMember | null>(null);
   const [sendingMember, setSendingMember] = useState<TeamMember | null>(null);
   const [revokingMember, setRevokingMember] = useState<TeamMember | null>(null);
   const [deletingMember, setDeletingMember] = useState<TeamMember | null>(null);
@@ -298,6 +300,7 @@ function TeamSignaturesContent() {
                     setEditingMember(m);
                     setIsMemberModalOpen(true);
                   }}
+                  onPreview={setPreviewingMember}
                   onCopy={handleCopyMember}
                   onSend={(m) => setSendingMember(m)}
                   onRevoke={(m) => setRevokingMember(m)}
@@ -315,6 +318,15 @@ function TeamSignaturesContent() {
           </div>
         )}
       </main>
+
+      {team && previewingMember && (
+        <PreviewSignatureModal
+          isOpen={Boolean(previewingMember)}
+          onClose={() => setPreviewingMember(null)}
+          html={renderTeamMemberHtml(team, previewingMember, { preview: true })}
+          showCanvasTab={false}
+        />
+      )}
 
       {/* Choose Signature Modal */}
       <ChooseSignatureModal
