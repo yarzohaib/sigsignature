@@ -23,7 +23,7 @@ export default function PopularGuides({ searchQuery = "" }: PopularGuidesProps) 
           Popular guides
         </h2>
         <Link
-          href="/help?all=true"
+          href="/help/guides"
           className="text-xs font-semibold text-[#245FD4] hover:underline transition"
           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
         >

@@ -7,6 +7,10 @@ interface GuidePageProps {
   params: Promise<{ slug: string }>;
 }
 
+export function generateStaticParams() {
+  return Object.keys(DETAILED_GUIDES).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: GuidePageProps): Promise<Metadata> {

@@ -86,7 +86,7 @@ export default function CategoryCards() {
         {HELP_CATEGORIES.map((cat) => (
           <Link
             key={cat.slug}
-            href={`/help?category=${cat.slug}`}
+            href={`/help/guides#${cat.slug}`}
             className="group flex flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-6 transition hover:border-[#245FD4]/40 hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]"
           >
             <div className="flex items-start justify-between">
