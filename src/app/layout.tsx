@@ -2,6 +2,7 @@ import type { Viewport } from "next";
 import { Montserrat, Commissioner } from "next/font/google";
 import { fontInter, fontRoboto, fontDmSans } from "./design-studio/fonts";
 import { siteMetadata } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/next";
 import { GoogleTracking, GtmNoScript } from "@/components/analytics/GoogleAnalytics";
 import CookieConsent from "@/components/common/CookieConsent";
 import ScrollToTop from "@/components/common/ScrollToTop";
@@ -43,6 +44,7 @@ export default function RootLayout({
         <CookieConsent />
         <ScrollToTop />
         <GoogleTracking />
+        <Analytics />
       </body>
     </html>
   );
