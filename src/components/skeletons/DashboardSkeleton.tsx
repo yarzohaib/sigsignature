@@ -4,14 +4,8 @@ import { Skeleton, SkeletonContainer } from "@/components/ui/Skeleton";
 export function DashboardSkeleton() {
   return (
     <SkeletonContainer label="Loading dashboard..." className="flex flex-1 flex-col lg:h-full lg:min-h-0 justify-between gap-5 sm:gap-6 lg:gap-3.5 xl:gap-4.5 2xl:gap-5 w-full">
-      {/* 1. Welcome Banner Header (Matching plain text HeroSection geometry, no card wrapper) */}
-      <div className="text-left shrink-0">
-        <Skeleton className="h-8 xl:h-9 w-64 sm:w-80 rounded-xl" />
-        <div className="mt-1.5 space-y-1">
-          <Skeleton className="h-4 w-72 sm:w-96 rounded-md" />
-          <Skeleton className="h-4 w-56 sm:w-72 rounded-md" />
-        </div>
-      </div>
+      {/* 1. Welcome Banner Header (Matching new gradient HeroSection banner card geometry) */}
+      <Skeleton className="w-full h-[180px] sm:h-[190px] lg:h-[200px] rounded-[20px] sm:rounded-[22px] shrink-0" />
 
       {/* 2. Action Cards (Start from template / Create from scratch) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 lg:flex-1 lg:min-h-0 w-full">
