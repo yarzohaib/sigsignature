@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getStoredAvatarUrl, getStoredRefreshToken, clearAuthSession, getStoredUser } from "@/app/lib/auth";
 import { logoutUser, UserProfile } from "@/app/lib/api";
 import { useOptionalUser } from "@/contexts/UserContext";
@@ -18,6 +18,7 @@ type TopBarProps = {
   onOpenMobileMenu: () => void;
   onLogout?: () => void;
   isLoggingOut?: boolean;
+  isGuidesPage?: boolean;
 };
 
 export default function DashboardTopBar({
@@ -28,8 +29,11 @@ export default function DashboardTopBar({
   onOpenMobileMenu,
   onLogout,
   isLoggingOut = false,
+  isGuidesPage: propIsGuidesPage,
 }: TopBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isGuidesPage = Boolean(propIsGuidesPage || pathname?.startsWith("/help/guides"));
   const optionalUser = useOptionalUser();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -68,19 +72,20 @@ export default function DashboardTopBar({
   const displaySrc = resolvedAvatar && failedUrl !== resolvedAvatar ? resolvedAvatar : "/placeholder-avatar.svg";
 
   // Check if onboarding setup guide has been acknowledged / completed
-  const [mounted, setMounted] = useState(false);
-  const [isGuideAcknowledged, setIsGuideAcknowledged] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const checkGuideStatus = () => {
-      const uid = optionalUser?.user?.id || getStoredUser()?.id || "";
-      setIsGuideAcknowledged(hasAcknowledgedOnboarding(uid));
-    };
-    checkGuideStatus();
-    window.addEventListener(ONBOARDING_EVENT, checkGuideStatus);
-    return () => window.removeEventListener(ONBOARDING_EVENT, checkGuideStatus);
-  }, [optionalUser?.user?.id]);
+  const guideUserId = optionalUser?.user?.id || getStoredUser()?.id || "";
+  const mounted = useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    useCallback(() => true, []),
+    useCallback(() => false, []),
+  );
+  const isGuideAcknowledged = useSyncExternalStore(
+    useCallback((onStoreChange) => {
+      window.addEventListener(ONBOARDING_EVENT, onStoreChange);
+      return () => window.removeEventListener(ONBOARDING_EVENT, onStoreChange);
+    }, []),
+    useCallback(() => hasAcknowledgedOnboarding(guideUserId), [guideUserId]),
+    useCallback(() => true, []),
+  );
 
   const showSetupGuide = mounted && !isGuideAcknowledged;
 
@@ -135,17 +140,32 @@ export default function DashboardTopBar({
 
   return (
     <header className="sticky top-0 z-30 flex h-[66px] w-full items-center justify-between border-b border-[#E2E8F0] bg-white px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 shrink-0 transition-all">
-      {/* Mobile menu toggle */}
-      <button
-        type="button"
-        onClick={onOpenMobileMenu}
-        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 lg:hidden"
-        aria-label="Open navigation menu"
-      >
-        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      {/* Left side: Branding (if on Guides page without sidebar) or Mobile menu toggle */}
+      <div className="flex items-center gap-3">
+        {isGuidesPage ? (
+          <Link href="/dashboard" className="flex items-center gap-2 transition hover:opacity-90">
+            <Image
+              src="/logo.svg"
+              alt="SigSignature"
+              width={130}
+              height={28}
+              className="h-6.5 w-auto select-none"
+              priority
+            />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={onOpenMobileMenu}
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 lg:hidden"
+            aria-label="Open navigation menu"
+          >
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        )}
+      </div>
 
       {/* Right: Notifications & User Profile */}
       <div className="ml-auto flex items-center gap-2 sm:gap-3">
