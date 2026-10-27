@@ -19,15 +19,15 @@ export function DashboardSkeleton() {
         {[1, 2].map((cardIdx) => (
           <div
             key={cardIdx}
-            className="flex flex-col xl:flex-row items-stretch rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4 xl:p-5 2xl:p-6 shadow-xs gap-3.5 sm:gap-4 xl:gap-5 2xl:gap-6"
+            className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:p-6 shadow-xs gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6"
           >
             {/* Top / Left illustration skeleton */}
-            <Skeleton className="h-[135px] sm:h-[155px] xl:h-auto xl:w-[210px] 2xl:w-[240px] 3xl:w-[270px] xl:self-stretch w-full rounded-xl 2xl:rounded-2xl shrink-0" />
+            <Skeleton className="h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[240px] 3xl:w-[280px] 2xl:self-stretch w-full rounded-xl 2xl:rounded-2xl shrink-0" />
 
             {/* Right / Content Column */}
             <div className="flex flex-1 flex-col justify-between min-w-0">
-              <div className="flex items-start gap-3 xl:block">
-                <Skeleton className="w-10 h-10 rounded-xl shrink-0 xl:hidden" />
+              <div className="flex items-start gap-3 2xl:block">
+                <Skeleton className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl shrink-0 2xl:hidden" />
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <Skeleton className="h-5 w-44 rounded-md" />
                   <Skeleton className="h-3.5 w-full max-w-[260px] rounded-md" />
@@ -35,7 +35,7 @@ export function DashboardSkeleton() {
               </div>
 
               {/* Bottom Button */}
-              <div className="mt-4 xl:mt-3 shrink-0">
+              <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-3 shrink-0">
                 <Skeleton className="h-10 xl:h-11 2xl:h-12 w-full rounded-full" />
               </div>
             </div>

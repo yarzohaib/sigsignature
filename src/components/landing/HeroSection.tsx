@@ -182,7 +182,7 @@ export default function HeroSection() {
 
         {/* Social Proof Line (No border, transparent background matching section) */}
         <div className="mt-auto pt-4 flex justify-center pb-2 sm:pb-3">
-          <div className="inline-flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+          <div className="flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3">
             {/* Avatars cluster from People.svg */}
             <Image
               src="/People.svg"
@@ -190,15 +190,17 @@ export default function HeroSection() {
               width={100}
               height={34}
               sizes="(min-width: 1536px) 110px, 90px"
-              className="h-7 sm:h-8 2xl:h-9 w-auto object-contain"
+              className="h-7 w-auto object-contain sm:h-8 2xl:h-9"
             />
 
-            <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-1.5 sm:gap-2 font-body text-xs text-[#878787] sm:text-sm xl:text-base 2xl:text-lg text-center">
-              <span className="text-slate-400">✦</span>
-              <span className="font-medium text-slate-800">Used by 500+ professionals</span>
-              <span className="text-slate-400">✦</span>
+            <div className="flex flex-col items-center justify-center gap-1.5 text-center font-body text-xs text-[#878787] sm:flex-row sm:flex-wrap sm:gap-2 sm:text-sm xl:text-base 2xl:text-lg">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="text-slate-400">✦</span>
+                <span className="font-medium text-slate-800">Used by 500+ professionals</span>
+                <span className="hidden text-slate-400 sm:inline">✦</span>
+              </span>
               <span>Works with Gmail, Outlook &amp; more</span>
-              <span className="text-slate-400">✦</span>
+              <span className="hidden text-slate-400 sm:inline">✦</span>
               <span>Production-ready HTML every time</span>
             </div>
           </div>
