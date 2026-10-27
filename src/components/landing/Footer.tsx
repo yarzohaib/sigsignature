@@ -117,13 +117,13 @@ const isAuthenticated =
       }}
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
-        {/* Brand Header: Left-aligned on mobile & tablet, centered on desktop (>=1024) */}
+        {/* Brand Header */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={MOTION_VIEWPORT}
           transition={{ duration: 0.5, ease: EASE_OUT_CUBIC }}
-          className="flex flex-col items-start text-left lg:items-center lg:text-center"
+          className="flex flex-col items-center text-center"
         >
           <Link
             href="/"
@@ -143,7 +143,7 @@ const isAuthenticated =
               Sig Signature
             </span>
           </Link>
-          <p className="mt-3 max-w-lg text-left font-body text-[14px] leading-normal text-[#878787] sm:max-w-xl lg:max-w-none lg:text-center lg:whitespace-nowrap 3xl:text-[16px]">
+          <p className="mt-3 max-w-lg text-center font-body text-[14px] leading-normal text-[#878787] sm:max-w-xl lg:max-w-none lg:whitespace-nowrap 3xl:text-[16px]">
             Professional email signatures ensure every email reflects a consistent and professional brand identity.
           </p>
         </motion.div>
