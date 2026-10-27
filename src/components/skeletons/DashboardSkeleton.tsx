@@ -3,44 +3,49 @@ import { Skeleton, SkeletonContainer } from "@/components/ui/Skeleton";
 
 export function DashboardSkeleton() {
   return (
-    <SkeletonContainer label="Loading dashboard..." className="flex flex-1 flex-col justify-start gap-5 sm:gap-6 lg:gap-6 xl:gap-7 2xl:gap-8 w-full">
-      {/* 1. Welcome Banner Header (Matching new gradient HeroSection banner card geometry) */}
-      <Skeleton className="w-full h-[180px] sm:h-[190px] lg:h-[200px] rounded-[20px] sm:rounded-[22px] shrink-0" />
+    <SkeletonContainer label="Loading dashboard..." className="flex flex-1 flex-col justify-between gap-6 sm:gap-7 lg:gap-6 xl:gap-7 2xl:gap-8 w-full">
+      {/* Top Group: Banner + Quick Overview */}
+      <div className="flex flex-col gap-5 sm:gap-6 lg:gap-6 xl:gap-7 shrink-0">
+        {/* 1. Welcome Banner Header */}
+        <Skeleton className="w-full h-[180px] sm:h-[190px] lg:h-[200px] rounded-[20px] sm:rounded-[22px] shrink-0" />
 
-      {/* 2. Quick Overview Cards Skeleton (4 cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 xl:gap-5 shrink-0">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-[84px] w-full rounded-2xl" />
-        ))}
+        {/* 2. Quick Overview Cards Skeleton (4 cards) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 xl:gap-5 shrink-0">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-[84px] w-full rounded-2xl" />
+          ))}
+        </div>
       </div>
 
-      {/* 3. Action Cards (Start from template / Create from scratch) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 w-full shrink-0">
-        {[1, 2].map((cardIdx) => (
-          <div
-            key={cardIdx}
-            className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[275px] 2xl:p-7 3xl:min-h-[310px] 3xl:p-8 shadow-xs gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-7"
-          >
-            {/* Top / Left illustration skeleton */}
-            <Skeleton className="h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[290px] 3xl:w-[340px] 2xl:self-stretch w-full rounded-xl 2xl:rounded-2xl shrink-0" />
+      {/* 3. Action Cards (anchored to bottom on bigger screens) */}
+      <div className="w-full shrink-0 lg:mt-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-4 xl:gap-5 2xl:gap-6 w-full shrink-0">
+          {[1, 2].map((cardIdx) => (
+            <div
+              key={cardIdx}
+              className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[275px] 2xl:p-7 3xl:min-h-[310px] 3xl:p-8 shadow-xs gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-7"
+            >
+              {/* Top / Left illustration skeleton */}
+              <Skeleton className="h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[290px] 3xl:w-[340px] 2xl:self-stretch w-full rounded-xl 2xl:rounded-2xl shrink-0" />
 
-            {/* Right / Content Column */}
-            <div className="flex flex-1 flex-col justify-between min-w-0 py-0.5 2xl:py-1">
-              <div className="flex items-start gap-3 2xl:block">
-                <Skeleton className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl shrink-0 2xl:hidden" />
-                <div className="space-y-1.5 flex-1 min-w-0">
-                  <Skeleton className="h-5 w-44 rounded-md" />
-                  <Skeleton className="h-3.5 w-full max-w-[260px] rounded-md" />
+              {/* Right / Content Column */}
+              <div className="flex flex-1 flex-col justify-between min-w-0 py-0.5 2xl:py-1">
+                <div className="flex items-start gap-3 2xl:block">
+                  <Skeleton className="w-10 h-10 xl:w-11 xl:h-11 rounded-xl shrink-0 2xl:hidden" />
+                  <div className="space-y-1.5 flex-1 min-w-0">
+                    <Skeleton className="h-5 w-44 rounded-md" />
+                    <Skeleton className="h-3.5 w-full max-w-[260px] rounded-md" />
+                  </div>
+                </div>
+
+                {/* Bottom Button */}
+                <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-5 shrink-0">
+                  <Skeleton className="h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full rounded-full" />
                 </div>
               </div>
-
-              {/* Bottom Button */}
-              <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-5 shrink-0">
-                <Skeleton className="h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full rounded-full" />
-              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </SkeletonContainer>
   );
