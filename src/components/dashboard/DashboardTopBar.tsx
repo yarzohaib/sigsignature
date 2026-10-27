@@ -130,7 +130,7 @@ export default function DashboardTopBar({
       </button>
 
       {/* Right: Notifications & User Profile */}
-      <div className="ml-auto flex items-center gap-4 sm:gap-6">
+      <div className="ml-auto flex items-center gap-2 sm:gap-3">
         {/* Notification Bell with Dropdown */}
         <div className="relative" ref={notificationsRef}>
           <button
