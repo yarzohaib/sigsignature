@@ -25,13 +25,12 @@ export default function TemplateSignatureThumbnail({
   );
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-white px-0 py-3 select-none sm:py-4">
+    <div className="flex h-full w-full items-center justify-center bg-white px-3 py-3 select-none sm:px-4 sm:py-4 lg:px-5">
       <div className="w-full flex items-center justify-center">
         <SignaturePreviewFrame
           html={previewHtml}
           aspectRatio="350 / 174"
-          fitPadding={0.98}
-          allowUpscale
+          fitPadding={0.9}
         />
       </div>
     </div>

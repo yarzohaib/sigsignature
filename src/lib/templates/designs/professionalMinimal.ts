@@ -12,7 +12,7 @@ import {
 /**
  * Professional Minimal Template Renderer (Daniel Wilson).
  * Standard dimension: 350px width, 140px-174px height.
- * Clean white background with square rounded avatar on left, contact info with blue icons, and subtle star badge.
+ * Clean white background with square rounded avatar on left and contact info with blue icons.
  */
 export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor || "#245FD4");
@@ -73,10 +73,6 @@ export function render(data: TemplateSignatureData): string {
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:4px;">${contactRows.join("")}</table>`
     : "";
 
-  const starCell = `<td style="vertical-align:top;text-align:right;width:24px;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" style="display:inline-block;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-  </td>`;
-
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#1E293B;width:100%;max-width:350px;">
     <tr>
       ${photoCell}
@@ -89,7 +85,6 @@ export function render(data: TemplateSignatureData): string {
         </div>
         ${contactsTable}
       </td>
-      ${starCell}
     </tr>
   </table>`;
 }
