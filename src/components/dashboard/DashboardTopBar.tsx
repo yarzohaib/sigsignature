@@ -68,9 +68,11 @@ export default function DashboardTopBar({
   const displaySrc = resolvedAvatar && failedUrl !== resolvedAvatar ? resolvedAvatar : "/placeholder-avatar.svg";
 
   // Check if onboarding setup guide has been acknowledged / completed
+  const [mounted, setMounted] = useState(false);
   const [isGuideAcknowledged, setIsGuideAcknowledged] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const checkGuideStatus = () => {
       const uid = optionalUser?.user?.id || getStoredUser()?.id || "";
       setIsGuideAcknowledged(hasAcknowledgedOnboarding(uid));
@@ -80,7 +82,7 @@ export default function DashboardTopBar({
     return () => window.removeEventListener(ONBOARDING_EVENT, checkGuideStatus);
   }, [optionalUser?.user?.id]);
 
-  const showSetupGuide = !isGuideAcknowledged;
+  const showSetupGuide = mounted && !isGuideAcknowledged;
 
   const handleInternalLogout = async () => {
     if (onLogout) {
