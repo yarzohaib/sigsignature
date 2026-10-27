@@ -40,7 +40,7 @@ function PricingContent() {
         </div>
       )}
 
-      <main className="flex w-full flex-1 flex-col justify-start gap-6 py-1 sm:gap-8 3xl:gap-9">
+      <main className="flex w-full flex-1 flex-col justify-start gap-6 py-1 sm:gap-8 lg:justify-between 3xl:gap-9">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
