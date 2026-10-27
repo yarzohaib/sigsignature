@@ -6,6 +6,7 @@ import PricingSkeleton from "@/components/skeletons/PricingSkeleton";
 
 function PricingContent() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   function handleGoPremium() {
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
@@ -254,7 +255,7 @@ function PricingContent() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:gap-4 3xl:gap-5">
+              <div className="grid grid-cols-1 items-start gap-3.5 md:grid-cols-2 xl:gap-4 3xl:gap-5">
                 {[
                   {
                     question: "Is it really free?",
@@ -272,33 +273,59 @@ function PricingContent() {
                     question: "Do I need to know how to code?",
                     answer: "No. Build and customize your signature visually, then copy or download the finished version.",
                   },
-                ].map((item, index) => (
-                  <article
-                    key={item.question}
-                    className="flex min-h-[126px] gap-3.5 rounded-2xl border border-[#E5EAF2] bg-gradient-to-br from-white to-[#F8FAFF] p-4 shadow-[0_2px_8px_rgba(16,24,40,0.04)] sm:min-h-[132px] sm:p-5 3xl:min-h-[148px] 3xl:p-6"
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#EAF1FF] text-xs font-bold text-[#245FD4]">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <div className="min-w-0">
-                      <h3
-                        className="text-[14px] font-semibold leading-snug text-[#172238] sm:text-[15px] 3xl:text-base"
-                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                ].map((item, index) => {
+                  const isOpen = openFaq === index;
+                  const answerId = `pricing-faq-answer-${index}`;
+
+                  return (
+                    <article
+                      key={item.question}
+                      className={`rounded-2xl border p-4 shadow-[0_2px_8px_rgba(16,24,40,0.04)] sm:p-5 3xl:p-6 ${
+                        isOpen ? "border-[#C8D8FA] bg-[#FBFDFF]" : "border-[#E5EAF2] bg-white"
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        aria-expanded={isOpen}
+                        aria-controls={answerId}
+                        onClick={() => setOpenFaq(isOpen ? null : index)}
+                        className="flex w-full items-center justify-between gap-4 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] focus-visible:ring-offset-2"
                       >
-                        {item.question}
-                      </h3>
-                      <div className="mt-2.5 flex items-start gap-2.5 border-l-2 border-[#C8D8FA] pl-3">
-                        <span className="mt-px text-[10px] font-bold uppercase tracking-wide text-[#245FD4]">A</span>
+                        <h3
+                          className="text-base font-semibold leading-snug text-slate-900"
+                          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                        >
+                          {item.question}
+                        </h3>
+                        <svg
+                          aria-hidden="true"
+                          className={`h-5 w-5 shrink-0 text-[#245FD4] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </button>
+                      <div
+                        id={answerId}
+                        aria-hidden={!isOpen}
+                        hidden={!isOpen}
+                        className="mt-3 border-t border-[#E8EDF5] pt-3"
+                      >
                         <p
-                          className="text-[12px] leading-relaxed text-[#64748B] sm:text-[13px] 3xl:text-sm"
+                          className="text-sm leading-relaxed text-slate-600"
                           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                         >
                           {item.answer}
                         </p>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </section>
           </main>
