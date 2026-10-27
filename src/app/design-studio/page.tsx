@@ -75,6 +75,7 @@ function DesignStudioContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
+  const duplicateId = searchParams.get("duplicate");
   const isPremium = useIsPremium();
 
   // Auth & Session
@@ -289,33 +290,58 @@ function DesignStudioContent() {
         const draftKey = `sig_studio_draft_${userId}`;
         let loadedData: StudioSignatureData = INITIAL_STUDIO_DATA;
         let hasSavedDraft = false;
-        try {
-          const savedDraft = localStorage.getItem(draftKey);
-          if (savedDraft) {
-            const parsed = JSON.parse(savedDraft);
-            if (parsed && typeof parsed === "object") {
-              const elements = Array.isArray(parsed.elements) ? parsed.elements : [];
-              const isOnlyAutoMigrated =
-                elements.length > 0 &&
-                elements.every(
-                  (el: FreeElement) =>
-                    typeof el.id === "string" && el.id.startsWith("el_")
-                );
+        if (duplicateId) {
+          try {
+            const sourceSignature = await getSignatureRepository().get(duplicateId);
+            if (isCancelled) return;
+            if (!sourceSignature || sourceSignature.kind !== "studio") {
+              showToast("This saved signature is unavailable in Design Studio");
+              router.replace("/design-studio");
+              return;
+            }
+            loadedData = sourceSignature.data as StudioSignatureData;
+            if (!loadedData.elements) {
+              loadedData = migrateFlowToFree(loadedData);
+            }
+            setSignatureName(`${sourceSignature.name || "My Signature"} copy`);
+            hasSavedDraft = true;
+          } catch (loadErr) {
+            console.error("Failed to load the signature to duplicate:", loadErr);
+            showToast("Failed to load the saved signature");
+            router.replace("/design-studio");
+            return;
+          }
+        }
 
-              if (isOnlyAutoMigrated) {
-                try {
-                  localStorage.removeItem(draftKey);
-                } catch {
-                  // ignore
+        if (!duplicateId) {
+          try {
+            const savedDraft = localStorage.getItem(draftKey);
+            if (savedDraft) {
+              const parsed = JSON.parse(savedDraft);
+              if (parsed && typeof parsed === "object") {
+                const elements = Array.isArray(parsed.elements) ? parsed.elements : [];
+                const isOnlyAutoMigrated =
+                  elements.length > 0 &&
+                  elements.every(
+                    (el: FreeElement) =>
+                      typeof el.id === "string" && el.id.startsWith("el_")
+                  );
+
+                if (isOnlyAutoMigrated) {
+                  try {
+                    localStorage.removeItem(draftKey);
+                  } catch {
+                    // ignore
+                  }
+                } else if (elements.length > 0) {
+                  loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
+                  hasSavedDraft = true;
                 }
-              } else if (elements.length > 0) {
-                loadedData = { ...INITIAL_STUDIO_DATA, ...parsed };
-                hasSavedDraft = true;
               }
             }
+          } catch {
+            // ignore localStorage parsing errors
           }
-        } catch {
-          // ignore localStorage parsing errors
         }
 
         if (!hasSavedDraft) {
@@ -353,7 +379,7 @@ function DesignStudioContent() {
     return () => {
       isCancelled = true;
     };
-  }, [editId, router, showToast]);
+  }, [editId, duplicateId, router, showToast]);
 
   // Debounced Autosave to localStorage (600ms)
   useEffect(() => {

@@ -1,9 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
+import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
+import { renderSavedSignatureHtml } from "@/lib/signatures/render";
+import type { SavedSignature } from "@/types/signature";
 import type { TemplateSignatureData } from "@/types/template";
 
 interface StartingPointCardProps {
@@ -17,6 +20,7 @@ interface StartingPointCardProps {
   signatureFont: string;
   brandColor: string;
   includePhoto: boolean;
+  savedSignatures: SavedSignature[];
 }
 
 export default function StartingPointCard({
@@ -30,9 +34,15 @@ export default function StartingPointCard({
   signatureFont,
   brandColor,
   includePhoto,
+  savedSignatures,
 }: StartingPointCardProps) {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const selectedSavedSignature = savedSignatures.find(
+    (signature) => signature.id === defaultTemplateId
+  );
   const currentTemplate =
     AVAILABLE_TEMPLATES.find((t) => t.id === defaultTemplateId) ||
+    AVAILABLE_TEMPLATES.find((t) => t.id === "photo-pop") ||
     AVAILABLE_TEMPLATES[0];
 
   const fullName = `${firstName || ""} ${lastName || ""}`.trim() || "John Doe";
@@ -41,10 +51,18 @@ export default function StartingPointCard({
   const displayFormat = defaultExportFormat === "plain" ? "Plain" : "HTML";
 
   const previewHtml = useMemo(() => {
+    if (selectedSavedSignature) {
+      try {
+        return renderSavedSignatureHtml(selectedSavedSignature, { preview: true });
+      } catch {
+        return "";
+      }
+    }
+
     const base = currentTemplate?.defaultData || AVAILABLE_TEMPLATES[0].defaultData;
     const data: TemplateSignatureData = {
       ...base,
-      templateId: currentTemplate?.id || "professional-minimal",
+      templateId: currentTemplate?.id || "photo-pop",
       fullName,
       email: displayEmail,
       companyName: displayCompany,
@@ -58,6 +76,7 @@ export default function StartingPointCard({
       return "";
     }
   }, [
+    selectedSavedSignature,
     currentTemplate,
     fullName,
     displayEmail,
@@ -78,12 +97,18 @@ export default function StartingPointCard({
         >
           Your starting point
         </h2>
-        <div className="text-slate-400">
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <button
+          type="button"
+          onClick={() => setIsPreviewOpen(true)}
+          className="rounded-lg p-1 text-slate-400 transition hover:bg-blue-50 hover:text-[#245FD4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]"
+          aria-label="Preview starting signature"
+          title="Preview signature"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
           </svg>
-        </div>
+        </button>
       </div>
 
       {/* Real Signature Preview Box */}
@@ -97,9 +122,18 @@ export default function StartingPointCard({
           className="text-[12px] font-medium text-[#94A3B8]"
           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
         >
-          {currentTemplate.name} template · {signatureFont} · {displayFormat}
+          {selectedSavedSignature
+            ? `${selectedSavedSignature.name} · Saved signature`
+            : `${currentTemplate.name} template · ${signatureFont} · ${displayFormat}`}
         </span>
       </div>
+
+      <PreviewSignatureModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        html={previewHtml}
+        showCanvasTab={false}
+      />
     </div>
   );
 }

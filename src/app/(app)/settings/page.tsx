@@ -10,6 +10,9 @@ import NotificationsCard from "@/components/settings/NotificationsCard";
 import PlanUsageCard from "@/components/settings/PlanUsageCard";
 import SecurityCard from "@/components/settings/SecurityCard";
 import StartingPointCard from "@/components/settings/StartingPointCard";
+import SettingsActionConfirmModal, {
+  type SettingsAction,
+} from "@/components/settings/SettingsActionConfirmModal";
 import DataPrivacyCard from "@/components/settings/DataPrivacyCard";
 import { getLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import {
@@ -33,6 +36,8 @@ import {
 } from "@/app/lib/auth";
 import { compressImageToBlob } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
+import { getSignatureRepository } from "@/lib/signatures/repository";
+import type { SavedSignature } from "@/types/signature";
 
 interface FormState {
   firstName: string;
@@ -47,12 +52,24 @@ interface FormState {
 }
 
 const HEX_COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+const DEFAULT_SIGNATURE_TEMPLATE_ID = "photo-pop";
+
+function resolveDefaultSignatureId(
+  id: string | null | undefined,
+  signatures: SavedSignature[]
+) {
+  return signatures.some((signature) => signature.id === id)
+    ? id!
+    : DEFAULT_SIGNATURE_TEMPLATE_ID;
+}
 
 function SettingsContent() {
   const router = useRouter();
 
   // Loading & data states
   const cachedAccount = getCachedRouteData<AccountData>("/settings");
+  const cachedSignatures = getCachedRouteData<SavedSignature[]>("/signatures") || [];
+  const [savedSignatures, setSavedSignatures] = useState<SavedSignature[]>(cachedSignatures);
   const [accountData, setAccountData] = useState<AccountData | null>(() => cachedAccount || null);
   const [isLoading, setIsLoading] = useState(!cachedAccount);
 
@@ -66,7 +83,7 @@ function SettingsContent() {
       lastName: cachedUser?.lastName || "",
       companyName: cachedUser?.companyName || "",
       avatarUrl: cachedUser?.avatarUrl || cachedAvatar || null,
-      defaultTemplateId: cachedSettings?.defaultTemplateId || "professional-minimal",
+      defaultTemplateId: resolveDefaultSignatureId(cachedSettings?.defaultTemplateId, cachedSignatures),
       defaultExportFormat: cachedSettings?.defaultExportFormat || "html",
       signatureFont: cachedSettings?.signatureFont || "Arimo",
       brandColor: cachedSettings?.brandColor || "#245FD4",
@@ -84,7 +101,7 @@ function SettingsContent() {
       lastName: cachedUser?.lastName || "",
       companyName: cachedUser?.companyName || "",
       avatarUrl: cachedUser?.avatarUrl || cachedAvatar || null,
-      defaultTemplateId: cachedSettings?.defaultTemplateId || "professional-minimal",
+      defaultTemplateId: resolveDefaultSignatureId(cachedSettings?.defaultTemplateId, cachedSignatures),
       defaultExportFormat: cachedSettings?.defaultExportFormat || "html",
       signatureFont: cachedSettings?.signatureFont || "Arimo",
       brandColor: cachedSettings?.brandColor || "#245FD4",
@@ -111,6 +128,7 @@ function SettingsContent() {
 
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
+  const [pendingAction, setPendingAction] = useState<SettingsAction | null>(null);
 
   // Toast feedback state
   const [toast, setToast] = useState<{
@@ -132,8 +150,23 @@ function SettingsContent() {
 
     async function loadAccount() {
       try {
+        const signaturesPromise = getSignatureRepository()
+          .list()
+          .then((signatures) => {
+            if (isMounted) {
+              setSavedSignatures(signatures);
+              setCachedRouteData("/signatures", signatures);
+            }
+            return signatures;
+          })
+          .catch((err) => {
+            console.error("Failed to load signatures for settings:", err);
+            return [];
+          });
+
         const data = await fetchAccount();
         if (!isMounted) return;
+        const signatures = await signaturesPromise;
 
         setAccountData(data);
         setCachedRouteData("/settings", data);
@@ -143,7 +176,7 @@ function SettingsContent() {
           lastName: data.user.lastName || "",
           companyName: data.user.companyName || "",
           avatarUrl: serverAvatar,
-          defaultTemplateId: data.settings.defaultTemplateId || "professional-minimal",
+          defaultTemplateId: resolveDefaultSignatureId(data.settings.defaultTemplateId, signatures),
           defaultExportFormat: data.settings.defaultExportFormat || "html",
           signatureFont: data.settings.signatureFont || "Arimo",
           brandColor: data.settings.brandColor || "#245FD4",
@@ -157,7 +190,10 @@ function SettingsContent() {
 
         // Synchronize local caches
         setStoredUser(data.user);
-        setStoredSettings(data.settings);
+        setStoredSettings({
+          ...data.settings,
+          defaultTemplateId: serverForm.defaultTemplateId,
+        });
         setStoredAvatarUrl(serverAvatar);
       } catch (err: unknown) {
         console.error("Failed to load account:", err);
@@ -312,7 +348,13 @@ function SettingsContent() {
       // 2. Send settings updates if any changed
       if (hasSettingsChange) {
         const updatedSettings = await updateAccountSettings(settingsPayload);
-        setStoredSettings(updatedSettings);
+        setStoredSettings({
+          ...updatedSettings,
+          defaultTemplateId: resolveDefaultSignatureId(
+            updatedSettings.defaultTemplateId,
+            savedSignatures
+          ),
+        });
       }
 
       // Update local state to reflect fresh saved values
@@ -383,7 +425,10 @@ function SettingsContent() {
 
     try {
       const updated = await updateAccountSettings({ notifyProductUpdates: nextVal });
-      setStoredSettings(updated);
+      setStoredSettings({
+        ...updated,
+        defaultTemplateId: resolveDefaultSignatureId(updated.defaultTemplateId, savedSignatures),
+      });
     } catch (err: unknown) {
       // Rollback on error
       setNotifyProductUpdates(!nextVal);
@@ -399,7 +444,10 @@ function SettingsContent() {
 
     try {
       const updated = await updateAccountSettings({ notifyTips: nextVal });
-      setStoredSettings(updated);
+      setStoredSettings({
+        ...updated,
+        defaultTemplateId: resolveDefaultSignatureId(updated.defaultTemplateId, savedSignatures),
+      });
     } catch (err: unknown) {
       // Rollback on error
       setNotifyTips(!nextVal);
@@ -413,7 +461,10 @@ function SettingsContent() {
     setIsJoiningWaitlist(true);
     try {
       const updated = await joinWaitlist();
-      setStoredSettings(updated);
+      setStoredSettings({
+        ...updated,
+        defaultTemplateId: resolveDefaultSignatureId(updated.defaultTemplateId, savedSignatures),
+      });
       if (accountData) {
         setAccountData({
           ...accountData,
@@ -458,7 +509,7 @@ function SettingsContent() {
               <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 pt-1">
                 <button
                   type="button"
-                  onClick={handleCancel}
+                  onClick={() => setPendingAction("cancel")}
                   disabled={!isDirty || isSaving}
                   className="rounded-xl border border-slate-200 bg-white px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
@@ -467,7 +518,7 @@ function SettingsContent() {
                 </button>
                 <button
                   type="button"
-                  onClick={handleSaveChanges}
+                  onClick={() => setPendingAction("save")}
                   disabled={!isDirty || !isValid || isSaving}
                   className="flex items-center gap-2 rounded-xl bg-[#022977] px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:bg-opacity-95 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
@@ -517,6 +568,7 @@ function SettingsContent() {
                   signatureFont={formState.signatureFont}
                   brandColor={formState.brandColor}
                   includePhoto={formState.includePhoto}
+                  savedSignatures={savedSignatures}
                   brandColorError={errors.brandColor}
                   onTemplateChange={(val) =>
                     setFormState((prev) => ({ ...prev, defaultTemplateId: val }))
@@ -585,6 +637,7 @@ function SettingsContent() {
                   signatureFont={formState.signatureFont}
                   brandColor={formState.brandColor}
                   includePhoto={formState.includePhoto}
+                  savedSignatures={savedSignatures}
                 />
 
                 {/* 7. Data & privacy card */}
@@ -596,6 +649,16 @@ function SettingsContent() {
             </div>
           </main>
         )}
+
+      <SettingsActionConfirmModal
+        action={pendingAction}
+        onClose={() => setPendingAction(null)}
+        onConfirm={(action) => {
+          setPendingAction(null);
+          if (action === "save") void handleSaveChanges();
+          else handleCancel();
+        }}
+      />
 
       {/* Toast Notification */}
       {toast && (

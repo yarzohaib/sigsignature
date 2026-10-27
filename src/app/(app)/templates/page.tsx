@@ -15,6 +15,7 @@ import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
+import type { SavedSignature } from "@/types/signature";
 
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
 type CategoryTab = (typeof CATEGORIES)[number];
@@ -46,18 +47,51 @@ function TemplatesContent() {
     async function loadSignatureForEditing() {
       if (!editId) {
         setTemplateNotFound(false);
-        setIsLoadingEdit(false);
+        setIsLoadingEdit(Boolean(isNew));
         if (isNew && !isCancelled) {
           if (isSignatureLimitReached()) {
             setIsLimitModalOpen(true);
+            setIsLoadingEdit(false);
             return;
           }
           const settings = getStoredSettings();
-          const targetId = settings?.defaultTemplateId || "professional-minimal";
-          const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === targetId) || AVAILABLE_TEMPLATES[0];
+          const targetId = settings?.defaultTemplateId || "photo-pop";
+          let savedDefault: SavedSignature | null = null;
+          if (!AVAILABLE_TEMPLATES.some((template) => template.id === targetId)) {
+            try {
+              savedDefault = await getSignatureRepository().get(targetId);
+            } catch {
+              // Fall back to Photo Pop if the saved default is unavailable.
+            }
+          }
+          if (isCancelled) return;
+
+          if (savedDefault?.kind === "template") {
+            const sourceTemplate = AVAILABLE_TEMPLATES.find(
+              (template) => template.id === savedDefault.templateId
+            );
+            const fallbackTemplate = AVAILABLE_TEMPLATES.find(
+              (template) => template.id === "photo-pop"
+            ) || AVAILABLE_TEMPLATES[0];
+            setEditingSignatureId(undefined);
+            setEditingSignatureData(savedDefault.data as TemplateSignatureData);
+            setEditingTemplate(sourceTemplate || fallbackTemplate);
+            setIsLoadingEdit(false);
+            return;
+          }
+
+          if (savedDefault?.kind === "studio") {
+            router.replace(`/design-studio?duplicate=${encodeURIComponent(savedDefault.id)}`);
+            return;
+          }
+
+          const tpl = AVAILABLE_TEMPLATES.find((t) => t.id === targetId) ||
+            AVAILABLE_TEMPLATES.find((t) => t.id === "photo-pop") ||
+            AVAILABLE_TEMPLATES[0];
           setEditingSignatureId(undefined);
           setEditingSignatureData(undefined);
           setEditingTemplate(tpl);
+          setIsLoadingEdit(false);
         }
         return;
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
+import type { SavedSignature } from "@/types/signature";
 
 export const EMAIL_SAFE_FONTS = [
   "Arimo",
@@ -18,6 +18,7 @@ interface SignatureDefaultsCardProps {
   signatureFont: string;
   brandColor: string;
   includePhoto: boolean;
+  savedSignatures: SavedSignature[];
   brandColorError?: string;
   onTemplateChange: (val: string) => void;
   onExportFormatChange: (val: "html" | "plain") => void;
@@ -27,11 +28,12 @@ interface SignatureDefaultsCardProps {
 }
 
 export default function SignatureDefaultsCard({
-  defaultTemplateId,
+  defaultTemplateId: selectedDefaultId,
   defaultExportFormat,
   signatureFont,
   brandColor,
   includePhoto,
+  savedSignatures,
   brandColorError,
   onTemplateChange,
   onExportFormatChange,
@@ -39,9 +41,11 @@ export default function SignatureDefaultsCard({
   onBrandColorChange,
   onIncludePhotoChange,
 }: SignatureDefaultsCardProps) {
-  // Normalize template selection to either valid id or the first template
-  const currentTemplateId =
-    defaultTemplateId || AVAILABLE_TEMPLATES[0]?.id || "professional-minimal";
+  const currentTemplateId = selectedDefaultId && savedSignatures.some(
+    (signature) => signature.id === selectedDefaultId
+  )
+    ? selectedDefaultId
+    : "photo-pop";
 
   return (
     <div className="rounded-2xl border border-[#E1E6EF] bg-white p-6 shadow-xs">
@@ -85,7 +89,7 @@ export default function SignatureDefaultsCard({
             className="block text-[13px] font-semibold text-[#1E293B] mb-1.5"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
-            Default template
+            Default signature
           </label>
           <div className="relative">
             <select
@@ -95,9 +99,10 @@ export default function SignatureDefaultsCard({
               className="w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2.5 text-sm text-[#1E293B] focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-blue-100 transition cursor-pointer pr-10"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              {AVAILABLE_TEMPLATES.map((tmpl) => (
-                <option key={tmpl.id} value={tmpl.id}>
-                  {tmpl.name}
+              <option value="photo-pop">Photo Pop (Default)</option>
+              {savedSignatures.map((signature) => (
+                <option key={signature.id} value={signature.id}>
+                  {signature.name}
                 </option>
               ))}
             </select>
