@@ -18,6 +18,11 @@ export default function TemplateSignatureThumbnail({
   template,
 }: TemplateSignatureThumbnailProps) {
   const { defaultData } = template;
+  const preferTableBounds = [
+    "corporate-elegant",
+    "executive-corporate",
+    "bold-block",
+  ].includes(template.id);
 
   const previewHtml = useMemo(
     () => generateTemplateHtml(defaultData, { preview: true }),
@@ -31,6 +36,7 @@ export default function TemplateSignatureThumbnail({
           html={previewHtml}
           aspectRatio="350 / 174"
           fitPadding={0.92}
+          preferTableBounds={preferTableBounds}
           className="h-full"
         />
       </div>

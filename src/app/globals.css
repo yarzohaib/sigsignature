@@ -74,6 +74,8 @@ html, body {
   font-family: var(--font-commissioner), sans-serif;
   background: var(--color-surface);
   color: #0f172a;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .page-heading {

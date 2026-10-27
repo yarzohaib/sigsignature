@@ -26,6 +26,8 @@ export interface SignaturePreviewFrameProps {
   fitPadding?: number;
   /** Allow aspect-ratio previews to scale up when their content is smaller than the panel. */
   allowUpscale?: boolean;
+  /** Measure the outer signature table instead of overflowing descendants. */
+  preferTableBounds?: boolean;
   /**
    * Target container width when aspectRatio is false, used to auto-scale content down if it exceeds the viewport.
    */
@@ -48,6 +50,7 @@ export const SignaturePreviewFrame = forwardRef<
     aspectRatio = "16 / 9",
     fitPadding = 0.92,
     allowUpscale = false,
+    preferTableBounds = false,
     targetWidth,
   },
   ref
@@ -138,19 +141,23 @@ export const SignaturePreviewFrame = forwardRef<
       const rootRect = root.getBoundingClientRect();
       const tableRect = table ? table.getBoundingClientRect() : null;
 
-      let w = Math.max(
-        rootRect.width,
-        root.scrollWidth,
-        tableRect ? tableRect.width : 0,
-        table ? table.scrollWidth : 0
-      );
+      let w = preferTableBounds && tableRect
+        ? tableRect.width
+        : Math.max(
+            rootRect.width,
+            root.scrollWidth,
+            tableRect ? tableRect.width : 0,
+            table ? table.scrollWidth : 0
+          );
 
-      const h = Math.max(
-        rootRect.height,
-        root.scrollHeight,
-        tableRect ? tableRect.height : 0,
-        table ? table.scrollHeight : 0
-      );
+      const h = preferTableBounds && tableRect
+        ? tableRect.height
+        : Math.max(
+            rootRect.height,
+            root.scrollHeight,
+            tableRect ? tableRect.height : 0,
+            table ? table.scrollHeight : 0
+          );
 
       if (table) {
         const attrW = parseFloat(table.getAttribute("width") || "0");
@@ -165,7 +172,7 @@ export const SignaturePreviewFrame = forwardRef<
     } catch {
       // Ignore cross-origin issues if any
     }
-  }, [minHeight]);
+  }, [minHeight, preferTableBounds]);
 
   // Reset measured state when HTML changes
   useEffect(() => {
