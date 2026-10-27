@@ -7,7 +7,7 @@ export default function ActionCards() {
   return (
     <section className="grid w-full grid-cols-1 gap-3.5 sm:gap-4 lg:grid-cols-2 lg:gap-4 xl:gap-5 2xl:gap-6 shrink-0" aria-label="Signature Creation Options">
       {/* Card 1: Start From a Template */}
-      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:p-6 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6">
+      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[220px] 2xl:p-6 3xl:min-h-[250px] 3xl:p-7 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6">
         {/* Left / Top Illustration: Frame.svg */}
         <div className="flex h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[240px] 3xl:w-[280px] 2xl:self-stretch shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 2xl:rounded-2xl">
           <Image
@@ -77,7 +77,7 @@ export default function ActionCards() {
       </div>
 
       {/* Card 2: Create from Scratch */}
-      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:p-6 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6">
+      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[220px] 2xl:p-6 3xl:min-h-[250px] 3xl:p-7 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6">
         {/* Left / Top Illustration: Dashboard-selection.png with unoptimized full Retina clarity */}
         <div className="flex h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[240px] 3xl:w-[280px] 2xl:self-stretch shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 2xl:rounded-2xl">
           <Image
