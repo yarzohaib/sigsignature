@@ -33,7 +33,7 @@ export default function EmptyTeamState({ onCreateSignature }: EmptyTeamStateProp
           <button
             type="button"
             onClick={onCreateSignature}
-            className="flex items-center gap-2 rounded-xl bg-[#245FD4] hover:bg-[#1D4ED8] px-6 py-3 text-sm sm:text-base font-semibold text-white shadow-xs transition hover:shadow-md cursor-pointer"
+            className="flex items-center gap-2 rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 py-3 text-sm sm:text-base font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

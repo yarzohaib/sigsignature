@@ -419,7 +419,7 @@ function TeamSignaturesContent() {
           {toastInfo.action && (
             <Link
               href={toastInfo.action.href}
-              className="ml-1 inline-flex items-center rounded-lg bg-[#245FD4] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#1E4FB0] transition shrink-0"
+              className="ml-1 inline-flex items-center rounded-lg bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-2.5 py-1 text-xs font-semibold text-white hover:opacity-95 transition shrink-0"
             >
               {toastInfo.action.label}
             </Link>

@@ -64,7 +64,7 @@ export default function DevInviteModal({
             <button
               type="button"
               onClick={handleCopy}
-              className="rounded-lg bg-[#245FD4] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1D4ED8] transition shrink-0 cursor-pointer"
+              className="rounded-lg bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-95 transition shrink-0 cursor-pointer"
             >
               {copied ? "Copied!" : "Copy Link"}
             </button>
