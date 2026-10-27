@@ -7,9 +7,9 @@ export default function ActionCards() {
   return (
     <section className="grid w-full grid-cols-1 gap-3.5 sm:gap-4 lg:grid-cols-2 lg:gap-4 xl:gap-5 2xl:gap-6 shrink-0" aria-label="Signature Creation Options">
       {/* Card 1: Start From a Template */}
-      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[220px] 2xl:p-6 3xl:min-h-[250px] 3xl:p-7 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6">
+      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[275px] 2xl:p-7 3xl:min-h-[310px] 3xl:p-8 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-7">
         {/* Left / Top Illustration: Frame.svg */}
-        <div className="flex h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[240px] 3xl:w-[280px] 2xl:self-stretch shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 2xl:rounded-2xl">
+        <div className="flex h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[290px] 3xl:w-[340px] 2xl:self-stretch shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 2xl:p-3.5 3xl:p-4 2xl:rounded-2xl">
           <Image
             src="/Frame.svg"
             alt="Templates preview"
@@ -21,7 +21,7 @@ export default function ActionCards() {
         </div>
 
         {/* Right / Content Column */}
-        <div className="flex flex-1 flex-col justify-between min-w-0">
+        <div className="flex flex-1 flex-col justify-between min-w-0 py-0.5 2xl:py-1">
           <div>
             {/* Title with icon visible on mobile/tablet/laptop/desktop and hidden only on 2xl+ extra large monitors */}
             <div className="flex items-start gap-3 2xl:block">
@@ -37,7 +37,7 @@ export default function ActionCards() {
 
               <div className="min-w-0">
                 <h3
-                  className="text-[#1E293B] font-bold text-[17px] xl:text-[18px] 2xl:text-[20px] leading-tight"
+                  className="text-[#1E293B] font-bold text-[17px] xl:text-[18px] 2xl:text-[21px] 3xl:text-[22px] leading-tight"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                     letterSpacing: "0%",
@@ -47,7 +47,7 @@ export default function ActionCards() {
                   Start From a Template
                 </h3>
                 <p
-                  className="mt-1 xl:mt-1.5 text-[13px] xl:text-[13.5px] 2xl:text-[14.5px] leading-snug text-[#64748B]"
+                  className="mt-1 xl:mt-1.5 2xl:mt-2 text-[13px] xl:text-[13.5px] 2xl:text-[15px] 3xl:text-[15.5px] leading-snug 2xl:leading-relaxed text-[#64748B]"
                   style={{
                     fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                     fontWeight: 400,
@@ -60,10 +60,10 @@ export default function ActionCards() {
           </div>
 
           {/* Browse Templates Button with landing page gradient */}
-          <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-3 shrink-0">
+          <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-5 shrink-0">
             <Link
               href="/templates"
-              className="group flex h-10 xl:h-11 2xl:h-12 w-full items-center justify-center gap-2 rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[16px] leading-tight"
+              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full items-center justify-center gap-2 rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
               style={{
                 fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 letterSpacing: "0%",
@@ -77,9 +77,9 @@ export default function ActionCards() {
       </div>
 
       {/* Card 2: Create from Scratch */}
-      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[220px] 2xl:p-6 3xl:min-h-[250px] 3xl:p-7 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-6">
+      <div className="flex flex-col 2xl:flex-row items-stretch justify-between rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-3.5 sm:p-4 lg:p-4.5 xl:p-5 2xl:min-h-[275px] 2xl:p-7 3xl:min-h-[310px] 3xl:p-8 shadow-xs transition hover:shadow-md gap-3.5 sm:gap-4 xl:gap-4.5 2xl:gap-7">
         {/* Left / Top Illustration: Dashboard-selection.png with unoptimized full Retina clarity */}
-        <div className="flex h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[240px] 3xl:w-[280px] 2xl:self-stretch shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 2xl:rounded-2xl">
+        <div className="flex h-[145px] sm:h-[165px] lg:h-[165px] xl:h-[185px] 2xl:h-auto 2xl:w-[290px] 3xl:w-[340px] 2xl:self-stretch shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#F8FAFC] p-2 2xl:p-3.5 3xl:p-4 2xl:rounded-2xl">
           <Image
             src="/Dashboard-selection.png"
             alt="Create from scratch Design Studio editor preview"
@@ -92,7 +92,7 @@ export default function ActionCards() {
         </div>
 
         {/* Right / Content Column */}
-        <div className="flex flex-1 flex-col justify-between min-w-0">
+        <div className="flex flex-1 flex-col justify-between min-w-0 py-0.5 2xl:py-1">
           <div>
             {/* Title with icon visible on mobile/tablet/laptop/desktop and hidden only on 2xl+ extra large monitors */}
             <div className="flex items-start gap-3 2xl:block">
@@ -106,7 +106,7 @@ export default function ActionCards() {
 
               <div className="min-w-0">
                 <h3
-                  className="text-[#1E293B] font-bold text-[17px] xl:text-[18px] 2xl:text-[20px] leading-tight"
+                  className="text-[#1E293B] font-bold text-[17px] xl:text-[18px] 2xl:text-[21px] 3xl:text-[22px] leading-tight"
                   style={{
                     fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                     letterSpacing: "0%",
@@ -116,7 +116,7 @@ export default function ActionCards() {
                   Create from Scratch
                 </h3>
                 <p
-                  className="mt-1 xl:mt-1.5 text-[13px] xl:text-[13.5px] 2xl:text-[14.5px] leading-snug text-[#64748B]"
+                  className="mt-1 xl:mt-1.5 2xl:mt-2 text-[13px] xl:text-[13.5px] 2xl:text-[15px] 3xl:text-[15.5px] leading-snug 2xl:leading-relaxed text-[#64748B]"
                   style={{
                     fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                     fontWeight: 400,
@@ -129,10 +129,10 @@ export default function ActionCards() {
           </div>
 
           {/* Start From Scratch Button with text color #022977 */}
-          <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-3 shrink-0">
+          <div className="mt-3.5 sm:mt-4 xl:mt-4 2xl:mt-5 shrink-0">
             <Link
               href="/design-studio"
-              className="group flex h-10 xl:h-11 2xl:h-12 w-full items-center justify-center gap-2 rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-medium text-[14px] xl:text-[15px] 2xl:text-[16px] leading-tight"
+              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full items-center justify-center gap-2 rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
               style={{
                 fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 letterSpacing: "0%",
