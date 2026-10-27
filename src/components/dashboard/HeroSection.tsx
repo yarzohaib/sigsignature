@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useOptionalUser } from "@/contexts/UserContext";
 import { getStoredUser } from "@/app/lib/auth";
 import { UserProfile } from "@/app/lib/api";
@@ -24,12 +24,6 @@ export function getUserInitials(name: string): string {
 export default function HeroSection() {
   const optionalUser = useOptionalUser();
   const [storedUser, setStoredUser] = useState<UserProfile | null>(() => getStoredUser());
-
-  useEffect(() => {
-    if (!storedUser) {
-      setStoredUser(getStoredUser());
-    }
-  }, [storedUser]);
 
   const user = optionalUser?.user || storedUser;
 

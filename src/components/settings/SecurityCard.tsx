@@ -211,12 +211,12 @@ export default function SecurityCard({
                 Coming soon
               </span>
             </div>
-            <p
+            {/* <p
               className="mt-0.5 text-[11px] text-[#6B7280]"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
               Add an extra layer of security.
-            </p>
+            </p> */}
           </div>
 
           {/* Disabled toggle switch */}

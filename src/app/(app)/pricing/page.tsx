@@ -40,7 +40,7 @@ function PricingContent() {
         </div>
       )}
 
-      <main className="mx-auto flex w-full max-w-[1240px] flex-1 flex-col justify-start gap-6 py-1 sm:gap-8">
+      <main className="flex w-full flex-1 flex-col justify-start gap-6 py-1 sm:gap-8 3xl:gap-9">
             {/* Top Heading Section */}
             <div className="w-full text-left shrink-0">
               <h1
@@ -52,7 +52,7 @@ function PricingContent() {
                 Simple Pricing. Powerful Signatures.
               </h1>
               <p
-                className="mt-1.5 text-[#000000] text-[14px] sm:text-[15px] xl:text-[16px]"
+                className="mt-1.5 text-[#000000] text-[14px] sm:text-[15px] xl:text-[16px] 3xl:text-[18px]"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                   fontWeight: 400,
@@ -69,7 +69,7 @@ function PricingContent() {
             <div className="flex w-full shrink-0 flex-col items-stretch justify-between gap-4 lg:flex-row lg:gap-5 xl:gap-6">
               {/* Free Plan Card */}
               <div
-                className="flex h-auto min-h-[300px] flex-1 flex-col justify-between rounded-2xl p-5 shadow-2xs transition hover:shadow-xs sm:p-6 lg:min-h-[320px] xl:min-h-[330px] 2xl:min-h-[340px]"
+                className="flex h-auto min-h-[300px] flex-1 flex-col justify-between rounded-2xl p-5 shadow-2xs transition hover:shadow-xs sm:p-6 lg:min-h-[320px] xl:min-h-[330px] 2xl:min-h-[340px] 3xl:min-h-[360px] 3xl:p-7"
                 style={{
                   width: "100%",
                   borderWidth: "0.5px",
@@ -83,7 +83,7 @@ function PricingContent() {
                   {/* Header Row: Title & Current Plan badge */}
                   <div className="flex items-center justify-between">
                     <h2
-                      className="text-[17px] xl:text-[19px] font-semibold text-[#0F172A]"
+                      className="text-[17px] font-semibold text-[#0F172A] xl:text-[19px] 3xl:text-[21px]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       Free Plan
@@ -99,7 +99,7 @@ function PricingContent() {
                   {/* Price Row */}
                   <div className="mt-1.5 flex items-baseline gap-1.5">
                     <span
-                      className="text-[28px] sm:text-[32px] xl:text-[34px] font-bold text-[#0F172A]"
+                      className="text-[28px] font-bold text-[#0F172A] sm:text-[32px] xl:text-[34px] 3xl:text-[38px]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       $0
@@ -114,7 +114,7 @@ function PricingContent() {
 
                   {/* Subtitle description */}
                   <p
-                    className="mt-0.5 text-[12px] xl:text-[13px] text-[#64748B]"
+                    className="mt-0.5 text-[12px] text-[#64748B] xl:text-[13px] 3xl:text-[14px]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
                     Signature builder (templates + from scratch)
@@ -122,7 +122,7 @@ function PricingContent() {
 
                   {/* Features List */}
                   <ul
-                    className="mt-2.5 xl:mt-3 flex flex-col gap-1.5 xl:gap-2 text-[12.5px] xl:text-[13.5px] text-[#334155]"
+                    className="mt-2.5 flex flex-col gap-1.5 text-[12.5px] text-[#334155] xl:mt-3 xl:gap-2 xl:text-[13.5px] 3xl:text-[15px]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
                     <li className="flex items-center gap-2">
@@ -147,7 +147,7 @@ function PricingContent() {
                 {/* Bottom Action Button */}
                 <Link
                   href="/templates"
-                  className="mt-3 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 xl:py-2.5 text-center text-[13px] xl:text-[14px] font-semibold text-white shadow-xs transition hover:opacity-95"
+                  className="mt-3 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[13px] font-semibold text-white shadow-xs transition hover:opacity-95 xl:py-2.5 xl:text-[14px] 3xl:text-[15px]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Get Started
@@ -156,7 +156,7 @@ function PricingContent() {
 
               {/* Premium Plan Card */}
               <div
-                className="flex h-auto min-h-[300px] flex-1 flex-col justify-between rounded-2xl p-5 shadow-2xs transition hover:shadow-xs sm:p-6 lg:min-h-[320px] xl:min-h-[330px] 2xl:min-h-[340px]"
+                className="flex h-auto min-h-[300px] flex-1 flex-col justify-between rounded-2xl p-5 shadow-2xs transition hover:shadow-xs sm:p-6 lg:min-h-[320px] xl:min-h-[330px] 2xl:min-h-[340px] 3xl:min-h-[360px] 3xl:p-7"
                 style={{
                   width: "100%",
                   borderWidth: "0.5px",
@@ -170,7 +170,7 @@ function PricingContent() {
                   {/* Header Row: Title */}
                   <div className="flex items-center justify-between">
                     <h2
-                      className="text-[17px] xl:text-[19px] font-semibold text-[#0F172A]"
+                      className="text-[17px] font-semibold text-[#0F172A] xl:text-[19px] 3xl:text-[21px]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       Premium Plan
@@ -180,7 +180,7 @@ function PricingContent() {
                   {/* Price Row */}
                   <div className="mt-1.5 flex items-baseline gap-1.5">
                     <span
-                      className="text-[28px] sm:text-[32px] xl:text-[34px] font-bold text-[#0F172A]"
+                      className="text-[28px] font-bold text-[#0F172A] sm:text-[32px] xl:text-[34px] 3xl:text-[38px]"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       $10
@@ -195,7 +195,7 @@ function PricingContent() {
 
                   {/* Features List */}
                   <ul
-                    className="mt-2.5 xl:mt-3 flex flex-col gap-1.5 xl:gap-2 text-[12.5px] xl:text-[13.5px] text-[#334155]"
+                    className="mt-2.5 flex flex-col gap-1.5 text-[12.5px] text-[#334155] xl:mt-3 xl:gap-2 xl:text-[13.5px] 3xl:text-[15px]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
                     <li className="flex items-center gap-2">
@@ -225,7 +225,7 @@ function PricingContent() {
                 <button
                   type="button"
                   onClick={handleGoPremium}
-                  className="mt-3 w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 xl:py-2.5 text-center text-[13px] xl:text-[14px] font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer"
+                  className="mt-3 w-full cursor-pointer rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[13px] font-semibold text-white shadow-xs transition hover:opacity-95 xl:py-2.5 xl:text-[14px] 3xl:text-[15px]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Go Premium
@@ -241,20 +241,20 @@ function PricingContent() {
                 </span>
                 <h2
                   id="pricing-faq-heading"
-                  className="mt-2 text-[24px] font-semibold leading-tight tracking-tight text-[#101828] sm:text-[28px] xl:text-[32px]"
+                  className="mt-2 text-[24px] font-semibold leading-tight tracking-tight text-[#101828] sm:text-[28px] xl:text-[32px] 3xl:text-[36px]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Got questions? We&apos;ve got answers.
                 </h2>
                 <p
-                  className="mt-2 text-[13px] leading-relaxed text-[#64748B] sm:text-sm"
+                  className="mt-2 text-[13px] leading-relaxed text-[#64748B] sm:text-sm 3xl:text-base"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   Helpful details about plans, editing, and getting your signature into email.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:gap-4">
+              <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:gap-4 3xl:gap-5">
                 {[
                   {
                     question: "Is it really free?",
@@ -275,14 +275,14 @@ function PricingContent() {
                 ].map((item, index) => (
                   <article
                     key={item.question}
-                    className="flex min-h-[126px] gap-3.5 rounded-2xl border border-[#E5EAF2] bg-gradient-to-br from-white to-[#F8FAFF] p-4 shadow-[0_2px_8px_rgba(16,24,40,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#BFD2F8] hover:shadow-[0_8px_20px_rgba(36,95,212,0.08)] sm:p-5"
+                    className="flex min-h-[126px] gap-3.5 rounded-2xl border border-[#E5EAF2] bg-gradient-to-br from-white to-[#F8FAFF] p-4 shadow-[0_2px_8px_rgba(16,24,40,0.04)] sm:min-h-[132px] sm:p-5 3xl:min-h-[148px] 3xl:p-6"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#EAF1FF] text-xs font-bold text-[#245FD4]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0">
                       <h3
-                        className="text-[14px] font-semibold leading-snug text-[#172238] sm:text-[15px]"
+                        className="text-[14px] font-semibold leading-snug text-[#172238] sm:text-[15px] 3xl:text-base"
                         style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                       >
                         {item.question}
@@ -290,7 +290,7 @@ function PricingContent() {
                       <div className="mt-2.5 flex items-start gap-2.5 border-l-2 border-[#C8D8FA] pl-3">
                         <span className="mt-px text-[10px] font-bold uppercase tracking-wide text-[#245FD4]">A</span>
                         <p
-                          className="text-[12px] leading-relaxed text-[#64748B] sm:text-[13px]"
+                          className="text-[12px] leading-relaxed text-[#64748B] sm:text-[13px] 3xl:text-sm"
                           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                         >
                           {item.answer}
@@ -310,7 +310,7 @@ export default function PricingPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-1 flex-col justify-center overflow-y-auto lg:overflow-hidden px-4 py-3 sm:px-6 sm:py-4 lg:px-8 xl:px-12 2xl:px-16 bg-white w-full">
+        <div className="flex w-full flex-1 flex-col justify-start overflow-y-auto bg-white px-4 py-5 sm:px-6 sm:py-6 lg:px-8 xl:px-10 2xl:px-12">
           <PricingSkeleton />
         </div>
       }
