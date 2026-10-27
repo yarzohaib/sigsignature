@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import {
@@ -9,7 +10,9 @@ import {
   OPEN_ONBOARDING_EVENT,
   getOnboardingFlags,
   hasSeenOnboarding,
+  hasAcknowledgedOnboarding,
   markOnboardingSeen,
+  markOnboardingCompleted,
   markOnboardingStep,
   type OnboardingFlags,
 } from "@/lib/onboarding";
@@ -88,6 +91,7 @@ type Props = {
 };
 
 export default function GettingStartedModal({ userId }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [signatureCount, setSignatureCount] = useState(0);
   const [flags, setFlags] = useState<OnboardingFlags>({ exported: false, installed: false });
@@ -104,61 +108,6 @@ export default function GettingStartedModal({ userId }: Props) {
       return null;
     }
   }, []);
-
-  const close = useCallback(() => {
-    markOnboardingSeen(userId); // whatever way it closes, it never auto opens again
-    setOpen(false);
-  }, [userId]);
-
-  // First visit check + live updates
-  useEffect(() => {
-    let alive = true;
-    loadFlags();
-
-    (async () => {
-      const count = await loadCount();
-      if (!alive || count === null) return;
-      const f = getOnboardingFlags();
-      const finished = count > 0 && f.exported && f.installed;
-      // Auto open only for a user who has not seen it and has not already finished setup
-      if (!hasSeenOnboarding(userId) && !finished) setOpen(true);
-    })();
-
-    const onFlags = () => loadFlags();
-    const onCount = () => loadCount();
-    const onReopen = () => {
-      loadFlags();
-      loadCount();
-      setOpen(true);
-    };
-    window.addEventListener(ONBOARDING_EVENT, onFlags);
-    window.addEventListener("sig_count_update", onCount);
-    window.addEventListener(OPEN_ONBOARDING_EVENT, onReopen);
-    return () => {
-      alive = false;
-      window.removeEventListener(ONBOARDING_EVENT, onFlags);
-      window.removeEventListener("sig_count_update", onCount);
-      window.removeEventListener(OPEN_ONBOARDING_EVENT, onReopen);
-    };
-  }, [userId, loadFlags, loadCount]);
-
-  // Escape to close, lock page scroll, move focus into the dialog
-  useEffect(() => {
-    if (!open) return;
-    const previous = document.activeElement as HTMLElement | null;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    dialogRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKey);
-      previous?.focus?.();
-    };
-  }, [open, close]);
 
   const hasSignature = signatureCount > 0;
   const exported = hasSignature && flags.exported;
@@ -222,6 +171,69 @@ export default function GettingStartedModal({ userId }: Props) {
   const currentIndex = steps.findIndex((s) => !s.complete);
   const currentStep = currentIndex === -1 ? null : steps[currentIndex];
 
+  const close = useCallback(() => {
+    if (allDone) {
+      markOnboardingCompleted(userId);
+    } else {
+      markOnboardingSeen(userId); // whatever way it closes, it never auto opens again
+    }
+    setOpen(false);
+  }, [userId, allDone]);
+
+  // First visit check + live updates
+  useEffect(() => {
+    let alive = true;
+    loadFlags();
+
+    (async () => {
+      const count = await loadCount();
+      if (!alive || count === null) return;
+      const f = getOnboardingFlags();
+      const finished = count > 0 && f.exported && f.installed;
+      // Auto open only for a user who has not seen it and has not already finished setup
+      if (!hasSeenOnboarding(userId) && !finished) setOpen(true);
+      // If user has already finished all steps and seen the guide before, ensure acknowledged flag is recorded
+      if (finished && hasSeenOnboarding(userId) && !hasAcknowledgedOnboarding(userId)) {
+        markOnboardingCompleted(userId);
+      }
+    })();
+
+    const onFlags = () => loadFlags();
+    const onCount = () => loadCount();
+    const onReopen = () => {
+      loadFlags();
+      loadCount();
+      setOpen(true);
+    };
+    window.addEventListener(ONBOARDING_EVENT, onFlags);
+    window.addEventListener("sig_count_update", onCount);
+    window.addEventListener(OPEN_ONBOARDING_EVENT, onReopen);
+    return () => {
+      alive = false;
+      window.removeEventListener(ONBOARDING_EVENT, onFlags);
+      window.removeEventListener("sig_count_update", onCount);
+      window.removeEventListener(OPEN_ONBOARDING_EVENT, onReopen);
+    };
+  }, [userId, loadFlags, loadCount]);
+
+  // Escape to close, lock page scroll, move focus into the dialog
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    dialogRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+      previous?.focus?.();
+    };
+  }, [open, close]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -277,7 +289,7 @@ export default function GettingStartedModal({ userId }: Props) {
                   <button
                     type="button"
                     onClick={close}
-                    className="rounded-lg px-3 py-1.5 text-[13px] font-semibold text-[#64748B] transition hover:bg-slate-100 hover:text-[#1E293B]"
+                    className="rounded-lg px-3 py-1.5 text-[13px] font-semibold text-[#64748B] transition hover:bg-slate-100 hover:text-[#1E293B] cursor-pointer"
                     style={bodyFont}
                   >
                     Skip
@@ -287,7 +299,7 @@ export default function GettingStartedModal({ userId }: Props) {
                   type="button"
                   onClick={close}
                   aria-label="Close"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] transition hover:bg-slate-100 hover:text-[#1E293B]"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] transition hover:bg-slate-100 hover:text-[#1E293B] cursor-pointer"
                 >
                   {Icons.close}
                 </button>
@@ -376,7 +388,7 @@ export default function GettingStartedModal({ userId }: Props) {
                           <button
                             type="button"
                             onClick={step.onManual}
-                            className="text-[12px] font-semibold text-[#245FD4] underline-offset-2 hover:underline"
+                            className="text-[12px] font-semibold text-[#245FD4] underline-offset-2 hover:underline cursor-pointer"
                             style={bodyFont}
                           >
                             {step.manualLabel}
@@ -393,8 +405,12 @@ export default function GettingStartedModal({ userId }: Props) {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={close}
-                  className="inline-flex h-10 items-center rounded-full bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-[14px] font-semibold text-white transition hover:opacity-95"
+                  onClick={() => {
+                    markOnboardingCompleted(userId);
+                    close();
+                    router.push("/dashboard");
+                  }}
+                  className="inline-flex h-10 items-center rounded-full bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-[14px] font-semibold text-white transition hover:opacity-95 cursor-pointer"
                   style={bodyFont}
                 >
                   Go to dashboard

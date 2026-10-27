@@ -13,6 +13,7 @@ export type OnboardingFlags = Record<OnboardingFlag, boolean>;
 
 const FLAGS_KEY = "sig_onboarding";
 const SEEN_PREFIX = "sig_onboarding_seen:";
+const COMPLETED_PREFIX = "sig_onboarding_completed:";
 
 export const ONBOARDING_EVENT = "sig_onboarding_update";
 export const OPEN_ONBOARDING_EVENT = "sig_onboarding_open";
@@ -51,7 +52,7 @@ export function markOnboardingStep(flag: OnboardingFlag, value = true) {
 
 /** True once the popup has been closed in any way (skip, X, finish, or a step button). */
 export function hasSeenOnboarding(userId: string): boolean {
-  if (typeof window === "undefined") return true; // never auto open on the server
+  if (typeof window === "undefined" || !userId) return true; // never auto open on the server
   try {
     if (localStorage.getItem(SEEN_PREFIX + userId) === "1") {
       return true;
@@ -71,7 +72,7 @@ export function hasSeenOnboarding(userId: string): boolean {
 }
 
 export function markOnboardingSeen(userId: string) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !userId) return;
   try {
     // 1. Immediately record in localStorage so it never opens again on this browser
     localStorage.setItem(SEEN_PREFIX + userId, "1");
@@ -90,6 +91,28 @@ export function markOnboardingSeen(userId: string) {
     markOnboardingSeenApi().catch((err) => {
       console.warn("[Onboarding] Failed to sync seen flag with backend:", err);
     });
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+/** True once the user has finished all steps and acknowledged completion */
+export function hasAcknowledgedOnboarding(userId: string): boolean {
+  if (typeof window === "undefined" || !userId) return false;
+  try {
+    return localStorage.getItem(COMPLETED_PREFIX + userId) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Mark that the user has completed all onboarding steps and acknowledged completion */
+export function markOnboardingCompleted(userId: string) {
+  if (typeof window === "undefined" || !userId) return;
+  try {
+    localStorage.setItem(COMPLETED_PREFIX + userId, "1");
+    markOnboardingSeen(userId);
+    window.dispatchEvent(new Event(ONBOARDING_EVENT));
   } catch {
     // Ignore storage errors
   }
