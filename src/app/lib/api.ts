@@ -30,6 +30,7 @@ export interface UserProfile {
   lastName?: string | null;
   companyName?: string | null;
   avatarUrl?: string | null;
+  onboardingSeenAt?: string | null;
   isActive?: boolean;
   isVerified?: boolean;
   createdAt?: string;
@@ -1536,6 +1537,39 @@ export async function updateAccountSettings(
     }
 
     return (result?.data?.settings ?? {}) as AccountSettings;
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(
+      `Unable to reach backend server (${errorDetail}). Please check your connection.`,
+      0
+    );
+  }
+}
+
+/**
+ * Mark onboarding popup as seen on the backend (idempotent).
+ */
+export async function markOnboardingSeenApi(): Promise<{ onboardingSeenAt?: string }> {
+  const url = `${API_BASE_URL}/api/v1/account/onboarding-seen`;
+
+  try {
+    const response = await apiFetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = result?.message || `Failed to mark onboarding seen (HTTP ${response.status})`;
+      throw new ApiError(message, response.status, result?.code);
+    }
+
+    return result?.data ?? {};
   } catch (networkErr: unknown) {
     if (networkErr instanceof ApiError) throw networkErr;
     const errorDetail =

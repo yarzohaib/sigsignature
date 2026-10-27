@@ -26,6 +26,7 @@ import {
   renderSavedSignaturePlainText,
 } from "@/lib/signatures/render";
 import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
+import { markOnboardingStep } from "@/lib/onboarding";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
@@ -171,6 +172,7 @@ function MySignaturesContent() {
         await copySignatureRich(html, plainText);
       }
       setShowCopiedAlert(true);
+      markOnboardingStep("exported");
     } catch {
       showToast(`Failed to copy "${target.name}". Please try again.`);
     }

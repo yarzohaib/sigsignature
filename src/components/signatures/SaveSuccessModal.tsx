@@ -757,6 +757,7 @@ import { TemplateSignatureData } from "@/types/template";
 import { StudioSignatureData } from "@/types/studio";
 import { SavedSignature } from "@/types/signature";
 import { copySignatureRich, copyTextToClipboard } from "@/lib/email-core";
+import { markOnboardingStep } from "@/lib/onboarding";
 import { getStoredSettings } from "@/app/lib/auth";
 import { useRouter } from "next/navigation";
 import {
@@ -930,6 +931,7 @@ export default function SaveSuccessModal({
       }
       setCopiedSignature(true);
       setShowCopiedAlert(true);
+      markOnboardingStep("exported");
       setTimeout(() => setCopiedSignature(false), 2500);
     } catch {
       showToast("Failed to copy signature. Please try again.");
@@ -952,6 +954,7 @@ export default function SaveSuccessModal({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    markOnboardingStep("exported");
     showToast(message);
   }
 

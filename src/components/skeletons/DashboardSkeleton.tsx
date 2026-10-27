@@ -42,25 +42,6 @@ export function DashboardSkeleton() {
           </div>
         ))}
       </div>
-
-      {/* 3. Getting Started Steps card */}
-      <div className="rounded-2xl 2xl:rounded-3xl border border-[#E2E8F0] bg-white p-4.5 sm:p-5.5 lg:p-4 xl:p-4.5 2xl:p-5 3xl:p-6 shadow-xs shrink-0">
-        <Skeleton className="h-5 w-32 xl:w-36 rounded-md mb-2.5 sm:mt-3" />
-
-        {/* 5-Step horizontal sequence matching md:grid-cols-5 */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 lg:gap-4 xl:gap-6 2xl:gap-8">
-          {[1, 2, 3, 4, 5].map((idx) => (
-            <div key={idx} className="flex flex-col items-start text-left">
-              <div className="flex items-center w-full">
-                <Skeleton className="h-8 w-8 xl:h-9 xl:w-9 2xl:h-10 2xl:w-10 rounded-full shrink-0" />
-                {idx < 5 && <div className="hidden md:block flex-1 h-[2px] bg-slate-100 mx-2" />}
-              </div>
-              <Skeleton className="mt-1.5 xl:mt-2 h-3 w-28 rounded-md" />
-              <Skeleton className="mt-1 h-3.5 w-20 rounded-md" />
-            </div>
-          ))}
-        </div>
-      </div>
     </SkeletonContainer>
   );
 }
