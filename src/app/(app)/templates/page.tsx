@@ -281,6 +281,7 @@ function TemplatesContent() {
                 isOpen={Boolean(previewingTemplate)}
                 onClose={() => setPreviewingTemplate(null)}
                 html={generateTemplateHtml(previewingTemplate.defaultData, { preview: true })}
+                showCanvasTab={false}
               />
             )}
 

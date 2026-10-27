@@ -11,6 +11,7 @@ interface PreviewSignatureModalProps {
   onClose: () => void;
   html: string;
   data?: StudioSignatureData;
+  showCanvasTab?: boolean;
 }
 
 export default function PreviewSignatureModal({
@@ -18,6 +19,7 @@ export default function PreviewSignatureModal({
   onClose,
   html,
   data,
+  showCanvasTab = true,
 }: PreviewSignatureModalProps) {
   const [activeTab, setActiveTab] = useState<"email" | "canvas">("email");
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
@@ -76,17 +78,19 @@ export default function PreviewSignatureModal({
               >
                 As sent in email
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("canvas")}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition ${
-                  activeTab === "canvas"
-                    ? "bg-[#245FD4] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
-                }`}
-              >
-                Canvas
-              </button>
+              {showCanvasTab && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("canvas")}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition ${
+                    activeTab === "canvas"
+                      ? "bg-[#245FD4] text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                  }`}
+                >
+                  Canvas
+                </button>
+              )}
             </div>
           </div>
 
