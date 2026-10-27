@@ -30,7 +30,7 @@ export default function TemplateSignatureThumbnail({
         <SignaturePreviewFrame
           html={previewHtml}
           aspectRatio="350 / 174"
-          fitPadding={0.9}
+          fitPadding={0.92}
         />
       </div>
     </div>
