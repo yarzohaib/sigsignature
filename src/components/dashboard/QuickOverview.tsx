@@ -337,7 +337,7 @@ export default function QuickOverview() {
                 Help center
               </span>
               <span
-                className="mt-1 text-[#0F172A] font-bold text-[20px] sm:text-[22px] leading-none truncate"
+                className="mt-1 text-[#0F172A] font-bold text-[18px] sm:text-[20px] leading-none truncate"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
                 Guides
