@@ -114,7 +114,7 @@ export default function SettingsActionConfirmModal({
             onClick={() => onConfirm(action)}
             className={`rounded-lg px-6 py-2 text-[14px] font-semibold text-white shadow-xs transition active:scale-98 ${
               isSave
-                ? "bg-[#245FD4] hover:bg-[#1D4FB5]"
+                ? "bg-[#022977] hover:bg-[#01205F]"
                 : "bg-[#DC2626] hover:bg-[#B91C1C]"
             }`}
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
