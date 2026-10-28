@@ -302,7 +302,7 @@ function MySignaturesContent() {
             </button>
           </div>
         ) : signatures.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 w-full">
+          <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 wide:grid-cols-4 3xl:grid-cols-5">
             {signatures.map((sig) => (
               <SignatureCard
                 key={sig.id}

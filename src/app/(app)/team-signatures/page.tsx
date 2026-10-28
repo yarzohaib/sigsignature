@@ -290,7 +290,7 @@ function TeamSignaturesContent() {
             />
 
             {/* Grid: 3 cols on xl, 4-5 cols on 2xl/3xl, 2 cols on md, 1 col on mobile */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-5 2xl:gap-6">
+            <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 wide:grid-cols-4 3xl:grid-cols-5">
               {team.members.map((member) => (
                 <TeamMemberCard
                   key={member.id}
