@@ -67,7 +67,7 @@ export default function FaqSection() {
         {/* Header */}
         <div className="flex flex-col items-center text-center">
           <SectionBadge label="FAQS" />
-          <h2 className="font-heading mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+          <h2 className="font-heading mt-4 text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] font-bold tracking-tight text-slate-900 lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px]">
             Frequently Asked <span className="text-[#245FD4]">Questions</span>
           </h2>
           <p className="font-body mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">

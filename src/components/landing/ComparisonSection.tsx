@@ -45,7 +45,7 @@ export default function ComparisonSection() {
             <SectionBadge label="COMPARISON" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="font-heading text-[clamp(1.625rem,6.7vw,2.125rem)] font-semibold leading-[1.08] tracking-tight text-slate-900 [text-wrap:balance] lg:text-[54px] lg:leading-[1.12] 2xl:text-[60px] 3xl:text-[66px]">
+            <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] font-semibold leading-[1.08] tracking-tight text-slate-900 [text-wrap:balance] lg:text-[43px] lg:leading-[1.12] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px]">
               Why Developers Vs{" "}
               <span className="text-[#1243A3]">Sig Signature</span>
             </h2>

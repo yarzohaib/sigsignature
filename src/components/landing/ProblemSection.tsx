@@ -36,7 +36,7 @@ export default function ProblemSection() {
             <SectionBadge label="PROBLEM" />
           </Reveal>
           <Reveal staggerIndex={1}>
-            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[54px] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.15] [text-wrap:balance]">
+            <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.15] [text-wrap:balance]">
               Email Signatures Are Quietly
               <br />
               <span className="text-[#1243A3]">Broken</span>

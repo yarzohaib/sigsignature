@@ -18,8 +18,8 @@ export default function FeaturesSection() {
             <SectionBadge label="FEATURES" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="font-heading text-[clamp(1.625rem,1.1rem+2.3vw,3.375rem)] lg:text-[50px] xl:text-[54px] 2xl:text-[60px] 3xl:text-[66px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
-              Everything You Need to Build the{" "}
+            <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
+              Everything You Need to<br className="hidden lg:block" /> Build the{" "}
               <span className="text-[#1243A3]">Perfect Signature.</span>
             </h2>
           </Reveal>

@@ -14,7 +14,7 @@ export default function HeroSection() {
               No Developer Needed
             </p>
 
-            <h1 className="font-heading text-[clamp(2rem,1.25rem+2.5vw,3rem)] lg:text-[48px] xl:text-[54px] 2xl:text-[62px] 3xl:text-[68px] font-semibold tracking-tight text-slate-900 leading-[1.15] lg:leading-[1.12] [text-wrap:balance]">
+            <h1 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-[1.15] lg:leading-[1.12] [text-wrap:balance]">
               Free{" "}
               <span className="text-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] bg-clip-text text-transparent">
                 Email Signature Generator
