@@ -137,6 +137,7 @@ export default function EditDetailsModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-150"
+      data-edit-details-modal
       role="dialog"
       aria-modal="true"
       aria-labelledby="edit-details-title"

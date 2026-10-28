@@ -100,7 +100,7 @@ export default function ProfileCard({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/png, image/jpeg, image/jpg, image/webp"
+            accept=".jpg, .png"
             className="hidden"
             onChange={handleFileChange}
           />

@@ -384,7 +384,11 @@ function SettingsContent() {
 
   // Avatar upload handler
   const handleAvatarUpload = async (file: File) => {
-    if (!file.type.match(/^image\/(jpeg|png|webp)$/i)) {
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    const isJpg = (file.type === "image/jpeg" || file.type === "image/jpg") && ext === "jpg";
+    const isPng = file.type === "image/png" && ext === "png";
+
+    if (!isJpg && !isPng) {
       showToast("Please select a JPG or PNG image file.", true);
       return;
     }
