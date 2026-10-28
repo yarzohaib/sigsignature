@@ -11,6 +11,7 @@ import {
   RefObject,
 } from "react";
 import { createPortal } from "react-dom";
+import type { StudioShape } from "@/types/studio";
 
 export type CanvasAlignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
@@ -18,6 +19,8 @@ export type TeamFieldBind = "name" | "jobTitle" | "email" | "phone" | "photo" | 
 
 interface FloatingToolbarProps {
   elementType?: "text" | "image" | "logo" | "banner" | "divider" | "cta" | "social";
+  shape?: StudioShape;
+  onShapeChange?: (shape: StudioShape) => void;
   bold?: boolean;
   onToggleBold?: () => void;
   size?: "sm" | "md" | "lg";
@@ -52,6 +55,8 @@ const emptySubscribe = () => () => {};
 
 export default function FloatingToolbar({
   elementType,
+  shape = "rounded",
+  onShapeChange,
   bold,
   onToggleBold,
   size = "md",
@@ -87,7 +92,7 @@ export default function FloatingToolbar({
     () => false
   );
   const [openMenu, setOpenMenu] = useState<
-    "align" | "link" | "size" | "thickness" | "teamField" | null
+    "align" | "link" | "size" | "thickness" | "teamField" | "shape" | null
   >(null);
 
   const sentinelRef = useRef<HTMLSpanElement>(null);
@@ -650,6 +655,89 @@ export default function FloatingToolbar({
               </>
             )}
 
+            {/* SHAPE SELECTOR (image, logo, banner, cta) */}
+            {(elementType === "image" ||
+              elementType === "logo" ||
+              elementType === "banner" ||
+              elementType === "cta") &&
+              onShapeChange && (
+                <>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      aria-label="Change element shape"
+                      title={`Shape: ${shape}`}
+                      onClick={() => setOpenMenu((prev) => (prev === "shape" ? null : "shape"))}
+                      className="flex h-7 px-2 items-center gap-1.5 rounded text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400 capitalize"
+                    >
+                      <div
+                        className={`h-3 w-3 border border-slate-300 bg-slate-200 ${
+                          shape === "square"
+                            ? "rounded-none"
+                            : shape === "pill"
+                            ? "rounded-full"
+                            : "rounded-xs"
+                        }`}
+                      />
+                      <span className="text-[11px] font-medium hidden sm:inline">{shape}</span>
+                      <svg
+                        className="h-3 w-3 text-slate-400"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+
+                    {openMenu === "shape" && (
+                      <div className="absolute top-full mt-2 left-0 z-50 flex flex-col min-w-[110px] rounded-lg bg-[#0F172A] p-1 shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100">
+                        {(
+                          [
+                            { id: "rounded", label: "Rounded" },
+                            { id: "square", label: "Square" },
+                            { id: "pill", label: "Pill" },
+                          ] as const
+                        ).map((item) => {
+                          const isCurrent = shape === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => {
+                                onShapeChange(item.id);
+                                setOpenMenu(null);
+                              }}
+                              className={`flex items-center justify-between rounded px-2.5 py-1.5 text-xs text-left transition ${
+                                isCurrent
+                                  ? "bg-[#245FD4] text-white font-bold"
+                                  : "text-slate-200 hover:bg-slate-800 hover:text-white"
+                              }`}
+                            >
+                              <span>{item.label}</span>
+                              {isCurrent && (
+                                <svg
+                                  className="h-3 w-3 text-white"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="3"
+                                >
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
+                </>
+              )}
+
             {/* EDIT DETAILS (for text or social) */}
             {onEditDetails && (elementType === "text" || elementType === "social") && (
               <>
@@ -794,6 +882,7 @@ export default function FloatingToolbar({
         createPortal(
           <div
             ref={linkPopoverRef}
+            data-floating-toolbar
             role="dialog"
             aria-label="Set link URL"
             style={{

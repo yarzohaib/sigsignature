@@ -662,48 +662,50 @@ export default function FreeCanvas({
             </div>
           )}
 
-          {/* Elements */}
-          {elements.map((el) => {
-            const isTarget = selectedId === el.id;
-            const isDraggingThis = dragState?.elementId === el.id;
-            const isResizingThis = resizeState?.elementId === el.id;
+          {/* Keep every element inside the canvas while leaving the canvas resize handle accessible. */}
+          <div className="absolute inset-0 overflow-hidden">
+            {elements.map((el) => {
+              const isTarget = selectedId === el.id;
+              const isDraggingThis = dragState?.elementId === el.id;
+              const isResizingThis = resizeState?.elementId === el.id;
 
-            // Compute display rect (live during drag or resize)
-            const displayEl: FreeElement = isDraggingThis && dragState
-              ? { ...el, x: dragState.currentX, y: dragState.currentY }
-              : isResizingThis && resizeState
-              ? { ...el, ...resizeState.currentRect }
-              : el;
+              // Compute display rect (live during drag or resize)
+              const displayEl: FreeElement = isDraggingThis && dragState
+                ? { ...el, x: dragState.currentX, y: dragState.currentY }
+                : isResizingThis && resizeState
+                ? { ...el, ...resizeState.currentRect }
+                : el;
 
-            return (
-              <FreeElementView
-                key={el.id}
-                element={displayEl}
-                data={data}
-                isSelected={isTarget}
-                isColliding={isTarget && isColliding}
-                isDragging={isDraggingThis}
-                isResizing={isResizingThis}
-                showEditorOverlays={!hideLabels}
-                hideLabels={hideLabels}
-                onSelect={(id, e) => {
-                  e.stopPropagation();
-                  onSelect(id);
-                }}
-                onStartDrag={handleStartDrag}
-                onStartResize={handleStartResize}
-                onTextChange={(id, text) => {
-                  dispatch({
-                    type: "UPDATE_ELEMENT",
-                    payload: { id, updates: { text } },
-                  });
-                }}
-                onTextGrowth={handleTextGrowth}
-                isEditingSavedSignature={isEditingSavedSignature}
-                onToast={onToast}
-              />
-            );
-          })}
+              return (
+                <FreeElementView
+                  key={el.id}
+                  element={displayEl}
+                  data={data}
+                  isSelected={isTarget}
+                  isColliding={isTarget && isColliding}
+                  isDragging={isDraggingThis}
+                  isResizing={isResizingThis}
+                  showEditorOverlays={!hideLabels}
+                  hideLabels={hideLabels}
+                  onSelect={(id, e) => {
+                    e.stopPropagation();
+                    onSelect(id);
+                  }}
+                  onStartDrag={handleStartDrag}
+                  onStartResize={handleStartResize}
+                  onTextChange={(id, text) => {
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id, updates: { text } },
+                    });
+                  }}
+                  onTextGrowth={handleTextGrowth}
+                  isEditingSavedSignature={isEditingSavedSignature}
+                  onToast={onToast}
+                />
+              );
+            })}
+          </div>
 
           {/* Canvas Height Drag Handle on Bottom Edge */}
           <div

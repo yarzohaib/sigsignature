@@ -66,6 +66,7 @@ export type FreeBase = {
   y: number;
   w: number;
   h: number;
+  shape?: StudioShape;
   locked?: boolean;
 };
 

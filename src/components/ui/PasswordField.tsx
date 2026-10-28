@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { EyeIcon } from "@/components/auth/icons";
+import { EyeIcon, EyeOffIcon } from "@/components/auth/icons";
 
 type PasswordFieldProps = Omit<React.ComponentProps<"input">, "type"> & {
   label: string;
@@ -36,9 +36,19 @@ export default function PasswordField({
           type="button"
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? "Hide password" : "Show password"}
-          className="absolute right-4 top-1/2 -translate-y-1/2"
+          aria-pressed={visible}
+          title={visible ? "Hide password" : "Show password"}
+          className={`absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] focus-visible:ring-offset-1 active:scale-90 ${
+            visible
+              ? "text-[#245FD4] bg-blue-50/80 hover:bg-blue-100/80"
+              : "text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+          }`}
         >
-          <EyeIcon />
+          {visible ? (
+            <EyeIcon className="h-5 w-5 transition-transform duration-150" />
+          ) : (
+            <EyeOffIcon className="h-5 w-5 transition-transform duration-150" />
+          )}
         </button>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}

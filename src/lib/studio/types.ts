@@ -225,8 +225,14 @@ export function studioReducer(
     }
 
     case "SET_FULL_STATE": {
+      const nextState = { ...action.payload };
+      const canvas = nextState.canvas || { width: 600, height: 200 };
       return {
-        ...action.payload,
+        ...nextState,
+        elements: (nextState.elements || []).map((element) => ({
+          ...element,
+          ...clampToCanvas(element, canvas),
+        })),
       };
     }
 
@@ -353,9 +359,17 @@ export function studioReducer(
       const clamped = clampToCanvas(updatedCandidate, canvas);
       const finalEl = { ...updatedCandidate, ...clamped };
 
-      const others = currentElements.filter((el) => el.id !== action.payload.id);
-      if (others.some((other) => rectsOverlap(finalEl, other))) {
-        return state;
+      const isGeometryChange =
+        patch.x !== undefined ||
+        patch.y !== undefined ||
+        patch.w !== undefined ||
+        patch.h !== undefined;
+
+      if (isGeometryChange) {
+        const others = currentElements.filter((el) => el.id !== action.payload.id);
+        if (others.some((other) => rectsOverlap(finalEl, other))) {
+          return state;
+        }
       }
 
       const nextElements = currentElements.map((el) =>

@@ -141,7 +141,10 @@ function DesignStudioContent() {
       if (!(target instanceof Element)) return;
       if (
         target.closest("[data-signature-canvas]") ||
-        target.closest("[data-floating-toolbar]")
+        target.closest("[data-floating-toolbar]") ||
+        target.closest("[data-edit-details-modal]") ||
+        target.closest("[data-studio-tools]") ||
+        target.closest("aside")
       ) {
         return;
       }
@@ -1149,6 +1152,20 @@ function DesignStudioContent() {
   const selectedElement = state.elements?.find((el) => el.id === selectedId);
   const fullSignatureHtml = generateFreeHtml(state, { preview: true });
 
+  function handleShapeChange(shape: StudioShape) {
+    if (selectedElement && selectedId) {
+      dispatch({
+        type: "UPDATE_ELEMENT",
+        payload: { id: selectedId, updates: { shape } },
+      });
+      showToast(`Updated ${selectedElement.type} shape to ${shape}`);
+      return;
+    }
+
+    dispatch({ type: "SET_SHAPE", payload: shape });
+    showToast(`Updated canvas shape to ${shape}`);
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#FCFCFC]">
       {/* Toast Feedback */}
@@ -1219,6 +1236,7 @@ function DesignStudioContent() {
           {/* LEFT: TOOLS PANEL */}
           {/* ======================================================== */}
           <aside
+            data-studio-tools
             aria-label="Studio customization tools"
             className={`w-full lg:w-[340px] xl:w-[418px] shrink-0 border-r border-[#E2E8F0] bg-[#FCFCFC] overflow-y-auto studio-scrollbar p-5 pb-24 lg:pb-5 transition-all ${
               mobileTab === "tools" ? "block" : "hidden lg:block"
@@ -1636,6 +1654,11 @@ function DesignStudioContent() {
                   >
                     Shapes
                   </span>
+                  {selectedElement && (
+                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
+                      {selectedElement.type}
+                    </span>
+                  )}
                 </div>
                 <svg
                   className={`h-4 w-4 text-slate-400 transition-transform ${
@@ -1658,18 +1681,19 @@ function DesignStudioContent() {
                       { id: "square", label: "Square", rx: "rounded-none" },
                       { id: "pill", label: "Pill", rx: "rounded-full" },
                     ].map((shape) => {
-                      const isSelected = (state.design?.shape || "rounded") === shape.id;
+                      const activeShape = selectedElement?.shape || state.design?.shape || "rounded";
+                      const isSelected = activeShape === shape.id;
                       return (
                         <div
                           key={shape.id}
                           role="radio"
                           aria-checked={isSelected}
                           tabIndex={0}
-                          onClick={() => dispatch({ type: "SET_SHAPE", payload: shape.id as StudioShape })}
+                          onClick={() => handleShapeChange(shape.id as StudioShape)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              dispatch({ type: "SET_SHAPE", payload: shape.id as StudioShape });
+                              handleShapeChange(shape.id as StudioShape);
                             }
                           }}
                           className={`flex flex-col items-center justify-center rounded-[10px] border p-3 cursor-pointer transition select-none ${
@@ -2233,16 +2257,12 @@ function DesignStudioContent() {
                   role="switch"
                   aria-checked={hideLabels}
                   onClick={() => setHideLabels((prev) => !prev)}
-                  className={`flex h-[36px] items-center gap-2 rounded-lg border px-3 text-xs font-semibold shadow-2xs transition select-none ${
-                    hideLabels
-                      ? "border-[#245FD4] bg-[#EFF6FF] text-[#245FD4]"
-                      : "border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300 hover:text-[#1E293B]"
-                  }`}
+                  className="flex h-[36px] items-center gap-2 rounded-lg border border-[#E2E8F0] bg-white px-3 text-xs font-semibold text-[#64748B] shadow-2xs transition select-none"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   title={hideLabels ? "Click to show field labels on canvas" : "Click to hide field labels on canvas"}
                 >
                   {hideLabels ? (
-                    <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
                       <line x1="1" y1="1" x2="23" y2="23" />
                     </svg>
@@ -2439,6 +2459,8 @@ function DesignStudioContent() {
                 !savedSignatureRecord && (
                 <FloatingToolbar
                   elementType={selectedElement.type}
+                  shape={selectedElement.shape || state.design?.shape || "rounded"}
+                  onShapeChange={handleShapeChange}
                   bold={selectedElement.type === "text" ? selectedElement.bold : false}
                   onToggleBold={() =>
                     selectedElement.type === "text" &&
@@ -2627,16 +2649,12 @@ function DesignStudioContent() {
               role="switch"
               aria-checked={hideLabels}
               onClick={() => setHideLabels((prev) => !prev)}
-              className={`flex h-[38px] items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold shadow-2xs whitespace-nowrap transition shrink-0 ${
-                hideLabels
-                  ? "border-[#245FD4] bg-[#EFF6FF] text-[#245FD4]"
-                  : "border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300 hover:text-[#1E293B]"
-              }`}
+              className="flex h-[38px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-[#E2E8F0] bg-white px-2.5 text-xs font-semibold text-[#64748B] shadow-2xs transition"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               title={hideLabels ? "Click to show field labels" : "Click to hide field labels"}
             >
               {hideLabels ? (
-                <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
                   <line x1="1" y1="1" x2="23" y2="23" />
                 </svg>
@@ -2647,6 +2665,18 @@ function DesignStudioContent() {
                 </svg>
               )}
               <span className="hidden sm:inline">Hide Labels</span>
+              <span
+                aria-hidden="true"
+                className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${
+                  hideLabels ? "bg-[#245FD4]" : "bg-slate-200"
+                }`}
+              >
+                <span
+                  className={`inline-block h-3 w-3 rounded-full bg-white shadow-xs transition-transform ${
+                    hideLabels ? "translate-x-3.5" : "translate-x-0.5"
+                  }`}
+                />
+              </span>
             </button>
 
             <button

@@ -23,6 +23,43 @@ import {
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import { buildPreviewDocument } from "@/lib/signatures/previewDocument";
+import {
+  validateSocialUrl,
+  SOCIAL_PLATFORM_EXAMPLES,
+  TeamMemberSocialPlatform,
+} from "@/lib/team/socials";
+
+const SOCIAL_CONFIG: Array<{
+  key: "linkedin" | "twitter" | "facebook" | "instagram";
+  platform: TeamMemberSocialPlatform;
+  label: string;
+  placeholder: string;
+}> = [
+  {
+    key: "linkedin",
+    platform: "linkedin",
+    label: "LinkedIn Profile",
+    placeholder: SOCIAL_PLATFORM_EXAMPLES.linkedin,
+  },
+  {
+    key: "twitter",
+    platform: "x",
+    label: "X / Twitter Profile",
+    placeholder: "https://x.com/username",
+  },
+  {
+    key: "facebook",
+    platform: "facebook",
+    label: "Facebook Profile",
+    placeholder: SOCIAL_PLATFORM_EXAMPLES.facebook,
+  },
+  {
+    key: "instagram",
+    platform: "instagram",
+    label: "Instagram Profile",
+    placeholder: SOCIAL_PLATFORM_EXAMPLES.instagram,
+  },
+];
 
 interface TemplateEditorProps {
   template: TemplateItem;
@@ -125,6 +162,25 @@ export default function TemplateEditor({
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   // Logo uploading state
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+
+  // Validate social profile links matching platform rules
+  const socialErrors = useMemo(() => {
+    const errs: Record<string, string> = {};
+    const mapping: Record<string, TeamMemberSocialPlatform> = {
+      linkedin: "linkedin",
+      twitter: "x",
+      facebook: "facebook",
+      instagram: "instagram",
+    };
+    Object.entries(mapping).forEach(([key, plat]) => {
+      const val = formData.socials?.[key as keyof typeof formData.socials];
+      if (val && val.trim()) {
+        const err = validateSocialUrl(plat, val);
+        if (err) errs[key] = err;
+      }
+    });
+    return errs;
+  }, [formData.socials]);
 
   // Toast feedback state
   const [toastMessage, setToastMessage] = useState<{
@@ -322,24 +378,25 @@ export default function TemplateEditor({
 
   // Helper to prepare form data for save
   function prepareDataForSave(): TemplateSignatureData {
-    const rawInsta = formData.socials.instagram?.trim() || "";
-    const normalizedInsta = rawInsta
-      ? rawInsta.startsWith("http://") || rawInsta.startsWith("https://")
-        ? rawInsta
-        : `https://instagram.com/${rawInsta.replace(/^@/, "").replace(/\/.*$/, "")}`
-      : "";
-
     return {
       ...formData,
       socials: {
-        ...formData.socials,
-        instagram: normalizedInsta,
+        linkedin: formData.socials.linkedin?.trim() || "",
+        twitter: formData.socials.twitter?.trim() || "",
+        facebook: formData.socials.facebook?.trim() || "",
+        instagram: formData.socials.instagram?.trim() || "",
       },
     };
   }
 
   // Save the signature to user's signatures list
   async function handleSaveSignature() {
+    if (Object.keys(socialErrors).length > 0) {
+      setOpenSections((prev) => ({ ...prev, social: true }));
+      showToast("Invalid social link", "Please fix the invalid social profile URLs before saving.", true);
+      return;
+    }
+
     if (!currentSignatureId && isSignatureLimitReached()) {
       setIsLimitModalOpen(true);
       return;
@@ -437,10 +494,25 @@ export default function TemplateEditor({
   }
 
   // Pre-generate HTML and the shared srcDoc used by the iframe preview
-  const generatedHtml = useMemo(
-    () => generateTemplateHtml({ ...formData, templateId: template.id }),
-    [formData, template.id]
-  );
+  const generatedHtml = useMemo(() => {
+    const validSocials: TemplateSignatureData["socials"] = { ...formData.socials };
+    const mapping: Record<string, TeamMemberSocialPlatform> = {
+      linkedin: "linkedin",
+      twitter: "x",
+      facebook: "facebook",
+      instagram: "instagram",
+    };
+    Object.entries(mapping).forEach(([key, plat]) => {
+      const val = validSocials[key as keyof typeof validSocials];
+      if (val && val.trim()) {
+        const err = validateSocialUrl(plat, val);
+        if (err) {
+          validSocials[key as keyof typeof validSocials] = "";
+        }
+      }
+    });
+    return generateTemplateHtml({ ...formData, socials: validSocials, templateId: template.id });
+  }, [formData, template.id]);
 
   const previewSrcDoc = useMemo(
     () => buildPreviewDocument(generatedHtml, { padding: 16 }),
@@ -961,46 +1033,28 @@ export default function TemplateEditor({
 
             {openSections.social && (
               <div className="mt-4 pt-3 border-t border-slate-100 space-y-3">
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">LinkedIn Profile</label>
-                  <input
-                    type="url"
-                    value={formData.socials.linkedin}
-                    onChange={(e) => handleSocialChange("linkedin", e.target.value)}
-                    placeholder="https://linkedin.com/in/..."
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">X / Twitter Profile</label>
-                  <input
-                    type="url"
-                    value={formData.socials.twitter}
-                    onChange={(e) => handleSocialChange("twitter", e.target.value)}
-                    placeholder="https://x.com/..."
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">Facebook Profile</label>
-                  <input
-                    type="url"
-                    value={formData.socials.facebook}
-                    onChange={(e) => handleSocialChange("facebook", e.target.value)}
-                    placeholder="https://facebook.com/..."
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">Instagram Profile</label>
-                  <input
-                    type="text"
-                    value={formData.socials.instagram || ""}
-                    onChange={(e) => handleSocialChange("instagram", e.target.value)}
-                    placeholder="https://instagram.com/... or @handle"
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
-                </div>
+                {SOCIAL_CONFIG.map(({ key, label, placeholder }) => {
+                  const error = socialErrors[key];
+                  return (
+                    <div key={key}>
+                      <label className="text-[11px] font-semibold text-[#64748B]">{label}</label>
+                      <input
+                        type="url"
+                        value={formData.socials[key] || ""}
+                        onChange={(e) => handleSocialChange(key, e.target.value)}
+                        placeholder={placeholder}
+                        className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs transition focus:outline-none ${
+                          error
+                            ? "border-rose-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-200"
+                            : "border-slate-200 focus:border-[#245FD4]"
+                        }`}
+                      />
+                      {error && (
+                        <p className="mt-1 text-[11px] text-rose-500">{error}</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

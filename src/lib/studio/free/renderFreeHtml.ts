@@ -170,14 +170,14 @@ export function generateFreeHtml(
       if (!imgSrc) {
         if (options?.preview) {
           return `<div style="width:${el.w}px;height:${el.h}px;background-color:#F1F5F9;border-radius:${getShapeBorderRadius(
-            shape,
+            el.shape || shape,
             "image"
           )};display:block;text-align:center;line-height:${el.h}px;font-family:${fontStack};font-size:10px;color:#94A3B8;">${el.type}</div>`;
         }
         return "";
       }
 
-      const imgRadius = getShapeBorderRadius(shape, "image");
+      const imgRadius = getShapeBorderRadius(el.shape || shape, "image");
       const fitMode = el.type === "logo" ? "contain" : "cover";
       const imgTag = `<img src="${escapeHtml(
         imgSrc
@@ -216,7 +216,7 @@ export function generateFreeHtml(
     if (el.type === "cta") {
       const ctaEl = el as FreeCtaElement;
       const isSolid = buttonStyle !== "outline";
-      const btnRadius = getShapeBorderRadius(shape, "button");
+      const btnRadius = getShapeBorderRadius(el.shape || shape, "button");
       const ctaHref = ctaEl.url?.trim() ? safeUrl(normalizeWebsite(ctaEl.url)) : "#";
       const label = ctaEl.label?.trim() ? escapeHtml(ctaEl.label.trim()) : "Button";
 

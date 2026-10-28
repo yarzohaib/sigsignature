@@ -104,7 +104,7 @@ export default function FreeElementView({
   const themeKey = data.design?.theme || "corporate";
   const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.corporate;
   const themeColor = data.themeColor || "#245FD4";
-  const shape = data.design?.shape || "rounded";
+  const shape = element.shape || data.design?.shape || "rounded";
   const buttonStyle = data.design?.buttonStyle || "solid";
   const fontStack = resolveEmailFont(data.fontFamily || "Inter");
 
