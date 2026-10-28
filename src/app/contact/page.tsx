@@ -3,6 +3,7 @@ import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
 import ContactForm from "@/components/contact/ContactForm";
+import { ContactPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
   title: "Contact Us | SigSignature",
@@ -10,6 +11,30 @@ export const metadata: Metadata = {
     "Get in touch with the Sig Signature team for technical support, business partnerships, or product inquiries.",
   alternates: {
     canonical: "https://www.sigsignature.com/contact",
+  },
+  openGraph: {
+    title: "Contact Us | SigSignature",
+    description:
+      "Get in touch with the SigSignature team for technical support, custom template designs, and corporate partnership inquiries.",
+    url: "https://www.sigsignature.com/contact",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Contact SigSignature Support",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Us | SigSignature",
+    description:
+      "Get in touch with the SigSignature team for technical support and product inquiries.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -117,6 +142,13 @@ export default function ContactPage() {
       </div>
 
       <Navbar />
+      <ContactPageJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "Contact Us", url: "https://www.sigsignature.com/contact" },
+        ]}
+      />
 
       <main className="flex-1">
         {/* HERO SECTION */}

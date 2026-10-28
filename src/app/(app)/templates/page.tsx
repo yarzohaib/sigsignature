@@ -9,12 +9,13 @@ import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
-import { getStoredSettings } from "@/app/lib/auth";
+import { getStoredSettings, getStoredUser } from "@/app/lib/auth";
 import TemplatesGallerySkeleton from "@/components/skeletons/TemplatesGallerySkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
+import { TemplatesPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 import type { SavedSignature } from "@/types/signature";
 
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
@@ -25,6 +26,7 @@ function TemplatesContent() {
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
   const isNew = searchParams.get("new") === "true";
+  const templateParam = searchParams.get("template");
 
   // Category filtering state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
@@ -92,6 +94,18 @@ function TemplatesContent() {
           setEditingSignatureData(undefined);
           setEditingTemplate(tpl);
           setIsLoadingEdit(false);
+          return;
+        }
+
+        if (templateParam && !isCancelled) {
+          const matched = AVAILABLE_TEMPLATES.find((t) => t.id === templateParam);
+          if (matched) {
+            setEditingSignatureId(undefined);
+            setEditingSignatureData(undefined);
+            setEditingTemplate(matched);
+            setIsLoadingEdit(false);
+            return;
+          }
         }
         return;
       }
@@ -133,7 +147,7 @@ function TemplatesContent() {
     return () => {
       isCancelled = true;
     };
-  }, [editId, isNew, router]);
+  }, [editId, isNew, templateParam, router]);
 
   // Filter templates by category
   const filteredTemplates = useMemo(() => {
@@ -144,6 +158,11 @@ function TemplatesContent() {
   }, [selectedCategory]);
 
   const handleSelectTemplate = (template: TemplateItem) => {
+    const user = getStoredUser();
+    if (!user) {
+      router.push(`/signup?redirect=/templates&template=${encodeURIComponent(template.id)}`);
+      return;
+    }
     if (isSignatureLimitReached()) {
       setIsLimitModalOpen(true);
       return;
@@ -163,6 +182,13 @@ function TemplatesContent() {
 
   return (
     <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+      <TemplatesPageJsonLd templates={AVAILABLE_TEMPLATES} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "Templates", url: "https://www.sigsignature.com/templates" },
+        ]}
+      />
       <main className="flex flex-col gap-6 sm:gap-7 w-full">
         {/* If template not found, show friendly message */}
         {templateNotFound ? (

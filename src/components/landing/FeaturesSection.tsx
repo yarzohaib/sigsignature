@@ -33,7 +33,7 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/Template.svg" alt="" width={16} height={16} className="h-4 w-4" />
+                  <Image src="/Template.svg" alt="Pre-designed email signature templates icon" width={16} height={16} className="h-4 w-4" />
                 </FeatureIconTile>
                 <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
@@ -91,7 +91,7 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/Live.svg" alt="" width={18} height={11} className="h-3 w-auto" />
+                  <Image src="/Live.svg" alt="Live signature preview icon" width={18} height={11} className="h-3 w-auto" />
                 </FeatureIconTile>
                 <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
@@ -130,7 +130,7 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/Customization.svg" alt="" width={18} height={18} className="h-4 w-4" />
+                  <Image src="/Customization.svg" alt="Custom branding and styling options icon" width={18} height={18} className="h-4 w-4" />
                 </FeatureIconTile>
                 <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
@@ -195,7 +195,7 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/stash_image-light.svg" alt="" width={18} height={18} className="h-4 w-4" />
+                  <Image src="/stash_image-light.svg" alt="Custom photo and logo upload icon" width={18} height={18} className="h-4 w-4" />
                 </FeatureIconTile>
                 <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
@@ -234,7 +234,7 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/arcticons_nothing-icons.svg" alt="" width={18} height={18} className="h-4 w-4" />
+                  <Image src="/arcticons_nothing-icons.svg" alt="Clean design without bloat icon" width={18} height={18} className="h-4 w-4" />
                 </FeatureIconTile>
                 <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE

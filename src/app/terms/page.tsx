@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
+import { BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
   title: "Terms of Service | SigSignature",
@@ -9,6 +10,29 @@ export const metadata: Metadata = {
     "Terms of Service governing the use of Sig Signature web application and services provided by The Nevon.",
   alternates: {
     canonical: "https://www.sigsignature.com/terms",
+  },
+  openGraph: {
+    title: "Terms of Service | SigSignature",
+    description:
+      "Terms of Service governing the use of SigSignature email signature generator provided by The Nevon.",
+    url: "https://www.sigsignature.com/terms",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "SigSignature Terms of Service",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service | SigSignature",
+    description: "Terms of Service governing the use of SigSignature provided by The Nevon.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -133,6 +157,12 @@ export default function TermsPage() {
       </div>
 
       <Navbar />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "Terms of Service", url: "https://www.sigsignature.com/terms" },
+        ]}
+      />
 
       <main className="flex-1">
         {/* HERO SECTION */}

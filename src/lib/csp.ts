@@ -58,6 +58,8 @@ export function buildCspDirectives(
         "https://pagead2.googlesyndication.com",
         "https://partner.googleadservices.com",
         "https://tpc.googlesyndication.com",
+        "https://adservice.google.com",
+        "https://ep2.adtrafficquality.google",
         ...(isDev ? ["'unsafe-eval'"] : []),
       ],
     },
@@ -114,6 +116,11 @@ export function buildCspDirectives(
         "https://region1.google-analytics.com",
         "https://*.googletagmanager.com",
         "https://pagead2.googlesyndication.com",
+        "https://ep2.adtrafficquality.google",
+        "https://*.adtrafficquality.google",
+        "https://adservice.google.com",
+        "https://googleads.g.doubleclick.net",
+        "https://*.doubleclick.net",
         ...(isDev
           ? [
               "http://localhost:*",
@@ -133,8 +140,12 @@ export function buildCspDirectives(
         "'self'",
         "https://www.googletagmanager.com",
         "https://googleads.g.doubleclick.net",
+        "https://*.doubleclick.net",
         "https://pagead2.googlesyndication.com",
         "https://tpc.googlesyndication.com",
+        "https://ep2.adtrafficquality.google",
+        "https://*.adtrafficquality.google",
+        "https://adservice.google.com",
       ],
     },
 

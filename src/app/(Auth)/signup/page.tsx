@@ -245,13 +245,16 @@ function SignupForm() {
         err instanceof Error
           ? err.message
           : "Failed to create account. Please try again.";
-      setServerError(message);
 
       if (message.toLowerCase().includes("already exists")) {
+        // Show duplicate-account feedback only beside the email field.
+        setServerError(null);
         setErrors((prev) => ({
           ...prev,
           email: "An account with this email already exists",
         }));
+      } else {
+        setServerError(message);
       }
     } finally {
       setIsLoading(false);
@@ -287,7 +290,7 @@ function SignupForm() {
 
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
-          Create Your Account
+          Create Your Free SigSignature Account
         </h1>
         <p className="mt-2 text-sm text-slate-600">
           Create professional email signatures in minutes.

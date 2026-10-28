@@ -12,7 +12,7 @@ import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
 import FlashToast from "@/components/common/FlashToast";
 import LandingMotionConfig from "@/components/motion/LandingMotionConfig";
-import { WebApplicationJsonLd, OrganizationJsonLd } from "@/components/seo/StructuredData";
+import { WebApplicationJsonLd, OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/StructuredData";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -23,9 +23,33 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Free Email Signature Generator | SigSignature",
   description:
-    "Create up to 3 professional signatures with SigSignature’s free email signature generator. Customize templates, preview live, and export HTML or images.",
+    "Create up to 3 professional email signatures with SigSignature's free generator. Customize templates, preview live, and export 100% deliverable HTML.",
   alternates: {
     canonical: "https://www.sigsignature.com",
+  },
+  openGraph: {
+    title: "Free Email Signature Generator | SigSignature",
+    description:
+      "Create up to 3 professional email signatures with SigSignature's free generator. Customize templates, preview live, and export 100% deliverable HTML.",
+    url: "https://www.sigsignature.com",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Free Email Signature Generator | SigSignature",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Email Signature Generator | SigSignature",
+    description:
+      "Create up to 3 professional email signatures with SigSignature's free generator. Customize templates, preview live, and export 100% deliverable HTML.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -44,6 +68,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Structured Data for Search Engines & LLM scrapers */}
+      <WebSiteJsonLd />
       <WebApplicationJsonLd />
       <OrganizationJsonLd />
 

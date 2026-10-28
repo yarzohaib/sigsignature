@@ -19,7 +19,7 @@ export default function HeroSection() {
               <span className="text-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] bg-clip-text text-transparent">
                 Email Signature Generator
               </span>{" "}
-              – Create Professional Signatures in Minutes
+              - Create Professional Signatures in Minutes
             </h1>
 
             <p className="font-body mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-base xl:text-lg 2xl:text-[20px] 3xl:text-[22px] leading-relaxed text-[#878787] max-w-[640px] 2xl:max-w-[720px]">

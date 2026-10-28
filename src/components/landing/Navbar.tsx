@@ -590,7 +590,7 @@ export default function Navbar() {
                 onClick={() => setUserDropdownOpen((prev) => !prev)}
                 aria-expanded={userDropdownOpen}
                 aria-haspopup="true"
-                className="group flex items-center gap-3 rounded-full border border-slate-200 bg-white/90 py-1.5 pr-4 pl-1.5 shadow-2xs backdrop-blur-sm transition hover:border-[#245FD4]/40 hover:bg-slate-50/80 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                className="group flex items-center gap-3 rounded-full border border-slate-200 bg-transparent py-1.5 pr-4 pl-1.5 shadow-2xs backdrop-blur-sm transition hover:border-[#245FD4]/40 hover:bg-slate-50/80 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               >
                 {/* User Avatar Photo */}
                 <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/20 bg-slate-100 transition group-hover:ring-brand">

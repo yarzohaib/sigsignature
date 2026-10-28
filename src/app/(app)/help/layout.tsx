@@ -2,10 +2,34 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Help & Documentation | SigSignature",
-  description: "Documentation, installation guides, and email client setup instructions.",
+  description: "Documentation, installation guides, and email client setup instructions for Gmail, Outlook, Apple Mail, and Thunderbird.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/help",
+  },
+  openGraph: {
+    title: "Help & Documentation | SigSignature",
+    description: "Documentation, installation guides, and email client setup instructions.",
+    url: "https://www.sigsignature.com/help",
+    siteName: "SigSignature",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Help & Documentation | SigSignature",
+    description: "Documentation, installation guides, and email client setup instructions.",
+    images: ["/og-image.png"],
+  },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

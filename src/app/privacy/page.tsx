@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
+import { BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | SigSignature",
@@ -9,6 +10,30 @@ export const metadata: Metadata = {
     "Learn how Sig Signature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
   alternates: {
     canonical: "https://www.sigsignature.com/privacy",
+  },
+  openGraph: {
+    title: "Privacy Policy | SigSignature",
+    description:
+      "Learn how SigSignature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
+    url: "https://www.sigsignature.com/privacy",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "SigSignature Privacy Policy",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | SigSignature",
+    description:
+      "Learn how SigSignature and The Nevon collect, use, and protect your personal data.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -43,6 +68,12 @@ export default function PrivacyPage() {
       </div>
 
       <Navbar />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "Privacy Policy", url: "https://www.sigsignature.com/privacy" },
+        ]}
+      />
 
       <main className="flex-1">
         {/* HERO SECTION */}

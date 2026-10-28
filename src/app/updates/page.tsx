@@ -2,13 +2,38 @@ import type { Metadata } from "next";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
+import { UpdatesPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Changelog & Product Updates | SigSignature",
+  title: "Product Updates | SigSignature",
   description:
     "Track the latest features, engine updates, bug fixes, and client compatibility improvements in Sig Signature.",
   alternates: {
     canonical: "https://www.sigsignature.com/updates",
+  },
+  openGraph: {
+    title: "Product Updates | SigSignature",
+    description:
+      "Track new feature releases, email client compatibility upgrades, and performance enhancements across SigSignature.",
+    url: "https://www.sigsignature.com/updates",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "SigSignature Product Updates",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Product Updates | SigSignature",
+    description:
+      "Track new feature releases and email client compatibility upgrades across SigSignature.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -115,6 +140,13 @@ export default function UpdatesPage() {
       </div>
 
       <Navbar />
+      <UpdatesPageJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "Product Updates", url: "https://www.sigsignature.com/updates" },
+        ]}
+      />
 
       <main className="flex-1">
         {/* HERO SECTION */}

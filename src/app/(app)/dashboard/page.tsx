@@ -8,7 +8,7 @@ import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 
 function DashboardContent() {
   return (
-    <div className="flex min-h-full flex-1 flex-col w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-14 pt-5 pb-8 sm:pt-6 sm:pb-10 lg:h-full lg:min-h-0 lg:overflow-hidden lg:pt-5 lg:pb-6 xl:pt-6 xl:pb-7 2xl:pt-7 2xl:pb-8 3xl:pt-[clamp(24px,1.4vw,40px)] 3xl:pb-[clamp(32px,1.5vw,48px)]">
+    <div className="flex min-h-full flex-1 flex-col w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-14 pt-5 pb-6 sm:pt-6 lg:h-full lg:min-h-0 lg:overflow-hidden lg:pt-5 xl:pt-6 2xl:pt-7 3xl:pt-[clamp(24px,1.4vw,40px)]">
       <main className="flex w-full flex-1 flex-col justify-start gap-5 sm:gap-6 lg:min-h-0 lg:justify-start lg:gap-6 xl:gap-7 2xl:gap-8">
         {/* Welcome Heading Section */}
         <HeroSection />
@@ -27,7 +27,7 @@ export default function DashboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-1 flex-col w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-14 py-5 sm:py-6 lg:py-4 xl:py-5 2xl:py-6 3xl:py-[clamp(24px,1.4vw,40px)] lg:h-full lg:min-h-0 lg:overflow-hidden">
+        <div className="flex flex-1 flex-col w-full px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-14 pt-5 pb-6 sm:pt-6 lg:pt-4 xl:pt-5 2xl:pt-6 3xl:pt-[clamp(24px,1.4vw,40px)] lg:h-full lg:min-h-0 lg:overflow-hidden">
           <DashboardSkeleton />
         </div>
       }

@@ -11,16 +11,13 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host = (request.headers.get("host") || "").toLowerCase();
 
-  // 1. Session Protection for authenticated dashboard & editor routes
+  // 1. Session Protection for authenticated dashboard & account routes
   if (
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/signatures") ||
     pathname.startsWith("/team-signatures") ||
-    pathname.startsWith("/templates") ||
-    pathname.startsWith("/pricing") ||
-    pathname.startsWith("/design-studio") ||
-    pathname.startsWith("/help") ||
-    pathname.startsWith("/settings")
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/pricing")
   ) {
     if (!hasSession) {
       const loginUrl = new URL("/login", request.url);
@@ -51,10 +48,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/signatures") ||
     pathname.startsWith("/team-signatures") ||
-    pathname.startsWith("/design-studio") ||
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/help") ||
-    pathname.startsWith("/templates") ||
     pathname.startsWith("/pricing") ||
     pathname.startsWith("/s/") ||
     pathname.startsWith("/api/") ||

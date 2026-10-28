@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
+import { AboutPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
   title: "About Us | SigSignature",
@@ -9,6 +10,30 @@ export const metadata: Metadata = {
     "Sig Signature by The Nevon is a lightweight, deliverability-focused HTML email signature generator built for modern professionals and teams.",
   alternates: {
     canonical: "https://www.sigsignature.com/about",
+  },
+  openGraph: {
+    title: "About Us | SigSignature",
+    description:
+      "Learn how SigSignature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures for modern professionals and teams.",
+    url: "https://www.sigsignature.com/about",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "About SigSignature",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us | SigSignature",
+    description:
+      "Learn how SigSignature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -116,6 +141,13 @@ export default function AboutPage() {
       </div>
 
       <Navbar />
+      <AboutPageJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "About Us", url: "https://www.sigsignature.com/about" },
+        ]}
+      />
 
       <main className="flex-1">
         {/* HERO SECTION */}

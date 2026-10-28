@@ -1168,6 +1168,7 @@ function DesignStudioContent() {
       />
 
       <div className="flex flex-1 flex-col overflow-hidden">
+        <h1 className="sr-only">Email Signature Design Studio - Free Custom Drag and Drop Builder</h1>
         <DashboardTopBar
           userName={displayName}
           userEmail={user?.email || ""}
@@ -2690,6 +2691,7 @@ export default function DesignStudioPage() {
         <div className="flex h-screen overflow-hidden bg-[#FCFCFC]">
           <DashboardSidebar mobileOpen={false} onCloseMobile={() => {}} />
           <div className="flex flex-1 flex-col overflow-hidden">
+        <h1 className="sr-only">Email Signature Design Studio - Free Custom Drag and Drop Builder</h1>
             <DashboardTopBar onOpenMobileMenu={() => {}} />
             <DesignStudioSkeleton />
           </div>

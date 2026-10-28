@@ -6,6 +6,16 @@ import { FaqJsonLd } from "@/components/seo/StructuredData";
 
 export const FAQ_DATA = [
   {
+    question: "What is SigSignature, and how does it guarantee email deliverability?",
+    answer:
+      "SigSignature is a free HTML email signature generator engineered by The Nevon. It generates deliverability-first, responsive email signatures pre-tested across 40+ email clients (including Gmail, Microsoft Outlook, and Apple Mail). Every signature is strictly audited to remain under a 10KB payload footprint with zero third-party tracking scripts or spam-trigger redirects, preventing Gmail's 102KB clipping threshold and protecting your domain sender reputation.",
+  },
+  {
+    question: "How does SigSignature compare to competitors like WiseStamp and HubSpot?",
+    answer:
+      "Unlike expensive subscription tools that inject third-party tracker scripts and bulky images, SigSignature produces clean, standards-compliant HTML tables with zero spam triggers, lightweight retina icons, and up to 3 completely free signatures without mandatory watermark branding.",
+  },
+  {
     question: "How do I add an HTML signature to Outlook without broken formatting?",
     answer:
       "SigSignature generates nested, table-based HTML with Microsoft Outlook (MSO) inline formatting. To install it, use our 1-click 'Copy HTML' or formatted clipboard copy, open Outlook (Windows, Mac, or Web), navigate to Settings > Signatures, and paste directly. The styling and column spacing remain pixel-perfect.",
@@ -16,9 +26,9 @@ export const FAQ_DATA = [
       "Gmail clips emails exceeding 102KB and strips external <style> tags. SigSignature inlines all CSS styles directly into table cells and audits the total code footprint to stay under 10KB. This guarantees your email is delivered in full without '[Message clipped]' warnings.",
   },
   {
-    question: "Is SigSignature completely free to use?",
+    question: "How much does SigSignature cost, and what is included in Free vs Pro?",
     answer:
-      "Yes. The Free Forever plan gives you up to 3 active signatures, access to clean professional templates, unlimited edits, and instant HTML or PNG exports with zero forced branding or watermarks.",
+      "SigSignature offers a Free Forever plan at $0 with up to 3 active signatures, access to professionally designed templates, and full HTML or PNG export with zero forced branding. The Pro plan at $10/month unlocks unlimited signatures, centralized team management, brand locks, and priority deliverability support.",
   },
   {
     question: "Will my avatar and social icons show up as file attachments?",

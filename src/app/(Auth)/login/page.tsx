@@ -203,10 +203,10 @@ function LoginForm() {
       {/* Header */}
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
-          Welcome Back!
+          Log in to SigSignature
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Log in to access your signatures.
+          Welcome back! Log in to access your signatures.
         </p>
       </div>
 

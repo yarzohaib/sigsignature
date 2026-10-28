@@ -8,6 +8,7 @@ interface TeamMemberCardProps {
   team: Team;
   member: TeamMember;
   onEdit: (member: TeamMember) => void;
+  onPreview: (member: TeamMember) => void;
   onCopy: (member: TeamMember) => void;
   onSend: (member: TeamMember) => void;
   onRevoke: (member: TeamMember) => void;
@@ -37,6 +38,7 @@ export default function TeamMemberCard({
   team,
   member,
   onEdit,
+  onPreview,
   onCopy,
   onSend,
   onRevoke,
@@ -103,6 +105,14 @@ export default function TeamMemberCard({
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
             </svg>
             <span>Edit Member</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onPreview(member)}
+            className="flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50 active:scale-95 cursor-pointer"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            Preview
           </button>
         </div>
       </div>
@@ -213,13 +223,13 @@ export default function TeamMemberCard({
       </div>
 
       {/* Bottom actions row */}
-      <div className="flex items-center justify-between gap-1.5 border-t border-[#EEF0F4] px-4 py-2.5">
-        <div className="flex items-center gap-2">
+      <div className="border-t border-[#EEF0F4] px-3 py-2.5 sm:px-4">
+        <div className="flex w-full items-center gap-2">
           {/* Edit button */}
           <button
             type="button"
             onClick={() => onEdit(member)}
-            className="flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+            className="flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-1.5 py-1.5 text-xs font-semibold text-[#475569] hover:bg-slate-50 transition cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -233,7 +243,7 @@ export default function TeamMemberCard({
           <button
             type="button"
             onClick={() => onCopy(member)}
-            className="flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#475569] hover:bg-slate-50 transition cursor-pointer"
+            className="flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-1.5 py-1.5 text-xs font-semibold text-[#475569] hover:bg-slate-50 transition cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -248,7 +258,7 @@ export default function TeamMemberCard({
             type="button"
             onClick={() => onSend(member)}
             disabled={isRevoked}
-            className={`flex items-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
+            className={`flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg border border-[#E2E8F0] bg-white px-1.5 py-1.5 text-xs font-semibold transition cursor-pointer ${
               isRevoked
                 ? "opacity-50 cursor-not-allowed text-slate-400"
                 : "text-[#245FD4] hover:bg-blue-50"

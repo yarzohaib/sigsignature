@@ -3,13 +3,38 @@ import Image from "next/image";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SectionBadge from "@/components/landing/SectionBadge";
+import { TeamPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Meet the Team | SigSignature",
+  title: "Meet Our Team | SigSignature",
   description:
     "The builders, designers, and problem solvers behind Sig Signature and The Nevon.",
   alternates: {
     canonical: "https://www.sigsignature.com/team",
+  },
+  openGraph: {
+    title: "Meet Our Team | SigSignature",
+    description:
+      "Meet the engineers, designers, and search strategists building SigSignature at The Nevon.",
+    url: "https://www.sigsignature.com/team",
+    siteName: "SigSignature",
+    images: [
+      {
+        url: "https://www.sigsignature.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "SigSignature Team",
+      },
+    ],
+    locale: "en_US",
+    type: "profile",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Meet Our Team | SigSignature",
+    description:
+      "Meet the engineers, designers, and search strategists building SigSignature at The Nevon.",
+    images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
@@ -140,6 +165,13 @@ export default function TeamPage() {
       </div>
 
       <Navbar />
+      <TeamPageJsonLd />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.sigsignature.com" },
+          { name: "Meet Our Team", url: "https://www.sigsignature.com/team" },
+        ]}
+      />
 
       <main className="flex-1">
         {/* HERO SECTION */}
