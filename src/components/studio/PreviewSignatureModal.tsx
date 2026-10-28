@@ -57,20 +57,20 @@ export default function PreviewSignatureModal({
       >
         {/* Header with Title, Tabs, Device Switcher, and Close */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] px-4 sm:px-6 py-3 sm:py-4 bg-slate-50/70 relative">
-          <div className="pr-8 sm:pr-0">
+          <div className="flex min-w-0 items-center gap-2 pr-10 sm:pr-0">
             <h3
               id="preview-modal-title"
-              className="text-base font-bold text-[#1E293B]"
+              className="whitespace-nowrap text-base font-bold text-[#1E293B]"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               Preview Signature
             </h3>
             {/* View Mode Tabs */}
-            <div className="flex items-center gap-1 mt-1.5">
+            <div className="flex shrink-0 items-center gap-1">
               <button
                 type="button"
                 onClick={() => setActiveTab("email")}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition ${
+                className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold transition ${
                   activeTab === "email"
                     ? "bg-[#245FD4] text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
@@ -138,7 +138,7 @@ export default function PreviewSignatureModal({
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-3 right-3 sm:static flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200/50 hover:text-slate-600 transition"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition hover:bg-slate-200/50 hover:text-slate-600 sm:static"
               aria-label="Close preview"
             >
               &times;
