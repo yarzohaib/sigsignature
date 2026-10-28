@@ -76,10 +76,6 @@ export default function ForgotPasswordPage() {
           label: "Proceed to Log In",
           href: "/login",
         }}
-        secondaryAction={{
-          label: "Enter Reset Token Manually",
-          href: `/reset?email=${encodeURIComponent(email)}`,
-        }}
       />
 
       {/* Heading */}

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePathname } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import GettingStartedModal from "@/components/dashboard/GettingStartedModal";
@@ -12,22 +11,18 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const optionalUser = useOptionalUser();
   const userId = optionalUser?.user?.id || getStoredUser()?.id || "";
-  const pathname = usePathname();
-  const isGuidesPage = Boolean(pathname?.startsWith("/help/guides"));
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
-      {/* Persistent 256px Fixed Sidebar (hidden on All Guides and Individual Guide pages) */}
-      {!isGuidesPage && (
-        <DashboardSidebar
-          mobileOpen={mobileMenuOpen}
-          onCloseMobile={() => setMobileMenuOpen(false)}
-        />
-      )}
+      {/* Persistent 256px Fixed Sidebar across all app pages */}
+      <DashboardSidebar
+        mobileOpen={mobileMenuOpen}
+        onCloseMobile={() => setMobileMenuOpen(false)}
+      />
 
       {/* Persistent Top Navigation Bar + Dynamic Page Canvas */}
       <div className="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        <DashboardTopBar onOpenMobileMenu={() => setMobileMenuOpen(true)} isGuidesPage={isGuidesPage} />
+        <DashboardTopBar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
         {/* Page Scroll Canvas */}
         <div

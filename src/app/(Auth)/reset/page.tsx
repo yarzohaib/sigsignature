@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
-import TextField from "@/components/ui/TextField";
+import { Suspense, useEffect, useState } from "react";
 import PasswordField from "@/components/ui/PasswordField";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { resetPassword } from "@/app/lib/api";
@@ -11,13 +10,11 @@ import { resetPassword } from "@/app/lib/api";
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialToken = searchParams.get("token") || "";
+  const [token] = useState(() => searchParams.get("token")?.trim() || "");
 
-  const [token, setToken] = useState(initialToken);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{
-    token?: string;
     newPassword?: string;
     confirmPassword?: string;
   }>({});
@@ -25,12 +22,15 @@ function ResetPasswordForm() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Immediately sanitize address bar & browser history so the raw token is completely wiped from view
+  useEffect(() => {
+    if (token && typeof window !== "undefined" && window.location.search) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [token]);
+
   function validate(): boolean {
     const nextErrors: typeof errors = {};
-
-    if (!token.trim()) {
-      nextErrors.token = "Reset token is required (check link or enter token)";
-    }
 
     if (!newPassword) {
       nextErrors.newPassword = "Password is required";
@@ -69,7 +69,7 @@ function ResetPasswordForm() {
 
     try {
       await resetPassword({
-        token: token.trim(),
+        token,
         newPassword,
       });
 
@@ -83,6 +83,37 @@ function ResetPasswordForm() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  // If no token in URL, prompt user to request one from /forgot
+  if (!token) {
+    return (
+      <div className="flex w-full max-w-[496px] flex-col items-center justify-center gap-5 rounded-2xl border border-slate-200/80 bg-white p-8 sm:p-10 text-center shadow-xs">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+          <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+        <div className="space-y-1.5">
+          <h1 className="text-brand-gradient font-heading text-[24px] font-semibold sm:text-[28px]">
+            Reset Link Required
+          </h1>
+          <p className="text-sm text-slate-600 max-w-sm">
+            Password reset links are sent directly to your email for security. Please check your inbox and click the reset button, or request a new link below.
+          </p>
+        </div>
+        <Link
+          href="/forgot"
+          className="bg-brand-gradient flex h-12 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-xs transition hover:opacity-95 sm:h-14 sm:text-lg mt-2"
+        >
+          Request Reset Link
+        </Link>
+        <Link href="/login" className="text-xs font-semibold text-brand hover:underline">
+          Return to Log In
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -104,10 +135,10 @@ function ResetPasswordForm() {
       {/* Heading */}
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
-          Create New Password.
+          Create New Password
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Create a new password to securely access your SIG Signature account.
+          Enter a new password to securely access your SigSignature account.
         </p>
       </div>
 
@@ -115,47 +146,36 @@ function ResetPasswordForm() {
       {serverError && (
         <div
           role="alert"
-          className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+          className="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800"
         >
-          <svg
-            className="h-5 w-5 shrink-0 text-red-600"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>{serverError}</span>
+          <div className="flex items-center gap-2">
+            <svg
+              className="h-5 w-5 shrink-0 text-red-600"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>{serverError}</span>
+          </div>
+          <Link href="/forgot" className="text-xs font-semibold text-brand underline ml-7">
+            Request a new password reset link
+          </Link>
         </div>
       )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5" noValidate>
-        {/* Token input (auto-filled if in query param, visible for manual entry otherwise) */}
-        {!initialToken && (
-          <TextField
-            label="Reset Token"
-            name="token"
-            placeholder="Paste your 64-character reset token"
-            value={token}
-            error={errors.token}
-            disabled={isLoading}
-            onChange={(e) => {
-              setToken(e.target.value);
-              if (errors.token) setErrors((prev) => ({ ...prev, token: undefined }));
-            }}
-          />
-        )}
-
         <div>
           <PasswordField
             label="New Password"
             name="newPassword"
-            placeholder="Enter your password"
+            placeholder="Enter your new password"
             value={newPassword}
             error={errors.newPassword}
             disabled={isLoading}
@@ -174,7 +194,7 @@ function ResetPasswordForm() {
         <PasswordField
           label="Confirm New Password"
           name="confirmPassword"
-          placeholder="Enter your password"
+          placeholder="Confirm your new password"
           value={confirmPassword}
           error={errors.confirmPassword}
           disabled={isLoading}
@@ -217,18 +237,10 @@ function ResetPasswordForm() {
               <span>Updating Password...</span>
             </>
           ) : (
-            "Set New Password"
+            "Reset Password"
           )}
         </button>
       </form>
-
-      {/* Footer */}
-      <p className="text-center text-sm text-slate-600 text-[#6889C9]">
-        Already have an account?{" "}
-        <Link href="/login" className="font-bold text-brand-dark ">
-          Log In
-        </Link>
-      </p>
     </div>
   );
 }
@@ -238,7 +250,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="flex h-64 items-center justify-center text-slate-500">
-          Loading reset password...
+          Loading reset form...
         </div>
       }
     >

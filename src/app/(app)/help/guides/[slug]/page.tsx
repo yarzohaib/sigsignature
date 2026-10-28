@@ -44,7 +44,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
   }
 
   return (
-    <div className="flex-1 w-full py-4 sm:py-6 lg:py-8 bg-[#F8FAFC]">
+    <div className="flex-1 w-full bg-[#F8FAFC]">
       <GuideArticle guide={guide} />
     </div>
   );

@@ -96,8 +96,8 @@ export default function AllGuidesPage() {
   }, [searchQuery, activeCategory]);
 
   return (
-    <div className="w-full min-h-screen bg-[#F8FAFC] py-6 sm:py-8 lg:py-10">
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:px-10 2xl:px-12 w-full pb-16">
+      <div className="w-full max-w-6xl mx-auto">
         {/* Breadcrumb: Help & Support > Guides */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 font-body">
           <Link
@@ -127,7 +127,7 @@ export default function AllGuidesPage() {
               className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#0F172A]"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
-              All 19 Technical Guides
+              All Technical Guides
             </h1>
             <p
               className="mt-2.5 text-sm sm:text-base lg:text-lg leading-relaxed text-[#64748B]"
@@ -144,7 +144,7 @@ export default function AllGuidesPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search all 19 guides (e.g. Gmail, Outlook, Retina, Dark Mode)..."
+                placeholder="Search all guides (e.g. Gmail, Outlook, Retina, Dark Mode)..."
                 className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 pl-11 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#245FD4] focus:outline-none focus:ring-4 focus:ring-[#245FD4]/10 transition shadow-2xs font-body"
               />
               <svg
@@ -184,10 +184,9 @@ export default function AllGuidesPage() {
               }`}
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              All Guides (19)
+              All Guides
             </button>
             {CATEGORIES.map((cat) => {
-              const count = ALL_19_GUIDES.filter((g) => g.categorySlug === cat.slug).length;
               const isActive = activeCategory === cat.slug;
               return (
                 <button
@@ -199,7 +198,7 @@ export default function AllGuidesPage() {
                     const el = document.getElementById(cat.slug);
                     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`rounded-full px-4 py-1.5 text-xs font-semibold transition cursor-pointer ${
                     isActive
                       ? "bg-[#245FD4] text-white shadow-xs"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200/80"
@@ -207,9 +206,6 @@ export default function AllGuidesPage() {
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <span>{cat.title}</span>
-                  <span className={`text-[11px] px-1.5 py-0.2 rounded-full ${isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"}`}>
-                    {count}
-                  </span>
                 </button>
               );
             })}
@@ -268,18 +264,13 @@ export default function AllGuidesPage() {
                         {cat.icon}
                       </div>
                       <div>
-                        <div className="flex items-center gap-2.5">
-                          <h2
-                            id={`heading-${cat.slug}`}
-                            className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight"
-                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                          >
-                            {cat.title}
-                          </h2>
-                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-                            {guides.length} guides
-                          </span>
-                        </div>
+                        <h2
+                          id={`heading-${cat.slug}`}
+                          className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight"
+                          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                        >
+                          {cat.title}
+                        </h2>
                         <p className="text-xs sm:text-sm text-slate-500 font-body mt-0.5">
                           {cat.description}
                         </p>
@@ -304,34 +295,26 @@ export default function AllGuidesPage() {
 }
 
 function GuideCard({ guide }: { guide: DetailedGuide }) {
-  const guideNumStr = String(guide.guideNumber || 1).padStart(2, "0");
-
   return (
     <Link
       href={`/help/guides/${guide.slug}`}
-      className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:border-[#245FD4]/50 hover:shadow-md hover:-translate-y-0.5"
+      className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:border-[#245FD4]/50 hover:shadow-md"
     >
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span
-            className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700 group-hover:bg-[#EFF6FF] group-hover:text-[#245FD4] transition"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            {guideNumStr}
-          </span>
-          <div className="flex items-center gap-2">
-            {guide.isPopular && (
-              <span className="rounded-full bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">
-                Popular
-              </span>
-            )}
-            <span
-              className="text-xs text-slate-400 font-body"
-              title="Estimated reading time"
-            >
-              {guide.readTime}
+          {guide.isPopular ? (
+            <span className="rounded-full bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">
+              Popular
             </span>
-          </div>
+          ) : (
+            <span />
+          )}
+          <span
+            className="text-xs text-slate-400 font-body"
+            title="Estimated reading time"
+          >
+            {guide.readTime}
+          </span>
         </div>
 
         <h3

@@ -283,7 +283,7 @@ function SignupForm() {
           onClick: () => router.push("/login"),
         }}
         secondaryAction={{
-          label: "Didn't receive it? Verify or Resend",
+          label: "Didn't receive it? Resend Link",
           href: `/verify?email=${encodeURIComponent(registeredEmail)}`,
         }}
       />

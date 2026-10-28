@@ -2,14 +2,55 @@ import React from "react";
 import Link from "next/link";
 import { DetailedGuide } from "@/lib/guidesData";
 
+function cleanInlineText(str?: string): string {
+  if (!str) return "";
+  return str
+    .replace(/\s*\(\s*⚙️?\s*\)/gi, "")
+    .replace(/\s*\(⚙\)/gi, "")
+    .replace(/\s*\(\s*≡\s*\)/gi, "")
+    .replace(/≡/g, "")
+    .replace(/⚙️?/g, "")
+    .replace(/\*\*\*([^*]+)\*\*\*/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/\*/g, "")
+    .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\s*->\s*/g, " → ")
+    .replace(/\s*-->\s*/g, " → ")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+function renderFormattedText(text?: string) {
+  if (!text) return null;
+  const cleaned = cleanInlineText(text);
+
+  // If text starts with a label followed by colon (e.g. "Monochrome: Icons use..."), bold only the heading label
+  const colonMatch = cleaned.match(/^([A-Za-z0-9\s&/()#_-]+:)\s*(.+)$/);
+  if (colonMatch) {
+    const label = colonMatch[1];
+    const rest = colonMatch[2];
+    return (
+      <>
+        <span className="font-semibold text-slate-900">{label}</span>{" "}
+        <span className="font-normal text-slate-700">{rest}</span>
+      </>
+    );
+  }
+
+  return <span className="font-normal text-slate-700">{cleaned}</span>;
+}
+
 interface GuideArticleProps {
   guide: DetailedGuide;
 }
 
 export default function GuideArticle({ guide }: GuideArticleProps) {
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-      {/* Breadcrumb: Help & Support > Guides > [guide name] */}
+    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:px-10 2xl:px-12 w-full pb-16">
+      <div className="w-full max-w-5xl mx-auto">
+        {/* Breadcrumb: Help & Support > Guides > [guide name] */}
       <nav aria-label="Breadcrumb" className="mb-5 sm:mb-6 flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 font-body flex-wrap">
         <Link
           href="/help"
@@ -30,7 +71,7 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
           <polyline points="9 18 15 12 9 6" />
         </svg>
         <span className="text-slate-900 font-semibold truncate max-w-[260px] sm:max-w-md">
-          {guide.title}
+          {cleanInlineText(guide.title)}
         </span>
       </nav>
 
@@ -39,7 +80,7 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
         {/* Eyebrow badge */}
         <div className="mb-3">
           <span className="font-heading text-xs font-bold uppercase tracking-wider text-brand">
-            {guide.eyebrow}
+            {cleanInlineText(guide.eyebrow)}
           </span>
         </div>
 
@@ -48,12 +89,12 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
           className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 leading-[1.2]"
           style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
         >
-          {guide.title}
+          {cleanInlineText(guide.title)}
         </h1>
 
         {/* Subtitle / intro deck */}
         <p className="mt-3 sm:mt-4 text-base sm:text-lg leading-relaxed text-slate-600 font-body">
-          {guide.subtitle}
+          {cleanInlineText(guide.subtitle)}
         </p>
 
         {/* Meta badges: read time, applies to, author */}
@@ -118,7 +159,9 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
             </div>
             <ul className="space-y-1.5 text-sm text-slate-700 list-disc list-inside font-body">
               {guide.prerequisites.map((req, i) => (
-                <li key={i}>{req}</li>
+                <li key={i} className="leading-relaxed font-normal">
+                  {renderFormattedText(req)}
+                </li>
               ))}
             </ul>
           </div>
@@ -183,59 +226,56 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
                 </div>
               )}
 
-              {/* Numbered Steps */}
+              {/* Step Walkthrough Cards (Number container removed, clean layout) */}
               {section.steps && section.steps.length > 0 && (
-                <div className="space-y-6 mt-4">
-                  {section.steps.map((step) => (
+                <div className="space-y-4 sm:space-y-5 mt-4">
+                  {section.steps.map((step, sIdx) => (
                     <div
-                      key={step.number}
+                      key={sIdx}
                       className="rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 sm:p-5 transition hover:border-slate-300"
                     >
-                      <div className="flex items-start gap-3 sm:gap-4">
-                        <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg bg-brand text-white font-bold text-sm shadow-xs">
-                          {step.number}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className="text-base sm:text-lg font-bold text-slate-900"
-                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                          >
-                            {step.title}
-                          </h3>
-                          <p className="mt-1.5 text-sm sm:text-base text-slate-700 leading-relaxed font-body">
-                            {step.description}
-                          </p>
+                      <h3
+                        className="text-base sm:text-lg font-bold text-slate-900 leading-snug"
+                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                      >
+                        {cleanInlineText(step.title)}
+                      </h3>
+                      {step.description && step.description !== step.title && (
+                        <p className="mt-1.5 text-sm sm:text-base text-slate-700 leading-relaxed font-body font-normal">
+                          {renderFormattedText(step.description)}
+                        </p>
+                      )}
 
-                          {step.substeps && step.substeps.length > 0 && (
-                            <ul className="mt-2.5 space-y-1.5 text-sm text-slate-600 list-disc list-inside font-body pl-1">
-                              {step.substeps.map((sub, subIdx) => (
-                                <li key={subIdx} className="leading-relaxed">
-                                  {sub}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+                      {step.substeps && step.substeps.length > 0 && (
+                        <ul className="mt-2.5 space-y-1.5 text-sm text-slate-600 list-disc list-inside font-body pl-1">
+                          {step.substeps
+                            .filter((sub) => sub && sub !== "---")
+                            .map((sub, subIdx) => (
+                              <li key={subIdx} className="leading-relaxed font-normal">
+                                {renderFormattedText(sub)}
+                              </li>
+                            ))}
+                        </ul>
+                      )}
 
-                          {step.callout && (
-                            <div
-                              className={`mt-3.5 rounded-lg p-3 text-xs sm:text-sm font-body ${
-                                step.callout.type === "warning"
-                                  ? "border border-amber-200 bg-amber-50 text-amber-900"
-                                  : step.callout.type === "tip"
-                                  ? "border border-emerald-200 bg-emerald-50 text-emerald-900"
-                                  : "border border-blue-200 bg-blue-50 text-blue-900"
-                              }`}
-                            >
-                              <div className="flex items-start gap-2">
-                                <span className="font-bold shrink-0 uppercase tracking-wide text-[11px]">
-                                  {step.callout.type}:
-                                </span>
-                                <span>{step.callout.text}</span>
-                              </div>
-                            </div>
-                          )}
+                      {step.callout && (
+                        <div
+                          className={`mt-3.5 rounded-lg p-3 text-xs sm:text-sm font-body ${
+                            step.callout.type === "warning"
+                              ? "border border-amber-200 bg-amber-50 text-amber-900"
+                              : step.callout.type === "tip"
+                              ? "border border-emerald-200 bg-emerald-50 text-emerald-900"
+                              : "border border-blue-200 bg-blue-50 text-blue-900"
+                          }`}
+                        >
+                          <div className="flex items-start gap-2">
+                            <span className="font-bold shrink-0 uppercase tracking-wide text-[11px]">
+                              {step.callout.type}:
+                            </span>
+                            <span>{cleanInlineText(step.callout.text)}</span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -315,8 +355,8 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
             </h2>
             <ul className="space-y-2 text-sm sm:text-base text-slate-700 list-disc list-inside font-body">
               {guide.keyTakeaways.map((takeaway, i) => (
-                <li key={i} className="leading-relaxed">
-                  {takeaway}
+                <li key={i} className="leading-relaxed font-normal">
+                  {renderFormattedText(takeaway)}
                 </li>
               ))}
             </ul>
@@ -352,6 +392,7 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
           </Link>
         </div>
       </article>
+      </div>
     </div>
   );
 }
