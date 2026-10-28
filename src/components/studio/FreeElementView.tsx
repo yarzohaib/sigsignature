@@ -36,6 +36,7 @@ interface FreeElementViewProps {
   onTextGrowth?: (id: string, deltaH: number) => void;
   domRef?: (node: HTMLDivElement | null) => void;
   showEditorOverlays?: boolean;
+  hideLabels?: boolean;
   isEditingSavedSignature?: boolean;
   onToast?: (msg: string, isError?: boolean) => void;
 }
@@ -76,6 +77,7 @@ export default function FreeElementView({
   onTextGrowth,
   domRef,
   showEditorOverlays = true,
+  hideLabels = false,
   isEditingSavedSignature = false,
   onToast,
 }: FreeElementViewProps) {
@@ -414,7 +416,7 @@ export default function FreeElementView({
       )}
 
       {/* Linked Team Field Badge */}
-      {showEditorOverlays && "bind" in element && element.bind && (
+      {!hideLabels && showEditorOverlays && "bind" in element && element.bind && (
         <div
           data-team-field-badge={element.bind}
           className="absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded bg-[#449AFA] px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none"
@@ -430,6 +432,8 @@ export default function FreeElementView({
               ? "Phone"
               : element.bind === "photo"
               ? "Photo"
+              : element.bind === "company"
+              ? "Company"
               : element.bind}
           </span>
         </div>

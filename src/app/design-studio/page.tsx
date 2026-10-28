@@ -102,6 +102,9 @@ function DesignStudioContent() {
   // Canvas Zoom State
   const [zoom, setZoom] = useState(100);
 
+  // Hide Field Labels on Canvas
+  const [hideLabels, setHideLabels] = useState(false);
+
   // Autosave Status
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving">("saved");
 
@@ -151,9 +154,9 @@ function DesignStudioContent() {
 
   // Collapsible Tool Sections (all open by default)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    elements: true,
     fonts: true,
     colors: true,
-    elements: true,
     shapes: true,
     socials: true,
     themes: true,
@@ -1224,228 +1227,7 @@ function DesignStudioContent() {
               scrollbarGutter: "stable",
             }}
           >
-            {/* 1. FONTS SECTION */}
-            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
-              <button
-                type="button"
-                onClick={() => toggleSection("fonts")}
-                aria-expanded={openSections.fonts}
-                className="flex w-full items-center justify-between text-left group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] text-xs font-bold shadow-2xs">
-                    F
-                  </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B]"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Fonts
-                  </span>
-                </div>
-                <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
-                    openSections.fonts ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openSections.fonts && (
-                <div className="mt-3.5">
-                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Font Selection">
-                    {ALLOWED_STUDIO_FONTS.map((font) => {
-                      const isSelected = state.fontFamily === font;
-                      const fontFam =
-                        font === "Inter"
-                          ? "'Inter', sans-serif"
-                          : font === "Roboto"
-                          ? "'Roboto', sans-serif"
-                          : font === "Georgia"
-                          ? "Georgia, serif"
-                          : "'DM Sans', sans-serif";
-
-                      return (
-                        <div
-                          key={font}
-                          role="radio"
-                          aria-checked={isSelected}
-                          tabIndex={0}
-                          onClick={() => dispatch({ type: "SET_FONT", payload: font })}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              dispatch({ type: "SET_FONT", payload: font });
-                            }
-                          }}
-                          className={`flex items-center justify-between rounded-[10px] border p-2.5 cursor-pointer transition select-none ${
-                            isSelected
-                              ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
-                              : "border-[#E2E8F0] bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <span
-                            className="text-xs font-semibold text-[#1E293B]"
-                            style={{ fontFamily: fontFam }}
-                          >
-                            {font}
-                          </span>
-                          <span
-                            className="text-[11px] text-[#94A3B8]"
-                            style={{ fontFamily: fontFam }}
-                          >
-                            Aa Bb Cc
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* PREMIUM FONTS */}
-                  <div className="mt-3">
-                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                      PREMIUM
-                    </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5">
-                      {[
-                        { name: "Alata" },
-                        { name: "DM Serif" },
-                        { name: "Play Fair" },
-                        { name: "Duru Sans" },
-                      ].map((item) => (
-                        <div
-                          key={item.name}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-white p-2.5 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
-                        >
-                          <span className="text-xs font-medium text-slate-700">{item.name}</span>
-                          <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                            Premium
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p
-                    className="mt-2 text-[11px] text-[#94A3B8] leading-tight"
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  >
-                    Fonts that are not installed on the reader&apos;s device fall back to Arial.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* 2. COLORS SECTION */}
-            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
-              <button
-                type="button"
-                onClick={() => toggleSection("colors")}
-                aria-expanded={openSections.colors}
-                className="flex w-full items-center justify-between text-left group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.97-4.48-9-10-9z" />
-                    </svg>
-                  </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B]"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Colors
-                  </span>
-                </div>
-                <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
-                    openSections.colors ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openSections.colors && (
-                <div className="mt-3.5">
-                  <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                    SOLID COLORS
-                  </span>
-                  <div className="flex flex-wrap items-center gap-2.5 mt-2">
-                    {STUDIO_SOLID_COLORS.map((color) => {
-                      const isSelected = state.themeColor?.toLowerCase() === color.toLowerCase();
-                      const isWhite = color.toUpperCase() === "#FFFFFF";
-
-                      return (
-                        <button
-                          key={color}
-                          type="button"
-                          aria-label={`Select color ${color}`}
-                          onClick={() => dispatch({ type: "SET_COLOR", payload: color })}
-                          className={`h-6 w-6 rounded-full transition transform hover:scale-110 focus:outline-none ${
-                            isWhite ? "border border-[#CBD5E1]" : ""
-                          } ${
-                            isSelected
-                              ? "ring-2 ring-offset-2 ring-[#245FD4] scale-110"
-                              : "hover:ring-1 hover:ring-slate-300"
-                          }`}
-                          style={{ backgroundColor: color }}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                        GRADIENT COLORS
-                      </span>
-                      <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                        Premium
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2.5 mt-2">
-                      {[
-                        "linear-gradient(135deg, #4F46E5, #9333EA)",
-                        "linear-gradient(135deg, #F97316, #EF4444)",
-                        "linear-gradient(135deg, #14B8A6, #22C55E)",
-                        "linear-gradient(135deg, #A855F7, #EC4899)",
-                      ].map((grad, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          aria-label={`Premium gradient ${idx + 1}`}
-                          onClick={handlePremiumClick}
-                          className="h-6 w-6 rounded-full opacity-95 hover:opacity-100 transition transform hover:scale-105 cursor-pointer shadow-2xs"
-                          style={{ background: grad }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 3. ADD ELEMENTS SECTION */}
+            {/* 1. ADD ELEMENTS SECTION */}
             <div className="border-b border-[#E2E8F0] pb-5 mb-5">
               <button
                 type="button"
@@ -1608,6 +1390,227 @@ function DesignStudioContent() {
                       </svg>
                       <span>Add Banner</span>
                     </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. FONTS SECTION */}
+            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
+              <button
+                type="button"
+                onClick={() => toggleSection("fonts")}
+                aria-expanded={openSections.fonts}
+                className="flex w-full items-center justify-between text-left group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] text-xs font-bold shadow-2xs">
+                    F
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Fonts
+                  </span>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                    openSections.fonts ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.fonts && (
+                <div className="mt-3.5">
+                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Font Selection">
+                    {ALLOWED_STUDIO_FONTS.map((font) => {
+                      const isSelected = state.fontFamily === font;
+                      const fontFam =
+                        font === "Inter"
+                          ? "'Inter', sans-serif"
+                          : font === "Roboto"
+                          ? "'Roboto', sans-serif"
+                          : font === "Georgia"
+                          ? "Georgia, serif"
+                          : "'DM Sans', sans-serif";
+
+                      return (
+                        <div
+                          key={font}
+                          role="radio"
+                          aria-checked={isSelected}
+                          tabIndex={0}
+                          onClick={() => dispatch({ type: "SET_FONT", payload: font })}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              dispatch({ type: "SET_FONT", payload: font });
+                            }
+                          }}
+                          className={`flex items-center justify-between rounded-[10px] border p-2.5 cursor-pointer transition select-none ${
+                            isSelected
+                              ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
+                              : "border-[#E2E8F0] bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <span
+                            className="text-xs font-semibold text-[#1E293B]"
+                            style={{ fontFamily: fontFam }}
+                          >
+                            {font}
+                          </span>
+                          <span
+                            className="text-[11px] text-[#94A3B8]"
+                            style={{ fontFamily: fontFam }}
+                          >
+                            Aa Bb Cc
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* PREMIUM FONTS */}
+                  <div className="mt-3">
+                    <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
+                      PREMIUM
+                    </span>
+                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5">
+                      {[
+                        { name: "Alata" },
+                        { name: "DM Serif" },
+                        { name: "Play Fair" },
+                        { name: "Duru Sans" },
+                      ].map((item) => (
+                        <div
+                          key={item.name}
+                          role="button"
+                          aria-disabled="true"
+                          tabIndex={0}
+                          onClick={handlePremiumClick}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handlePremiumClick();
+                            }
+                          }}
+                          className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-white p-2.5 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
+                        >
+                          <span className="text-xs font-medium text-slate-700">{item.name}</span>
+                          <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
+                            Premium
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p
+                    className="mt-2 text-[11px] text-[#94A3B8] leading-tight"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    Fonts that are not installed on the reader&apos;s device fall back to Arial.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* 3. COLORS SECTION */}
+            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
+              <button
+                type="button"
+                onClick={() => toggleSection("colors")}
+                aria-expanded={openSections.colors}
+                className="flex w-full items-center justify-between text-left group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.97-4.48-9-10-9z" />
+                    </svg>
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Colors
+                  </span>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                    openSections.colors ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.colors && (
+                <div className="mt-3.5">
+                  <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
+                    SOLID COLORS
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2.5 mt-2">
+                    {STUDIO_SOLID_COLORS.map((color) => {
+                      const isSelected = state.themeColor?.toLowerCase() === color.toLowerCase();
+                      const isWhite = color.toUpperCase() === "#FFFFFF";
+
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          aria-label={`Select color ${color}`}
+                          onClick={() => dispatch({ type: "SET_COLOR", payload: color })}
+                          className={`h-6 w-6 rounded-full transition transform hover:scale-110 focus:outline-none ${
+                            isWhite ? "border border-[#CBD5E1]" : ""
+                          } ${
+                            isSelected
+                              ? "ring-2 ring-offset-2 ring-[#245FD4] scale-110"
+                              : "hover:ring-1 hover:ring-slate-300"
+                          }`}
+                          style={{ backgroundColor: color }}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
+                        GRADIENT COLORS
+                      </span>
+                      <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
+                        Premium
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2.5 mt-2">
+                      {[
+                        "linear-gradient(135deg, #4F46E5, #9333EA)",
+                        "linear-gradient(135deg, #F97316, #EF4444)",
+                        "linear-gradient(135deg, #14B8A6, #22C55E)",
+                        "linear-gradient(135deg, #A855F7, #EC4899)",
+                      ].map((grad, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          aria-label={`Premium gradient ${idx + 1}`}
+                          onClick={handlePremiumClick}
+                          className="h-6 w-6 rounded-full opacity-95 hover:opacity-100 transition transform hover:scale-105 cursor-pointer shadow-2xs"
+                          style={{ background: grad }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -2221,9 +2224,49 @@ function DesignStudioContent() {
               mobileTab === "canvas" ? "flex" : "hidden lg:flex"
             }`}
           >
-            {/* Top Toolbar Row 1: Action Buttons (Preview Signature + Save & Continue) */}
+            {/* Top Toolbar Row 1: Action Buttons (Hide Labels + Preview Signature + Save & Continue) */}
             <div className="hidden lg:flex items-center justify-end px-6 pt-4 pb-1 shrink-0">
               <div className="flex items-center gap-2">
+                {/* Hide Labels Toggle */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={hideLabels}
+                  onClick={() => setHideLabels((prev) => !prev)}
+                  className={`flex h-[36px] items-center gap-2 rounded-lg border px-3 text-xs font-semibold shadow-2xs transition select-none ${
+                    hideLabels
+                      ? "border-[#245FD4] bg-[#EFF6FF] text-[#245FD4]"
+                      : "border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300 hover:text-[#1E293B]"
+                  }`}
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  title={hideLabels ? "Click to show field labels on canvas" : "Click to hide field labels on canvas"}
+                >
+                  {hideLabels ? (
+                    <svg className="h-3.5 w-3.5 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                      <line x1="1" y1="1" x2="23" y2="23" />
+                    </svg>
+                  ) : (
+                    <svg className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+                  <span>Hide Labels</span>
+                  <span
+                    aria-hidden="true"
+                    className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${
+                      hideLabels ? "bg-[#245FD4]" : "bg-slate-200"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-3 w-3 transform rounded-full bg-white shadow-xs transition-transform ${
+                        hideLabels ? "translate-x-3.5" : "translate-x-0.5"
+                      }`}
+                    />
+                  </span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setPreviewModalOpen(true)}
@@ -2383,6 +2426,7 @@ function DesignStudioContent() {
                 zoom={zoom}
                 onToast={showToast}
                 isEditingSavedSignature={Boolean(editingSignatureId || editId)}
+                hideLabels={hideLabels}
               />
 
               {/* Portaled FloatingToolbar when an element is selected */}
@@ -2576,7 +2620,35 @@ function DesignStudioContent() {
 
         {/* Sticky Bottom Bar on Small Screens (< lg) */}
         {!isLoading && (
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center gap-3 border-t border-[#E2E8F0] bg-white p-3 shadow-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center gap-2 border-t border-[#E2E8F0] bg-white p-3 shadow-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            {/* Hide Labels Toggle (Mobile) */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={hideLabels}
+              onClick={() => setHideLabels((prev) => !prev)}
+              className={`flex h-[38px] items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold shadow-2xs whitespace-nowrap transition shrink-0 ${
+                hideLabels
+                  ? "border-[#245FD4] bg-[#EFF6FF] text-[#245FD4]"
+                  : "border-[#E2E8F0] bg-white text-[#64748B] hover:border-slate-300 hover:text-[#1E293B]"
+              }`}
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              title={hideLabels ? "Click to show field labels" : "Click to hide field labels"}
+            >
+              {hideLabels ? (
+                <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                  <line x1="1" y1="1" x2="23" y2="23" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+              <span className="hidden sm:inline">Hide Labels</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setPreviewModalOpen(true)}

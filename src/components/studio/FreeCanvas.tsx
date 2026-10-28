@@ -24,6 +24,7 @@ interface FreeCanvasProps {
   zoom: number;
   onToast: (msg: string, isError?: boolean) => void;
   isEditingSavedSignature?: boolean;
+  hideLabels?: boolean;
 }
 
 interface DragState {
@@ -72,6 +73,7 @@ export default function FreeCanvas({
   zoom,
   onToast,
   isEditingSavedSignature = false,
+  hideLabels = false,
 }: FreeCanvasProps) {
   const canvasWidth = data.canvas?.width || 600;
   const canvasHeight = data.canvas?.height || 200;
@@ -682,6 +684,8 @@ export default function FreeCanvas({
                 isColliding={isTarget && isColliding}
                 isDragging={isDraggingThis}
                 isResizing={isResizingThis}
+                showEditorOverlays={!hideLabels}
+                hideLabels={hideLabels}
                 onSelect={(id, e) => {
                   e.stopPropagation();
                   onSelect(id);
