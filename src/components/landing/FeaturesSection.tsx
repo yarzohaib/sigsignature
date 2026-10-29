@@ -19,8 +19,8 @@ export default function FeaturesSection() {
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
             <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
-              Everything You Need to<br className="hidden lg:block" /> Build the{" "}
-              <span className="text-[#1243A3]">Perfect Signature.</span>
+              Tools to Create and Customize Your{" "}
+              <span className="text-[#1243A3]">Email Signature</span>
             </h2>
           </Reveal>
         </div>
@@ -29,7 +29,7 @@ export default function FeaturesSection() {
         <FeatureGrid className="mt-8 grid grid-cols-1 gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           {/* ROW 1 */}
           {/* Card 1 (WIDE - 7 cols in Figma 687px) */}
-          <FeatureCard colSpan="lg:col-span-7" direction="left" aria-label="Templates or From Scratch">
+          <FeatureCard colSpan="lg:col-span-7" direction="left" aria-label="Start with a Template or Blank Layout">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
@@ -40,12 +40,10 @@ export default function FeaturesSection() {
                 </span>
               </div>
               <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                Templates or From Scratch
+                Start with a Template or Blank Layout
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Choose a professionally designed template, or start from a blank
-                canvas and build your signature completely from scratch. Either
-                way, you&apos;re in full control.
+                Choose a starting design or build your own layout. Arrange your information to suit your role and brand.
               </p>
             </div>
 
@@ -87,7 +85,7 @@ export default function FeaturesSection() {
           </FeatureCard>
 
           {/* Card 2 (NARROW - 5 cols in Figma) */}
-          <FeatureCard colSpan="lg:col-span-5" direction="right" aria-label="Live Preview">
+          <FeatureCard colSpan="lg:col-span-5" direction="right" aria-label="Preview Changes While You Edit">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
@@ -98,11 +96,10 @@ export default function FeaturesSection() {
                 </span>
               </div>
               <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                Live Preview
+                Preview Changes While You Edit
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Every change updates instantly. What you see is exactly what
-                lands in the inbox.
+                See your design update as you change its content and appearance. After installation, send a test email to check how it displays in your email app.
               </p>
             </div>
 
@@ -126,7 +123,7 @@ export default function FeaturesSection() {
 
           {/* ROW 2 */}
           {/* Card 3 (NARROW - 5 cols in Figma) */}
-          <FeatureCard colSpan="lg:col-span-5" direction="left" aria-label="Full Customization">
+          <FeatureCard colSpan="lg:col-span-5" direction="left" aria-label="Customize Your Brand Details">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
@@ -137,11 +134,10 @@ export default function FeaturesSection() {
                 </span>
               </div>
               <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                Full Customization
+                Customize Your Brand Details
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Make it completely yours. Customize colors, fonts, logos, social
-                icons, banners, and layouts—no coding required.
+                Adjust colors, fonts, logos, social icons, banners, and layouts using the editor’s visual controls.
               </p>
             </div>
 
@@ -156,7 +152,7 @@ export default function FeaturesSection() {
           </FeatureCard>
 
           {/* Card 4 (WIDE - 7 cols in Figma with CodeSnippet.svg) */}
-          <FeatureCard colSpan="lg:col-span-7" direction="right" aria-label="Production-Ready HTML Export">
+          <FeatureCard colSpan="lg:col-span-7" direction="right" aria-label="Export Your Signature as HTML">
             <div>
               <div className="flex items-center gap-1.5 text-slate-400">
                 <FeatureIconTile>
@@ -167,12 +163,10 @@ export default function FeaturesSection() {
                 </span>
               </div>
               <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                Production-Ready HTML Export
+                Export Your Signature as HTML
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Copy clean, working signature: inline-styled, client-tested signature
-                that&apos;s compatible with Gmail, Outlook, Apple Mail, and more.
-                Paste it in, and it works the first time, every time.
+                Export an HTML version for use in an email app that supports formatted signatures. Check your app’s installation options and test the result before using it in everyday emails.
               </p>
             </div>
 
@@ -191,7 +185,7 @@ export default function FeaturesSection() {
 
           {/* ROW 3 */}
           {/* Card 5 (EQUAL 50% - 6 cols in Figma) */}
-          <FeatureCard colSpan="lg:col-span-6" direction="left" aria-label="High-Quality Image Export">
+          <FeatureCard colSpan="lg:col-span-6" direction="left" aria-label="Download an Image Version">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
@@ -202,11 +196,10 @@ export default function FeaturesSection() {
                 </span>
               </div>
               <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                High-Quality Image Export
+                Download an Image Version
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Need an image version? Download a high-quality export in one
-                click.
+                Export your design as an image when you need a visual version. An image does not preserve individual text links as separately clickable elements.
               </p>
             </div>
 
@@ -230,7 +223,7 @@ export default function FeaturesSection() {
           </FeatureCard>
 
           {/* Card 6 (EQUAL 50% - 6 cols in Figma) */}
-          <FeatureCard colSpan="lg:col-span-6" direction="right" aria-label="Save Multiple Signatures">
+          <FeatureCard colSpan="lg:col-span-6" direction="right" aria-label="Save and Update Your Signatures">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
@@ -241,11 +234,10 @@ export default function FeaturesSection() {
                 </span>
               </div>
               <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                Save Multiple Signatures
+                Save and Update Your Signatures
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Store multiple signatures, whether built from a template or from
-                scratch, in your dashboard, and update them anytime.
+                Keep your saved designs in your dashboard and update them when your role, contact details, or branding changes. The free plan includes up to 3 signatures.
               </p>
             </div>
 

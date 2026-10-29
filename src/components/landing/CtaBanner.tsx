@@ -23,10 +23,10 @@ export default function CtaBanner() {
           duration: 0.6,
           ease: EASE_OUT_CUBIC,
         }}
-        className="mx-auto max-w-5xl 2xl:max-w-[1300px] 3xl:max-w-[1500px] px-4 sm:px-6 lg:px-8"
+        className="mx-auto flex flex-col items-center text-center max-w-5xl 2xl:max-w-[1300px] 3xl:max-w-[1500px] px-4 sm:px-6 lg:px-8"
       >
-        <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight leading-tight sm:leading-[1.2] [text-wrap:balance]">
-          <span className="block whitespace-normal sm:whitespace-nowrap">
+        <h2 className="font-heading text-center mx-auto text-[clamp(1.75rem,1.1rem+2vw,2.5rem)] lg:text-[34px] xl:text-[40px] 2xl:text-[48px] 3xl:text-[54px] font-semibold tracking-tight leading-tight sm:leading-[1.25] [text-wrap:balance]">
+          <span className="block lg:whitespace-nowrap">
             Your Email Signature Is the Last Thing People See,
           </span>
           <span className="block mt-1 sm:mt-1.5">
@@ -43,10 +43,9 @@ export default function CtaBanner() {
             delay: shouldReduceMotion ? 0 : 0.45,
             ease: EASE_OUT_CUBIC,
           }}
-          className="font-body mt-4 text-sm text-blue-100 sm:text-base 3xl:text-[18px]"
+          className="font-body mt-4 max-w-2xl 2xl:max-w-3xl mx-auto text-center text-sm text-blue-100 sm:text-base 3xl:text-[18px]"
         >
-          Join professionals who&apos;ve stopped overpaying for email signatures.
-          Create yours free in minutes.
+          Bring your name, contact details, and brand into one clear design. Start with a template or create your own layout, preview your changes, and export your signature.
         </motion.p>
 
         {/* Sleek, 275px x 46px pill button matching Figma Frame properties */}
@@ -87,9 +86,9 @@ export default function CtaBanner() {
             delay: shouldReduceMotion ? 0 : 0.75,
             ease: EASE_OUT_CUBIC,
           }}
-          className="mt-3.5 font-body text-xs text-blue-200/90 sm:text-sm 3xl:text-base"
+          className="mt-3.5 text-center mx-auto font-body text-xs text-blue-200/90 sm:text-sm 3xl:text-base"
         >
-          No credit card. No designer. No developer. Just you.
+          Up to 3 signatures free. No coding required.
         </motion.p>
       </motion.div>
     </section>

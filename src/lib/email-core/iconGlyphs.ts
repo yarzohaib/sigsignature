@@ -1,3 +1,16 @@
+export const CONTACT_ICONS = [
+  "phone",
+  "email",
+  "address",
+  "website",
+] as const;
+
+export type ContactIcon = (typeof CONTACT_ICONS)[number];
+
+export function isContactIcon(network: string): boolean {
+  return CONTACT_ICONS.includes(network as ContactIcon);
+}
+
 export const SOCIAL_NETWORKS = [
   "linkedin",
   "twitter",
@@ -6,9 +19,23 @@ export const SOCIAL_NETWORKS = [
   "github",
   "youtube",
   "website",
+  "phone",
+  "email",
+  "address",
 ] as const;
 
 export type SocialNetwork = (typeof SOCIAL_NETWORKS)[number];
+
+// Pure social networks excluding dedicated contact icons (used by social pickers)
+export const PURE_SOCIAL_NETWORKS = [
+  "linkedin",
+  "twitter",
+  "facebook",
+  "instagram",
+  "github",
+  "youtube",
+  "website",
+] as const;
 
 // Official LinkedIn glyph path fallback (simple-icons brand SVG path without outer frame)
 const LINKEDIN_GLYPH_PATH =
@@ -38,6 +65,18 @@ const YOUTUBE_GLYPH_PATH =
 const WEBSITE_GLYPH_PATH =
   "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z";
 
+// Phone handset filled glyph path (standard 24x24)
+const PHONE_GLYPH_PATH =
+  "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z";
+
+// Email envelope filled glyph path with folded flap cutout (standard 24x24)
+const EMAIL_GLYPH_PATH =
+  "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1.4 3.25L12 12.2 5.4 7.25h13.2zM4 18V9.18l7.4 5.55c.36.27.84.27 1.2 0L20 9.18V18H4z";
+
+// Address / Location pin filled glyph path with circular hole (standard 24x24)
+const ADDRESS_GLYPH_PATH =
+  "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z";
+
 export const ICON_GLYPHS: Record<SocialNetwork, string> = {
   linkedin: LINKEDIN_GLYPH_PATH,
   twitter: TWITTER_GLYPH_PATH,
@@ -46,4 +85,7 @@ export const ICON_GLYPHS: Record<SocialNetwork, string> = {
   github: GITHUB_GLYPH_PATH,
   youtube: YOUTUBE_GLYPH_PATH,
   website: WEBSITE_GLYPH_PATH,
+  phone: PHONE_GLYPH_PATH,
+  email: EMAIL_GLYPH_PATH,
+  address: ADDRESS_GLYPH_PATH,
 };

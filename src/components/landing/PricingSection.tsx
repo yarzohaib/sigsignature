@@ -10,7 +10,7 @@ import { EASE_OUT_CUBIC, MOTION_VIEWPORT } from "@/components/motion/motionConfi
 const freeFeatures = [
   "Create up to 3 professional signatures",
   "Access starter templates",
-  "Production-ready HTML export",
+  "HTML signature export",
   "High-quality image export",
   "Real-time live preview",
 ];
@@ -141,8 +141,8 @@ export default function PricingSection() {
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
             <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] lg:leading-[1.12] font-semibold tracking-tight text-slate-900 leading-tight [text-wrap:balance]">
-              Transparent Pricing,{" "}
-              <span className="text-[#1243A3]">Start Free.</span>
+              Start with a Free{" "}
+              <span className="text-[#1243A3]">Email Signature Plan</span>
             </h2>
           </Reveal>
         </div>
@@ -220,7 +220,7 @@ export default function PricingSection() {
                   href="/signup"
                   className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
                 >
-                  Lets Start
+                  Create Your Free Signature
                 </Link>
               </div>
             </div>

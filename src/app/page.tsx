@@ -10,7 +10,6 @@ import PricingSection from "@/components/landing/PricingSection";
 import FaqSection from "@/components/landing/FaqSection";
 import CtaBanner from "@/components/landing/CtaBanner";
 import Footer from "@/components/landing/Footer";
-import FlashToast from "@/components/common/FlashToast";
 import LandingMotionConfig from "@/components/motion/LandingMotionConfig";
 import { WebApplicationJsonLd, OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/StructuredData";
 
@@ -23,14 +22,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Free Email Signature Generator | SigSignature",
   description:
-    "Create up to 3 professional email signatures with SigSignature's free generator. Customize templates, preview live, and export 100% deliverable HTML.",
+    "Create up to 3 email signatures free with SigSignature. Customize templates, preview your design, and export HTML or images. No coding required.",
   alternates: {
     canonical: "https://www.sigsignature.com",
   },
   openGraph: {
     title: "Free Email Signature Generator | SigSignature",
     description:
-      "Create up to 3 professional email signatures with SigSignature's free generator. Customize templates, preview live, and export 100% deliverable HTML.",
+      "Create up to 3 email signatures free with SigSignature. Customize templates, preview your design, and export HTML or images. No coding required.",
     url: "https://www.sigsignature.com",
     siteName: "SigSignature",
     images: [
@@ -48,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Free Email Signature Generator | SigSignature",
     description:
-      "Create up to 3 professional email signatures with SigSignature's free generator. Customize templates, preview live, and export 100% deliverable HTML.",
+      "Create up to 3 email signatures free with SigSignature. Customize templates, preview your design, and export HTML or images. No coding required.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
@@ -87,9 +86,6 @@ export default function LandingPage() {
 
       {/* Separate Footer Component */}
       <Footer />
-
-      {/* Flash Toast for global redirects like account deletion */}
-      <FlashToast />
     </div>
     </LandingMotionConfig>
   );

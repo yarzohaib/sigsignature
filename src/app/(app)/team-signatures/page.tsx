@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, Suspense } from "react";
-import Link from "next/link";
 import TeamSignaturesHeader from "@/components/team/TeamSignaturesHeader";
 import EmptyTeamState from "@/components/team/EmptyTeamState";
 import TeamTemplateBar from "@/components/team/TeamTemplateBar";
@@ -15,6 +14,7 @@ import DeleteMemberModal from "@/components/team/DeleteMemberModal";
 import RevokeInviteModal from "@/components/team/RevokeInviteModal";
 import DevInviteModal from "@/components/team/DevInviteModal";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
+import { toast } from "@/lib/toast";
 import TeamSignaturesSkeleton from "@/components/skeletons/TeamSignaturesSkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
@@ -40,10 +40,6 @@ function TeamSignaturesContent() {
   const [isLoading, setIsLoading] = useState(!cachedTeam);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const [toastInfo, setToastInfo] = useState<{
-    message: string;
-    action?: { label: string; href: string };
-  } | null>(null);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
 
   // Modals state
@@ -62,10 +58,12 @@ function TeamSignaturesContent() {
   const [devInviteInfo, setDevInviteInfo] = useState<{ url: string; email: string } | null>(null);
 
   const showToast = useCallback((msg: string, action?: { label: string; href: string }) => {
-    setToastInfo({ message: msg, action });
-    setTimeout(() => {
-      setToastInfo(null);
-    }, 5000);
+    toast.show({
+      type: "dark",
+      message: msg,
+      action,
+      duration: 5000,
+    });
   }, []);
 
   useEffect(() => {
@@ -413,37 +411,10 @@ function TeamSignaturesContent() {
         isRevoking={isRevokingMember}
       />
 
-      {/* Toast Notification */}
-      {toastInfo && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl animate-fade-in max-w-md">
-          {toastInfo.action ? (
-            <svg className="h-4 w-4 text-[#449AFA] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-          ) : (
-            <svg className="h-4 w-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          )}
-          <span className="flex-1">{toastInfo.message}</span>
-          {toastInfo.action && (
-            <Link
-              href={toastInfo.action.href}
-              className="ml-1 inline-flex items-center rounded-lg bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-2.5 py-1 text-xs font-semibold text-white hover:opacity-95 transition shrink-0"
-            >
-              {toastInfo.action.label}
-            </Link>
-          )}
-        </div>
-      )}
-
       {/* Signature Copied Alert Banner */}
       <SignatureCopiedAlert
         isOpen={showCopiedAlert}
         onClose={() => setShowCopiedAlert(false)}
-        className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] shadow-2xl animate-in slide-in-from-bottom-5 duration-200"
       />
     </div>
   );

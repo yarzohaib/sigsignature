@@ -15,6 +15,9 @@ const VALID_NETWORKS = new Set<SocialNetwork>([
   "github",
   "youtube",
   "website",
+  "phone",
+  "email",
+  "address",
 ]);
 
 const HEX_COLOR_REGEX = /^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/;
@@ -118,7 +121,7 @@ export async function GET(
   const cleanNetwork = network.endsWith(".png") ? network.slice(0, -4) : network;
   if (!VALID_NETWORKS.has(cleanNetwork as SocialNetwork)) {
     return new Response(
-      "Invalid network. Must be linkedin, twitter, facebook, instagram, github, youtube, or website.",
+      "Invalid network. Must be linkedin, twitter, facebook, instagram, github, youtube, website, phone, email, or address.",
       {
         status: 400,
         headers: { "Cache-Control": "no-store" },

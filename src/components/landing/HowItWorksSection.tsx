@@ -5,20 +5,20 @@ import HowItWorksTimeline, { StepItem } from "./HowItWorksTimeline";
 const steps: StepItem[] = [
   {
     step: "1",
-    title: "Sign Up Free",
-    description: "Create your account in seconds. No credit card required.",
+    title: "Create Your Free Account",
+    description: "Sign up to access the editor and save your signatures in your dashboard.",
   },
   {
     step: "2",
-    title: "Design Your Signature",
+    title: "Choose and Customize Your Design",
     description:
-      "Pick a template to move fast, or build completely from scratch. Customize colors, fonts, and icons, and watch it update in real time.",
+      "Select a template or start from scratch. Add your name, role, contact details, and relevant links, then adjust the layout and colors.",
   },
   {
     step: "3",
-    title: "Export & Use It Anywhere",
+    title: "Export and Test Your Signature",
     description:
-      "Copy the signature or download the image. Paste it into Gmail, Outlook, or any email client done.",
+      "Export HTML or an image and add it using your email app’s signature settings. Send a test email to check the layout, images, and links.",
   },
 ];
 
@@ -31,10 +31,9 @@ export default function HowItWorksSection() {
           <SectionBadge label="HOW IT WORKS" />
         </Reveal>
         <Reveal y={24} blur={8} delay={0.1}>
-          <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.15] [text-wrap:balance]">
-            From Zero to Signature in
-            <br />
-            <span className="text-[#1243A3]">3 Steps.</span>
+          <h2 className="font-heading text-[clamp(1.75rem,1.1rem+2vw,2.5rem)] lg:text-[38px] xl:text-[45px] 2xl:text-[52px] 3xl:text-[58px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.15] [text-wrap:balance]">
+            How to Create a{" "}
+            <span className="text-[#1243A3]">Free Email Signature</span>
           </h2>
         </Reveal>
       </div>

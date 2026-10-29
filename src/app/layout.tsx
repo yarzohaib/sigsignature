@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { GoogleTracking, GtmNoScript } from "@/components/analytics/GoogleAnalytics";
 import CookieConsent from "@/components/common/CookieConsent";
 import ScrollToTop from "@/components/common/ScrollToTop";
+import FlashToast from "@/components/common/FlashToast";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -45,6 +46,7 @@ export default function RootLayout({
         <ScrollToTop />
         <GoogleTracking />
         <Analytics />
+        <FlashToast />
       </body>
     </html>
   );

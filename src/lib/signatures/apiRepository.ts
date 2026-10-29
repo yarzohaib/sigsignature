@@ -25,40 +25,8 @@ import {
 function showToastNotification(message: string): void {
   if (typeof window === "undefined") return;
 
-  // Dispatch custom event for React components listening
+  // Dispatch custom event for global stacked toast notification
   window.dispatchEvent(new CustomEvent("sig_toast", { detail: message }));
-
-  // Direct DOM toast overlay to guarantee display across page transitions
-  const existing = document.getElementById("sig-global-toast");
-  if (existing) {
-    existing.remove();
-  }
-
-  const toast = document.createElement("div");
-  toast.id = "sig-global-toast";
-  toast.className =
-    "fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl bg-[#1E293B] px-4 py-3 text-sm text-white shadow-xl animate-in slide-in-from-bottom-5 duration-200";
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("class", "h-4 w-4 text-emerald-400 shrink-0");
-  svg.setAttribute("viewBox", "0 0 24 24");
-  svg.setAttribute("fill", "none");
-  svg.setAttribute("stroke", "currentColor");
-  svg.setAttribute("stroke-width", "2.5");
-
-  const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-  polyline.setAttribute("points", "20 6 9 17 4 12");
-  svg.appendChild(polyline);
-
-  const span = document.createElement("span");
-  span.textContent = message;
-
-  toast.appendChild(svg);
-  toast.appendChild(span);
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.remove();
-  }, 4000);
 }
 
 function toSavedSignature(item: BackendSavedSignature): SavedSignature {

@@ -873,9 +873,10 @@ export default function SaveSuccessModal({
       };
     }
     if (signature) {
+      const renderedHtml = renderSavedSignatureHtml(signature);
       return {
-        html: renderSavedSignatureHtml(signature),
-        previewHtml: renderSavedSignatureHtml(signature, { preview: true }),
+        html: renderedHtml,
+        previewHtml: renderedHtml,
         plainText: renderSavedSignaturePlainText(signature),
       };
     }
@@ -887,15 +888,17 @@ export default function SaveSuccessModal({
       ) {
         const studioData = signatureData as StudioSignatureData;
         if (studioData.elements && Array.isArray(studioData.elements)) {
+          const rendered = generateFreeHtml(studioData);
           return {
-            html: generateFreeHtml(studioData),
-            previewHtml: generateFreeHtml(studioData, { preview: true }),
+            html: rendered,
+            previewHtml: rendered,
             plainText: generateFreePlainText(studioData),
           };
         }
+        const rendered = generateStudioHtml(studioData);
         return {
-          html: generateStudioHtml(studioData),
-          previewHtml: generateStudioHtml(studioData, { preview: true }),
+          html: rendered,
+          previewHtml: rendered,
           plainText: generateStudioPlainText(studioData),
         };
       }

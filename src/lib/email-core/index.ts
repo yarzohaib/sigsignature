@@ -5,13 +5,24 @@
 
 import {
   SOCIAL_NETWORKS,
+  CONTACT_ICONS,
+  PURE_SOCIAL_NETWORKS,
   ICON_GLYPHS,
+  isContactIcon,
   type SocialNetwork,
+  type ContactIcon,
 } from "./iconGlyphs";
 import { buildIconSvg, type IconStyle } from "./iconSvg";
 
-export { SOCIAL_NETWORKS, ICON_GLYPHS, buildIconSvg };
-export type { SocialNetwork, IconStyle };
+export {
+  SOCIAL_NETWORKS,
+  CONTACT_ICONS,
+  PURE_SOCIAL_NETWORKS,
+  ICON_GLYPHS,
+  isContactIcon,
+  buildIconSvg,
+};
+export type { SocialNetwork, ContactIcon, IconStyle };
 
 /**
  * Escapes special HTML characters in user text to prevent XSS and malformed markup.

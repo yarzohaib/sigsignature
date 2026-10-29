@@ -116,6 +116,21 @@ function LoginForm() {
           setIsLoading(false);
         },
         onSuccess: (target) => {
+          try {
+            sessionStorage.setItem(
+              "sig_flash_toast",
+              "Successfully logged in! Welcome back."
+            );
+          } catch {
+            // Ignore sessionStorage access errors
+          }
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("sig_flash_toast", {
+                detail: "Successfully logged in! Welcome back.",
+              })
+            );
+          }
           router.push(target || redirectTarget);
           router.refresh();
         },
@@ -182,6 +197,24 @@ function LoginForm() {
 
       if (response.data?.tokens && response.data?.user) {
         setAuthSession(response.data.tokens, response.data.user);
+
+        try {
+          sessionStorage.setItem(
+            "sig_flash_toast",
+            "Successfully logged in! Welcome back."
+          );
+        } catch {
+          // Ignore sessionStorage access errors
+        }
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("sig_flash_toast", {
+              detail: "Successfully logged in! Welcome back.",
+            })
+          );
+        }
+
         router.push(redirectTarget);
         router.refresh();
       } else {
@@ -193,7 +226,6 @@ function LoginForm() {
           ? err.message
           : "Invalid email or password. Please try again.";
       setServerError(message);
-    } finally {
       setIsLoading(false);
     }
   }

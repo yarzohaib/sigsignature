@@ -144,7 +144,7 @@ const isAuthenticated =
             </span>
           </Link>
           <p className="mt-3 max-w-lg text-center font-body text-[14px] leading-normal text-[#878787] sm:max-w-xl lg:max-w-none lg:whitespace-nowrap 3xl:text-[16px]">
-            Professional email signatures ensure every email reflects a consistent and professional brand identity.
+            SigSignature helps you create and customize professional email signatures online. Choose a template, preview your design, and export HTML or images.
           </p>
         </motion.div>
 

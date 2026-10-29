@@ -36,13 +36,11 @@ export default function SolutionSection() {
             className="mx-auto flex w-full flex-col items-start text-left"
           >
             <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
-              There&apos;s a <span className="text-[#1243A3]">Better Way.</span>
+              Build Your Email Signature <span className="text-[#1243A3]">Your Way</span>
             </h2>
 
             <p className="font-body mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-base xl:text-lg 2xl:text-[20px] 3xl:text-[22px] leading-relaxed text-[#878787]">
-              Sig Signature is a self service email signature builder that lets
-              anyone from freelancers to entire teams design, manage and share a
-              consistent signature without a designer or a line of code.
+              SigSignature is an online email signature builder for professionals, freelancers, and business owners. Start with a template or a blank layout, add your contact details, and customize the design to match your brand. Save your signatures in your dashboard and return when your information changes.
             </p>
 
             <RevealGroup stagger={0.1} as="ul" className="mt-6 space-y-3.5 sm:space-y-4">
@@ -67,7 +65,7 @@ export default function SolutionSection() {
                     />
                   </svg>
                 </CheckPop>
-                <span>Start with a template</span>
+                <span>Start with a template or a blank layout.</span>
               </RevealItem>
 
               <RevealItem
@@ -91,7 +89,7 @@ export default function SolutionSection() {
                     />
                   </svg>
                 </CheckPop>
-                <span>Build from scratch</span>
+                <span>Customize your details, colors, fonts, and links.</span>
               </RevealItem>
 
               <RevealItem
@@ -115,7 +113,7 @@ export default function SolutionSection() {
                     />
                   </svg>
                 </CheckPop>
-                <span>Create professional signature in minutes</span>
+                <span>Save your design and export HTML or an image.</span>
               </RevealItem>
             </RevealGroup>
 
@@ -124,7 +122,7 @@ export default function SolutionSection() {
                 href="/signup"
                 className="group inline-flex min-h-[44px] w-full max-w-[360px] sm:max-w-none items-center justify-center gap-2.5 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 py-3 font-body text-sm font-semibold text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 sm:w-auto [@media(hover:hover)]:hover:opacity-95 [@media(hover:hover)]:hover:shadow-md active:scale-95"
               >
-                <span>Try the Editor</span>
+                <span>Create Your Signature</span>
                 <svg
                   className="h-4 w-4 transition-transform group-hover:translate-x-1"
                   fill="none"

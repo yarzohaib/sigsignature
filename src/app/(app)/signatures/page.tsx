@@ -28,6 +28,7 @@ import {
 import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import { markOnboardingStep } from "@/lib/onboarding";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
+import { toast } from "@/lib/toast";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
@@ -49,7 +50,6 @@ function MySignaturesContent() {
   const [deletingSignature, setDeletingSignature] = useState<SavedSignature | null>(null);
   const [previewingSignature, setPreviewingSignature] = useState<SavedSignature | null>(null);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
 
   // Copy to team state
@@ -105,25 +105,8 @@ function MySignaturesContent() {
     };
   }, []);
 
-  useEffect(() => {
-    function handleCustomToast(event: Event) {
-      const customEvent = event as CustomEvent<string>;
-      if (customEvent.detail) {
-        showToast(customEvent.detail);
-      }
-    }
-
-    window.addEventListener("sig_toast", handleCustomToast);
-    return () => {
-      window.removeEventListener("sig_toast", handleCustomToast);
-    };
-  }, []);
-
   function showToast(msg: string) {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
+    toast.dark(msg);
   }
 
   const handleCreateNew = () => {
@@ -448,21 +431,10 @@ function MySignaturesContent() {
         </div>
       )}
 
-      {/* Toast Feedback */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl bg-[#1E293B] px-4 py-3 text-sm text-white shadow-xl animate-in slide-in-from-bottom-5 duration-200">
-          <svg className="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
       {/* Small Copied Alert */}
       <SignatureCopiedAlert
         isOpen={showCopiedAlert}
         onClose={() => setShowCopiedAlert(false)}
-        className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] shadow-2xl animate-in slide-in-from-bottom-5 duration-200"
       />
     </div>
   );

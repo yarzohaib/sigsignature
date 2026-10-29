@@ -183,9 +183,9 @@ export default function GettingStartedModal({ userId }: Props) {
   // First visit check + live updates
   useEffect(() => {
     let alive = true;
-    loadFlags();
 
     (async () => {
+      loadFlags();
       const count = await loadCount();
       if (!alive || count === null) return;
       const f = getOnboardingFlags();

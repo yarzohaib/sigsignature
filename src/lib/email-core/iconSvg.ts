@@ -1,4 +1,4 @@
-import { ICON_GLYPHS, type SocialNetwork } from "./iconGlyphs";
+import { ICON_GLYPHS, isContactIcon, type SocialNetwork } from "./iconGlyphs";
 
 export type IconStyle = "filled" | "outline" | "circle" | "minimal";
 
@@ -66,9 +66,14 @@ export function buildIconSvg(
     throw new Error(`Unsupported icon style: ${style}`);
   }
 
+  const isContact = isContactIcon(network);
+  const glyphX = style === "minimal" && isContact ? 3 : 9;
+  const glyphY = style === "minimal" && isContact ? 3 : 9;
+  const glyphSize = style === "minimal" && isContact ? 34 : 22;
+
   return `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
   ${backgroundShape}
-  <svg x="9" y="9" width="22" height="22" viewBox="0 0 24 24">
+  <svg x="${glyphX}" y="${glyphY}" width="${glyphSize}" height="${glyphSize}" viewBox="0 0 24 24">
     <path fill="${glyphColor}" d="${glyph}" />
   </svg>
 </svg>`;

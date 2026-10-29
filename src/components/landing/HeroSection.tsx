@@ -23,7 +23,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="font-body mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-base xl:text-lg 2xl:text-[20px] 3xl:text-[22px] leading-relaxed text-[#878787] max-w-[640px] 2xl:max-w-[720px]">
-              Create up to 3 professional email signatures with our free email signature generator. Start with a template or build from scratch, customize your design, preview changes live, and export HTML or images.
+              Create a professional email signature that brings your contact details and brand together. Choose a template or start from scratch, customize your layout, and preview changes as you work. Create up to 3 signatures free, then export HTML or an image.
             </p>
 
             <div className="mt-6 sm:mt-7 flex flex-col items-center sm:items-start gap-3 sm:flex-row sm:items-center w-full">

@@ -84,6 +84,15 @@ function AuthCallbackContent() {
 
         setAuthSession(response.data.tokens, response.data.user);
 
+        try {
+          sessionStorage.setItem(
+            "sig_flash_toast",
+            "Successfully logged in! Welcome back."
+          );
+        } catch {
+          // Ignore sessionStorage access errors
+        }
+
         // Read and clear the stored redirect target
         let redirectTarget = "/dashboard";
         try {
