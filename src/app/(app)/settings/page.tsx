@@ -34,7 +34,7 @@ import {
   getStoredAvatarUrl,
   setStoredAvatarUrl,
 } from "@/app/lib/auth";
-import { compressImageToBlob } from "@/lib/imageUtils";
+import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import type { SavedSignature } from "@/types/signature";
@@ -384,11 +384,7 @@ function SettingsContent() {
 
   // Avatar upload handler
   const handleAvatarUpload = async (file: File) => {
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    const isJpg = (file.type === "image/jpeg" || file.type === "image/jpg") && ext === "jpg";
-    const isPng = file.type === "image/png" && ext === "png";
-
-    if (!isJpg && !isPng) {
+    if (!isAllowedJpgOrPng(file)) {
       showToast("Please select a JPG or PNG image file.", true);
       return;
     }

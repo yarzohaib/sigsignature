@@ -4,7 +4,7 @@ import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback } from "
 import Image from "next/image";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
 import { getSignatureRepository } from "@/lib/signatures/repository";
-import { compressImageToBlob } from "@/lib/imageUtils";
+import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { isSignatureLimitError } from "@/app/lib/api";
 import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
@@ -298,10 +298,9 @@ export default function TemplateEditor({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate the file type (jpeg, png, webp only) and show an error toast otherwise
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      showToast("Invalid file", "Please upload a JPEG, PNG, or WebP image.", true);
+    // Validate the file type (JPG and PNG only) and show an error toast otherwise
+    if (!isAllowedJpgOrPng(file)) {
+      showToast("Invalid file", "Please upload a JPG or PNG image.", true);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -433,9 +432,8 @@ export default function TemplateEditor({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      showToast("Invalid file", "Please upload a JPEG, PNG, or WebP image.", true);
+    if (!isAllowedJpgOrPng(file)) {
+      showToast("Invalid file", "Please upload a JPG or PNG image.", true);
       if (logoInputRef.current) {
         logoInputRef.current.value = "";
       }
@@ -749,7 +747,7 @@ export default function TemplateEditor({
                         <input
                           ref={fileInputRef}
                           type="file"
-                          accept="image/jpeg,image/png,image/webp"
+                          accept=".jpg, .png"
                           onChange={handlePhotoUpload}
                           className="hidden"
                         />
@@ -976,7 +974,7 @@ export default function TemplateEditor({
                         <input
                           ref={logoInputRef}
                           type="file"
-                          accept="image/jpeg,image/png,image/webp"
+                          accept=".jpg, .png"
                           onChange={handleLogoUpload}
                           className="hidden"
                         />

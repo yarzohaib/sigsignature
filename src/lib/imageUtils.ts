@@ -5,8 +5,19 @@
 
 export type ImageKind = "avatar" | "logo";
 
-const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+/**
+ * Validates that a file is strictly a .jpg (JPEG) or .png image.
+ * Excludes .jpeg, .webp, svg, gif, etc.
+ */
+export function isAllowedJpgOrPng(file: File): boolean {
+  if (!file || !file.name) return false;
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  const isJpg = (file.type === "image/jpeg" || file.type === "image/jpg") && ext === "jpg";
+  const isPng = file.type === "image/png" && ext === "png";
+  return Boolean(isJpg || isPng);
+}
 
 /**
  * Resizes and compresses an image file to an optimized Blob.
@@ -28,10 +39,10 @@ export function compressImageToBlob(
     );
   }
 
-  // Reject input that is not image/jpeg, image/png or image/webp (SVG and GIF are not allowed)
-  if (!ALLOWED_MIME_TYPES.includes(file.type as (typeof ALLOWED_MIME_TYPES)[number])) {
+  // Reject input that is not strictly .jpg or .png
+  if (!isAllowedJpgOrPng(file)) {
     return Promise.reject(
-      new Error("Invalid image format. Only JPEG, PNG, and WebP files are supported.")
+      new Error("Invalid image format. Only JPG and PNG files are supported.")
     );
   }
 
@@ -94,9 +105,9 @@ export function compressImageToBlob(
       ctx.imageSmoothingQuality = "high";
 
       // Output format:
-      // For logo: keep PNG transparency (use image/png if input is png or webp)
+      // For logo: keep PNG transparency (use image/png if input is png)
       let outputType: "image/jpeg" | "image/png" = "image/jpeg";
-      if (kind === "logo" && (file.type === "image/png" || file.type === "image/webp")) {
+      if (kind === "logo" && file.type === "image/png") {
         outputType = "image/png";
       }
 

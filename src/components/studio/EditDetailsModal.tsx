@@ -12,7 +12,7 @@ import {
   FreeBannerElement,
 } from "@/types/studio";
 import { StudioAction } from "@/lib/studio/types";
-import { compressImageToBlob } from "@/lib/imageUtils";
+import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import {
   validateSocialUrl,
@@ -97,9 +97,8 @@ export default function EditDetailsModal({
     const file = e.target.files?.[0];
     if (!file || !selectedElement) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      onToast("Please upload a JPEG, PNG, or WebP image.", true);
+    if (!isAllowedJpgOrPng(file)) {
+      onToast("Please upload a JPG or PNG image.", true);
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -446,7 +445,7 @@ export default function EditDetailsModal({
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/jpeg,image/png,image/webp"
+                      accept=".jpg, .png"
                       onChange={handleMediaUpload}
                       className="hidden"
                     />

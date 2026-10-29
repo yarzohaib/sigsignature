@@ -37,7 +37,7 @@ import {
   FreeImageElement,
   FreeLogoElement,
 } from "@/types/studio";
-import { compressImageToBlob } from "@/lib/imageUtils";
+import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { generateFreeHtml } from "@/lib/studio/free/renderFreeHtml";
 import { useIsPremium } from "@/lib/premium";
@@ -674,9 +674,8 @@ function DesignStudioContent() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      showToast("Please upload a JPEG, PNG, or WebP image.");
+    if (!isAllowedJpgOrPng(file)) {
+      showToast("Please upload a JPG or PNG image.");
       if (imageUploadInputRef.current) imageUploadInputRef.current.value = "";
       return;
     }
@@ -750,9 +749,8 @@ function DesignStudioContent() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
-    if (!allowedTypes.includes(file.type)) {
-      showToast("Please upload a JPEG, PNG, WebP, or SVG image.");
+    if (!isAllowedJpgOrPng(file)) {
+      showToast("Please upload a JPG or PNG image.");
       if (logoUploadInputRef.current) logoUploadInputRef.current.value = "";
       return;
     }
@@ -905,9 +903,8 @@ function DesignStudioContent() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      showToast("Please upload a JPEG, PNG, or WebP image.");
+    if (!isAllowedJpgOrPng(file)) {
+      showToast("Please upload a JPG or PNG image.");
       if (bannerUploadInputRef.current) bannerUploadInputRef.current.value = "";
       return;
     }
@@ -1287,21 +1284,21 @@ function DesignStudioContent() {
                   <input
                     ref={logoUploadInputRef}
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept=".jpg, .png"
                     className="hidden"
                     onChange={handleLogoFileSelected}
                   />
                   <input
                     ref={imageUploadInputRef}
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept=".jpg, .png"
                     className="hidden"
                     onChange={handleImageFileSelected}
                   />
                   <input
                     ref={bannerUploadInputRef}
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept=".jpg, .png"
                     className="hidden"
                     onChange={handleBannerFileSelected}
                   />

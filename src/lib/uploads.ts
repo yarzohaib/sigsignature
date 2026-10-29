@@ -3,7 +3,6 @@ import { requestUploadUrl, UploadContentType, UploadKind } from "@/app/lib/api";
 const VALID_CONTENT_TYPES: readonly UploadContentType[] = [
   "image/jpeg",
   "image/png",
-  "image/webp",
 ];
 
 /**
@@ -17,7 +16,7 @@ export async function uploadSignatureImage(
   const contentType = blob.type as UploadContentType;
   if (!VALID_CONTENT_TYPES.includes(contentType)) {
     throw new Error(
-      `Invalid image content type "${blob.type}". Expected image/jpeg, image/png, or image/webp.`
+      `Invalid image content type "${blob.type}". Expected image/jpeg or image/png.`
     );
   }
 

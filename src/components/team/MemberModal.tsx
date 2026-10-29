@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Team, TeamMember } from "@/types/team";
 import { addTeamMember, updateTeamMember, ApiError } from "@/app/lib/api";
-import { compressImageToBlob } from "@/lib/imageUtils";
+import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { renderTeamMemberHtml } from "@/lib/team/render";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
@@ -123,9 +123,11 @@ export default function MemberModal({
 
     setPhotoError(null);
 
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      setPhotoError("Please select a JPEG, PNG, or WebP image.");
+    if (!isAllowedJpgOrPng(file)) {
+      setPhotoError("Please select a JPG or PNG image.");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       return;
     }
 
@@ -618,7 +620,7 @@ export default function MemberModal({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept=".jpg, .png"
                 onChange={handlePhotoFileChange}
                 className="hidden"
               />
@@ -669,7 +671,7 @@ export default function MemberModal({
                     )}
                   </div>
                   <span className="text-[11px] text-[#94A3B8]">
-                    JPEG, PNG or WebP up to 2MB
+                    JPG or PNG up to 2MB
                   </span>
                 </div>
               </div>
