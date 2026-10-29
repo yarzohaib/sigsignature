@@ -62,23 +62,6 @@ const freeCardVariants: Variants = {
   },
 };
 
-// Recommended badge fades in after the card enters
-const recommendedBadgeVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    scale: 0.85,
-  },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.35,
-      delay: 0.45,
-      ease: EASE_OUT_CUBIC,
-    },
-  },
-};
-
 const listVariants: Variants = {
   hidden: {},
   visible: {
@@ -158,48 +141,45 @@ export default function PricingSection() {
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : freeCardVariants}
-            className="flex w-full max-w-[440px] md:max-w-[380px] lg:max-w-[420px] mx-auto md:mx-0 justify-center"
+            className="flex w-full max-w-[495px] mx-auto md:mx-0 justify-center"
           >
             <div
-              className="relative flex w-full min-h-[440px] md:min-h-[470px] lg:min-h-[480px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#C1C1C1] bg-pricing-free p-5 sm:p-6 lg:p-7 shadow-xs transition-[box-shadow,border-color] duration-200 ease-out  [@media(hover:hover)]:hover:shadow-[0_20px_40px_-12px_rgba(36,95,212,0.18)] [@media(hover:hover)]:hover:border-brand/40"
+              className="relative flex w-full min-h-[540px] flex-col justify-start rounded-[24px] border border-[#E2E8F0] bg-white p-[26px] shadow-none transition-colors duration-200 [@media(hover:hover)]:hover:border-[#C8D8FA]"
               style={{
-                background:
-                  "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(196, 223, 251, 0.5) 50.81%, #FFFFFF 99.33%)",
+                fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
               }}
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="font-heading text-lg 3xl:text-xl font-semibold text-slate-900">
-                    Free Plan
+                  <span className="font-heading text-[20px] font-semibold text-[#101828]">
+                    Basic
                   </span>
-                  {shouldReduceMotion ? (
-                    <span className="rounded-full bg-blue-100 px-3 py-1 font-body text-xs font-semibold text-brand">
-                      Recommended
-                    </span>
-                  ) : (
-                    <motion.span
-                      variants={recommendedBadgeVariants}
-                      className="rounded-full bg-blue-100 px-3 py-1 font-body text-xs font-semibold text-brand"
-                    >
-                      Recommended
-                    </motion.span>
-                  )}
                 </div>
 
                 {/* Price */}
-                <div className="mt-4 sm:mt-5 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl sm:text-5xl 3xl:text-[56px] font-semibold tracking-tight text-slate-900">
+                <div className="mt-2.5 flex items-baseline gap-1.5">
+                  <span className="font-heading text-[42px] font-bold leading-none tracking-tight text-[#101828]">
                     $0
                   </span>
-                  <span className="font-body text-sm font-normal text-[#878787]">
-                    / Forever
+                  <span className="text-[14px] text-[#64748B]">
+                    /month
                   </span>
                 </div>
+
+                <p className="mt-2 text-[14px] text-[#64748B]">Try us out first</p>
+
+                <div className="mt-6">
+                  <Link href="/signup" className="flex h-[46px] w-full items-center justify-center rounded-full bg-[#F1F5F9] text-[14px] font-semibold text-[#101828] transition-colors hover:bg-[#E8EEF6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
+                    Create Your Free Signature
+                  </Link>
+                </div>
+
+                <div className="mt-6 w-full border-t border-[#F1F5F9]" />
 
                 {/* Features List */}
                 <motion.ul
                   variants={shouldReduceMotion ? undefined : listVariants}
-                  className="mt-5 sm:mt-6 space-y-2.5 sm:space-y-3 font-body text-sm 3xl:text-[15px] text-[#878787]"
+                  className="mt-6 flex flex-col gap-3.5 sm:gap-[18px] text-[13.5px] sm:text-[14px] text-[#475467]"
                 >
                   {freeFeatures.map((feat) => (
                     <motion.li
@@ -207,22 +187,13 @@ export default function PricingSection() {
                       variants={shouldReduceMotion ? undefined : itemVariants}
                       className="flex items-center gap-3"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand shrink-0" />
+                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#93C5FD" strokeWidth="1.5" /><path d="M6.5 10.2L8.8 12.5L13.5 7.8" stroke="#245FD4" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       <span>{feat}</span>
                     </motion.li>
                   ))}
                 </motion.ul>
               </div>
 
-              {/* CTA Button */}
-              <div className="mt-5 pt-1 sm:mt-6 sm:pt-2">
-                <Link
-                  href="/signup"
-                  className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
-                >
-                  Create Your Free Signature
-                </Link>
-              </div>
             </div>
           </motion.div>
 
@@ -232,37 +203,46 @@ export default function PricingSection() {
             whileInView={shouldReduceMotion ? undefined : "visible"}
             viewport={MOTION_VIEWPORT}
             variants={shouldReduceMotion ? undefined : premiumCardVariants}
-            className="flex w-full max-w-[460px] md:max-w-[410px] lg:max-w-[463px] mx-auto md:mx-0 justify-center md:-mt-5 lg:-mt-7 z-10"
+            className="flex w-full max-w-[495px] mx-auto md:mx-0 justify-center z-10"
           >
             <div
-              className="relative flex w-full min-h-[500px] md:min-h-[540px] lg:min-h-[550px] flex-col justify-between rounded-[20px] md:rounded-[12px] border border-[#8A95F2]/40 bg-pricing-premium p-6 sm:p-7 lg:p-8 shadow-pricing-premium transition-[box-shadow,border-color] duration-200 ease-out  "
+              className="relative flex w-full min-h-[540px] flex-col justify-start rounded-[24px] border-[3px] border-[#3565E8] bg-white p-[23px] shadow-none"
               style={{
-                background:
-                  "linear-gradient(146.72deg, #FFFFFF 1.16%, rgba(138, 149, 242, 0.15) 50.81%, #FFFFFF 99.33%)",
-                boxShadow: "0px 0px 14.3px 0px rgba(138, 149, 242, 0.35)",
+                fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
               }}
             >
+              <div className="absolute -top-[14px] left-1/2 z-10 inline-flex -translate-x-1/2 items-center rounded-full bg-[#1A4FD8] px-5 py-1.5 shadow-xs whitespace-nowrap">
+                <span className="text-[12px] font-semibold tracking-wide text-white" style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}>Coming Soon</span>
+              </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="font-heading text-xl 3xl:text-2xl font-semibold text-slate-900">
-                    Premium Plan
+                  <span className="font-heading text-[20px] font-semibold text-[#101828]">
+                    Professional
                   </span>
                 </div>
 
                 {/* Price */}
-                <div className="mt-5 sm:mt-6 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl sm:text-5xl 3xl:text-[56px] font-semibold tracking-tight text-slate-900">
+                <div className="mt-2.5 flex items-baseline gap-1.5">
+                  <span className="font-heading text-[42px] font-bold leading-none tracking-tight text-[#101828]">
                     $10
                   </span>
-                  <span className="font-body text-sm font-normal text-[#878787]">
-                    / month
+                  <span className="text-[14px] text-[#64748B]">
+                    /month
                   </span>
                 </div>
+
+                <p className="mt-2 text-[14px] text-[#64748B]">Good for small businesses and pro users</p>
+
+                <div className="mt-6">
+                  <button type="button" onClick={handleGoPremium} className="flex h-[46px] w-full items-center justify-center rounded-full bg-[#245FD4] text-[14px] font-semibold text-white transition-colors hover:bg-[#1A4FD8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">Go Premium</button>
+                </div>
+
+                <div className="mt-6 w-full border-t border-[#F1F5F9]" />
 
                 {/* Features List */}
                 <motion.ul
                   variants={shouldReduceMotion ? undefined : listVariants}
-                  className="mt-6 sm:mt-7 space-y-3 sm:space-y-3.5 font-body text-sm 3xl:text-[15px] text-[#878787]"
+                  className="mt-6 flex flex-col gap-3.5 sm:gap-[18px] text-[13.5px] sm:text-[14px] text-[#475467]"
                 >
                   {premiumFeatures.map((feat) => (
                     <motion.li
@@ -270,23 +250,13 @@ export default function PricingSection() {
                       variants={shouldReduceMotion ? undefined : itemVariants}
                       className="flex items-center gap-3"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#8A95F2] shrink-0" />
+                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#93C5FD" strokeWidth="1.5" /><path d="M6.5 10.2L8.8 12.5L13.5 7.8" stroke="#245FD4" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       <span>{feat}</span>
                     </motion.li>
                   ))}
                 </motion.ul>
               </div>
 
-              {/* Premium plan action */}
-              <div className="mt-5 pt-1 sm:mt-6 sm:pt-2">
-                <button
-                  type="button"
-                  onClick={handleGoPremium}
-                  className="flex min-h-[48px] h-12 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] font-body text-sm font-semibold text-white shadow-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-[0.98]"
-                >
-                  Go Premium
-                </button>
-              </div>
             </div>
           </motion.div>
         </div>
