@@ -12,10 +12,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { StudioShape } from "@/types/studio";
+import { getSocialIconSvgDataUrl } from "@/lib/email-core";
 
 export type CanvasAlignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
-export type TeamFieldBind = "name" | "jobTitle" | "email" | "phone" | "photo" | "company";
+export type TeamFieldBind = "name" | "jobTitle" | "email" | "phone" | "photo" | "company" | "website";
 
 interface FloatingToolbarProps {
   elementType?: "text" | "image" | "logo" | "banner" | "divider" | "cta" | "social";
@@ -25,6 +26,8 @@ interface FloatingToolbarProps {
   onToggleBold?: () => void;
   size?: "sm" | "md" | "lg";
   onSizeChange?: (size: "sm" | "md" | "lg") => void;
+  icon?: "phone" | "email" | "website" | "address" | null;
+  onIconChange?: (icon: "phone" | "email" | "website" | "address" | null) => void;
   url?: string;
   onUrlChange?: (url: string) => void;
   width?: number;
@@ -61,6 +64,8 @@ export default function FloatingToolbar({
   onToggleBold,
   size = "md",
   onSizeChange,
+  icon,
+  onIconChange,
   url,
   onUrlChange,
   width,
@@ -92,7 +97,7 @@ export default function FloatingToolbar({
     () => false
   );
   const [openMenu, setOpenMenu] = useState<
-    "align" | "link" | "size" | "thickness" | "teamField" | "shape" | null
+    "align" | "link" | "size" | "icon" | "thickness" | "teamField" | "shape" | null
   >(null);
 
   const sentinelRef = useRef<HTMLSpanElement>(null);
@@ -295,6 +300,7 @@ export default function FloatingToolbar({
         { label: "Job title", value: "jobTitle" as const },
         { label: "Email", value: "email" as const },
         { label: "Phone", value: "phone" as const },
+        { label: "Website", value: "website" as const },
       ];
     }
     if (elementType === "image") {
@@ -317,6 +323,10 @@ export default function FloatingToolbar({
         return "Email";
       case "phone":
         return "Phone";
+      case "website":
+        return "Website";
+      case "company":
+        return "Company";
       case "photo":
         return "Photo";
       default:
@@ -401,6 +411,104 @@ export default function FloatingToolbar({
                           <span className="text-[10px] text-slate-400">
                             {s === "sm" ? "12px" : s === "md" ? "14px" : "16px"}
                           </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* ICON SELECTOR */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-label="Contact icon"
+                    aria-haspopup="listbox"
+                    aria-expanded={openMenu === "icon"}
+                    title={icon ? `Icon: ${icon}` : "Select contact icon"}
+                    onClick={() => setOpenMenu((prev) => (prev === "icon" ? null : "icon"))}
+                    className="flex h-7 px-2 items-center gap-1.5 rounded text-[11px] font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400 capitalize"
+                  >
+                    {icon ? (
+                      <span className="flex items-center gap-1">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={getSocialIconSvgDataUrl("minimal", "#93C5FD", icon)}
+                          alt=""
+                          width={12}
+                          height={12}
+                          className="w-3 h-3 block pointer-events-none"
+                        />
+                        <span className="capitalize">{icon}</span>
+                      </span>
+                    ) : (
+                      <span>Icon: None</span>
+                    )}
+                    <svg className="h-3 w-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  {openMenu === "icon" && (
+                    <div
+                      role="listbox"
+                      aria-label="Contact icon options"
+                      className="absolute top-full mt-2 left-0 z-40 flex flex-col min-w-[120px] rounded-lg bg-[#0F172A] p-1 shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100"
+                    >
+                      {[
+                        { label: "None", value: null },
+                        { label: "Phone", value: "phone" as const },
+                        { label: "Email", value: "email" as const },
+                        { label: "Website", value: "website" as const },
+                        { label: "Address", value: "address" as const },
+                      ].map((opt) => (
+                        <button
+                          key={opt.label}
+                          type="button"
+                          role="option"
+                          aria-selected={(icon || null) === opt.value}
+                          aria-label={opt.label}
+                          onClick={() => {
+                            onIconChange?.(opt.value);
+                            setOpenMenu(null);
+                          }}
+                          className={`flex items-center justify-between rounded px-2.5 py-1.5 text-xs text-left transition ${
+                            (icon || null) === opt.value
+                              ? "bg-[#245FD4] text-white font-bold"
+                              : "text-slate-200 hover:bg-slate-800 hover:text-white"
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            {opt.value ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={getSocialIconSvgDataUrl(
+                                  "minimal",
+                                  (icon || null) === opt.value ? "#FFFFFF" : "#94A3B8",
+                                  opt.value
+                                )}
+                                alt=""
+                                width={14}
+                                height={14}
+                                className="w-3.5 h-3.5 block pointer-events-none"
+                              />
+                            ) : (
+                              <span className="w-3.5 h-3.5 inline-block text-center text-slate-400 text-[10px] leading-none">
+                                &mdash;
+                              </span>
+                            )}
+                            <span>{opt.label}</span>
+                          </span>
+                          {(icon || null) === opt.value && (
+                            <svg
+                              className="h-3 w-3 text-white"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
                         </button>
                       ))}
                     </div>

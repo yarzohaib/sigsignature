@@ -15,6 +15,7 @@ import {
   normalizeWebsite,
   telHref,
   resolveEmailFont,
+  emailIconUrl,
 } from "@/lib/email-core";
 import { isValidEmail, sanitizePhone, isValidPhone } from "@/lib/validation";
 import {
@@ -151,32 +152,67 @@ export function generateFreeHtml(
       const fontWeight = textEl.bold ? "bold" : "normal";
       const align = textEl.align || "left";
 
-      // If bound to email: do NOT export invalid email as entered!
+      // Validation guards for bound fields
       if (textEl.bind === "email") {
         const raw = textEl.text?.trim() || "";
         if (!isValidEmail(raw)) {
           return "";
         }
-        const href = safeUrl(`mailto:${raw}`);
-        return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
-  <a href="${href}" style="color:${color};text-decoration:none;">${escapeHtml(raw)}</a>
-</div>`;
       }
-
-      // If bound to phone: do NOT export invalid phone as entered!
       if (textEl.bind === "phone") {
         const sanitized = sanitizePhone(textEl.text || "");
         if (!isValidPhone(sanitized)) {
           return "";
         }
-        const href = safeUrl(telHref(sanitized));
-        return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
-  <a href="${href}" style="color:${color};text-decoration:none;">${escapeHtml(sanitized)}</a>
-</div>`;
+      }
+
+      // Link resolution
+      let href = "";
+      let displayText = textEl.text || "";
+
+      if (textEl.bind === "phone" || textEl.icon === "phone") {
+        const sanitized = sanitizePhone(textEl.text || "");
+        if (sanitized && isValidPhone(sanitized)) {
+          href = safeUrl(telHref(sanitized));
+          displayText = sanitized;
+        }
+      } else if (textEl.bind === "email" || textEl.icon === "email") {
+        const raw = textEl.text?.trim() || "";
+        if (raw && isValidEmail(raw)) {
+          href = safeUrl(`mailto:${raw}`);
+          displayText = raw;
+        }
+      } else if (textEl.bind === "website" || textEl.icon === "website") {
+        const raw = textEl.text?.trim() || "";
+        if (raw) {
+          href = safeUrl(normalizeWebsite(raw));
+          displayText = raw;
+        }
+      }
+
+      const contentHtml = href
+        ? `<a href="${href}" style="color:${color};text-decoration:none;">${escapeHtml(displayText)}</a>`
+        : escapeHtml(displayText);
+
+      if (textEl.icon) {
+        const iconUrl = emailIconUrl("minimal", data.themeColor, textEl.icon);
+        const textWidth = Math.max(1, el.w - 22);
+        return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${el.w}" style="border-collapse:collapse;width:${el.w}px;">
+  <tr>
+    <td width="22" valign="middle" style="width:22px;vertical-align:middle;padding:0;">
+      <img src="${iconUrl}" width="16" height="16" alt="${escapeHtml(textEl.icon)}" style="display:block;border:0;outline:none;text-decoration:none;" />
+    </td>
+    <td valign="middle" style="vertical-align:middle;padding:0;">
+      <div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:break-word;">
+        ${contentHtml}
+      </div>
+    </td>
+  </tr>
+</table>`;
       }
 
       return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
-  ${escapeHtml(textEl.text || "")}
+  ${contentHtml}
 </div>`;
     }
 

@@ -475,6 +475,7 @@ function DesignStudioContent() {
     let size: "sm" | "md" | "lg" = "md";
     let bold = false;
     let bind: "name" | "email" | undefined = undefined;
+    let icon: "phone" | "email" | "website" | "address" | undefined = undefined;
     let w = 240;
     let h = 24;
     let toastMsg = "Text added";
@@ -492,6 +493,7 @@ function DesignStudioContent() {
       size = "sm";
       bold = false;
       bind = "email";
+      icon = "email";
       w = Math.max(200, Math.min(320, userEmail.length * 8 + 24));
       h = 20;
       toastMsg = "Email added from your account";
@@ -511,6 +513,7 @@ function DesignStudioContent() {
       w,
       h,
       ...(bind ? { bind } : {}),
+      ...(icon ? { icon } : {}),
     };
     dispatch({ type: "ADD_ELEMENT", payload: newEl });
     setSelectedId(id);
@@ -620,6 +623,8 @@ function DesignStudioContent() {
     let w = 220;
     let h = 20;
 
+    let icon: "phone" | "email" | "website" | "address" | undefined = undefined;
+
     if (field === "name") {
       const userFullName =
         `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
@@ -634,6 +639,7 @@ function DesignStudioContent() {
       text = user?.email?.trim() || state.email?.trim() || "hello@example.com";
       size = "sm";
       bold = false;
+      icon = "email";
       w = Math.max(200, Math.min(320, text.length * 8 + 24));
       h = 20;
     } else if (field === "jobTitle") {
@@ -646,7 +652,15 @@ function DesignStudioContent() {
       text = state.phone?.trim() || "+1 (555) 000-0000";
       size = "sm";
       bold = false;
+      icon = "phone";
       w = 160;
+      h = 20;
+    } else if (field === "website") {
+      text = state.website?.trim() || "https://example.com";
+      size = "sm";
+      bold = false;
+      icon = "website";
+      w = Math.max(180, Math.min(320, text.length * 8 + 24));
       h = 20;
     }
 
@@ -664,6 +678,7 @@ function DesignStudioContent() {
       w,
       h,
       bind: field,
+      ...(icon ? { icon } : {}),
     };
 
     dispatch({ type: "ADD_ELEMENT", payload: newEl });
@@ -2098,6 +2113,7 @@ function DesignStudioContent() {
                         { key: "jobTitle", label: "Job title" },
                         { key: "email", label: "Email" },
                         { key: "phone", label: "Phone" },
+                        { key: "website", label: "Website" },
                         { key: "photo", label: "Photo" },
                       ] as const
                     ).map((field) => {
@@ -2503,6 +2519,14 @@ function DesignStudioContent() {
                     dispatch({
                       type: "UPDATE_ELEMENT",
                       payload: { id: selectedId!, updates: { size } },
+                    })
+                  }
+                  icon={selectedElement.type === "text" ? selectedElement.icon : undefined}
+                  onIconChange={(icon) =>
+                    selectedElement.type === "text" &&
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { icon } },
                     })
                   }
                   url={

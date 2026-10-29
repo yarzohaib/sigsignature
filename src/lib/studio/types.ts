@@ -132,7 +132,7 @@ export type StudioAction =
       type: "LINK_TEAM_FIELD";
       payload: {
         id: string;
-        field?: "name" | "jobTitle" | "email" | "phone" | "photo" | "company";
+        field?: "name" | "jobTitle" | "email" | "phone" | "photo" | "company" | "website";
       };
     }
   | { type: "MIGRATE_FLOW_TO_FREE" };
@@ -540,6 +540,9 @@ export function studioReducer(
           }
           if (el.type === "text" && field !== "photo") {
             const updated: FreeTextElement = { ...el, bind: field };
+            if (!updated.icon && (field === "phone" || field === "email" || field === "website")) {
+              updated.icon = field;
+            }
             return updated;
           }
           if (el.type === "image" && field === "photo") {

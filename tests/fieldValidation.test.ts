@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { isValidEmail, sanitizePhone, isValidPhone, MAX_LENGTH } from "../src/lib/validation";
 import { generateTemplateHtml } from "../src/lib/templates/renderTemplateHtml";
 import { generateFreeHtml } from "../src/lib/studio/free/renderFreeHtml";
+import { INITIAL_STUDIO_DATA } from "../src/lib/studio/types";
 import type { TemplateSignatureData } from "../src/types/template";
 import type { StudioSignatureData, FreeTextElement } from "../src/types/studio";
 
@@ -124,6 +125,7 @@ describe("Field Validation & Sanitization System", () => {
   test("Design Studio: does not export invalid email on bound element", () => {
     const invalidEmail = "maruim1677gmail.com";
     const studioData: StudioSignatureData = {
+      ...INITIAL_STUDIO_DATA,
       elements: [
         {
           id: "email-1",
@@ -136,8 +138,7 @@ describe("Field Validation & Sanitization System", () => {
           bind: "email",
         } as FreeTextElement,
       ],
-      canvas: { width: 500, height: 200 },
-      theme: "ocean",
+      canvas: { width: 600, height: 200 },
     };
 
     const html = generateFreeHtml(studioData);
@@ -148,6 +149,7 @@ describe("Field Validation & Sanitization System", () => {
   test("Design Studio: exports valid email on bound element with safe mailto", () => {
     const validEmail = "maruim1677@gmail.com";
     const studioData: StudioSignatureData = {
+      ...INITIAL_STUDIO_DATA,
       elements: [
         {
           id: "email-1",
@@ -160,8 +162,7 @@ describe("Field Validation & Sanitization System", () => {
           bind: "email",
         } as FreeTextElement,
       ],
-      canvas: { width: 500, height: 200 },
-      theme: "ocean",
+      canvas: { width: 600, height: 200 },
     };
 
     const html = generateFreeHtml(studioData);
@@ -172,6 +173,7 @@ describe("Field Validation & Sanitization System", () => {
   test("Design Studio: does not export invalid phone with letters on bound element", () => {
     const invalidPhone = "abc-not-a-phone";
     const studioData: StudioSignatureData = {
+      ...INITIAL_STUDIO_DATA,
       elements: [
         {
           id: "phone-1",
@@ -184,8 +186,7 @@ describe("Field Validation & Sanitization System", () => {
           bind: "phone",
         } as FreeTextElement,
       ],
-      canvas: { width: 500, height: 200 },
-      theme: "ocean",
+      canvas: { width: 600, height: 200 },
     };
 
     const html = generateFreeHtml(studioData);
@@ -196,6 +197,7 @@ describe("Field Validation & Sanitization System", () => {
   test("Design Studio: exports valid phone on bound element with safe tel", () => {
     const validPhone = "+1 (555) 345-6789";
     const studioData: StudioSignatureData = {
+      ...INITIAL_STUDIO_DATA,
       elements: [
         {
           id: "phone-1",
@@ -208,8 +210,7 @@ describe("Field Validation & Sanitization System", () => {
           bind: "phone",
         } as FreeTextElement,
       ],
-      canvas: { width: 500, height: 200 },
-      theme: "ocean",
+      canvas: { width: 600, height: 200 },
     };
 
     const html = generateFreeHtml(studioData);

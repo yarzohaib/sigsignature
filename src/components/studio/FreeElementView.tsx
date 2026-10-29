@@ -210,6 +210,67 @@ export default function FreeElementView({
         const align = textEl.align || "left";
         const color = textEl.bold ? theme.text : theme.muted;
 
+        if (textEl.icon) {
+          const iconSrc = getSocialIconSvgDataUrl("minimal", themeColor, textEl.icon);
+          return (
+            <div className="w-full h-full flex items-center">
+              <div
+                style={{ width: 22, height: "100%" }}
+                className="shrink-0 flex items-center justify-start select-none pointer-events-none"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={iconSrc}
+                  alt={textEl.icon}
+                  width={16}
+                  height={16}
+                  style={{ display: "block", border: 0, width: 16, height: 16 }}
+                  className="select-none pointer-events-none block"
+                  draggable={false}
+                />
+              </div>
+              <div className="flex-1 h-full min-w-0 flex items-center">
+                {isEditingText ? (
+                  <textarea
+                    ref={textareaRef}
+                    value={localText}
+                    onChange={handleTextChange}
+                    onBlur={handleTextBlur}
+                    onKeyDown={handleTextKeyDown}
+                    onPaste={handleTextPaste}
+                    maxLength={isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500}
+                    className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
+                    style={{
+                      fontFamily: fontStack,
+                      fontSize: `${fontSize}px`,
+                      lineHeight: `${lineHeight}px`,
+                      fontWeight,
+                      color,
+                      textAlign: align,
+                    }}
+                  />
+                ) : (
+                  <div
+                    className="w-full h-full overflow-hidden select-none break-words flex items-center"
+                    style={{
+                      fontFamily: fontStack,
+                      fontSize: `${fontSize}px`,
+                      lineHeight: `${lineHeight}px`,
+                      fontWeight,
+                      color,
+                      textAlign: align,
+                    }}
+                  >
+                    {textEl.text || (
+                      <span className="text-slate-400 italic">Double-click to edit text</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
         if (isEditingText) {
           return (
             <textarea
@@ -470,6 +531,8 @@ export default function FreeElementView({
                 ? "Photo"
                 : element.bind === "company"
                 ? "Company"
+                : element.bind === "website"
+                ? "Website"
                 : element.bind}
             </span>
           </div>

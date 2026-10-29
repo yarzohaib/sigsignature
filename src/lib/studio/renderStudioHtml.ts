@@ -123,7 +123,7 @@ function renderSocialLinks(
 }
 
 /**
- * Builds contact rows with colored letter labels.
+ * Builds contact rows with minimal icon images.
  */
 function renderContactRows(
   data: StudioSignatureData,
@@ -135,28 +135,32 @@ function renderContactRows(
 
   if (data.phone?.trim()) {
     const href = safeUrl(telHref(data.phone));
+    const iconUrl = emailIconUrl("minimal", themeColor, "phone");
     rows.push(
-      `<tr><td style="padding:1px 6px 1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;font-weight:bold;color:${themeColor};">T</td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" style="color:${mutedColor};text-decoration:none;">${escapeHtml(data.phone.trim())}</a></td></tr>`
+      `<tr><td width="22" valign="middle" style="width:22px;vertical-align:middle;padding:1px 6px 1px 0;"><img src="${iconUrl}" width="16" height="16" alt="Phone" style="display:block;border:0;outline:none;text-decoration:none;" /></td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" style="color:${mutedColor};text-decoration:none;">${escapeHtml(data.phone.trim())}</a></td></tr>`
     );
   }
 
   if (data.email?.trim()) {
     const href = safeUrl(`mailto:${data.email.trim()}`);
+    const iconUrl = emailIconUrl("minimal", themeColor, "email");
     rows.push(
-      `<tr><td style="padding:1px 6px 1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;font-weight:bold;color:${themeColor};">E</td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" style="color:${mutedColor};text-decoration:none;">${escapeHtml(data.email.trim())}</a></td></tr>`
+      `<tr><td width="22" valign="middle" style="width:22px;vertical-align:middle;padding:1px 6px 1px 0;"><img src="${iconUrl}" width="16" height="16" alt="Email" style="display:block;border:0;outline:none;text-decoration:none;" /></td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" style="color:${mutedColor};text-decoration:none;">${escapeHtml(data.email.trim())}</a></td></tr>`
     );
   }
 
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
+    const iconUrl = emailIconUrl("minimal", themeColor, "website");
     rows.push(
-      `<tr><td style="padding:1px 6px 1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;font-weight:bold;color:${themeColor};">W</td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" target="_blank" style="color:${mutedColor};text-decoration:none;">${escapeHtml(data.website.trim())}</a></td></tr>`
+      `<tr><td width="22" valign="middle" style="width:22px;vertical-align:middle;padding:1px 6px 1px 0;"><img src="${iconUrl}" width="16" height="16" alt="Website" style="display:block;border:0;outline:none;text-decoration:none;" /></td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" target="_blank" style="color:${mutedColor};text-decoration:none;">${escapeHtml(data.website.trim())}</a></td></tr>`
     );
   }
 
   if (data.optional?.address?.trim()) {
+    const iconUrl = emailIconUrl("minimal", themeColor, "address");
     rows.push(
-      `<tr><td style="padding:1px 6px 1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;font-weight:bold;color:${themeColor};">A</td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;color:${mutedColor};">${escapeHtml(data.optional.address.trim())}</td></tr>`
+      `<tr><td width="22" valign="middle" style="width:22px;vertical-align:middle;padding:1px 6px 1px 0;"><img src="${iconUrl}" width="16" height="16" alt="Address" style="display:block;border:0;outline:none;text-decoration:none;" /></td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;color:${mutedColor};">${escapeHtml(data.optional.address.trim())}</td></tr>`
     );
   }
 
@@ -166,7 +170,7 @@ function renderContactRows(
 }
 
 /**
- * Builds the compact horizontal contact row.
+ * Builds the compact horizontal contact row with minimal icon images.
  */
 function renderCompactContactItems(
   data: StudioSignatureData,
@@ -178,28 +182,32 @@ function renderCompactContactItems(
 
   if (data.phone?.trim()) {
     const href = safeUrl(telHref(data.phone));
+    const iconUrl = emailIconUrl("minimal", themeColor, "phone");
     items.push(
-      `<span style="margin-right:12px;display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;">T</strong>&nbsp;<a href="${href}" style="color:${mutedColor};text-decoration:none;font-family:${fontStack};font-size:10px;">${escapeHtml(data.phone.trim())}</a></span>`
+      `<span style="margin-right:12px;display:inline-block;"><img src="${iconUrl}" width="14" height="14" alt="Phone" style="display:inline-block;vertical-align:middle;border:0;outline:none;text-decoration:none;margin-right:4px;" />&nbsp;<a href="${href}" style="color:${mutedColor};text-decoration:none;font-family:${fontStack};font-size:10px;vertical-align:middle;">${escapeHtml(data.phone.trim())}</a></span>`
     );
   }
 
   if (data.email?.trim()) {
     const href = safeUrl(`mailto:${data.email.trim()}`);
+    const iconUrl = emailIconUrl("minimal", themeColor, "email");
     items.push(
-      `<span style="margin-right:12px;display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;">E</strong>&nbsp;<a href="${href}" style="color:${mutedColor};text-decoration:none;font-family:${fontStack};font-size:10px;">${escapeHtml(data.email.trim())}</a></span>`
+      `<span style="margin-right:12px;display:inline-block;"><img src="${iconUrl}" width="14" height="14" alt="Email" style="display:inline-block;vertical-align:middle;border:0;outline:none;text-decoration:none;margin-right:4px;" />&nbsp;<a href="${href}" style="color:${mutedColor};text-decoration:none;font-family:${fontStack};font-size:10px;vertical-align:middle;">${escapeHtml(data.email.trim())}</a></span>`
     );
   }
 
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
+    const iconUrl = emailIconUrl("minimal", themeColor, "website");
     items.push(
-      `<span style="margin-right:12px;display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;">W</strong>&nbsp;<a href="${href}" target="_blank" style="color:${mutedColor};text-decoration:none;font-family:${fontStack};font-size:10px;">${escapeHtml(data.website.trim())}</a></span>`
+      `<span style="margin-right:12px;display:inline-block;"><img src="${iconUrl}" width="14" height="14" alt="Website" style="display:inline-block;vertical-align:middle;border:0;outline:none;text-decoration:none;margin-right:4px;" />&nbsp;<a href="${href}" target="_blank" style="color:${mutedColor};text-decoration:none;font-family:${fontStack};font-size:10px;vertical-align:middle;">${escapeHtml(data.website.trim())}</a></span>`
     );
   }
 
   if (data.optional?.address?.trim()) {
+    const iconUrl = emailIconUrl("minimal", themeColor, "address");
     items.push(
-      `<span style="display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;">A</strong>&nbsp;<span style="color:${mutedColor};font-family:${fontStack};font-size:10px;">${escapeHtml(data.optional.address.trim())}</span></span>`
+      `<span style="display:inline-block;"><img src="${iconUrl}" width="14" height="14" alt="Address" style="display:inline-block;vertical-align:middle;border:0;outline:none;text-decoration:none;margin-right:4px;" />&nbsp;<span style="color:${mutedColor};font-family:${fontStack};font-size:10px;vertical-align:middle;">${escapeHtml(data.optional.address.trim())}</span></span>`
     );
   }
 
