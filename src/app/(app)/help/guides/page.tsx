@@ -302,14 +302,7 @@ function GuideCard({ guide }: { guide: DetailedGuide }) {
       className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:border-[#245FD4]/50 hover:shadow-md"
     >
       <div>
-        <div className="flex items-center justify-between gap-2 mb-3">
-          {guide.isPopular ? (
-            <span className="rounded-full bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700">
-              Popular
-            </span>
-          ) : (
-            <span />
-          )}
+        <div className="flex items-center justify-end gap-2 mb-3">
           <span
             className="text-xs text-slate-400 font-body"
             title="Estimated reading time"
