@@ -21,15 +21,33 @@ export default function ScrollToTop() {
 
   // 1. Automatic scroll-to-top on route change
   useEffect(() => {
-    // Immediate scroll reset for window
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    // Preserve intentional directory category links.
+    if (window.location.hash) return;
 
-    // Immediate scroll reset for AppShell canvas
-    const appContainer = getAppContainer();
-    if (appContainer) {
-      appContainer.scrollTop = 0;
-      appContainer.scrollLeft = 0;
-    }
+    const resetScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
+      const appContainer = getAppContainer();
+      if (appContainer) {
+        appContainer.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
+    };
+
+    // Next.js and browser scroll restoration can run after the route effect.
+    // Reapply the reset over the next two frames so both article and directory
+    // routes settle at the top of the app's scroll canvas.
+    let secondFrame: number | null = null;
+    const firstFrame = requestAnimationFrame(() => {
+      resetScroll();
+      secondFrame = requestAnimationFrame(resetScroll);
+    });
+    const settleTimer = window.setTimeout(resetScroll, 120);
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      if (secondFrame !== null) cancelAnimationFrame(secondFrame);
+      window.clearTimeout(settleTimer);
+    };
   }, [pathname, getAppContainer]);
 
   // 2. Capture-phase scroll listener: detects scroll on window AND nested containers

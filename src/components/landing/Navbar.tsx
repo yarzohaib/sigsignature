@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useSyncExternalStore, useMemo } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore, useMemo, type MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -79,6 +79,21 @@ export default function Navbar() {
       return { user: null, avatarUrl: null };
     }
   }, [authRaw]);
+
+  function handleBrandClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (window.location.pathname !== "/") return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: shouldReduceMotion ? "auto" : "smooth",
+    });
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }
 
   // Validate session with backend in background
   useEffect(() => {
@@ -311,7 +326,10 @@ export default function Navbar() {
           {/* Mobile Logo & Wordmark */}
           <Link
             href="/"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(event) => {
+              handleBrandClick(event);
+              setMobileMenuOpen(false);
+            }}
             className="flex min-h-[44px] min-w-[44px] items-center gap-2 transition hover:opacity-90"
           >
             <Image
@@ -542,6 +560,7 @@ export default function Navbar() {
           {/* Brand Logo pointing back to landing page */}
           <Link
             href="/"
+            onClick={handleBrandClick}
             className="flex items-center gap-2.5 transition hover:opacity-90 min-h-[44px] min-w-[44px]"
           >
             <Image

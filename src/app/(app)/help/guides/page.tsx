@@ -96,7 +96,7 @@ export default function AllGuidesPage() {
   }, [searchQuery, activeCategory]);
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:px-10 2xl:px-12 w-full pb-16">
+    <div className="w-full px-4 pt-6 pb-28 sm:px-6 sm:pt-8 lg:px-8 xl:px-10 2xl:px-12">
       <div className="w-full max-w-6xl mx-auto">
         {/* Breadcrumb: Help & Support > Guides */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 font-body">

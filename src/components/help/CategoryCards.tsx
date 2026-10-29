@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { HELP_CATEGORIES, HelpCategory } from "@/lib/helpData";
 
 function CategoryIcon({ type }: { type: HelpCategory["icon"] }) {
@@ -77,45 +80,57 @@ function CategoryIcon({ type }: { type: HelpCategory["icon"] }) {
 }
 
 export default function CategoryCards() {
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get("category");
+
   return (
     <section aria-labelledby="help-categories-heading" className="w-full">
       <h2 id="help-categories-heading" className="sr-only">
         Help Categories
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 2xl:gap-6">
-        {HELP_CATEGORIES.map((cat) => (
-          <Link
-            key={cat.slug}
-            href={`/help/guides#${cat.slug}`}
-            className="group flex flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-6 transition hover:border-[#245FD4]/40 hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] transition group-hover:scale-105">
-                <CategoryIcon type={cat.icon} />
+      <div className="grid auto-rows-fr grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 2xl:gap-6">
+        {HELP_CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat.slug;
+
+          return (
+            <Link
+              key={cat.slug}
+              href={`/help/guides#${cat.slug}`}
+              aria-current={isActive ? "page" : undefined}
+              className={`group flex min-h-[190px] flex-col gap-5 rounded-2xl border bg-white p-5 sm:p-6 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
+                isActive
+                  ? "border-blue-600 bg-blue-50/40 ring-2 ring-blue-600/20 shadow-sm"
+                  : "border-[#E2E8F0] hover:border-[#245FD4]/40 hover:shadow-xs"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] transition group-hover:scale-105">
+                  <CategoryIcon type={cat.icon} />
+                </div>
+                <span
+                  className="text-xs font-medium text-[#94A3B8]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  {cat.guideCount} guides
+                </span>
               </div>
-              <span
-                className="text-xs font-medium text-[#94A3B8]"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                {cat.guideCount} guides
-              </span>
-            </div>
-            <div className="mt-4">
-              <h3
-                className="text-base font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
-                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-              >
-                {cat.title}
-              </h3>
-              <p
-                className="mt-1 text-xs sm:text-[13px] text-[#64748B] leading-relaxed"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                {cat.description}
-              </p>
-            </div>
-          </Link>
-        ))}
+              <div>
+                <h3
+                  className="text-base font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  {cat.title}
+                </h3>
+                <p
+                  className="mt-1 min-h-[36px] text-xs sm:text-[13px] text-[#64748B] leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  {cat.description}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
