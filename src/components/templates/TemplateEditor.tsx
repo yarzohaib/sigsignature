@@ -28,6 +28,12 @@ import {
   SOCIAL_PLATFORM_EXAMPLES,
   TeamMemberSocialPlatform,
 } from "@/lib/team/socials";
+import {
+  isValidEmail,
+  sanitizePhone,
+  isValidPhone,
+  MAX_LENGTH,
+} from "@/lib/validation";
 
 const SOCIAL_CONFIG: Array<{
   key: "linkedin" | "twitter" | "facebook" | "instagram";
@@ -162,6 +168,30 @@ export default function TemplateEditor({
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   // Logo uploading state
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+
+  // Validate email address matching standard email rules
+  const emailError = useMemo(() => {
+    const trimmed = formData.email?.trim() || "";
+    if (!trimmed) {
+      return "Email address is required.";
+    }
+    if (!isValidEmail(trimmed)) {
+      return "Please enter a valid email address.";
+    }
+    return null;
+  }, [formData.email]);
+
+  // Validate phone number format
+  const phoneError = useMemo(() => {
+    const trimmed = formData.phone?.trim() || "";
+    if (!trimmed) {
+      return "Phone number is required.";
+    }
+    if (!isValidPhone(trimmed)) {
+      return "Please enter a valid phone number (at least 6 digits).";
+    }
+    return null;
+  }, [formData.phone]);
 
   // Validate social profile links matching platform rules
   const socialErrors = useMemo(() => {
@@ -390,6 +420,18 @@ export default function TemplateEditor({
 
   // Save the signature to user's signatures list
   async function handleSaveSignature() {
+    if (emailError) {
+      setOpenSections((prev) => ({ ...prev, personal: true }));
+      showToast("Invalid email address", emailError, true);
+      return;
+    }
+
+    if (phoneError) {
+      setOpenSections((prev) => ({ ...prev, personal: true }));
+      showToast("Invalid phone number", phoneError, true);
+      return;
+    }
+
     if (Object.keys(socialErrors).length > 0) {
       setOpenSections((prev) => ({ ...prev, social: true }));
       showToast("Invalid social link", "Please fix the invalid social profile URLs before saving.", true);
@@ -509,7 +551,18 @@ export default function TemplateEditor({
         }
       }
     });
-    return generateTemplateHtml({ ...formData, socials: validSocials, templateId: template.id });
+    // Do not accept invalid email into signature preview
+    const previewEmail = isValidEmail(formData.email) ? formData.email.trim() : "";
+    // Do not accept invalid phone into signature preview
+    const previewPhone = isValidPhone(formData.phone) ? formData.phone.trim() : "";
+
+    return generateTemplateHtml({
+      ...formData,
+      email: previewEmail,
+      phone: previewPhone,
+      socials: validSocials,
+      templateId: template.id,
+    });
   }, [formData, template.id]);
 
   const previewSrcDoc = useMemo(
@@ -787,6 +840,7 @@ export default function TemplateEditor({
                     <input
                       type="text"
                       value={formData.fullName}
+                      maxLength={MAX_LENGTH.NAME}
                       onChange={(e) => handleInputChange("fullName", e.target.value)}
                       disabled={isEditing}
                       placeholder="e.g. Daniel Wilson"
@@ -810,6 +864,7 @@ export default function TemplateEditor({
                     <input
                       type="text"
                       value={formData.jobTitle}
+                      maxLength={MAX_LENGTH.JOB_TITLE}
                       onChange={(e) => handleInputChange("jobTitle", e.target.value)}
                       placeholder="e.g. UX/UI Designer"
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
@@ -834,6 +889,7 @@ export default function TemplateEditor({
                     <input
                       type="text"
                       value={formData.companyName}
+                      maxLength={MAX_LENGTH.COMPANY}
                       onChange={(e) => handleInputChange("companyName", e.target.value)}
                       disabled={isEditing}
                       placeholder="e.g. Acme Corp"
@@ -857,10 +913,18 @@ export default function TemplateEditor({
                     <input
                       type="email"
                       value={formData.email}
+                      maxLength={MAX_LENGTH.EMAIL}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       placeholder="e.g. name@company.com"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:outline-none ${
+                        emailError
+                          ? "border-rose-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-200"
+                          : "border-slate-200 focus:border-[#245FD4]"
+                      }`}
                     />
+                    {emailError && (
+                      <p className="mt-1 text-[11px] text-rose-500">{emailError}</p>
+                    )}
                   </div>
 
                   <div>
@@ -870,10 +934,18 @@ export default function TemplateEditor({
                     <input
                       type="text"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      maxLength={MAX_LENGTH.PHONE}
+                      onChange={(e) => handleInputChange("phone", sanitizePhone(e.target.value))}
                       placeholder="e.g. +1 (555) 345-6789"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:outline-none ${
+                        phoneError
+                          ? "border-rose-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-200"
+                          : "border-slate-200 focus:border-[#245FD4]"
+                      }`}
                     />
+                    {phoneError && (
+                      <p className="mt-1 text-[11px] text-rose-500">{phoneError}</p>
+                    )}
                   </div>
 
                   <div>
@@ -883,6 +955,7 @@ export default function TemplateEditor({
                     <input
                       type="text"
                       value={formData.website}
+                      maxLength={MAX_LENGTH.WEBSITE}
                       onChange={(e) => handleInputChange("website", e.target.value)}
                       placeholder="e.g. www.company.com"
                       className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
@@ -988,6 +1061,7 @@ export default function TemplateEditor({
                   <input
                     type="text"
                     value={formData.optional.tagline || ""}
+                    maxLength={MAX_LENGTH.TAGLINE}
                     onChange={(e) => handleOptionalChange("tagline", e.target.value)}
                     placeholder="e.g. Elevate your presence"
                     className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
@@ -1039,6 +1113,7 @@ export default function TemplateEditor({
                       <input
                         type="url"
                         value={formData.socials[key] || ""}
+                        maxLength={MAX_LENGTH.SOCIAL_URL}
                         onChange={(e) => handleSocialChange(key, e.target.value)}
                         placeholder={placeholder}
                         className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium text-[#1E293B] placeholder:text-slate-400 shadow-2xs transition focus:outline-none ${
@@ -1095,6 +1170,7 @@ export default function TemplateEditor({
                   <input
                     type="text"
                     value={formData.optional.address || ""}
+                    maxLength={MAX_LENGTH.ADDRESS}
                     onChange={(e) => handleOptionalChange("address", e.target.value)}
                     placeholder="e.g. 123 Business Ave, New York, NY 10001"
                     className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
@@ -1107,6 +1183,7 @@ export default function TemplateEditor({
                   <input
                     type="text"
                     value={formData.optional.disclaimer || ""}
+                    maxLength={MAX_LENGTH.DISCLAIMER}
                     onChange={(e) => handleOptionalChange("disclaimer", e.target.value)}
                     placeholder="e.g. Proudly servicing Metropolitan & Regional Areas"
                     className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"

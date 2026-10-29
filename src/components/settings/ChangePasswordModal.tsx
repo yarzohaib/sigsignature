@@ -193,6 +193,7 @@ export default function ChangePasswordModal({
                 id="current-password"
                 type={showCurrent ? "text" : "password"}
                 value={currentPassword}
+                maxLength={128}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
                 disabled={isLoading}
@@ -234,6 +235,7 @@ export default function ChangePasswordModal({
                 id="new-password"
                 type={showNew ? "text" : "password"}
                 value={newPassword}
+                maxLength={128}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
                 disabled={isLoading}
@@ -292,6 +294,7 @@ export default function ChangePasswordModal({
                 id="confirm-password"
                 type={showConfirm ? "text" : "password"}
                 value={confirmPassword}
+                maxLength={128}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isLoading}

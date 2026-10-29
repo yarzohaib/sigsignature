@@ -40,6 +40,7 @@ import {
 import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { generateFreeHtml } from "@/lib/studio/free/renderFreeHtml";
+import { isValidEmail, isValidPhone } from "@/lib/validation";
 import { useIsPremium } from "@/lib/premium";
 import { studioHistoryReducer } from "@/lib/studio/free/history";
 import { migrateFlowToFree } from "@/lib/studio/free/migrate";
@@ -1005,6 +1006,36 @@ function DesignStudioContent() {
   // Save Signature to API Repository
   async function handleSaveSignature(nameOverride?: string) {
     if (!state.elements?.length) return;
+
+    // Validate email and phone fields before saving
+    const invalidEmailEl = state.elements?.find(
+      (el): el is FreeTextElement =>
+        el.type === "text" &&
+        "bind" in el &&
+        el.bind === "email" &&
+        Boolean(el.text?.trim()) &&
+        !isValidEmail(el.text)
+    );
+    if (invalidEmailEl) {
+      setSelectedId(invalidEmailEl.id);
+      showToast("Please enter a valid email address before saving.");
+      return;
+    }
+
+    const invalidPhoneEl = state.elements?.find(
+      (el): el is FreeTextElement =>
+        el.type === "text" &&
+        "bind" in el &&
+        el.bind === "phone" &&
+        Boolean(el.text?.trim()) &&
+        !isValidPhone(el.text)
+    );
+    if (invalidPhoneEl) {
+      setSelectedId(invalidPhoneEl.id);
+      showToast("Please enter a valid phone number before saving.");
+      return;
+    }
+
     if (!editingSignatureId && !editId && isSignatureLimitReached()) {
       setLimitModalOpen(true);
       return;

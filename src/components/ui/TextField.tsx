@@ -20,6 +20,7 @@ export default function TextField({
       <input
         id={inputId}
         aria-invalid={Boolean(error)}
+        maxLength={props.maxLength ?? (props.type === "email" ? 254 : props.type === "tel" ? 25 : 100)}
         className={`h-12 w-full rounded-xl border bg-white px-4 text-base text-slate-900 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 sm:h-14 ${
           error ? "border-red-500 focus:border-red-500" : "border-line focus:border-brand"
         } ${className}`}

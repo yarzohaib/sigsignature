@@ -19,6 +19,12 @@ import {
   SocialNetwork,
 } from "@/lib/email-core";
 import { THEME_PRESETS, getShapeBorderRadius } from "@/lib/studio/shared";
+import {
+  isValidEmail,
+  sanitizePhone,
+  isValidPhone,
+  MAX_LENGTH,
+} from "@/lib/validation";
 
 export type ResizeHandle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 
@@ -163,8 +169,13 @@ export default function FreeElementView({
     }
   }
 
+  const isPhoneField = "bind" in element && element.bind === "phone";
+  const isEmailField = "bind" in element && element.bind === "email";
+
   function handleTextChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const val = e.target.value.slice(0, 500);
+    const raw = isPhoneField ? sanitizePhone(e.target.value) : e.target.value;
+    const max = isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500;
+    const val = raw.slice(0, max);
     setLocalText(val);
 
     // Check if height needs to grow
@@ -179,10 +190,12 @@ export default function FreeElementView({
   function handleTextPaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
     e.preventDefault();
     const plain = e.clipboardData.getData("text/plain");
+    const sanitizedPlain = isPhoneField ? sanitizePhone(plain) : plain;
     const current = localText;
     const start = e.currentTarget.selectionStart || 0;
     const end = e.currentTarget.selectionEnd || 0;
-    const next = (current.slice(0, start) + plain + current.slice(end)).slice(0, 500);
+    const max = isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500;
+    const next = (current.slice(0, start) + sanitizedPlain + current.slice(end)).slice(0, max);
     setLocalText(next);
   }
 
@@ -206,7 +219,7 @@ export default function FreeElementView({
               onBlur={handleTextBlur}
               onKeyDown={handleTextKeyDown}
               onPaste={handleTextPaste}
-              maxLength={500}
+              maxLength={isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500}
               className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
               style={{
                 fontFamily: fontStack,
@@ -416,28 +429,52 @@ export default function FreeElementView({
       )}
 
       {/* Linked Team Field Badge */}
-      {!hideLabels && showEditorOverlays && "bind" in element && element.bind && (
-        <div
-          data-team-field-badge={element.bind}
-          className="absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded bg-[#449AFA] px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none"
-        >
-          <span>
-            {element.bind === "name"
-              ? "Name"
-              : element.bind === "jobTitle"
-              ? "Job title"
-              : element.bind === "email"
-              ? "Email"
-              : element.bind === "phone"
-              ? "Phone"
-              : element.bind === "photo"
-              ? "Photo"
-              : element.bind === "company"
-              ? "Company"
-              : element.bind}
-          </span>
-        </div>
-      )}
+      {!hideLabels && showEditorOverlays && "bind" in element && element.bind && (() => {
+        const isInvalidEmail =
+          element.bind === "email" &&
+          Boolean(
+            element.type === "text" &&
+              (element as FreeTextElement).text?.trim() &&
+              !isValidEmail((element as FreeTextElement).text)
+          );
+        const isInvalidPhone =
+          element.bind === "phone" &&
+          Boolean(
+            element.type === "text" &&
+              (element as FreeTextElement).text?.trim() &&
+              !isValidPhone((element as FreeTextElement).text)
+          );
+        const hasFormatError = isInvalidEmail || isInvalidPhone;
+
+        return (
+          <div
+            data-team-field-badge={element.bind}
+            className={`absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none ${
+              hasFormatError ? "bg-rose-600" : "bg-[#449AFA]"
+            }`}
+          >
+            <span>
+              {isInvalidEmail
+                ? "Invalid Email"
+                : isInvalidPhone
+                ? "Invalid Phone"
+                : element.bind === "name"
+                ? "Name"
+                : element.bind === "jobTitle"
+                ? "Job title"
+                : element.bind === "email"
+                ? "Email"
+                : element.bind === "phone"
+                ? "Phone"
+                : element.bind === "photo"
+                ? "Photo"
+                : element.bind === "company"
+                ? "Company"
+                : element.bind}
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Lock Indicator */}
       {element.locked && isSelected && (

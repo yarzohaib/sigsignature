@@ -194,6 +194,7 @@ export default function DeleteAccountModal({
                   id="delete-password"
                   type={showPassword ? "text" : "password"}
                   value={password}
+                  maxLength={128}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
@@ -234,6 +235,7 @@ export default function DeleteAccountModal({
                 id="delete-confirm-text"
                 type="text"
                 value={confirmText}
+                maxLength={10}
                 onChange={(e) => setConfirmText(e.target.value)}
                 required
                 disabled={isLoading}

@@ -86,6 +86,7 @@ export default function ContactForm() {
             id="fullName"
             type="text"
             required
+            maxLength={80}
             placeholder="Jane Doe"
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -102,6 +103,7 @@ export default function ContactForm() {
             id="workEmail"
             type="email"
             required
+            maxLength={100}
             placeholder="jane@company.com"
             value={formData.workEmail}
             onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
@@ -144,6 +146,7 @@ export default function ContactForm() {
           id="message"
           rows={5}
           required
+          maxLength={2000}
           placeholder="How can our team help you?"
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}

@@ -143,6 +143,7 @@ export default function AllGuidesPage() {
               <input
                 type="text"
                 value={searchQuery}
+                maxLength={100}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search all guides (e.g. Gmail, Outlook, Retina, Dark Mode)..."
                 className="w-full rounded-2xl border border-slate-200 bg-slate-50/60 pl-11 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#245FD4] focus:outline-none focus:ring-4 focus:ring-[#245FD4]/10 transition shadow-2xs font-body"

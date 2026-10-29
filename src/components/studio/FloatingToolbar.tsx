@@ -910,6 +910,7 @@ export default function FloatingToolbar({
               <input
                 type="text"
                 value={inputUrl}
+                maxLength={300}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setInputUrl(e.target.value)}
                 placeholder="https://example.com (optional)"
                 className="w-full rounded-lg bg-slate-800 px-2.5 py-1.5 text-xs text-white placeholder-slate-500 border border-slate-700 focus:outline-none focus:border-blue-500"

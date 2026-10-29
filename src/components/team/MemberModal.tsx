@@ -23,6 +23,11 @@ import {
   validateSocialUrl,
   teamHasSocialElement,
 } from "@/lib/team/socials";
+import {
+  sanitizePhone,
+  isValidPhone,
+  MAX_LENGTH,
+} from "@/lib/validation";
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -62,6 +67,7 @@ export default function MemberModal({
 
   const [nameError, setNameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [isLimitError, setIsLimitError] = useState(false);
@@ -89,13 +95,16 @@ export default function MemberModal({
 
   // Live preview mockup
   const previewHtml = useMemo(() => {
+    const validEmailForPreview = EMAIL_REGEX.test(email.trim()) ? email.trim() : "";
+    const validPhoneForPreview = isValidPhone(phone.trim()) ? phone.trim() : "";
+
     const mockMember: TeamMember = {
       id: member?.id || "temp-preview",
       teamId: team.id,
       name: name.trim() || "Full Name",
-      email: email.trim() || "email@company.com",
+      email: validEmailForPreview || "email@company.com",
       jobTitle: jobTitle.trim(),
-      phone: phone.trim(),
+      phone: validPhoneForPreview,
       photoUrl: photoUrl.trim(),
       socials: socials.filter((s) => s.url.trim().length > 0),
       status: member?.status || "draft",
@@ -238,6 +247,7 @@ export default function MemberModal({
     let isValid = true;
     setNameError(null);
     setEmailError(null);
+    setPhoneError(null);
     setGlobalError(null);
     setIsLimitError(false);
 
@@ -257,6 +267,11 @@ export default function MemberModal({
       isValid = false;
     } else if (email.trim().length > 254) {
       setEmailError("Email cannot exceed 254 characters.");
+      isValid = false;
+    }
+
+    if (phone.trim() && !isValidPhone(phone.trim())) {
+      setPhoneError("Please enter a valid phone number (at least 6 digits).");
       isValid = false;
     }
 
@@ -502,12 +517,22 @@ export default function MemberModal({
                 <input
                   type="text"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    setPhone(sanitizePhone(e.target.value));
+                    if (phoneError) setPhoneError(null);
+                  }}
                   placeholder="e.g. +1 555 234 8890"
-                  maxLength={40}
-                  className="w-full rounded-xl border border-[#E2E8F0] px-3.5 py-2.5 text-sm text-[#0B1A3D] placeholder-[#94A3B8] transition focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/20"
+                  maxLength={MAX_LENGTH.PHONE}
+                  className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#0B1A3D] placeholder-[#94A3B8] transition focus:outline-none focus:ring-2 ${
+                    phoneError
+                      ? "border-rose-300 focus:border-rose-400 focus:ring-rose-200"
+                      : "border-[#E2E8F0] focus:border-[#245FD4] focus:ring-[#245FD4]/20"
+                  }`}
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 />
+                {phoneError && (
+                  <p className="mt-1 text-xs text-rose-500">{phoneError}</p>
+                )}
               </div>
             </div>
 

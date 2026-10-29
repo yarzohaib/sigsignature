@@ -13,8 +13,10 @@ import {
   safeUrl,
   safeImageUrl,
   normalizeWebsite,
+  telHref,
   resolveEmailFont,
 } from "@/lib/email-core";
+import { isValidEmail, sanitizePhone, isValidPhone } from "@/lib/validation";
 import {
   THEME_PRESETS,
   getShapeBorderRadius,
@@ -148,6 +150,30 @@ export function generateFreeHtml(
       const color = textEl.bold ? theme.text : theme.muted;
       const fontWeight = textEl.bold ? "bold" : "normal";
       const align = textEl.align || "left";
+
+      // If bound to email: do NOT export invalid email as entered!
+      if (textEl.bind === "email") {
+        const raw = textEl.text?.trim() || "";
+        if (!isValidEmail(raw)) {
+          return "";
+        }
+        const href = safeUrl(`mailto:${raw}`);
+        return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
+  <a href="${href}" style="color:${color};text-decoration:none;">${escapeHtml(raw)}</a>
+</div>`;
+      }
+
+      // If bound to phone: do NOT export invalid phone as entered!
+      if (textEl.bind === "phone") {
+        const sanitized = sanitizePhone(textEl.text || "");
+        if (!isValidPhone(sanitized)) {
+          return "";
+        }
+        const href = safeUrl(telHref(sanitized));
+        return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
+  <a href="${href}" style="color:${color};text-decoration:none;">${escapeHtml(sanitized)}</a>
+</div>`;
+      }
 
       return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
   ${escapeHtml(textEl.text || "")}
@@ -451,7 +477,14 @@ export function generateFreePlainText(data: StudioSignatureData): string {
 
   for (const el of sorted) {
     if (el.type === "text") {
-      const text = (el as FreeTextElement).text?.trim();
+      const textEl = el as FreeTextElement;
+      if (textEl.bind === "email" && (!textEl.text || !isValidEmail(textEl.text))) {
+        continue;
+      }
+      if (textEl.bind === "phone" && (!textEl.text || !isValidPhone(textEl.text))) {
+        continue;
+      }
+      const text = textEl.text?.trim();
       if (text) lines.push(text);
     } else if (el.type === "cta") {
       const cta = el as FreeCtaElement;

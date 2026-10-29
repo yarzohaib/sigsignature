@@ -19,6 +19,12 @@ import {
   TeamMemberSocialPlatform,
   SOCIAL_PLATFORM_EXAMPLES,
 } from "@/lib/team/socials";
+import {
+  isValidEmail,
+  sanitizePhone,
+  isValidPhone,
+  MAX_LENGTH,
+} from "@/lib/validation";
 
 interface EditDetailsModalProps {
   isOpen: boolean;
@@ -88,6 +94,31 @@ export default function EditDetailsModal({
       selectedElement.id === "el-name" ||
       selectedElement.id === "el-company")
   );
+
+  const isBoundEmail =
+    selectedElement?.type === "text" &&
+    "bind" in selectedElement &&
+    selectedElement.bind === "email";
+  const isBoundPhone =
+    selectedElement?.type === "text" &&
+    "bind" in selectedElement &&
+    selectedElement.bind === "phone";
+
+  const textFieldError = useMemo(() => {
+    if (!selectedElement || selectedElement.type !== "text") return null;
+    const textEl = selectedElement as FreeTextElement;
+    const trimmed = textEl.text?.trim() || "";
+    if (textEl.bind === "email") {
+      if (!trimmed) return "Email address is required.";
+      if (!isValidEmail(trimmed)) return "Please enter a valid email address.";
+    }
+    if (textEl.bind === "phone") {
+      if (!trimmed) return "Phone number is required.";
+      if (!isValidPhone(trimmed))
+        return "Please enter a valid phone number (at least 6 digits).";
+    }
+    return null;
+  }, [selectedElement]);
 
   const isSocialMode =
     initialSection === "socials" || selectedElement?.type === "social";
@@ -217,6 +248,7 @@ export default function EditDetailsModal({
                       <input
                         type="url"
                         value={state.socials?.[key] || ""}
+                        maxLength={250}
                         onChange={(e) => {
                           const val = e.target.value;
                           dispatch({
@@ -251,7 +283,11 @@ export default function EditDetailsModal({
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-semibold text-slate-700">
-                      Text Content
+                      {isBoundEmail
+                        ? "Email Address"
+                        : isBoundPhone
+                        ? "Phone Number"
+                        : "Text Content"}
                     </label>
                     {isLockedIdentity && (
                       <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
@@ -267,22 +303,36 @@ export default function EditDetailsModal({
                     value={(selectedElement as FreeTextElement).text || ""}
                     onChange={(e) => {
                       if (isLockedIdentity) return;
-                      const text = e.target.value.slice(0, 500);
+                      const raw = e.target.value;
+                      const text = isBoundPhone
+                        ? sanitizePhone(raw).slice(0, MAX_LENGTH.PHONE)
+                        : raw.slice(0, isBoundEmail ? MAX_LENGTH.EMAIL : 500);
                       dispatch({
                         type: "UPDATE_ELEMENT",
                         payload: { id: selectedElement.id, updates: { text } },
                       });
                     }}
                     disabled={isLockedIdentity}
-                    maxLength={500}
-                    rows={4}
+                    maxLength={isBoundPhone ? MAX_LENGTH.PHONE : isBoundEmail ? MAX_LENGTH.EMAIL : 500}
+                    rows={isBoundEmail || isBoundPhone ? 2 : 4}
                     className={`w-full rounded-xl border px-3.5 py-2 text-xs transition ${
                       isLockedIdentity
                         ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
+                        : textFieldError
+                        ? "border-rose-400 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-200"
                         : "border-slate-300 text-slate-800 placeholder-slate-400 focus:border-[#245FD4] focus:outline-none focus:ring-1 focus:ring-[#245FD4]"
                     }`}
-                    placeholder="Enter text..."
+                    placeholder={
+                      isBoundEmail
+                        ? "alex@company.com"
+                        : isBoundPhone
+                        ? "+1 555 123 4567"
+                        : "Enter text..."
+                    }
                   />
+                  {textFieldError && !isLockedIdentity && (
+                    <p className="mt-1 text-[11px] text-rose-500">{textFieldError}</p>
+                  )}
                   {isLockedIdentity && (
                     <p className="mt-1.5 text-[11px] text-slate-500">
                       Full name and company name are locked to preserve signature identity on the Free plan.
@@ -371,6 +421,7 @@ export default function EditDetailsModal({
                 <input
                   type="text"
                   value={(selectedElement as FreeCtaElement).label || ""}
+                  maxLength={80}
                   onChange={(e) => {
                     dispatch({
                       type: "UPDATE_ELEMENT",
@@ -392,6 +443,7 @@ export default function EditDetailsModal({
                 <input
                   type="url"
                   value={(selectedElement as FreeCtaElement).url || ""}
+                  maxLength={300}
                   onChange={(e) => {
                     dispatch({
                       type: "UPDATE_ELEMENT",
@@ -462,6 +514,7 @@ export default function EditDetailsModal({
                       (selectedElement as FreeImageElement | FreeLogoElement | FreeBannerElement)
                         .linkUrl || ""
                     }
+                    maxLength={300}
                     onChange={(e) => {
                       const linkUrl = e.target.value;
                       dispatch({
