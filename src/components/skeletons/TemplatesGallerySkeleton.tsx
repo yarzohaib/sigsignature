@@ -22,9 +22,9 @@ export function TemplatesGallerySkeleton() {
         <Skeleton className="h-8 w-32 rounded-lg shrink-0" />
       </div>
 
-      {/* 6-Card Grid matching real template gallery breakpoints */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-        {[1, 2, 3, 4, 5, 6].map((idx) => (
+      {/* Card Grid matching real template gallery breakpoints: 3 on lg/xl, 4 below 80% zoom */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 col4:grid-cols-4 gap-6 w-full">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
           <div
             key={idx}
             className="flex flex-col rounded-2xl border border-[#E2E8F0] bg-white shadow-xs overflow-hidden"

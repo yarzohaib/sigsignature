@@ -43,8 +43,8 @@ export function TeamSignaturesSkeleton() {
         <Skeleton className="h-6 w-16 rounded-md shrink-0" />
       </div>
 
-      {/* 3. Cards Grid: matching real TeamMemberCard and AddMemberCard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-5 2xl:gap-6 w-full">
+      {/* 3. Cards Grid: matching real TeamMemberCard and AddMemberCard (3 cols up to 80% zoom, 4 cols below 80%) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 col4:grid-cols-4 gap-5 sm:gap-6 w-full">
         {/* Card 1 & 2: Team Member Cards */}
         {[1, 2].map((idx) => (
           <div

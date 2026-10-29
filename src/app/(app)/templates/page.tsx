@@ -287,8 +287,8 @@ function TemplatesContent() {
 
             </div>
 
-            {/* Template Cards Grid: Standard 3-column Layout */}
-            <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 wide:grid-cols-4 3xl:grid-cols-5">
+            {/* Template Cards Grid: 3 columns up to 80% zoom (1850px), 4 columns below 80% */}
+            <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 col4:grid-cols-4">
               {filteredTemplates.map((template) => (
                 <TemplateGalleryCard
                   key={template.id}
