@@ -74,12 +74,15 @@ export function GoogleTracking({
         />
       )}
 
-      {/* 4. Google AdSense Code Snippet */}
-      <Script
-        id="google-adsense"
+      {/* 4. Google AdSense Code Snippet:
+          Use native <script async> rather than Next.js <Script> component because
+          next/script automatically injects data-nscript="afterInteractive", which triggers
+          the AdSense warning: "AdSense head tag doesn't support the data-nscript attribute."
+          React 19 hoists standard <script async> directly into <head> without injecting data-nscript. */}
+      <script
+        async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2946217028626519"
         crossOrigin="anonymous"
-        strategy="afterInteractive"
       />
     </>
   );
