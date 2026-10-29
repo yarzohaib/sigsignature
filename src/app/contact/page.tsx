@@ -152,7 +152,7 @@ export default function ContactPage() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
+        <section className="relative overflow-hidden pt-12 pb-6 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-8">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
@@ -175,7 +175,7 @@ export default function ContactPage() {
         </section>
 
         {/* DIRECT CONTACT CHANNELS */}
-        <section className="py-12 sm:py-16">
+        <section className="pt-4 pb-12 sm:pt-4 sm:pb-16 lg:pt-6">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               {contactChannels.map((item) => (

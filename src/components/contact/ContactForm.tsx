@@ -31,7 +31,7 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-3xl border border-[#245FD4]/30 bg-gradient-to-b from-white to-blue-50/40 p-8 text-center sm:p-12">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 text-center shadow-sm sm:p-10">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#DCEBFF] text-[#245FD4]">
           <svg
             className="h-8 w-8"
@@ -74,13 +74,13 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-[#C1C1C1]/80 bg-white p-7 shadow-xs sm:p-10 lg:p-12"
+      className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm sm:p-8 lg:p-10"
     >
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {/* Full Name */}
         <div>
           <label htmlFor="fullName" className="block font-heading text-sm font-semibold text-slate-800">
-            Full Name <span className="text-red-500">*</span>
+            Full Name
           </label>
           <input
             id="fullName"
@@ -90,14 +90,14 @@ export default function ContactForm() {
             placeholder="Jane Doe"
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-            className="mt-2 w-full rounded-xl border border-[#C1C1C1] bg-white px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#245FD4] focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
+            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[#245FD4] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
           />
         </div>
 
         {/* Work Email */}
         <div>
           <label htmlFor="workEmail" className="block font-heading text-sm font-semibold text-slate-800">
-            Work Email <span className="text-red-500">*</span>
+            Work Email
           </label>
           <input
             id="workEmail"
@@ -107,7 +107,7 @@ export default function ContactForm() {
             placeholder="jane@company.com"
             value={formData.workEmail}
             onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
-            className="mt-2 w-full rounded-xl border border-[#C1C1C1] bg-white px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#245FD4] focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
+            className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[#245FD4] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
           />
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function ContactForm() {
             id="inquiryType"
             value={formData.inquiryType}
             onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
-            className="w-full appearance-none rounded-xl border border-[#C1C1C1] bg-white px-4 py-3 pr-10 font-body text-sm text-slate-900 focus:border-[#245FD4] focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
+            className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 font-body text-sm text-slate-900 transition-colors focus:border-[#245FD4] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
           >
             <option value="Support">Support</option>
             <option value="Sales & Enterprise">Sales &amp; Enterprise</option>
@@ -140,7 +140,7 @@ export default function ContactForm() {
       {/* Message */}
       <div className="mt-6">
         <label htmlFor="message" className="block font-heading text-sm font-semibold text-slate-800">
-          Message <span className="text-red-500">*</span>
+          Message
         </label>
         <textarea
           id="message"
@@ -150,7 +150,7 @@ export default function ContactForm() {
           placeholder="How can our team help you?"
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-          className="mt-2 w-full rounded-xl border border-[#C1C1C1] bg-white p-4 font-body text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#245FD4] focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
+          className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/50 p-4 font-body text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[#245FD4] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
         />
       </div>
 
@@ -171,7 +171,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
         >
           {status === "submitting" ? (
             <>

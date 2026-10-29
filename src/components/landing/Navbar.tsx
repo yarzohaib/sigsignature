@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useSyncExternalStore, useMemo, type MouseEvent } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore, useMemo, type MouseEvent as ReactMouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -80,7 +80,7 @@ export default function Navbar() {
     }
   }, [authRaw]);
 
-  function handleBrandClick(event: MouseEvent<HTMLAnchorElement>) {
+  function handleBrandClick(event: ReactMouseEvent<HTMLAnchorElement>) {
     if (window.location.pathname !== "/") return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
 
