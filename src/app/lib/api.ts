@@ -589,6 +589,8 @@ export async function resetPassword(payload: ResetPasswordPayload): Promise<Rese
 export async function requestEmailVerification(email: string): Promise<VerifyEmailResponse> {
   const url = `${API_BASE_URL}/api/v1/auth/request-verification`;
   let response: Response;
+  const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), 15000) : null;
   try {
     response = await fetch(url, {
       method: "POST",
@@ -597,11 +599,17 @@ export async function requestEmailVerification(email: string): Promise<VerifyEma
         Accept: "application/json",
       },
       body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      signal: controller?.signal,
     });
   } catch (networkErr: unknown) {
+    if (networkErr instanceof Error && networkErr.name === "AbortError") {
+      throw new Error("Verification request timed out. Please check your connection and try again.");
+    }
     const errorDetail =
       networkErr instanceof Error ? networkErr.message : "Network request failed";
     throw new Error(`Unable to reach backend server (${errorDetail}).`);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
   }
 
   const result = await response.json().catch(() => null);
@@ -620,6 +628,8 @@ export async function requestEmailVerification(email: string): Promise<VerifyEma
 export async function verifyEmailWithToken(token: string): Promise<VerifyEmailResponse> {
   const url = `${API_BASE_URL}/api/v1/auth/verify-email`;
   let response: Response;
+  const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), 15000) : null;
   try {
     response = await fetch(url, {
       method: "POST",
@@ -628,11 +638,17 @@ export async function verifyEmailWithToken(token: string): Promise<VerifyEmailRe
         Accept: "application/json",
       },
       body: JSON.stringify({ token: token.trim() }),
+      signal: controller?.signal,
     });
   } catch (networkErr: unknown) {
+    if (networkErr instanceof Error && networkErr.name === "AbortError") {
+      throw new Error("Verification request timed out. Please check your connection and try again.");
+    }
     const errorDetail =
       networkErr instanceof Error ? networkErr.message : "Network request failed";
     throw new Error(`Unable to reach backend server (${errorDetail}).`);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
   }
 
   const result = await response.json().catch(() => null);

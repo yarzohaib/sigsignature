@@ -43,6 +43,11 @@ const nextConfig: NextConfig = {
         destination: "/reset",
         permanent: true,
       },
+      {
+        source: "/verify-email",
+        destination: "/verify",
+        permanent: true,
+      },
     ];
   },
   async headers() {

@@ -2,24 +2,29 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import TextField from "@/components/ui/TextField";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { requestEmailVerification, verifyEmailWithToken } from "@/app/lib/api";
+import { getStoredToken, getStoredUser } from "@/app/lib/auth";
 
 type VerificationState = "verifying" | "success" | "error" | "resend";
 
 function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-  const initialEmail = searchParams.get("email") || "";
 
-  const [state, setState] = useState<VerificationState>(() => (token ? "verifying" : "resend"));
+  // Capture initial token & email on mount so URL sanitization or searchParams re-render never wipes it
+  const [initialToken] = useState(() => (searchParams.get("token") || searchParams.get("t") || "").trim());
+  const initialEmail = (searchParams.get("email") || "").trim();
+
+  const [state, setState] = useState<VerificationState>(() => (initialToken ? "verifying" : "resend"));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [email, setEmail] = useState(initialEmail);
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [isSendingLink, setIsSendingLink] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [modalConfig, setModalConfig] = useState<{
     icon: "mail" | "check";
     badge: string;
@@ -28,45 +33,69 @@ function VerifyEmailForm() {
     primaryAction: { label: string; href?: string; onClick?: () => void };
   } | null>(null);
 
-  // Auto-verify as soon as the user arrives with a token in the URL
+  // Check login state on mount
   useEffect(() => {
-    if (!token) return;
+    const user = getStoredUser();
+    const token = getStoredToken();
+    if (user && token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
-    const activeToken = token.trim();
-    if (!activeToken) return;
+  // Prevent multiple executions in StrictMode or re-renders
+  const hasTriggeredRef = useRef(false);
 
-    // Immediately sanitize address bar & browser history so the raw token is completely wiped from view
-    if (typeof window !== "undefined" && window.location.search) {
-      window.history.replaceState(null, "", window.location.pathname);
+  // Auto-verify as soon as the user arrives with a token
+  useEffect(() => {
+    if (!initialToken) {
+      setState("resend");
+      return;
     }
 
-    let isCancelled = false;
+    if (hasTriggeredRef.current) return;
+    hasTriggeredRef.current = true;
 
     async function autoVerify() {
       setState("verifying");
       try {
-        await verifyEmailWithToken(activeToken);
-        if (!isCancelled) {
-          setState("success");
+        await verifyEmailWithToken(initialToken);
+        setState("success");
+        // Sanitize the URL only after successful verification completes
+        if (typeof window !== "undefined" && window.location.search) {
+          window.history.replaceState(null, "", window.location.pathname);
         }
       } catch (err: unknown) {
-        if (!isCancelled) {
-          const message =
-            err instanceof Error
-              ? err.message
-              : "This verification link is invalid or has expired.";
-          setErrorMessage(message);
-          setState("error");
-        }
+        const message =
+          err instanceof Error
+            ? err.message
+            : "This verification link is invalid or has expired.";
+        setErrorMessage(message);
+        setState("error");
       }
     }
 
     autoVerify();
+  }, [initialToken]);
 
-    return () => {
-      isCancelled = true;
-    };
-  }, [token]);
+  // Automatic countdown & redirect on success
+  useEffect(() => {
+    if (state !== "success") return;
+
+    const destination = isLoggedIn ? "/dashboard" : "/login";
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          router.push(destination);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [state, isLoggedIn, router]);
 
   async function handleResend(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -152,6 +181,7 @@ function VerifyEmailForm() {
 
   // 2. Success state
   if (state === "success") {
+    const destination = isLoggedIn ? "/dashboard" : "/login";
     return (
       <div className="flex w-full max-w-[496px] flex-col items-center justify-center gap-5 rounded-2xl border border-emerald-200/80 bg-white p-8 sm:p-10 text-center shadow-xs animate-in fade-in duration-300">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
@@ -170,12 +200,17 @@ function VerifyEmailForm() {
             Your account is now activated. You can sign in and start designing deliverable email signatures.
           </p>
         </div>
-        <Link
-          href="/login"
-          className="bg-brand-gradient flex h-12 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-xs transition hover:opacity-95 sm:h-14 sm:text-lg mt-2"
-        >
-          Proceed to Log In
-        </Link>
+        <div className="w-full space-y-2 mt-2">
+          <Link
+            href={destination}
+            className="bg-brand-gradient flex h-12 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-xs transition hover:opacity-95 sm:h-14 sm:text-lg"
+          >
+            {isLoggedIn ? "Proceed to Dashboard" : "Proceed to Log In"}
+          </Link>
+          <p className="text-xs text-slate-500">
+            Redirecting automatically in {countdown} {countdown === 1 ? "second" : "seconds"}...
+          </p>
+        </div>
       </div>
     );
   }
@@ -211,16 +246,19 @@ function VerifyEmailForm() {
       {state === "error" && errorMessage && (
         <div
           role="alert"
-          className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900"
+          className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-900"
         >
-          <svg className="h-5 w-5 shrink-0 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+          <svg className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
-              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
               clipRule="evenodd"
             />
           </svg>
-          <span>{errorMessage}</span>
+          <div className="flex-1 space-y-1">
+            <p className="font-semibold text-rose-900">Verification Link Invalid</p>
+            <p className="text-rose-700 text-xs sm:text-sm">{errorMessage}</p>
+          </div>
         </div>
       )}
 
@@ -243,6 +281,9 @@ function VerifyEmailForm() {
           <div className="mt-2 flex justify-between text-xs">
             <Link href="/login" className="font-semibold text-brand hover:underline">
               Already verified? Log In
+            </Link>
+            <Link href="/contact" className="text-slate-500 hover:text-brand hover:underline">
+              Need help? Contact Support
             </Link>
           </div>
         </div>
