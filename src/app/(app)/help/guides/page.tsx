@@ -219,17 +219,41 @@ export default function AllGuidesPage() {
         {/* Guides List by Category Sections */}
         {searchQuery || activeCategory !== "all" ? (
           /* Search/category results flat grid */
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2
-                className="text-lg font-bold text-slate-900"
-                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-              >
-                {searchQuery
-                  ? `Search Results (${filteredGuides.length})`
-                  : `${CATEGORIES.find((category) => category.slug === activeCategory)?.title || "Category"} (${filteredGuides.length})`}
-              </h2>
-            </div>
+          <div className={searchQuery ? "space-y-4" : ""}>
+            {searchQuery ? (
+              <div className="flex items-center justify-between">
+                <h2
+                  className="text-lg font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Search Results ({filteredGuides.length})
+                </h2>
+              </div>
+            ) : (() => {
+              const category = CATEGORIES.find((item) => item.slug === activeCategory);
+              if (!category) return null;
+
+              return (
+                <div className="flex flex-col gap-2 border-b border-slate-200 pb-4 mb-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4]">
+                      {category.icon}
+                    </div>
+                    <div>
+                      <h2
+                        className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight"
+                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                      >
+                        {category.title}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-slate-500 font-body mt-0.5">
+                        {category.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
             {filteredGuides.length === 0 ? (
               <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
                 <p className="text-base text-slate-600 font-body">
