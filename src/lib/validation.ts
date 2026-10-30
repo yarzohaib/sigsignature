@@ -30,6 +30,25 @@ export function isValidPhone(phone: string): boolean {
   return digits.length >= 6 && digits.length <= 15;
 }
 
+/** Accepts a public HTTP(S) URL, adding https:// when the user omits a scheme. */
+export function isValidWebUrl(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed || /\s/.test(trimmed)) return false;
+
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  try {
+    const parsed = new URL(candidate);
+    return (
+      (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      parsed.hostname.includes(".") &&
+      !parsed.hostname.startsWith(".") &&
+      !parsed.hostname.endsWith(".")
+    );
+  } catch {
+    return false;
+  }
+}
+
 /** Standard field max character lengths */
 export const MAX_LENGTH = {
   NAME: 80,

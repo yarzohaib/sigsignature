@@ -40,7 +40,7 @@ import {
 import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { generateFreeHtml } from "@/lib/studio/free/renderFreeHtml";
-import { isValidEmail, isValidPhone } from "@/lib/validation";
+import { isValidEmail, isValidPhone, isValidWebUrl } from "@/lib/validation";
 import { useIsPremium } from "@/lib/premium";
 import { studioHistoryReducer } from "@/lib/studio/free/history";
 import { migrateFlowToFree } from "@/lib/studio/free/migrate";
@@ -1021,6 +1021,16 @@ function DesignStudioContent() {
   // Save Signature to API Repository
   async function handleSaveSignature(nameOverride?: string) {
     if (!state.elements?.length) return;
+
+    const ctaWithoutUrl = state.elements.find(
+      (el): el is Extract<FreeElement, { type: "cta" }> =>
+        el.type === "cta" && !isValidWebUrl(el.url || "")
+    );
+    if (ctaWithoutUrl) {
+      setSelectedId(ctaWithoutUrl.id);
+      showToast("Enter a valid destination URL for every CTA button before saving.");
+      return;
+    }
 
     // Validate email and phone fields before saving
     const invalidEmailEl = state.elements?.find(

@@ -13,6 +13,7 @@ import {
 import { createPortal } from "react-dom";
 import type { StudioShape } from "@/types/studio";
 import { getSocialIconSvgDataUrl } from "@/lib/email-core";
+import { isValidWebUrl } from "@/lib/validation";
 
 export type CanvasAlignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
@@ -201,7 +202,7 @@ export default function FloatingToolbar({
     if (!linkButtonRef.current) return;
     const btnRect = linkButtonRef.current.getBoundingClientRect();
     const popoverWidth = 290;
-    const popoverHeight = 135;
+    const popoverHeight = 155;
 
     let popoverLeft = btnRect.left + btnRect.width / 2 - popoverWidth / 2;
     popoverLeft = Math.max(8, Math.min(popoverLeft, window.innerWidth - popoverWidth - 8));
@@ -277,6 +278,7 @@ export default function FloatingToolbar({
 
   const [prevUrl, setPrevUrl] = useState(url);
   const [inputUrl, setInputUrl] = useState(url || "");
+  const [linkError, setLinkError] = useState("");
 
   if (url !== prevUrl) {
     setPrevUrl(url);
@@ -289,6 +291,11 @@ export default function FloatingToolbar({
     elementType === "logo" ||
     elementType === "banner" ||
     elementType === "cta";
+
+  const hasValidLink =
+    elementType === "cta" ? isValidWebUrl(url || "") : Boolean(url?.trim());
+  const hasInvalidCtaLink =
+    elementType === "cta" && Boolean(url?.trim()) && !isValidWebUrl(url || "");
 
   const isTeamFieldSupported = elementType === "text" || elementType === "image";
 
@@ -706,24 +713,51 @@ export default function FloatingToolbar({
               </>
             )}
 
-            {/* ADD LINK (Optional: images, logo, banner, cta, text) */}
+            {/* ADD LINK (Optional for most elements; required for CTA buttons) */}
             {hasLinkSupport && (
               <>
                 <div className="relative">
                   <button
                     ref={linkButtonRef}
                     type="button"
-                    aria-label={url?.trim() ? "Edit link" : "Add link (optional)"}
-                    title={url?.trim() ? `Links to: ${url}` : "Add link (optional)"}
-                    onClick={() => setOpenMenu((prev) => (prev === "link" ? null : "link"))}
+                    aria-label={
+                      hasValidLink
+                        ? "Edit link"
+                        : hasInvalidCtaLink
+                          ? "Fix invalid CTA destination URL"
+                        : elementType === "cta"
+                          ? "Set required CTA destination URL"
+                          : "Add link (optional)"
+                    }
+                    title={
+                      hasValidLink
+                        ? `Links to: ${url}`
+                        : hasInvalidCtaLink
+                          ? "CTA destination URL is invalid"
+                        : elementType === "cta"
+                          ? "CTA destination URL is required"
+                          : "Add link (optional)"
+                    }
+                    onClick={() => {
+                      setLinkError("");
+                      setOpenMenu((prev) => (prev === "link" ? null : "link"));
+                    }}
                     className="flex h-7 px-2 items-center gap-1.5 rounded text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400"
                   >
-                    {url?.trim() ? (
+                    {hasValidLink ? (
                       <>
                         <svg className="h-3 w-3 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                         <span className="text-[11px] font-semibold text-slate-200">Link set</span>
+                      </>
+                    ) : hasInvalidCtaLink ? (
+                      <>
+                        <svg className="h-3.5 w-3.5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M12 8v4m0 4h.01" strokeLinecap="round" />
+                        </svg>
+                        <span className="text-[11px] font-semibold text-red-300">Invalid URL</span>
                       </>
                     ) : (
                       <>
@@ -731,7 +765,9 @@ export default function FloatingToolbar({
                           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                         </svg>
-                        <span className="text-[11px] font-semibold text-slate-300">Add link (optional)</span>
+                        <span className="text-[11px] font-semibold text-slate-300">
+                          {elementType === "cta" ? "Add required URL" : "Add link (optional)"}
+                        </span>
                       </>
                     )}
                   </button>
@@ -992,7 +1028,7 @@ export default function FloatingToolbar({
             ref={linkPopoverRef}
             data-floating-toolbar
             role="dialog"
-            aria-label="Set link URL"
+              aria-label={elementType === "cta" ? "Set CTA destination URL" : "Set link URL"}
             style={{
               position: "fixed",
               top: `${popoverCoords.top}px`,
@@ -1003,7 +1039,9 @@ export default function FloatingToolbar({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <span className="text-xs font-semibold text-slate-200">Element Link URL</span>
+              <span className="text-xs font-semibold text-slate-200">
+                {elementType === "cta" ? "CTA Destination URL (required)" : "Element Link URL"}
+              </span>
               <button
                 type="button"
                 onClick={() => setOpenMenu(null)}
@@ -1019,18 +1057,31 @@ export default function FloatingToolbar({
                 type="text"
                 value={inputUrl}
                 maxLength={300}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setInputUrl(e.target.value)}
-                placeholder="https://example.com (optional)"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  setInputUrl(e.target.value);
+                  setLinkError("");
+                }}
+                placeholder={elementType === "cta" ? "https://example.com" : "https://example.com (optional)"}
                 className="w-full rounded-lg bg-slate-800 px-2.5 py-1.5 text-xs text-white placeholder-slate-500 border border-slate-700 focus:outline-none focus:border-blue-500"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
+                    if (elementType === "cta" && !isValidWebUrl(inputUrl)) {
+                      setLinkError("Enter a valid URL, such as https://example.com.");
+                      return;
+                    }
                     onUrlChange?.(inputUrl);
                     setOpenMenu(null);
                   }
                 }}
               />
             </div>
+
+            {linkError && (
+              <p role="alert" className="mt-1.5 text-[11px] font-medium text-red-300">
+                {linkError}
+              </p>
+            )}
 
             <div className="mt-3 flex items-center justify-between pt-1">
               <button
@@ -1055,6 +1106,10 @@ export default function FloatingToolbar({
                 <button
                   type="button"
                   onClick={() => {
+                    if (elementType === "cta" && !isValidWebUrl(inputUrl)) {
+                      setLinkError("Enter a valid URL, such as https://example.com.");
+                      return;
+                    }
                     onUrlChange?.(inputUrl);
                     setOpenMenu(null);
                   }}
