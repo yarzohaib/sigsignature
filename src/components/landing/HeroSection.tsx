@@ -79,7 +79,7 @@ export default function HeroSection() {
                       <p className="mt-1 text-[13px] sm:text-sm text-[#878787] break-all">sardar@thenevon.com</p>
                     </div>
                   </div>
-                  <div className="mt-3.5 flex gap-2.5">
+                <div className="mx-auto mt-3.5 flex w-full max-w-[420px] justify-center gap-2.5">
                     <div className="h-9 flex-1 rounded-lg bg-gradient-to-r from-[#245FD4] to-[#022977] flex items-center justify-center shadow-xs">
                       <span className="text-xs sm:text-[13px] font-semibold text-white">Copy HTML</span>
                     </div>
@@ -89,8 +89,8 @@ export default function HeroSection() {
                   </div>
                 </div>
                 {/* Floating badges inside the card - HTML Validation */}
-                <div className="px-4 pb-4 flex gap-2 flex-wrap">
-                  <div className="flex items-center gap-2 rounded-xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
+                <div className="px-4 pb-4 flex flex-wrap justify-center gap-2">
+                  <div className="flex w-full max-w-[244px] flex-none items-center gap-2 rounded-xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#DCEBFF]">
                       <svg className="h-3.5 w-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
                     </div>
@@ -99,7 +99,7 @@ export default function HeroSection() {
                       <span className="font-body text-[10px] text-slate-500">Renders in 40+ clients</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 rounded-xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
+                  <div className="flex w-full max-w-[244px] flex-none items-center gap-2 rounded-xl border border-slate-100 bg-white px-3 py-2 shadow-sm">
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-950">
                       <svg className="h-3.5 w-3.5 text-white fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L14.2 9.8L22 12L14.2 14.2L12 22L9.8 14.2L2 12L9.8 9.8L12 2Z" /><circle cx="5" cy="5" r="1.5" /></svg>
                     </div>
