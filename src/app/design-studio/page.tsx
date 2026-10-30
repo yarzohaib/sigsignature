@@ -2160,7 +2160,7 @@ function DesignStudioContent() {
                     className="text-xs text-slate-500 mb-2.5 leading-relaxed"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
-                    Linked fields are replaced with each team member&apos;s own details.
+                    Click an unlinked field to add it to the canvas. To link an existing element, select it and use the Team field menu in its toolbar. Linked fields use each team member&apos;s own details.
                   </p>
                   <div className="space-y-1.5" role="list" aria-label="Team fields">
                     {(
@@ -2187,28 +2187,6 @@ function DesignStudioContent() {
                             if (linked) {
                               setSelectedId(linked.id);
                               return;
-                            }
-                            if (selectedId) {
-                              const selectedEl = (state.elements || []).find(
-                                (el) => el.id === selectedId
-                              );
-                              if (selectedEl) {
-                                if (field.key === "photo" && selectedEl.type === "image") {
-                                  dispatch({
-                                    type: "LINK_TEAM_FIELD",
-                                    payload: { id: selectedId, field: "photo" },
-                                  });
-                                  showToast(`Linked to ${field.label}`);
-                                  return;
-                                } else if (field.key !== "photo" && selectedEl.type === "text") {
-                                  dispatch({
-                                    type: "LINK_TEAM_FIELD",
-                                    payload: { id: selectedId, field: field.key },
-                                  });
-                                  showToast(`Linked to ${field.label}`);
-                                  return;
-                                }
-                              }
                             }
                             handleAddTeamField(field.key);
                           }}

@@ -550,8 +550,10 @@ export function studioReducer(
           }
           if (el.type === "text" && field !== "photo") {
             const updated: FreeTextElement = { ...el, bind: field };
-            if (!updated.icon && (field === "phone" || field === "email" || field === "website")) {
+            if (field === "phone" || field === "email" || field === "website") {
               updated.icon = field;
+            } else {
+              delete updated.icon;
             }
             return updated;
           }
