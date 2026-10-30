@@ -233,7 +233,7 @@ export default function PrivacyPage() {
                   <p className="pt-2">
                     To exercise any of these rights, manage your account directly via Settings or contact our Data
                     Privacy team at:{" "}
-                    <a href="mailto:team@thenevon.com" className="font-semibold text-[#1243A3] underline">
+                    <a href="mailto:team@thenevon.com" className="font-semibold text-[#1243A3] underline underline-offset-4 decoration-1 hover:text-[#245FD4]">
                       team@thenevon.com
                     </a>
                     .
