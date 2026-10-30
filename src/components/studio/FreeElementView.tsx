@@ -45,6 +45,7 @@ interface FreeElementViewProps {
   hideLabels?: boolean;
   isEditingSavedSignature?: boolean;
   onToast?: (msg: string, isError?: boolean) => void;
+  onSplitLines?: (id: string, text?: string) => void;
 }
 
 const HANDLE_CURSORS: Record<ResizeHandle, string> = {
@@ -86,6 +87,7 @@ export default function FreeElementView({
   hideLabels = false,
   isEditingSavedSignature = false,
   onToast,
+  onSplitLines,
 }: FreeElementViewProps) {
   const [isEditingText, setIsEditingText] = useState(false);
   const currentElementText = element.type === "text" ? element.text : "";
@@ -112,7 +114,6 @@ export default function FreeElementView({
   const themeColor = data.themeColor || "#245FD4";
   const shape = element.shape || data.design?.shape || "rounded";
   const buttonStyle = data.design?.buttonStyle || "solid";
-  const fontStack = resolveEmailFont(data.fontFamily || "Inter");
 
   // Determine handles to show
   let activeHandles: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
@@ -208,7 +209,8 @@ export default function FreeElementView({
         const lineHeight = textEl.size === "lg" ? 22 : textEl.size === "sm" ? 16 : 18;
         const fontWeight = textEl.bold ? 700 : 400;
         const align = textEl.align || "left";
-        const color = textEl.bold ? theme.text : theme.muted;
+        const elementFontStack = resolveEmailFont(textEl.fontFamily || data.fontFamily || "Inter");
+        const color = textEl.color || (textEl.bold ? theme.text : theme.muted);
 
         if (textEl.icon) {
           const iconSrc = getSocialIconSvgDataUrl("minimal", themeColor, textEl.icon);
@@ -241,7 +243,7 @@ export default function FreeElementView({
                     maxLength={isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500}
                     className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
                     style={{
-                      fontFamily: fontStack,
+                      fontFamily: elementFontStack,
                       fontSize: `${fontSize}px`,
                       lineHeight: `${lineHeight}px`,
                       fontWeight,
@@ -253,7 +255,7 @@ export default function FreeElementView({
                   <div
                     className="w-full h-full overflow-hidden select-none break-words flex items-center"
                     style={{
-                      fontFamily: fontStack,
+                      fontFamily: elementFontStack,
                       fontSize: `${fontSize}px`,
                       lineHeight: `${lineHeight}px`,
                       fontWeight,
@@ -283,7 +285,7 @@ export default function FreeElementView({
               maxLength={isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500}
               className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
               style={{
-                fontFamily: fontStack,
+                fontFamily: elementFontStack,
                 fontSize: `${fontSize}px`,
                 lineHeight: `${lineHeight}px`,
                 fontWeight,
@@ -298,7 +300,7 @@ export default function FreeElementView({
           <div
             className="w-full h-full overflow-hidden select-none break-words"
             style={{
-              fontFamily: fontStack,
+              fontFamily: elementFontStack,
               fontSize: `${fontSize}px`,
               lineHeight: `${lineHeight}px`,
               fontWeight,
@@ -347,7 +349,7 @@ export default function FreeElementView({
 
       case "divider": {
         const divEl = element as FreeDividerElement;
-        const dividerColor = themeColor || theme.border || "#E2E8F0";
+        const dividerColor = divEl.color || themeColor || theme.border || "#E2E8F0";
         const thickness = Math.max(1, divEl.thickness || 1);
 
         if (divEl.orientation === "vertical") {
@@ -379,13 +381,15 @@ export default function FreeElementView({
 
       case "cta": {
         const ctaEl = element as FreeCtaElement;
+        const ctaFontStack = resolveEmailFont(ctaEl.fontFamily || data.fontFamily || "Inter");
         const isSolid = buttonStyle !== "outline";
         const btnRadius = getShapeBorderRadius(shape, "button");
-        const btnBg = isSolid ? themeColor : "transparent";
+        const ctaThemeColor = ctaEl.color || themeColor;
+        const btnBg = isSolid ? ctaThemeColor : "transparent";
         const btnBorder = isSolid
           ? "none"
-          : `2px solid ${themeColor}`;
-        const textColor = isSolid ? "#FFFFFF" : themeColor;
+          : `2px solid ${ctaThemeColor}`;
+        const textColor = ctaEl.textColor || (isSolid ? "#FFFFFF" : ctaThemeColor);
 
         return (
           <div
@@ -395,7 +399,7 @@ export default function FreeElementView({
               border: btnBorder,
               borderRadius: btnRadius,
               color: textColor,
-              fontFamily: fontStack,
+              fontFamily: ctaFontStack,
             }}
           >
             <span className="truncate">{ctaEl.label || "Button"}</span>
@@ -552,6 +556,36 @@ export default function FreeElementView({
 
       {/* Main Content */}
       {renderContent()}
+
+      {/* Inline text edit notification & split lines helper */}
+      {isEditingText && (
+        <div
+          className="absolute -bottom-7 left-0 z-40 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded shadow pointer-events-auto whitespace-nowrap animate-in fade-in"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <span className="text-slate-300">Text Box • Styling applies to entire element</span>
+          {localText.includes("\n") && (
+            <>
+              <span className="text-slate-500">•</span>
+              <button
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsEditingText(false);
+                  onSplitLines?.(element.id, localText);
+                }}
+                className="text-blue-400 hover:text-blue-200 font-medium underline cursor-pointer"
+                title="Convert each line into its own element so they can be styled individually"
+              >
+                Split into separate lines
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Resize Handles (8 handles when selected and not locked) */}
       {isSelected && !element.locked && !isEditingText && (

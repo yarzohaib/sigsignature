@@ -120,6 +120,7 @@ export type StudioAction =
   | { type: "MOVE_EXTRA_UP"; payload: { id: string } }
   | { type: "MOVE_EXTRA_DOWN"; payload: { id: string } }
   | { type: "SET_EXTRAS"; payload: SignatureExtraItem[] }
+  | { type: "CLEAR_ELEMENTS" }
   | { type: "ADD_ELEMENT"; payload: FreeElement }
   | { type: "UPDATE_ELEMENT"; payload: { id: string; item?: Partial<FreeElement>; updates?: Partial<FreeElement> } }
   | { type: "MOVE_ELEMENT"; payload: { id: string; x: number; y: number } }
@@ -135,6 +136,7 @@ export type StudioAction =
         field?: "name" | "jobTitle" | "email" | "phone" | "photo" | "company" | "website";
       };
     }
+  | { type: "SPLIT_TEXT_ELEMENT"; payload: { id: string; text?: string } }
   | { type: "MIGRATE_FLOW_TO_FREE" };
 
 export function studioReducer(
@@ -324,6 +326,14 @@ export function studioReducer(
     // ==========================================
     // FREE CANVAS ACTIONS
     // ==========================================
+
+    case "CLEAR_ELEMENTS": {
+      if (!state.elements?.length) return state;
+      return {
+        ...state,
+        elements: [],
+      };
+    }
 
     case "ADD_ELEMENT": {
       const currentElements = state.elements || [];
@@ -562,6 +572,71 @@ export function studioReducer(
       return {
         ...state,
         elements: nextElements,
+      };
+    }
+
+    case "SPLIT_TEXT_ELEMENT": {
+      const currentElements = state.elements || [];
+      const target = currentElements.find((el) => el.id === action.payload.id);
+      if (!target || target.type !== "text") return state;
+      const textEl = target as FreeTextElement;
+      const textToSplit = action.payload.text !== undefined ? action.payload.text : (textEl.text || "");
+      const lines = textToSplit.split("\n").map((l) => l.trim()).filter(Boolean);
+      if (lines.length <= 1) return state;
+
+      const baseH = textEl.size === "lg" ? 24 : textEl.size === "sm" ? 18 : 20;
+      let currY = textEl.y;
+
+      const firstEl: FreeTextElement = {
+        ...textEl,
+        text: lines[0],
+        h: baseH,
+      };
+
+      const newElements: FreeElement[] = [firstEl];
+      currY += baseH + 4;
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        const isEmail = line.includes("@") && !line.includes(" ");
+        const isPhone = /^[\d+\-\s()]{6,}$/.test(line);
+        const subH = 18;
+
+        const subEl: FreeTextElement = {
+          id: `split_${Date.now()}_${i}_${Math.random().toString(36).substring(2, 6)}`,
+          type: "text",
+          x: textEl.x,
+          y: currY,
+          w: textEl.w,
+          h: subH,
+          text: line,
+          size: "sm",
+          bold: false,
+          align: textEl.align || "left",
+          fontFamily: textEl.fontFamily,
+          color: textEl.color,
+          ...(isEmail
+            ? { bind: "email" as const, icon: "email" as const }
+            : isPhone
+            ? { bind: "phone" as const, icon: "phone" as const }
+            : {}),
+        };
+        newElements.push(subEl);
+        currY += subH + 4;
+      }
+
+      const resultElements: FreeElement[] = [];
+      for (const el of currentElements) {
+        if (el.id === action.payload.id) {
+          resultElements.push(...newElements);
+        } else {
+          resultElements.push(el);
+        }
+      }
+
+      return {
+        ...state,
+        elements: resultElements,
       };
     }
 

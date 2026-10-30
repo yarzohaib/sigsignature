@@ -42,7 +42,12 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
 
   useEffect(() => {
     let isMounted = true;
-    setSignatureCount(getCachedSignatureCount());
+    const cached = getCachedSignatureCount();
+    if (cached > 0) {
+      queueMicrotask(() => {
+        if (isMounted) setSignatureCount(cached);
+      });
+    }
 
     async function loadCount() {
       try {

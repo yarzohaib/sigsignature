@@ -146,9 +146,10 @@ export function generateFreeHtml(
   function renderElementHtml(el: FreeElement): string {
     if (el.type === "text") {
       const textEl = el as FreeTextElement;
+      const elFontStack = resolveEmailFont(textEl.fontFamily || data.fontFamily || "Inter");
       const fontSize = textEl.size === "lg" ? 16 : textEl.size === "sm" ? 12 : 14;
       const lineHeight = textEl.size === "lg" ? 22 : textEl.size === "sm" ? 16 : 18;
-      const color = textEl.bold ? theme.text : theme.muted;
+      const color = textEl.color || (textEl.bold ? theme.text : theme.muted);
       const fontWeight = textEl.bold ? "bold" : "normal";
       const align = textEl.align || "left";
 
@@ -195,7 +196,8 @@ export function generateFreeHtml(
         : escapeHtml(displayText);
 
       if (textEl.icon) {
-        const iconUrl = emailIconUrl("minimal", data.themeColor, textEl.icon);
+        const iconColor = textEl.color || data.themeColor;
+        const iconUrl = emailIconUrl("minimal", iconColor, textEl.icon);
         const textWidth = Math.max(1, el.w - 22);
         return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${el.w}" style="border-collapse:collapse;width:${el.w}px;">
   <tr>
@@ -203,7 +205,7 @@ export function generateFreeHtml(
       <img src="${iconUrl}" width="16" height="16" alt="${escapeHtml(textEl.icon)}" style="display:block;border:0;outline:none;text-decoration:none;" />
     </td>
     <td valign="middle" style="vertical-align:middle;padding:0;">
-      <div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:break-word;">
+      <div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:break-word;">
         ${contentHtml}
       </div>
     </td>
@@ -211,7 +213,7 @@ export function generateFreeHtml(
 </table>`;
       }
 
-      return `<div style="font-family:${fontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
+      return `<div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
   ${contentHtml}
 </div>`;
     }
@@ -257,7 +259,7 @@ export function generateFreeHtml(
 
     if (el.type === "divider") {
       const divEl = el as FreeDividerElement;
-      const dividerColor = data.themeColor || theme.border || "#E2E8F0";
+      const dividerColor = divEl.color || data.themeColor || theme.border || "#E2E8F0";
       const thickness = Math.max(1, divEl.thickness || 1);
 
       if (divEl.orientation === "vertical") {
@@ -281,17 +283,19 @@ export function generateFreeHtml(
       const btnRadius = getShapeBorderRadius(el.shape || shape, "button");
       const ctaHref = ctaEl.url?.trim() ? safeUrl(normalizeWebsite(ctaEl.url)) : "#";
       const label = ctaEl.label?.trim() ? escapeHtml(ctaEl.label.trim()) : "Button";
+      const ctaColor = ctaEl.color || themeColor;
+      const ctaFontStack = resolveEmailFont(ctaEl.fontFamily || data.fontFamily || "Inter");
 
-      const btnBg = isSolid ? themeColor : "transparent";
+      const btnBg = isSolid ? ctaColor : "transparent";
       const btnBorder = isSolid
-        ? `background-color:${themeColor};`
-        : `background-color:transparent;border:2px solid ${themeColor};`;
-      const textColor = isSolid ? "#FFFFFF" : themeColor;
+        ? `background-color:${ctaColor};`
+        : `background-color:transparent;border:2px solid ${ctaColor};`;
+      const textColor = ctaEl.textColor || (isSolid ? "#FFFFFF" : ctaColor);
 
       return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${el.w}" style="border-collapse:separate;display:inline-table;width:${el.w}px;">
   <tr>
     <td align="center" bgcolor="${btnBg}" style="${btnBorder}border-radius:${btnRadius};height:${el.h}px;text-align:center;vertical-align:middle;padding:0 12px;">
-      <a href="${ctaHref}" target="_blank" style="display:inline-block;font-family:${fontStack};font-size:12px;font-weight:bold;color:${textColor};text-decoration:none;line-height:1.2;">
+      <a href="${ctaHref}" target="_blank" style="display:inline-block;font-family:${ctaFontStack};font-size:12px;font-weight:bold;color:${textColor};text-decoration:none;line-height:1.2;">
         ${label}
       </a>
     </td>

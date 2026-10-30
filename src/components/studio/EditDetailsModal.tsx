@@ -11,7 +11,7 @@ import {
   FreeLogoElement,
   FreeBannerElement,
 } from "@/types/studio";
-import { StudioAction } from "@/lib/studio/types";
+import { StudioAction, ALLOWED_STUDIO_FONTS } from "@/lib/studio/types";
 import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import {
@@ -388,6 +388,58 @@ export default function EditDetailsModal({
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Font Family
+                  </label>
+                  <select
+                    value={(selectedElement as FreeTextElement).fontFamily || state.fontFamily || "Inter"}
+                    onChange={(e) => {
+                      dispatch({
+                        type: "UPDATE_ELEMENT",
+                        payload: {
+                          id: selectedElement.id,
+                          updates: { fontFamily: e.target.value },
+                        },
+                      });
+                    }}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
+                  >
+                    {ALLOWED_STUDIO_FONTS.map((f) => (
+                      <option key={f} value={f}>
+                        {f}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Text Color
+                  </label>
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="color"
+                      value={(selectedElement as FreeTextElement).color || "#1E293B"}
+                      onChange={(e) => {
+                        dispatch({
+                          type: "UPDATE_ELEMENT",
+                          payload: {
+                            id: selectedElement.id,
+                            updates: { color: e.target.value },
+                          },
+                        });
+                      }}
+                      className="h-8 w-8 rounded-lg border border-slate-300 cursor-pointer p-0.5"
+                    />
+                    <span className="text-xs text-slate-600 font-mono">
+                      {(selectedElement as FreeTextElement).color || "Default"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -405,9 +457,32 @@ export default function EditDetailsModal({
                   className="rounded border-slate-300 text-[#245FD4] focus:ring-[#245FD4]"
                 />
                 <label htmlFor="boldToggle" className="text-xs font-medium text-slate-700">
-                  Bold text
+                  Bold text (applies to entire box)
                 </label>
               </div>
+
+              {(selectedElement as FreeTextElement).text?.includes("\n") && (
+                <div className="pt-2 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      dispatch({
+                        type: "SPLIT_TEXT_ELEMENT",
+                        payload: { id: selectedElement.id },
+                      });
+                      onToast("Split lines into separate elements");
+                      onClose();
+                    }}
+                    className="w-full py-2 px-3 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/60 text-blue-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 12h16" />
+                      <path d="M12 4v16" />
+                    </svg>
+                    <span>Split lines into separate elements</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -456,6 +531,58 @@ export default function EditDetailsModal({
                   placeholder="https://cal.com/example (optional)"
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Font Family
+                  </label>
+                  <select
+                    value={(selectedElement as FreeCtaElement).fontFamily || state.fontFamily || "Inter"}
+                    onChange={(e) => {
+                      dispatch({
+                        type: "UPDATE_ELEMENT",
+                        payload: {
+                          id: selectedElement.id,
+                          updates: { fontFamily: e.target.value },
+                        },
+                      });
+                    }}
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
+                  >
+                    {ALLOWED_STUDIO_FONTS.map((f) => (
+                      <option key={f} value={f}>
+                        {f}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Button Color
+                  </label>
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="color"
+                      value={(selectedElement as FreeCtaElement).color || state.themeColor || "#245FD4"}
+                      onChange={(e) => {
+                        dispatch({
+                          type: "UPDATE_ELEMENT",
+                          payload: {
+                            id: selectedElement.id,
+                            updates: { color: e.target.value },
+                          },
+                        });
+                      }}
+                      className="h-8 w-8 rounded-lg border border-slate-300 cursor-pointer p-0.5"
+                    />
+                    <span className="text-xs text-slate-600 font-mono">
+                      {(selectedElement as FreeCtaElement).color || "Theme color"}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           )}

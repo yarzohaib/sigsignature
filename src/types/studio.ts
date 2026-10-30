@@ -78,6 +78,8 @@ export type FreeTextElement = FreeBase & {
   align: "left" | "center" | "right";
   bind?: "name" | "jobTitle" | "email" | "phone" | "company" | "website";
   icon?: "phone" | "email" | "website" | "address" | null;
+  fontFamily?: string;
+  color?: string;
 };
 
 export type FreeImageElement = FreeBase & {
@@ -103,12 +105,16 @@ export type FreeDividerElement = FreeBase & {
   type: "divider";
   orientation: "horizontal" | "vertical";
   thickness: number;
+  color?: string;
 };
 
 export type FreeCtaElement = FreeBase & {
   type: "cta";
   label: string;
   url: string;
+  color?: string;
+  textColor?: string;
+  fontFamily?: string;
 };
 
 export type FreeSocialElement = FreeBase & {

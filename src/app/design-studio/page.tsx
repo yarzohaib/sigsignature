@@ -34,6 +34,7 @@ import {
   StudioSignatureData,
   FreeElement,
   FreeTextElement,
+  FreeCtaElement,
   FreeImageElement,
   FreeLogoElement,
 } from "@/types/studio";
@@ -1484,6 +1485,11 @@ function DesignStudioContent() {
                   >
                     Fonts
                   </span>
+                  {selectedElement && (selectedElement.type === "text" || selectedElement.type === "cta") && (
+                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
+                      {selectedElement.type}
+                    </span>
+                  )}
                 </div>
                 <svg
                   className={`h-4 w-4 text-slate-400 transition-transform ${
@@ -1502,7 +1508,25 @@ function DesignStudioContent() {
                 <div className="mt-3.5">
                   <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Font Selection">
                     {ALLOWED_STUDIO_FONTS.map((font) => {
-                      const isSelected = state.fontFamily === font;
+                      const isElementScope =
+                        selectedElement &&
+                        (selectedElement.type === "text" || selectedElement.type === "cta");
+                      const activeFont = isElementScope
+                        ? ((selectedElement as FreeTextElement | FreeCtaElement).fontFamily || state.fontFamily)
+                        : state.fontFamily;
+                      const isSelected = activeFont === font;
+
+                      const handleFontSelect = () => {
+                        if (isElementScope) {
+                          dispatch({
+                            type: "UPDATE_ELEMENT",
+                            payload: { id: selectedElement.id, updates: { fontFamily: font } },
+                          });
+                        } else {
+                          dispatch({ type: "SET_FONT", payload: font });
+                        }
+                      };
+
                       const fontFam =
                         font === "Inter"
                           ? "'Inter', sans-serif"
@@ -1518,11 +1542,11 @@ function DesignStudioContent() {
                           role="radio"
                           aria-checked={isSelected}
                           tabIndex={0}
-                          onClick={() => dispatch({ type: "SET_FONT", payload: font })}
+                          onClick={handleFontSelect}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              dispatch({ type: "SET_FONT", payload: font });
+                              handleFontSelect();
                             }
                           }}
                           className={`flex items-center justify-between rounded-[10px] border p-2.5 cursor-pointer transition select-none ${
@@ -1613,6 +1637,11 @@ function DesignStudioContent() {
                   >
                     Colors
                   </span>
+                  {selectedElement && (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider") && (
+                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
+                      {selectedElement.type}
+                    </span>
+                  )}
                 </div>
                 <svg
                   className={`h-4 w-4 text-slate-400 transition-transform ${
@@ -1634,15 +1663,32 @@ function DesignStudioContent() {
                   </span>
                   <div className="flex flex-wrap items-center gap-2.5 mt-2">
                     {STUDIO_SOLID_COLORS.map((color) => {
-                      const isSelected = state.themeColor?.toLowerCase() === color.toLowerCase();
+                      const isElementScope =
+                        selectedElement &&
+                        (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider");
+                      const activeColor = isElementScope
+                        ? (selectedElement.color || state.themeColor)
+                        : state.themeColor;
+                      const isSelected = activeColor?.toLowerCase() === color.toLowerCase();
                       const isWhite = color.toUpperCase() === "#FFFFFF";
+
+                      const handleColorSelect = () => {
+                        if (isElementScope) {
+                          dispatch({
+                            type: "UPDATE_ELEMENT",
+                            payload: { id: selectedElement.id, updates: { color } },
+                          });
+                        } else {
+                          dispatch({ type: "SET_COLOR", payload: color });
+                        }
+                      };
 
                       return (
                         <button
                           key={color}
                           type="button"
                           aria-label={`Select color ${color}`}
-                          onClick={() => dispatch({ type: "SET_COLOR", payload: color })}
+                          onClick={handleColorSelect}
                           className={`h-6 w-6 rounded-full transition transform hover:scale-110 focus:outline-none ${
                             isWhite ? "border border-[#CBD5E1]" : ""
                           } ${
@@ -2390,6 +2436,24 @@ function DesignStudioContent() {
 
               {/* Controls: Undo, Redo, Zoom Out, Reset, Zoom In, Fit */}
               <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={!state.elements?.length}
+                  onClick={() => {
+                    dispatch({ type: "CLEAR_ELEMENTS" });
+                    setSelectedId(null);
+                  }}
+                  className={`flex h-7 items-center justify-center rounded-md border border-[#E2E8F0] bg-white px-2 text-[11px] font-semibold shadow-2xs transition ${
+                    state.elements?.length
+                      ? "text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                      : "text-slate-300 cursor-not-allowed opacity-50"
+                  }`}
+                  title="Clear all elements from the design canvas"
+                  aria-label="Clear design canvas"
+                >
+                  Clear
+                </button>
+
                 {/* Undo Button */}
                 <button
                   type="button"
@@ -2531,6 +2595,41 @@ function DesignStudioContent() {
                       payload: { id: selectedId!, updates: { size } },
                     })
                   }
+                  fontFamily={
+                    "fontFamily" in selectedElement
+                      ? ((selectedElement as FreeTextElement | FreeCtaElement).fontFamily || state.fontFamily)
+                      : undefined
+                  }
+                  onFontChange={(font) => {
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { fontFamily: font } },
+                    });
+                  }}
+                  color={
+                    "color" in selectedElement
+                      ? (selectedElement.color || state.themeColor)
+                      : undefined
+                  }
+                  onColorChange={(color) => {
+                    dispatch({
+                      type: "UPDATE_ELEMENT",
+                      payload: { id: selectedId!, updates: { color } },
+                    });
+                  }}
+                  hasMultipleLines={
+                    selectedElement.type === "text" &&
+                    Boolean((selectedElement as FreeTextElement).text?.includes("\n"))
+                  }
+                  onSplitLines={() => {
+                    if (selectedElement.type === "text") {
+                      dispatch({
+                        type: "SPLIT_TEXT_ELEMENT",
+                        payload: { id: selectedId! },
+                      });
+                      showToast("Split text into separate elements");
+                    }
+                  }}
                   icon={selectedElement.type === "text" ? selectedElement.icon : undefined}
                   onIconChange={(icon) =>
                     selectedElement.type === "text" &&

@@ -331,15 +331,6 @@ function GuideCard({ guide }: { guide: DetailedGuide }) {
       className="group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:border-[#245FD4]/50 hover:shadow-md"
     >
       <div>
-        <div className="flex items-center justify-end gap-2 mb-3">
-          <span
-            className="text-xs text-slate-400 font-body"
-            title="Estimated reading time"
-          >
-            {guide.readTime}
-          </span>
-        </div>
-
         <h3
           className="text-[15px] sm:text-base font-bold text-slate-900 leading-snug group-hover:text-[#245FD4] transition"
           style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}

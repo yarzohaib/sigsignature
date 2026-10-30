@@ -700,6 +700,9 @@ export default function FreeCanvas({
                     });
                   }}
                   onTextGrowth={handleTextGrowth}
+                  onSplitLines={(id, text) => {
+                    dispatch({ type: "SPLIT_TEXT_ELEMENT", payload: { id, text } });
+                  }}
                   isEditingSavedSignature={isEditingSavedSignature}
                   onToast={onToast}
                 />

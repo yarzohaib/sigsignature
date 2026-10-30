@@ -12,6 +12,8 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { StudioShape } from "@/types/studio";
+import { ALLOWED_STUDIO_FONTS } from "@/lib/studio/types";
+import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
 import { getSocialIconSvgDataUrl } from "@/lib/email-core";
 import { isValidWebUrl } from "@/lib/validation";
 
@@ -27,6 +29,12 @@ interface FloatingToolbarProps {
   onToggleBold?: () => void;
   size?: "sm" | "md" | "lg";
   onSizeChange?: (size: "sm" | "md" | "lg") => void;
+  fontFamily?: string;
+  onFontChange?: (font: string) => void;
+  color?: string;
+  onColorChange?: (color: string) => void;
+  hasMultipleLines?: boolean;
+  onSplitLines?: () => void;
   icon?: "phone" | "email" | "website" | "address" | null;
   onIconChange?: (icon: "phone" | "email" | "website" | "address" | null) => void;
   url?: string;
@@ -65,6 +73,12 @@ export default function FloatingToolbar({
   onToggleBold,
   size = "md",
   onSizeChange,
+  fontFamily,
+  onFontChange,
+  color,
+  onColorChange,
+  hasMultipleLines,
+  onSplitLines,
   icon,
   onIconChange,
   url,
@@ -98,7 +112,7 @@ export default function FloatingToolbar({
     () => false
   );
   const [openMenu, setOpenMenu] = useState<
-    "align" | "link" | "size" | "icon" | "thickness" | "teamField" | "shape" | null
+    "align" | "link" | "size" | "icon" | "thickness" | "teamField" | "shape" | "font" | "color" | null
   >(null);
 
   const sentinelRef = useRef<HTMLSpanElement>(null);
@@ -372,8 +386,8 @@ export default function FloatingToolbar({
               <>
                 <button
                   type="button"
-                  aria-label="Toggle bold"
-                  title="Toggle bold"
+                  aria-label="Toggle bold (entire text box)"
+                  title="Toggle bold (applies to entire box)"
                   onClick={onToggleBold}
                   className={`flex h-7 w-7 items-center justify-center rounded text-xs font-bold transition focus:outline-none focus:ring-1 focus:ring-blue-400 ${
                     bold
@@ -387,8 +401,8 @@ export default function FloatingToolbar({
                 <div className="relative">
                   <button
                     type="button"
-                    aria-label="Change text size"
-                    title="Change text size"
+                    aria-label="Change text size (entire text box)"
+                    title="Change text size (applies to entire box)"
                     onClick={() => setOpenMenu((prev) => (prev === "size" ? null : "size"))}
                     className="flex h-7 px-2 items-center gap-1 rounded text-[11px] font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400 uppercase"
                   >
@@ -423,6 +437,23 @@ export default function FloatingToolbar({
                     </div>
                   )}
                 </div>
+
+                {/* Split lines button if multiline */}
+                {hasMultipleLines && onSplitLines && (
+                  <button
+                    type="button"
+                    aria-label="Split lines into separate elements"
+                    title="Split multiline text into separate stacked elements so each line can be styled individually"
+                    onClick={onSplitLines}
+                    className="flex h-7 px-2 items-center gap-1 rounded text-blue-300 hover:text-white hover:bg-blue-600/30 text-[11px] font-semibold transition focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  >
+                    <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 12h16" />
+                      <path d="M12 4v16" />
+                    </svg>
+                    <span className="hidden sm:inline">Split lines</span>
+                  </button>
+                )}
 
                 {/* ICON SELECTOR */}
                 <div className="relative">
@@ -518,6 +549,110 @@ export default function FloatingToolbar({
                           )}
                         </button>
                       ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
+              </>
+            )}
+
+            {/* ELEMENT FONT (for text and cta) */}
+            {(elementType === "text" || elementType === "cta") && onFontChange && (
+              <>
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-label="Change font family (selected element)"
+                    title={`Font: ${fontFamily || "Default"} (selected element)`}
+                    onClick={() => setOpenMenu((prev) => (prev === "font" ? null : "font"))}
+                    className="flex h-7 px-2 items-center gap-1 rounded text-[11px] font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  >
+                    <span className="truncate max-w-[70px]">{fontFamily || "Font"}</span>
+                    <svg className="h-3 w-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  {openMenu === "font" && (
+                    <div className="absolute top-full mt-2 left-0 z-50 flex flex-col min-w-[120px] rounded-lg bg-[#0F172A] p-1 shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100">
+                      <div className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800 mb-1">
+                        Element Font
+                      </div>
+                      {ALLOWED_STUDIO_FONTS.map((f) => (
+                        <button
+                          key={f}
+                          type="button"
+                          onClick={() => {
+                            onFontChange(f);
+                            setOpenMenu(null);
+                          }}
+                          className={`flex items-center justify-between rounded px-2.5 py-1.5 text-xs text-left transition ${
+                            fontFamily === f
+                              ? "bg-[#245FD4] text-white font-bold"
+                              : "text-slate-200 hover:bg-slate-800 hover:text-white"
+                          }`}
+                        >
+                          <span>{f}</span>
+                          {fontFamily === f && (
+                            <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
+              </>
+            )}
+
+            {/* ELEMENT COLOR (for text, cta, divider) */}
+            {(elementType === "text" || elementType === "cta" || elementType === "divider") && onColorChange && (
+              <>
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-label="Change color (selected element)"
+                    title={`Color: ${color || "Default"} (selected element)`}
+                    onClick={() => setOpenMenu((prev) => (prev === "color" ? null : "color"))}
+                    className="flex h-7 px-1.5 items-center gap-1.5 rounded text-[11px] font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  >
+                    <span
+                      className="w-3.5 h-3.5 rounded-full border border-slate-400 block shrink-0"
+                      style={{ backgroundColor: color || "#245FD4" }}
+                    />
+                    <svg className="h-3 w-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  {openMenu === "color" && (
+                    <div className="absolute top-full mt-2 left-0 z-50 flex flex-col p-2 min-w-[170px] rounded-lg bg-[#0F172A] shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100">
+                      <div className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-1 mb-2">
+                        Element Color
+                      </div>
+                      <div className="grid grid-cols-5 gap-1.5">
+                        {STUDIO_SOLID_COLORS.map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            title={c}
+                            onClick={() => {
+                              onColorChange(c);
+                              setOpenMenu(null);
+                            }}
+                            className={`w-6 h-6 rounded-full border transition-transform hover:scale-110 ${
+                              color?.toLowerCase() === c.toLowerCase()
+                                ? "ring-2 ring-blue-400 ring-offset-1 ring-offset-slate-900 scale-105 border-white"
+                                : "border-slate-600 hover:border-slate-300"
+                            }`}
+                            style={{ backgroundColor: c }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
