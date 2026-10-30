@@ -19,6 +19,7 @@ import {
   SocialNetwork,
 } from "@/lib/email-core";
 import { THEME_PRESETS, getShapeBorderRadius } from "@/lib/studio/shared";
+import { validateSocialUrl, TeamMemberSocialPlatform } from "@/lib/team/socials";
 import {
   isValidEmail,
   sanitizePhone,
@@ -408,16 +409,36 @@ export default function FreeElementView({
       }
 
       case "social": {
-        const networks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork }[] = [
-          { key: "linkedin", label: "LinkedIn", network: "linkedin" },
-          { key: "twitter", label: "Twitter", network: "twitter" },
-          { key: "facebook", label: "Facebook", network: "facebook" },
-          { key: "instagram", label: "Instagram", network: "instagram" },
+        const networks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork; platform: TeamMemberSocialPlatform }[] = [
+          { key: "linkedin", label: "LinkedIn", network: "linkedin", platform: "linkedin" },
+          { key: "twitter", label: "Twitter", network: "twitter", platform: "x" },
+          { key: "facebook", label: "Facebook", network: "facebook", platform: "facebook" },
+          { key: "instagram", label: "Instagram", network: "instagram", platform: "instagram" },
         ];
 
-        const activeNetworks = networks.filter((n) => Boolean(data.socials?.[n.key]?.trim()));
-        const displayNetworks = activeNetworks.length > 0 ? activeNetworks : networks;
+        const hasAnySocial = networks.some((n) => Boolean(data.socials?.[n.key]?.trim()));
+        const activeNetworks = networks.filter((n) => {
+          const val = data.socials?.[n.key]?.trim();
+          if (!val) return false;
+          return !validateSocialUrl(n.platform, val);
+        });
+
+        // If user has not entered any social handles yet, show defaults. If user entered some but they are all invalid, show none.
+        const displayNetworks =
+          activeNetworks.length > 0
+            ? activeNetworks
+            : hasAnySocial
+            ? []
+            : networks;
         const style = data.socialIconsStyle || "filled";
+
+        if (displayNetworks.length === 0) {
+          return (
+            <div className="w-full h-full flex items-center justify-center text-slate-400 text-[10px] italic border border-dashed border-slate-300 rounded">
+              Enter valid social link
+            </div>
+          );
+        }
 
         return (
           <div className="w-full h-full flex items-center gap-1.5 select-none overflow-hidden">

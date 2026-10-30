@@ -217,4 +217,93 @@ describe("Field Validation & Sanitization System", () => {
     assert.equal(html.includes(validPhone), true);
     assert.equal(html.includes("href=\"tel:"), true);
   });
+
+  test("Team Signatures: does not render invalid social icons in HTML preview", async () => {
+    const { renderTeamMemberHtml } = await import("../src/lib/team/render");
+    const { AVAILABLE_TEMPLATES } = await import("../src/lib/templatesData");
+    const defaultData = AVAILABLE_TEMPLATES[0].defaultData;
+    const team: Parameters<typeof renderTeamMemberHtml>[0] = {
+      id: "team-1",
+      ownerId: "owner-1",
+      memberLimit: 10,
+      kind: "template",
+      templateId: "corporate-elegant",
+      templateVersion: 1,
+      name: "Acme Team",
+      data: {
+        ...defaultData,
+        templateId: "corporate-elegant",
+        fullName: "Original Owner",
+        email: "owner@acme.com",
+      },
+      members: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const memberWithInvalidSocials: Parameters<typeof renderTeamMemberHtml>[1] = {
+      id: "mem-1",
+      name: "Maryam Fatima",
+      jobTitle: "HR",
+      email: "maruim1677@gmail.com",
+      phone: "+1 555 123 4567",
+      photoUrl: "",
+      socials: [
+        { platform: "linkedin", url: "2u7812792" }, // Invalid - does not start with https://
+        { platform: "instagram", url: "98w982989298392" }, // Invalid - does not start with https://
+        { platform: "x", url: "https://x.com/acme" }, // Valid
+      ],
+      status: "draft",
+      sentAt: null,
+      acceptedAt: null,
+      tokenExpiresAt: null,
+      sendCount: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const html = renderTeamMemberHtml(team, memberWithInvalidSocials, { preview: true });
+
+    // Valid X/Twitter link should render
+    assert.match(html, /twitter|x\.com/i);
+
+    // Invalid LinkedIn and Instagram links should NOT render
+    assert.equal(html.includes("2u7812792"), false, "Invalid LinkedIn URL must not be in HTML");
+    assert.equal(html.includes("98w982989298392"), false, "Invalid Instagram URL must not be in HTML");
+    assert.equal(html.includes("linkedin"), false, "LinkedIn icon should not be rendered for invalid URL");
+    assert.equal(html.includes("instagram"), false, "Instagram icon should not be rendered for invalid URL");
+  });
+
+  test("Design Studio: does not render invalid social icons in export HTML", () => {
+    const studioData: StudioSignatureData = {
+      ...INITIAL_STUDIO_DATA,
+      elements: [
+        {
+          id: "soc-1",
+          type: "social",
+          x: 20,
+          y: 50,
+          w: 120,
+          h: 24,
+        },
+      ],
+      socials: {
+        linkedin: "2u7812792", // Invalid
+        instagram: "98w982989298392", // Invalid
+        facebook: "https://www.facebook.com/acme", // Valid
+        twitter: "",
+      },
+    };
+
+    const html = generateFreeHtml(studioData);
+
+    // Facebook should render
+    assert.match(html, /facebook/i);
+
+    // Invalid LinkedIn and Instagram should NOT render
+    assert.equal(html.includes("2u7812792"), false, "Invalid LinkedIn URL must not be in HTML");
+    assert.equal(html.includes("98w982989298392"), false, "Invalid Instagram URL must not be in HTML");
+    assert.equal(html.includes("linkedin"), false, "LinkedIn icon must not render for invalid URL");
+    assert.equal(html.includes("instagram"), false, "Instagram icon must not render for invalid URL");
+  });
 });

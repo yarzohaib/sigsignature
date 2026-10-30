@@ -2,6 +2,7 @@ import type { Team, TeamMember } from "@/types/team";
 import type { SavedSignature } from "@/types/signature";
 import type { TemplateSignatureData } from "@/types/template";
 import type { StudioSignatureData, FreeElement } from "@/types/studio";
+import { validateSocialUrl } from "./socials";
 
 /**
  * Applies a team member's specific details onto the team's template/studio design.
@@ -11,7 +12,6 @@ import type { StudioSignatureData, FreeElement } from "@/types/studio";
  */
 export function applyMemberToSignature(team: Team, member: TeamMember): SavedSignature {
   const memberSocials = Array.isArray(member.socials) ? member.socials : [];
-  const hasSocials = memberSocials.some((s) => Boolean(s.url && s.url.trim()));
 
   const nextSocials: Record<string, string> = {
     linkedin: "",
@@ -24,10 +24,16 @@ export function applyMemberToSignature(team: Team, member: TeamMember): SavedSig
   };
   for (const s of memberSocials) {
     if (s.url && s.url.trim()) {
-      const key = s.platform === "x" ? "twitter" : s.platform;
-      nextSocials[key] = s.url.trim();
+      // Validate social URL: only accept valid URLs into signature rendering
+      const err = validateSocialUrl(s.platform, s.url);
+      if (!err) {
+        const key = s.platform === "x" ? "twitter" : s.platform;
+        nextSocials[key] = s.url.trim();
+      }
     }
   }
+
+  const hasSocials = Object.values(nextSocials).some((val) => Boolean(val && val.trim()));
 
   if (team.kind === "template") {
     const templateData: TemplateSignatureData = JSON.parse(

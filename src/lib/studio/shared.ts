@@ -1,4 +1,5 @@
 import { StudioSignatureData, StudioShape } from "@/types/studio";
+import { validateSocialUrl, TeamMemberSocialPlatform } from "@/lib/team/socials";
 import {
   escapeHtml,
   safeUrl,
@@ -71,13 +72,38 @@ export function renderSocialLinksHtml(
 
   const style = data.socialIconsStyle || "filled";
 
-  // Check which networks have URLs configured
-  const activeNetworks = networks.filter((n) =>
+  const platformMap: Record<string, TeamMemberSocialPlatform> = {
+    linkedin: "linkedin",
+    twitter: "x",
+    facebook: "facebook",
+    instagram: "instagram",
+  };
+
+  // Check which networks have URLs configured that are valid
+  const activeNetworks = networks.filter((n) => {
+    const raw = (data.socials as Record<string, string | undefined>)?.[n.key]?.trim();
+    if (!raw) return false;
+    const plat = platformMap[n.key];
+    if (plat && validateSocialUrl(plat, raw)) {
+      return false;
+    }
+    return true;
+  });
+
+  // Check if user has entered ANY social URL (even if invalid)
+  const hasAnySocialEntered = networks.some((n) =>
     Boolean((data.socials as Record<string, string | undefined>)?.[n.key]?.trim())
   );
+
   // If user placed a social element on canvas but hasn't entered custom URLs yet,
-  // show the 4 standard platforms (matching what FreeElementView displays on canvas)
-  const targetNetworks = activeNetworks.length > 0 ? activeNetworks : networks.slice(0, 4);
+  // show the 4 standard platforms (matching what FreeElementView displays on canvas).
+  // But if the user entered custom URLs and they are all invalid, show nothing.
+  const targetNetworks =
+    activeNetworks.length > 0
+      ? activeNetworks
+      : hasAnySocialEntered
+      ? []
+      : networks.slice(0, 4);
 
   const cells: string[] = [];
 
