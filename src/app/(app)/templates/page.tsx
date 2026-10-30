@@ -30,6 +30,7 @@ function TemplatesContent() {
 
   // Category filtering state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Active template being customized (null = gallery view)
   const [editingTemplate, setEditingTemplate] = useState<TemplateItem | null>(null);
@@ -149,13 +150,15 @@ function TemplatesContent() {
     };
   }, [editId, isNew, templateParam, router]);
 
-  // Filter templates by category
+  // Filter templates by category and name
   const filteredTemplates = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
     return AVAILABLE_TEMPLATES.filter((tpl) => {
-      if (selectedCategory === "All") return true;
-      return tpl.category === selectedCategory;
+      const matchesCategory = selectedCategory === "All" || tpl.category === selectedCategory;
+      const matchesName = !query || tpl.name.toLowerCase().includes(query);
+      return matchesCategory && matchesName;
     });
-  }, [selectedCategory]);
+  }, [selectedCategory, searchQuery]);
 
   const handleSelectTemplate = (template: TemplateItem) => {
     const user = getStoredUser();
@@ -284,20 +287,78 @@ function TemplatesContent() {
                   </button>
                 ))}
               </div>
-
+              <div className="relative w-full sm:w-[clamp(20rem,32vw,40rem)] sm:max-w-none">
+                <svg
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search templates by name"
+                  aria-label="Search templates by name"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 shadow-2xs outline-none transition focus:border-[#245FD4] focus:ring-2 focus:ring-[#245FD4]/15"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    aria-label="Clear template search"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 transition hover:text-slate-700"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Template Cards Grid: 3 columns up to 80% zoom (1850px), 4 columns below 80% */}
-            <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 col4:grid-cols-4">
-              {filteredTemplates.map((template) => (
-                <TemplateGalleryCard
-                  key={template.id}
-                  template={template}
-                  onUseTemplate={handleSelectTemplate}
-                  onPreview={setPreviewingTemplate}
-                />
-              ))}
-            </div>
+            {filteredTemplates.length > 0 ? (
+              <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 col4:grid-cols-4">
+                {filteredTemplates.map((template) => (
+                  <TemplateGalleryCard
+                    key={template.id}
+                    template={template}
+                    onUseTemplate={handleSelectTemplate}
+                    onPreview={setPreviewingTemplate}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center shadow-2xs">
+                <h2
+                  className="text-lg font-semibold text-[#1E293B]"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  No templates found
+                </h2>
+                <p
+                  className="mt-1 text-sm text-[#64748B]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Try another name or clear your filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategory("All");
+                  }}
+                  className="mt-4 text-sm font-semibold text-[#245FD4] transition hover:text-[#1243A3] hover:underline"
+                >
+                  Clear filters
+                </button>
+              </div>
+            )}
 
             {/* Bottom "Can't find what you're looking for?" Banner matching Figma */}
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xs">
