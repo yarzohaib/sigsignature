@@ -60,25 +60,36 @@ export default function AllGuidesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
-  // Handle hash scrolling on page load (e.g. navigated from /help?category=design-templates or /help/guides#design-templates)
+  // Resolve legacy category hashes and query params without jumping down the page.
   useEffect(() => {
-    function handleHash() {
-      const hash = window.location.hash.replace("#", "");
-      if (hash) {
-        setActiveCategory(hash);
-        const element = document.getElementById(hash);
-        if (element) {
-          setTimeout(() => {
-            element.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 100);
-        }
-      }
+    function syncCategoryFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const category = params.get("category") || window.location.hash.slice(1);
+      setActiveCategory(
+        category && CATEGORIES.some((item) => item.slug === category) ? category : "all"
+      );
     }
 
-    handleHash();
-    window.addEventListener("hashchange", handleHash);
-    return () => window.removeEventListener("hashchange", handleHash);
+    syncCategoryFromUrl();
+    window.addEventListener("popstate", syncCategoryFromUrl);
+    window.addEventListener("hashchange", syncCategoryFromUrl);
+    return () => {
+      window.removeEventListener("popstate", syncCategoryFromUrl);
+      window.removeEventListener("hashchange", syncCategoryFromUrl);
+    };
   }, []);
+
+  function selectCategory(category: string) {
+    setActiveCategory(category);
+    const url = new URL(window.location.href);
+    url.hash = "";
+    if (category === "all") {
+      url.searchParams.delete("category");
+    } else {
+      url.searchParams.set("category", category);
+    }
+    window.history.pushState(null, "", `${url.pathname}${url.search}`);
+  }
 
   const filteredGuides = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -174,10 +185,7 @@ export default function AllGuidesPage() {
           <div className="mt-6 flex flex-wrap items-center gap-2 pt-6 border-t border-slate-100">
             <button
               type="button"
-              onClick={() => {
-                setActiveCategory("all");
-                window.history.pushState(null, "", "/help/guides");
-              }}
+              onClick={() => selectCategory("all")}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold transition cursor-pointer ${
                 activeCategory === "all"
                   ? "bg-[#245FD4] text-white shadow-xs"
@@ -193,12 +201,7 @@ export default function AllGuidesPage() {
                 <button
                   key={cat.slug}
                   type="button"
-                  onClick={() => {
-                    setActiveCategory(cat.slug);
-                    window.history.pushState(null, "", `/help/guides#${cat.slug}`);
-                    const el = document.getElementById(cat.slug);
-                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
+                  onClick={() => selectCategory(cat.slug)}
                   className={`rounded-full px-4 py-1.5 text-xs font-semibold transition cursor-pointer ${
                     isActive
                       ? "bg-[#245FD4] text-white shadow-xs"
@@ -214,21 +217,25 @@ export default function AllGuidesPage() {
         </div>
 
         {/* Guides List by Category Sections */}
-        {searchQuery ? (
-          /* Search results flat grid */
+        {searchQuery || activeCategory !== "all" ? (
+          /* Search/category results flat grid */
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2
                 className="text-lg font-bold text-slate-900"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Search Results ({filteredGuides.length})
+                {searchQuery
+                  ? `Search Results (${filteredGuides.length})`
+                  : `${CATEGORIES.find((category) => category.slug === activeCategory)?.title || "Category"} (${filteredGuides.length})`}
               </h2>
             </div>
             {filteredGuides.length === 0 ? (
               <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
                 <p className="text-base text-slate-600 font-body">
-                  No guides found matching &quot;{searchQuery}&quot;.
+                  {searchQuery
+                    ? `No guides found matching “${searchQuery}”.`
+                    : "No guides are available in this category yet."}
                 </p>
                 <button
                   type="button"
@@ -254,8 +261,6 @@ export default function AllGuidesPage() {
               return (
                 <section
                   key={cat.slug}
-                  id={cat.slug}
-                  className="scroll-mt-24"
                   aria-labelledby={`heading-${cat.slug}`}
                 >
                   {/* Category Section Header */}

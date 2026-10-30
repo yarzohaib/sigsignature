@@ -31,28 +31,28 @@ export interface SupportInfo {
 export const HELP_CATEGORIES: HelpCategory[] = [
   {
     slug: "getting-started",
-    title: "Getting started",
+    title: "Getting Started",
     description: "Your first signature, step by step.",
     guideCount: 4,
     icon: "rocket",
   },
   {
     slug: "design-templates",
-    title: "Design & templates",
+    title: "Design & Templates",
     description: "Make every detail your own.",
     guideCount: 6,
     icon: "palette",
   },
   {
     slug: "export-installation",
-    title: "Export & installation",
+    title: "Export & Installation",
     description: "From the editor to your inbox.",
     guideCount: 5,
     icon: "code",
   },
   {
     slug: "account-billing",
-    title: "Account & billing",
+    title: "Account & Billing",
     description: "Manage access and preferences.",
     guideCount: 4,
     icon: "user",
@@ -63,7 +63,7 @@ export const POPULAR_GUIDES: PopularGuide[] = [
   {
     id: "create-first-signature",
     title: "Create your first email signature",
-    category: "Getting started",
+    category: "Getting Started",
     readTime: "3 min read",
     href: "/help/guides/create-first-signature",
   },

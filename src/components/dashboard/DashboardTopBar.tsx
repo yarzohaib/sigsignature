@@ -249,7 +249,7 @@ export default function DashboardTopBar({
 
         {/* User Profile Dropdown */}
         <div className="relative" ref={profileDropdownRef}>
-          {optionalUser?.isLoadingUser && !optionalUser.user ? (
+          {!mounted || (optionalUser?.isLoadingUser && !optionalUser.user) ? (
             <div className="flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1" aria-hidden="true">
               <Skeleton className="h-9 w-9 rounded-full shrink-0" />
               <Skeleton className="hidden sm:inline-block h-4 w-20 rounded-md" />

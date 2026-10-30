@@ -35,11 +35,15 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
   const pathname = usePathname();
   const router = useRouter();
   const optionalUser = useOptionalUser();
-  const [signatureCount, setSignatureCount] = useState<number>(getCachedSignatureCount);
+  // Keep the server render and the browser's first hydration render identical.
+  // Browser storage is read after mount in the effect below.
+  const [signatureCount, setSignatureCount] = useState<number>(0);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+    setSignatureCount(getCachedSignatureCount());
+
     async function loadCount() {
       try {
         const repo = getSignatureRepository();

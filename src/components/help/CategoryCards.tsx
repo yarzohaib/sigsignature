@@ -95,7 +95,7 @@ export default function CategoryCards() {
           return (
             <Link
               key={cat.slug}
-              href={`/help/guides#${cat.slug}`}
+              href={`/help/guides?category=${cat.slug}`}
               aria-current={isActive ? "page" : undefined}
               className={`group flex min-h-[190px] flex-col gap-5 rounded-2xl border bg-white p-5 sm:p-6 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
                 isActive
