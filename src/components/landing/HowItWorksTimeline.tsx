@@ -186,7 +186,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                 </div>
 
                 <div className="flex-1 md:flex-none md:text-center">
-                  <h3 className="font-heading mt-0 text-lg font-semibold text-slate-900 sm:text-xl md:mt-11 md:text-xl lg:text-2xl">
+                  <h3 className="font-heading mt-0 text-lg font-semibold text-slate-900 sm:text-xl md:mt-11 md:text-[17px] lg:text-[19px] xl:text-[21px] 2xl:text-2xl leading-snug xl:whitespace-nowrap 2xl:whitespace-nowrap">
                     {item.title}
                   </h3>
                   <p className="font-body mt-2 text-sm leading-relaxed text-[#878787] sm:mt-3 sm:text-base">

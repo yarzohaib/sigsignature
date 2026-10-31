@@ -63,14 +63,14 @@ export default function ActionCards() {
           <div className="mt-3.5 sm:mt-4 lg:mt-2.5 xl:mt-3 2xl:mt-5 shrink-0">
             <Link
               href="/templates"
-              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full items-center justify-center gap-2 rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
+              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
               style={{
                 fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 letterSpacing: "0%",
               }}
             >
-              <span>Browse Templates</span>
-              <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+              <span className="whitespace-nowrap">Browse Templates</span>
+              <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
         </div>
@@ -132,14 +132,14 @@ export default function ActionCards() {
           <div className="mt-3.5 sm:mt-4 lg:mt-2.5 xl:mt-3 2xl:mt-5 shrink-0">
             <Link
               href="/design-studio"
-              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full items-center justify-center gap-2 rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
+              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
               style={{
                 fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 letterSpacing: "0%",
               }}
             >
-              <span>Start From Scratch</span>
-              <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+              <span className="whitespace-nowrap">Start From Scratch</span>
+              <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
         </div>

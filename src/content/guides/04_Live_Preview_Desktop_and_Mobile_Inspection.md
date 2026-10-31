@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Test Email Signature Mobile & Desktop Preview | SigSignature
+* **Page Meta Title:** Test Email Signature Mobile & Desktop Preview | Sig Signature
 * **Meta Description:** Learn how to test your email signature in desktop (600px) and mobile (360px) viewports inside the SigSignature editor before exporting.
 * **Primary Target Keyword:** `test email signature mobile preview`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

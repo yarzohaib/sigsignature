@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Upgrade SigSignature Plan: Pro & Team Features | SigSignature
+* **Page Meta Title:** Upgrade SigSignature Plan: Pro & Team Features | Sig Signature
 * **Meta Description:** Compare Free, Pro, and Team plans on SigSignature. Unlock unlimited signature slots, custom branding, analytics, and centralized team deployment.
 * **Primary Target Keyword:** `sigsignature pricing pro team upgrade`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

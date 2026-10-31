@@ -86,17 +86,36 @@ export default function SendConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs overflow-y-auto cursor-pointer"
       role="dialog"
       aria-modal="true"
       aria-labelledby="send-modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !isSending) {
+          onClose();
+        }
+      }}
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl transition"
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl transition cursor-default"
       >
-        <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#245FD4]">
+        {/* Close Button */}
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isSending}
+          className="absolute top-4 right-4 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+          aria-label="Close dialog"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div className="flex items-start gap-4 pr-6">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#245FD4] mt-0.5">
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
@@ -106,13 +125,13 @@ export default function SendConfirmModal({
           <div className="flex-1">
             <h3
               id="send-modal-title"
-              className="text-base font-bold text-[#0B1A3D]"
+              className="text-base font-bold text-[#0B1A3D] leading-snug"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               {isResend ? `Resend signature to ${member.name}?` : `Send signature to ${member.name}?`}
             </h3>
             <p
-              className="mt-1 text-xs sm:text-sm text-[#64748B] leading-relaxed"
+              className="mt-1.5 text-xs sm:text-sm text-[#64748B] leading-relaxed"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
               They will get an email at <span className="font-semibold text-[#0B1A3D]">{member.email}</span> with
@@ -129,7 +148,7 @@ export default function SendConfirmModal({
         )}
 
         {/* Actions */}
-        <div className="mt-6 flex items-center justify-end gap-3 pt-3 border-t border-[#F1F5F9]">
+        <div className="mt-5 flex items-center justify-end gap-3 pt-4 border-t border-[#F1F5F9]">
           <button
             type="button"
             onClick={onClose}

@@ -5,18 +5,18 @@ import SectionBadge from "@/components/landing/SectionBadge";
 import { BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | SigSignature",
+  title: "Privacy Policy | Sig Signature",
   description:
     "Learn how Sig Signature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
   alternates: {
     canonical: "https://www.sigsignature.com/privacy",
   },
   openGraph: {
-    title: "Privacy Policy | SigSignature",
+    title: "Privacy Policy | Sig Signature",
     description:
       "Learn how SigSignature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
     url: "https://www.sigsignature.com/privacy",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     images: [
       {
         url: "https://www.sigsignature.com/og-image.png",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Privacy Policy | SigSignature",
+    title: "Privacy Policy | Sig Signature",
     description:
       "Learn how SigSignature and The Nevon collect, use, and protect your personal data.",
     images: ["https://www.sigsignature.com/og-image.png"],
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
+        <section className="relative overflow-hidden pt-12 pb-4 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-8">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
         </section>
 
         {/* POLICY SECTIONS */}
-        <section className="py-8 pb-20 sm:pb-24">
+        <section className="pt-4 pb-20 sm:pb-24">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl space-y-8">
               {/* 1. Information We Collect */}
@@ -232,8 +232,11 @@ export default function PrivacyPage() {
                   </ul>
                   <p className="pt-2">
                     To exercise any of these rights, manage your account directly via Settings or contact our Data
-                    Privacy team at:{" "}
-                    <a href="mailto:team@thenevon.com" className="font-semibold text-[#1243A3] underline underline-offset-4 decoration-1 hover:text-[#245FD4]">
+                    Privacy team at{" "}
+                    <a
+                      href="mailto:team@thenevon.com"
+                      className="font-semibold text-[#1243A3] underline underline-offset-4 decoration-blue-300 transition-colors hover:text-[#245FD4] hover:decoration-[#245FD4]"
+                    >
                       team@thenevon.com
                     </a>
                     .

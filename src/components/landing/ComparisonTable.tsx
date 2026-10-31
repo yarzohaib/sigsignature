@@ -61,11 +61,11 @@ export default function ComparisonTable({ rows }: ComparisonTableProps) {
             </h3>
             <div className="grid grid-cols-2 gap-1.5">
               <div className="min-h-[78px] rounded-[14px] bg-[#F1F2F5] p-2.5">
-                <span className="block font-body text-[9px] font-medium text-slate-500">Developer</span>
+                <span className="block font-body text-[9px] font-medium text-slate-500">Custom Development</span>
                 <span className="mt-1 block font-heading text-[12px] font-semibold leading-[1.3] text-[#25324C]">{row.developer}</span>
               </div>
               <div className="min-h-[78px] rounded-[14px] bg-gradient-to-br from-[#315EEA] to-[#163B9D] p-2.5">
-                <span className="block font-body text-[9px] font-medium text-white/85">Sig Signature</span>
+                <span className="block font-body text-[9px] font-medium text-white/85">SigSignature</span>
                 <span className="mt-1 block font-heading text-[12px] font-semibold leading-[1.3] text-white">{row.sigSignature}</span>
               </div>
             </div>
@@ -101,20 +101,20 @@ export default function ComparisonTable({ rows }: ComparisonTableProps) {
                   scope="col"
                   className="w-[26%] border-r border-b border-[#D7D7D7] bg-white px-6 py-6 font-heading text-lg font-semibold text-slate-900 sm:px-8 sm:py-7 lg:py-8 lg:text-[28px] leading-[100%] tracking-normal"
                 >
-                  Criteria
+                  Feature
                 </th>
                 <th
                   scope="col"
                   className="w-[37%] border-r border-b border-[#D7D7D7] bg-white px-6 py-6 font-heading text-lg font-semibold text-slate-900 sm:px-8 sm:py-7 lg:py-8 lg:text-[28px] leading-[100%] tracking-normal"
                 >
-                  Hiring a Developer
+                  Custom Development
                 </th>
                 <th
                   scope="col"
                   style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.35)" }}
                   className="relative z-10 w-[37%] border-b border-white/35 bg-transparent px-6 py-6 font-heading text-lg font-semibold text-white sm:px-8 sm:py-7 lg:py-8 lg:text-[28px] leading-[100%] tracking-normal"
                 >
-                  The Sig Signature
+                  SigSignature
                 </th>
               </tr>
             </thead>

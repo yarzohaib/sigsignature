@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Fix Email Signature Image Sizing & Spacing Bugs | SigSignature
+* **Page Meta Title:** Fix Email Signature Image Sizing & Spacing Bugs | Sig Signature
 * **Meta Description:** Complete diagnostic guide to solving blurry photos, giant Outlook logos, circular crop distortion, and unwanted table gaps in email signatures.
 * **Primary Target Keyword:** `fix email signature image size outlook`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

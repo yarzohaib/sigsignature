@@ -8,7 +8,6 @@ import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { signupUser, startOAuth, type OAuthProvider } from "@/app/lib/api";
-import { getCanonicalLegalUrl } from "@/lib/seo";
 
 function getOAuthErrorMessage(code: string | null): string | null {
   if (!code) return null;
@@ -453,7 +452,7 @@ function SignupForm() {
             <label htmlFor="signup-agree-terms" className="cursor-pointer select-none">
               I agree with the{" "}
               <Link
-                href={getCanonicalLegalUrl("/terms")}
+                href="/terms"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
@@ -463,7 +462,7 @@ function SignupForm() {
               </Link>{" "}
               &amp;{" "}
               <Link
-                href={getCanonicalLegalUrl("/privacy")}
+                href="/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}

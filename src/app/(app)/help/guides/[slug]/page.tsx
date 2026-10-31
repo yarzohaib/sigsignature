@@ -19,16 +19,16 @@ export async function generateMetadata({
 
   if (!guide) {
     return {
-      title: "Guide Not Found | SigSignature",
+      title: "Guide Not Found | Sig Signature",
       description: "The requested email signature guide could not be found.",
     };
   }
 
   return {
-    title: `${guide.title} | SigSignature Help`,
+    title: `${guide.title} | Sig Signature Help`,
     description: guide.subtitle,
     openGraph: {
-      title: `${guide.title} | SigSignature Help`,
+      title: `${guide.title} | Sig Signature Help`,
       description: guide.subtitle,
       type: "article",
     },

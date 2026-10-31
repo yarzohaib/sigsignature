@@ -100,7 +100,21 @@ export function markOnboardingSeen(userId: string) {
 export function hasAcknowledgedOnboarding(userId: string): boolean {
   if (typeof window === "undefined" || !userId) return false;
   try {
-    return localStorage.getItem(COMPLETED_PREFIX + userId) === "1";
+    if (localStorage.getItem(COMPLETED_PREFIX + userId) === "1") return true;
+
+    // Also hide if user has already created signatures or marked onboarding seen
+    const lifetimeRaw = localStorage.getItem("sig_lifetime_signatures_count");
+    if (lifetimeRaw && parseInt(lifetimeRaw, 10) > 0) return true;
+
+    const countRaw = localStorage.getItem("sig_signatures_count");
+    if (countRaw && parseInt(countRaw, 10) > 0) return true;
+
+    const user = getStoredUser();
+    if (user && user.id === userId && user.onboardingSeenAt) {
+      return true;
+    }
+
+    return false;
   } catch {
     return false;
   }

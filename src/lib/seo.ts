@@ -48,7 +48,7 @@ export function getSiteMetadata(
         },
     title: {
       template: "%s",
-      default: "SigSignature | Professional Email Signature Generator",
+      default: "Sig Signature | Professional Email Signature Generator",
     },
     description:
       "SigSignature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
@@ -64,14 +64,14 @@ export function getSiteMetadata(
     ],
     authors: [{ name: "The Nevon", url: "https://www.thenevon.com" }],
     creator: "The Nevon",
-    publisher: "SigSignature",
+    publisher: "Sig Signature",
     category: "Productivity",
     openGraph: {
       type: "website",
       locale: "en_US",
       url: "https://www.sigsignature.com",
-      siteName: "SigSignature",
-      title: "SigSignature | Professional HTML Email Signature Generator",
+      siteName: "Sig Signature",
+      title: "Sig Signature | Professional HTML Email Signature Generator",
       description:
         "Design deliverability-focused, client-tested email signatures in under 2 minutes. Free templates for Gmail, Outlook, Apple Mail.",
       images: [
@@ -79,13 +79,13 @@ export function getSiteMetadata(
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: "SigSignature Live Email Signature Generator",
+          alt: "Sig Signature Live Email Signature Generator",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "SigSignature | Professional HTML Email Signature Generator",
+      title: "Sig Signature | Professional HTML Email Signature Generator",
       description:
         "Design deliverability-focused, client-tested email signatures in under 2 minutes. Free templates for Gmail, Outlook, Apple Mail.",
       images: ["/og-image.png"],

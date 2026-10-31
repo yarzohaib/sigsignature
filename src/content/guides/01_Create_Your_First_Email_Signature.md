@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Create Your First Email Signature | SigSignature Help Center
+* **Page Meta Title:** Create Your First Email Signature | Sig Signature Help Center
 * **Meta Description:** Step-by-step walkthrough to design, customize, and preview a bulletproof HTML email signature tailored for your personal brand or team.
 * **Primary Target Keyword:** `create email signature`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Install Signature in Yahoo Mail, Thunderbird & Webmail | SigSignature
+* **Page Meta Title:** Install Signature in Yahoo Mail, Thunderbird & Webmail | Sig Signature
 * **Meta Description:** How to install your HTML email signature into Yahoo Mail, Mozilla Thunderbird, ProtonMail, and cPanel Roundcube webmail without broken tables.
 * **Primary Target Keyword:** `install signature yahoo mail thunderbird`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

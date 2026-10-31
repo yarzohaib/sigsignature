@@ -50,30 +50,22 @@ export default function SignaturePreview({ className = "", floating = false }: S
           >
             Book a call ›
           </span>
-          <a
-            href="https://www.linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            title="LinkedIn"
-            className={`group inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] transition-transform duration-150 hover:scale-110 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand ${
+          <div
+            aria-hidden="true"
+            className={`inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] select-none ${
               floating ? "animate-float-slow-2" : ""
             }`}
           >
             <LinkedInBrandIcon />
-          </a>
-          <a
-            href="https://x.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="X (formerly Twitter)"
-            title="X (formerly Twitter)"
-            className={`group inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] transition-transform duration-150 hover:scale-110 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand ${
+          </div>
+          <div
+            aria-hidden="true"
+            className={`inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] select-none ${
               floating ? "animate-float-slow-2" : ""
             }`}
           >
             <XBrandIcon />
-          </a>
+          </div>
         </div>
       </div>
 

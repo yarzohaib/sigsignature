@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Team Workspace: Members, Roles & Standard Signatures | SigSignature
+* **Page Meta Title:** Team Workspace: Members, Roles & Standard Signatures | Sig Signature
 * **Meta Description:** Centralize your company's email branding. Learn how to invite team members, assign Admin/Member roles, and deploy standardized signatures across your organization.
 * **Primary Target Keyword:** `manage team email signatures workspace`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

@@ -149,15 +149,13 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
         {/* Prerequisites box */}
         {guide.prerequisites && guide.prerequisites.length > 0 && (
           <div className="mt-6 rounded-xl border border-blue-100 bg-[#EFF6FF] p-4 sm:p-5">
-            <div className="flex items-center gap-2 text-sm font-bold text-brand mb-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="16" x2="12" y2="12" />
-                <line x1="12" y1="8" x2="12.01" y2="8" />
+            <div className="flex items-center gap-2.5 text-base font-semibold text-brand mb-2.5">
+              <svg className="w-5 h-5 shrink-0 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Prerequisites</span>
             </div>
-            <ul className="space-y-1.5 text-sm text-slate-700 list-disc list-inside font-body">
+            <ul className="space-y-2 text-sm sm:text-[15px] text-slate-700 list-disc list-inside font-body">
               {guide.prerequisites.map((req, i) => (
                 <li key={i} className="leading-relaxed font-normal">
                   {renderFormattedText(req)}
@@ -260,7 +258,7 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
 
                       {step.callout && (
                         <div
-                          className={`mt-3.5 rounded-lg p-3 text-xs sm:text-sm font-body ${
+                          className={`mt-3.5 rounded-lg p-3 sm:p-3.5 text-xs sm:text-sm font-body ${
                             step.callout.type === "warning"
                               ? "border border-amber-200 bg-amber-50 text-amber-900"
                               : step.callout.type === "tip"
@@ -268,11 +266,26 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
                               : "border border-blue-200 bg-blue-50 text-blue-900"
                           }`}
                         >
-                          <div className="flex items-start gap-2">
-                            <span className="font-bold shrink-0 uppercase tracking-wide text-[11px]">
-                              {step.callout.type}:
-                            </span>
-                            <span>{cleanInlineText(step.callout.text)}</span>
+                          <div className="flex items-start gap-2.5">
+                            {step.callout.type === "tip" ? (
+                              <svg className="h-4 w-4 shrink-0 text-emerald-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.002 6.002 0 00-4-5.659V5a2 2 0 114 0v2.091A6.002 6.002 0 0012 12.75z" />
+                              </svg>
+                            ) : step.callout.type === "warning" ? (
+                              <svg className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                              </svg>
+                            ) : (
+                              <svg className="h-4 w-4 shrink-0 text-blue-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                              </svg>
+                            )}
+                            <div className="flex flex-wrap items-baseline gap-1.5 leading-relaxed">
+                              <span className="font-bold shrink-0 uppercase tracking-wide text-[11px]">
+                                {step.callout.type}:
+                              </span>
+                              <span>{cleanInlineText(step.callout.text)}</span>
+                            </div>
                           </div>
                         </div>
                       )}

@@ -332,8 +332,30 @@ function MySignaturesContent() {
 
       {/* Copy to Team Confirmation Modal */}
       {copyToTeamSig && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-150 border border-slate-100">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150 cursor-pointer"
+          onClick={() => {
+            if (!isCopyingToTeam) setCopyToTeamSig(null);
+          }}
+        >
+          <div
+            className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-150 border border-slate-100 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top-Right Close Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (!isCopyingToTeam) setCopyToTeamSig(null);
+              }}
+              disabled={isCopyingToTeam}
+              className="absolute top-4 right-4 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+              aria-label="Close dialog"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
             {isCheckingTeam ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <div className="h-8 w-8 animate-spin rounded-full border-3 border-[#245FD4] border-t-transparent" />

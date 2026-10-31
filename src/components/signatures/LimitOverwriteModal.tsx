@@ -20,7 +20,7 @@ export default function LimitOverwriteModal({
   isOpen,
   onClose,
   title = "Signature Limit Reached (3/3)",
-  description = "Free accounts can create up to 3 email signatures in total. You have used all 3 free signature slots. Deleting signatures does not restore creation slots.",
+  description,
   infoText = "You can continue editing your existing signatures at any time. To create additional signatures or share with your team, upgrade to Pro.",
   secondaryLinkText = "My Signatures",
   secondaryLinkHref = "/signatures",
@@ -46,7 +46,7 @@ export default function LimitOverwriteModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[440px] max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 transition-all transform scale-100 animate-in zoom-in-95 duration-150 text-center"
+        className="w-full max-w-[440px] max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 sm:p-7 shadow-2xl border border-slate-100 transition-all transform scale-100 animate-in zoom-in-95 duration-150 text-center"
         onClick={(e) => e.stopPropagation()}
         style={{
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
@@ -67,20 +67,30 @@ export default function LimitOverwriteModal({
           {title}
         </h3>
 
-        <p
-          className="mt-2 text-xs leading-relaxed text-[#64748B]"
-          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-        >
-          {description}
-        </p>
-
-        <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200/70 p-3 text-left">
+        {description && (
           <p
-            className="text-[11px] text-slate-600 leading-normal"
+            className="mt-2 text-xs leading-relaxed text-[#64748B]"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
-            💡 <span className="font-semibold text-slate-800">{infoText}</span>
+            {description}
           </p>
+        )}
+
+        {/* Modernized Info Callout Card */}
+        <div className="mt-5 rounded-2xl bg-[#EFF6FF]/70 border border-blue-100 p-4 sm:p-4.5 text-left">
+          <div className="flex items-start gap-3">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-[#245FD4]">
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.002 6.002 0 00-4-5.659V5a2 2 0 114 0v2.091A6.002 6.002 0 0012 12.75z" />
+              </svg>
+            </div>
+            <p
+              className="text-xs sm:text-[13px] leading-relaxed text-slate-700 font-body"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              {infoText}
+            </p>
+          </div>
         </div>
 
         {/* Action Buttons */}
@@ -108,7 +118,7 @@ export default function LimitOverwriteModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-xl border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-500 shadow-2xs transition hover:bg-slate-50 hover:text-slate-700 text-center"
+              className="flex-1 rounded-xl border border-slate-200 bg-white py-2 px-3 text-xs font-semibold text-slate-500 shadow-2xs transition hover:bg-slate-50 hover:text-slate-700 text-center cursor-pointer"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               Close

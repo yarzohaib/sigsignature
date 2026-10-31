@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Email Signature Templates | SigSignature",
+  title: "Email Signature Templates | Sig Signature",
   description:
     "Explore professionally designed email signature templates. Choose from Minimal, Corporate, Creative, and Bold aesthetics with 1-click HTML copy.",
   alternates: {
     canonical: "https://www.sigsignature.com/templates",
   },
   openGraph: {
-    title: "Email Signature Templates | SigSignature",
+    title: "Email Signature Templates | Sig Signature",
     description:
       "Explore professionally designed email signature templates. Choose from Minimal, Corporate, Creative, and Bold aesthetics.",
     url: "https://www.sigsignature.com/templates",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Email Signature Templates | SigSignature",
+    title: "Email Signature Templates | Sig Signature",
     description:
       "Explore professionally designed email signature templates. Choose from Minimal, Corporate, Creative, and Bold aesthetics.",
     images: ["/og-image.png"],

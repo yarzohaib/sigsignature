@@ -10,24 +10,24 @@ import {
 } from "./fonts";
 
 export const metadata: Metadata = {
-  title: "Email Signature Design Studio | SigSignature",
+  title: "Email Signature Design Studio | Sig Signature",
   description:
     "Design, customize, and preview your professional HTML email signature with real-time editing and multi-client compilation.",
   alternates: {
     canonical: "https://www.sigsignature.com/design-studio",
   },
   openGraph: {
-    title: "Email Signature Design Studio | SigSignature",
+    title: "Email Signature Design Studio | Sig Signature",
     description:
       "Design, customize, and preview your professional HTML email signature with real-time editing and multi-client compilation.",
     url: "https://www.sigsignature.com/design-studio",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Email Signature Design Studio | SigSignature",
+    title: "Email Signature Design Studio | Sig Signature",
     description:
       "Design, customize, and preview your professional HTML email signature with real-time editing and multi-client compilation.",
     images: ["/og-image.png"],

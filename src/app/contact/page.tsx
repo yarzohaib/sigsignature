@@ -6,18 +6,18 @@ import ContactForm from "@/components/contact/ContactForm";
 import { ContactPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Contact Us | SigSignature",
+  title: "Contact Us | Sig Signature",
   description:
     "Get in touch with the Sig Signature team for technical support, business partnerships, or product inquiries.",
   alternates: {
     canonical: "https://www.sigsignature.com/contact",
   },
   openGraph: {
-    title: "Contact Us | SigSignature",
+    title: "Contact Us | Sig Signature",
     description:
       "Get in touch with the SigSignature team for technical support, custom template designs, and corporate partnership inquiries.",
     url: "https://www.sigsignature.com/contact",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     images: [
       {
         url: "https://www.sigsignature.com/og-image.png",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contact Us | SigSignature",
+    title: "Contact Us | Sig Signature",
     description:
       "Get in touch with the SigSignature team for technical support and product inquiries.",
     images: ["https://www.sigsignature.com/og-image.png"],
@@ -46,7 +46,7 @@ const contactChannels = [
     actionText: "Contact Support Team",
     icon: (
       <svg
-        className="h-6 w-6 text-white"
+        className="h-6 w-6 shrink-0 aspect-square text-white"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth="2"
@@ -68,7 +68,7 @@ const contactChannels = [
     actionText: "Contact Design Team",
     icon: (
       <svg
-        className="h-6 w-6 text-white"
+        className="h-6 w-6 shrink-0 aspect-square text-white"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth="2"
@@ -90,7 +90,7 @@ const contactChannels = [
     actionText: "Contact Executive Office",
     icon: (
       <svg
-        className="h-6 w-6 text-white"
+        className="h-6 w-6 shrink-0 aspect-square text-white"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth="2"
@@ -112,7 +112,7 @@ const contactChannels = [
     actionText: "Contact HR Team",
     icon: (
       <svg
-        className="h-6 w-6 text-white"
+        className="h-6 w-6 shrink-0 aspect-square text-white"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth="2"
@@ -152,10 +152,10 @@ export default function ContactPage() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-12 pb-6 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-8">
+        <section className="relative overflow-hidden pt-6 pb-4 sm:pt-8 sm:pb-5 lg:pt-10 lg:pb-6">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
-              <div className="mb-6 flex items-center justify-center">
+              <div className="mb-4 sm:mb-5 flex items-center justify-center">
                 <SectionBadge label="CONTACT US" />
               </div>
 
@@ -188,7 +188,7 @@ export default function ContactPage() {
                       style={{
                         background: "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
                       }}
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl shadow-xs"
+                      className="flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-2xl shadow-xs"
                     >
                       {item.icon}
                     </div>

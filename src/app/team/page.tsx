@@ -6,18 +6,18 @@ import SectionBadge from "@/components/landing/SectionBadge";
 import { TeamPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Meet Our Team | SigSignature",
+  title: "Meet Our Team | Sig Signature",
   description:
     "The builders, designers, and problem solvers behind Sig Signature and The Nevon.",
   alternates: {
     canonical: "https://www.sigsignature.com/team",
   },
   openGraph: {
-    title: "Meet Our Team | SigSignature",
+    title: "Meet Our Team | Sig Signature",
     description:
       "Meet the engineers, designers, and search strategists building SigSignature at The Nevon.",
     url: "https://www.sigsignature.com/team",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     images: [
       {
         url: "https://www.sigsignature.com/og-image.png",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Meet Our Team | SigSignature",
+    title: "Meet Our Team | Sig Signature",
     description:
       "Meet the engineers, designers, and search strategists building SigSignature at The Nevon.",
     images: ["https://www.sigsignature.com/og-image.png"],

@@ -5,18 +5,18 @@ import SectionBadge from "@/components/landing/SectionBadge";
 import { BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | SigSignature",
+  title: "Terms of Service | Sig Signature",
   description:
     "Terms of Service governing the use of Sig Signature web application and services provided by The Nevon.",
   alternates: {
     canonical: "https://www.sigsignature.com/terms",
   },
   openGraph: {
-    title: "Terms of Service | SigSignature",
+    title: "Terms of Service | Sig Signature",
     description:
       "Terms of Service governing the use of SigSignature email signature generator provided by The Nevon.",
     url: "https://www.sigsignature.com/terms",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     images: [
       {
         url: "https://www.sigsignature.com/og-image.png",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Terms of Service | SigSignature",
+    title: "Terms of Service | Sig Signature",
     description: "Terms of Service governing the use of SigSignature provided by The Nevon.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
@@ -134,8 +134,11 @@ const termsSections = [
     content: (
       <p>
         These Terms shall be governed by and construed in accordance with applicable laws. Inquiries regarding
-        these Terms should be sent to:{" "}
-        <a href="mailto:sardar@thenevon.com" className="font-semibold text-[#1243A3] underline">
+        these Terms should be sent to{" "}
+        <a
+          href="mailto:sardar@thenevon.com"
+          className="font-semibold text-[#1243A3] underline underline-offset-4 decoration-blue-300 transition-colors hover:text-[#245FD4] hover:decoration-[#245FD4]"
+        >
           sardar@thenevon.com
         </a>
         .
@@ -166,7 +169,7 @@ export default function TermsPage() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
+        <section className="relative overflow-hidden pt-12 pb-4 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-8">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">
@@ -196,7 +199,7 @@ export default function TermsPage() {
         </section>
 
         {/* TERMS SECTIONS */}
-        <section className="py-8 pb-20 sm:pb-24">
+        <section className="pt-4 pb-20 sm:pb-24">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl space-y-8">
               {termsSections.map((sec) => (

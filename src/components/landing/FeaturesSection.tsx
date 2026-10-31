@@ -18,7 +18,7 @@ export default function FeaturesSection() {
             <SectionBadge label="FEATURES" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
+            <h2 className="mx-auto max-w-[1500px] font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
               Tools to Create and Customize Your{" "}
               <span className="text-[#1243A3]">Email Signature</span>
             </h2>

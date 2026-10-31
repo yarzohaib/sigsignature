@@ -50,6 +50,13 @@ export default function DashboardTopBar({
     "Member";
 
   const resolvedUserEmail = userEmail || optionalUser?.displayEmail || storedUser?.email || "";
+  const userInitials = resolvedUserName
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("") || "M";
 
   // Avatar state resolved from props or localStorage, synchronized across pages
   const [storedAvatar, setStoredAvatar] = useState<string | null>(() => getStoredAvatarUrl());
@@ -65,7 +72,6 @@ export default function DashboardTopBar({
 
   const resolvedAvatar = avatarUrl || optionalUser?.avatarUrl || storedAvatar;
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
-  const displaySrc = resolvedAvatar && failedUrl !== resolvedAvatar ? resolvedAvatar : "/placeholder-avatar.svg";
 
   // Check if onboarding setup guide has been acknowledged / completed
   const guideUserId = optionalUser?.user?.id || getStoredUser()?.id || "";
@@ -247,8 +253,8 @@ export default function DashboardTopBar({
           )}
         </div>
 
-        {/* User Profile Dropdown */}
-        <div className="relative" ref={profileDropdownRef}>
+        {/* User Profile Dropdown (Hidden on mobile < md to prevent visual clutter alongside hamburger menu) */}
+        <div className="relative hidden md:block" ref={profileDropdownRef}>
           {!mounted || (optionalUser?.isLoadingUser && !optionalUser.user) ? (
             <div className="flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1" aria-hidden="true">
               <Skeleton className="h-9 w-9 rounded-full shrink-0" />
@@ -264,17 +270,21 @@ export default function DashboardTopBar({
               title="User menu"
               aria-label="User menu"
             >
-              {/* User Avatar: uses uploaded avatar preview or placeholder */}
-              <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 transition group-hover:ring-[#245FD4]">
-                <Image
-                  src={displaySrc}
-                  alt={resolvedUserName || "Profile avatar"}
-                  width={66}
-                  height={66}
-                  unoptimized
-                  onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
-                  className="h-full w-full object-cover"
-                />
+              {/* Use the uploaded avatar when available, otherwise show the user's initials. */}
+              <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full ring-1 ring-slate-200 bg-slate-100 text-[11px] font-bold text-slate-600 transition group-hover:ring-[#245FD4]">
+                {resolvedAvatar && failedUrl !== resolvedAvatar ? (
+                  <Image
+                    src={resolvedAvatar}
+                    alt={resolvedUserName || "Profile avatar"}
+                    width={64}
+                    height={64}
+                    unoptimized
+                    onError={() => setFailedUrl(resolvedAvatar)}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span aria-hidden="true">{userInitials}</span>
+                )}
               </div>
 
               {/* User Name matching typography from Figma */}
@@ -312,16 +322,20 @@ export default function DashboardTopBar({
               {/* User Header */}
               <div className="px-3.5 py-3 border-b border-slate-100 bg-slate-50/60">
                 <div className="flex items-center gap-2.5">
-                  <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-white">
-                    <Image
-                      src={displaySrc}
-                      alt={resolvedUserName || "Profile photo"}
-                      width={32}
-                      height={32}
-                      unoptimized
-                      onError={() => resolvedAvatar && setFailedUrl(resolvedAvatar)}
-                      className="h-full w-full object-cover"
-                    />
+                  <div className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-slate-100 text-[10px] font-bold text-slate-600">
+                    {resolvedAvatar && failedUrl !== resolvedAvatar ? (
+                      <Image
+                        src={resolvedAvatar}
+                        alt={resolvedUserName || "Profile photo"}
+                        width={28}
+                        height={28}
+                        unoptimized
+                        onError={() => setFailedUrl(resolvedAvatar)}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span aria-hidden="true">{userInitials}</span>
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p

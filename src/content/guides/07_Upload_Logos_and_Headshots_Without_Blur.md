@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Crisp Retina Logos & Headshots for Email Signatures | SigSignature
+* **Page Meta Title:** Crisp Retina Logos & Headshots for Email Signatures | Sig Signature
 * **Meta Description:** How to upload headshots and company logos at 2x Retina resolution with explicit HTML width/height attributes so they never appear blurry or oversized.
 * **Primary Target Keyword:** `crisp email signature logo retina`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

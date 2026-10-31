@@ -38,7 +38,13 @@ export default function ProfileCard({
 }: ProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
-  const displaySrc = avatarUrl && failedUrl !== avatarUrl ? avatarUrl : "/placeholder-avatar.svg";
+  const hasValidAvatar = Boolean(avatarUrl && failedUrl !== avatarUrl);
+
+  const userInitials = [firstName, lastName]
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p.charAt(0).toUpperCase())
+    .join("") || "U";
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,16 +85,20 @@ export default function ProfileCard({
 
       {/* Avatar Section */}
       <div className="py-5 flex items-center gap-4">
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100 shadow-2xs">
-          <Image
-            src={displaySrc}
-            alt={firstName ? `${firstName} avatar` : "Profile avatar"}
-            width={56}
-            height={56}
-            unoptimized
-            onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-            className="h-full w-full object-cover"
-          />
+        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 shadow-2xs text-base font-bold text-slate-700">
+          {hasValidAvatar ? (
+            <Image
+              src={avatarUrl!}
+              alt={firstName ? `${firstName} avatar` : "Profile avatar"}
+              width={56}
+              height={56}
+              unoptimized
+              onError={() => avatarUrl && setFailedUrl(avatarUrl)}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span aria-hidden="true">{userInitials}</span>
+          )}
           {isUploadingAvatar && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-2xs">
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />

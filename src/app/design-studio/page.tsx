@@ -1305,10 +1305,10 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("elements")}
                 aria-expanded={openSections.elements}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="12" r="10" />
                       <line x1="12" y1="8" x2="12" y2="16" />
@@ -1316,14 +1316,14 @@ function DesignStudioContent() {
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Add Elements
                   </span>
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.elements ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -1473,14 +1473,14 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("fonts")}
                 aria-expanded={openSections.fonts}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] text-xs font-bold shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] text-xs font-bold shadow-2xs transition group-hover:scale-105">
                     F
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Fonts
@@ -1492,7 +1492,7 @@ function DesignStudioContent() {
                   )}
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.fonts ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -1623,16 +1623,16 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("colors")}
                 aria-expanded={openSections.colors}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.97-4.48-9-10-9z" />
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Colors
@@ -1644,7 +1644,7 @@ function DesignStudioContent() {
                   )}
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.colors ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -1739,16 +1739,16 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("shapes")}
                 aria-expanded={openSections.shapes}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="3" width="18" height="18" rx="4" />
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Shapes
@@ -1760,7 +1760,7 @@ function DesignStudioContent() {
                   )}
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.shapes ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -1819,23 +1819,23 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("socials")}
                 aria-expanded={openSections.socials}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Social Icons
                   </span>
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.socials ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -1914,10 +1914,10 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("themes")}
                 aria-expanded={openSections.themes}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="3" width="18" height="18" rx="2" />
                       <line x1="3" y1="9" x2="21" y2="9" />
@@ -1925,14 +1925,14 @@ function DesignStudioContent() {
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Themes
                   </span>
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.themes ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -1991,10 +1991,10 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("layout")}
                 aria-expanded={openSections.layout}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="3" width="18" height="18" rx="2" />
                       <line x1="12" y1="3" x2="12" y2="21" />
@@ -2002,7 +2002,7 @@ function DesignStudioContent() {
                   </div>
                   <div>
                     <span
-                      className="text-sm font-bold text-[#1E293B] block leading-tight"
+                      className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors block leading-tight"
                       style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                     >
                       Quick Arrange
@@ -2011,7 +2011,7 @@ function DesignStudioContent() {
                   </div>
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.layout ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -2123,10 +2123,10 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("teamFields")}
                 aria-expanded={openSections.teamFields}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                       <circle cx="9" cy="7" r="4" />
@@ -2135,14 +2135,14 @@ function DesignStudioContent() {
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Team fields
                   </span>
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.teamFields ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"
@@ -2234,23 +2234,23 @@ function DesignStudioContent() {
                 type="button"
                 onClick={() => toggleSection("buttons")}
                 aria-expanded={openSections.buttons}
-                className="flex w-full items-center justify-between text-left group"
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
                     <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="6" width="18" height="12" rx="3" />
                     </svg>
                   </div>
                   <span
-                    className="text-sm font-bold text-[#1E293B]"
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     Button Styles
                   </span>
                 </div>
                 <svg
-                  className={`h-4 w-4 text-slate-400 transition-transform ${
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
                     openSections.buttons ? "rotate-180" : ""
                   }`}
                   viewBox="0 0 24 24"

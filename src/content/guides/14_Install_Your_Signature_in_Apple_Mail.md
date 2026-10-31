@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Install Email Signature in Apple Mail on Mac & iPhone | SigSignature
+* **Page Meta Title:** Install Email Signature in Apple Mail on Mac & iPhone | Sig Signature
 * **Meta Description:** Step-by-step setup for Apple Mail on macOS Sequoia/Sonoma and iOS 18/17. Fix font distortion and learn the shake-to-undo formatting restore trick.
 * **Primary Target Keyword:** `install email signature apple mail mac iphone`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
@@ -88,7 +88,7 @@ Notice that when you paste, iOS automatically distorts font sizes or shifts colo
 | Issue | Root Cause | Fix |
 |---|---|---|
 | **Font Reverts to Plain Text on Mac** | "Always match my default message font" is checked | Uncheck the box in Mail -> Settings -> Signatures |
-| **Phone Numbers Turn Bright Blue** | iOS auto-detects phone numbers and injects links | SigSignature wraps phone numbers in styled `tel:` tags |
+| **Phone Numbers Turn Bright Blue** | iOS auto-detects phone numbers and injects links | Sig Signature wraps phone numbers in styled `tel:` tags |
 | **Images Don't Load on Mobile** | Mail Privacy Protection caching issue | Toggle airplane mode or ensure images are hosted on HTTPS CDN |
 
 ---

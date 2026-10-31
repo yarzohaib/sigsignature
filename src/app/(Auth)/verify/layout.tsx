@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Verify Email | SigSignature",
+  title: "Verify Email | Sig Signature",
   description:
     "Verify your email address to activate your SigSignature account and start creating professional signatures.",
   robots: {

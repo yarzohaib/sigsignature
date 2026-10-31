@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Add Signature to Outlook Desktop, Web & Mac | SigSignature
+* **Page Meta Title:** Add Signature to Outlook Desktop, Web & Mac | Sig Signature
 * **Meta Description:** Mastering Outlook email signature setup across Windows desktop, Microsoft 365 OWA, and macOS with perfect image rendering and MSO table support.
 * **Primary Target Keyword:** `add signature outlook desktop web mac`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
@@ -73,9 +73,9 @@ This is the cleanest and fastest method for Microsoft 365 enterprise users.
 | Issue in Outlook | Root Cause | Fix |
 |---|---|---|
 | **Giant Logo on Windows** | User dragged corner handles in Outlook editor | Delete signature, re-copy from SigSignature, and paste without editing |
-| **Thin Line Borders Disappear** | Outlook Word engine rounds 0.5px borders to zero | SigSignature uses explicit `1px solid` table borders natively |
-| **Times New Roman Font Bug** | Outlook failed to find custom web font | SigSignature injects universal system fallbacks (Arial/Calibri) |
-| **Extra Spacing Below Rows** | Outlook injected default paragraph spacing | SigSignature forces `margin: 0; padding: 0; mso-line-height-rule: exactly;` |
+| **Thin Line Borders Disappear** | Outlook Word engine rounds 0.5px borders to zero | Sig Signature uses explicit `1px solid` table borders natively |
+| **Times New Roman Font Bug** | Outlook failed to find custom web font | Sig Signature injects universal system fallbacks (Arial/Calibri) |
+| **Extra Spacing Below Rows** | Outlook injected default paragraph spacing | Sig Signature forces `margin: 0; padding: 0; mso-line-height-rule: exactly;` |
 
 ---
 

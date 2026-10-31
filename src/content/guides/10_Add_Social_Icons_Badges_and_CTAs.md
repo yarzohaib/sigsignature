@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Add Social Icons, Custom Badges & CTAs to Signatures | SigSignature
+* **Page Meta Title:** Add Social Icons, Custom Badges & CTAs to Signatures | Sig Signature
 * **Meta Description:** Add verified social media icons, app store badges, calendar buttons, and promotional CTAs to your email signature without triggering spam filters.
 * **Primary Target Keyword:** `add social icons email signature`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

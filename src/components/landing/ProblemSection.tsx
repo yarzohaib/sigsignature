@@ -4,23 +4,23 @@ import { Reveal } from "@/components/motion";
 
 const problems = [
   {
-    title: "Expensive",
+    title: "Variable costs",
     description:
-      "Hiring a developer costs $100 - $120 per signature. Need 10 for your team? That's $1,000+ just to look professional in your inbox.",
+      "Custom signature development costs depend on project scope and developer rates, which can make budgeting harder.",
     icon: "/ExpensiveIcon.svg",
     iconAlt: "Expensive cost icon",
   },
   {
-    title: "Slow",
+    title: "Coordination",
     description:
-      "Brief the developer. Wait days. Review. Request changes. Wait again. By the time it's done, you've missed the urgency.",
+      "A custom build may involve briefing, review, and revisions. Timing depends on the requirements and developer availability.",
     icon: "/SlowIcon.svg",
     iconAlt: "Slow turnaround icon",
   },
   {
-    title: "Inconsistent",
+    title: "Keeping a consistent look",
     description:
-      "Send a template to your team and expect everyone to follow it the same way. In reality, everyone interprets it & leading to inconsistent results.",
+      "Keeping team signatures aligned can require shared templates and a clear process for making updates.",
     icon: "/InconsistentIcon.svg",
     iconAlt: "Inconsistent design icon",
   },

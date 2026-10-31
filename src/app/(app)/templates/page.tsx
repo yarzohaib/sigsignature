@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, Suspense } from "react";
+import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TemplateGalleryCard from "@/components/templates/TemplateGalleryCard";
@@ -21,6 +21,15 @@ import type { SavedSignature } from "@/types/signature";
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
 type CategoryTab = (typeof CATEGORIES)[number];
 
+const SORT_OPTIONS = [
+  { value: "popular", label: "Most Popular" },
+  { value: "newest", label: "Newest First" },
+  { value: "alphabetical", label: "Alphabetical (A-Z)" },
+  { value: "rated", label: "Highest Rated" },
+] as const;
+
+type SortValue = (typeof SORT_OPTIONS)[number]["value"];
+
 function TemplatesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,9 +37,12 @@ function TemplatesContent() {
   const isNew = searchParams.get("new") === "true";
   const templateParam = searchParams.get("template");
 
-  // Category filtering state
+  // Category filtering & sorting state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentSort, setCurrentSort] = useState<SortValue>("popular");
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
 
   // Active template being customized (null = gallery view)
   const [editingTemplate, setEditingTemplate] = useState<TemplateItem | null>(null);
@@ -150,15 +162,46 @@ function TemplatesContent() {
     };
   }, [editId, isNew, templateParam, router]);
 
-  // Filter templates by category and name
+  // Click outside to dismiss sorting menu
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(e.target as Node)) {
+        setSortDropdownOpen(false);
+      }
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setSortDropdownOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  // Filter templates by category and name, then sort
   const filteredTemplates = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return AVAILABLE_TEMPLATES.filter((tpl) => {
+    let list = AVAILABLE_TEMPLATES.filter((tpl) => {
       const matchesCategory = selectedCategory === "All" || tpl.category === selectedCategory;
       const matchesName = !query || tpl.name.toLowerCase().includes(query);
       return matchesCategory && matchesName;
     });
-  }, [selectedCategory, searchQuery]);
+
+    if (currentSort === "alphabetical") {
+      list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+    } else if (currentSort === "newest") {
+      list = [...list].reverse();
+    } else if (currentSort === "rated") {
+      list = [...list].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+    } else {
+      // "popular": popular first, then natural order
+      list = [...list].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+    }
+
+    return list;
+  }, [selectedCategory, searchQuery, currentSort]);
 
   const handleSelectTemplate = (template: TemplateItem) => {
     const user = getStoredUser();
@@ -239,8 +282,8 @@ function TemplatesContent() {
           />
         ) : (
           <div>
-            {/* Gallery Header Row matching Figma */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
+            {/* Gallery Header Row matching Figma: vertically center 'Build From Scratch' relative to Title & Subtitle block */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
               <div>
                 <h1
                   className="page-heading text-[#1E293B]"
@@ -261,16 +304,16 @@ function TemplatesContent() {
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition shrink-0"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                <svg className="h-4 w-4 text-[#245FD4] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                 </svg>
                 <span>Build From Scratch</span>
               </Link>
             </div>
 
-            {/* Category Filter Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4 mb-8">
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            {/* Category Filter & Sorting Bar */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/80 pb-4 mb-8">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat}
@@ -287,37 +330,95 @@ function TemplatesContent() {
                   </button>
                 ))}
               </div>
-              <div className="relative w-full sm:w-[clamp(20rem,32vw,40rem)] sm:max-w-none">
-                <svg
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Search templates by name"
-                  aria-label="Search templates by name"
-                  className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 shadow-2xs outline-none transition focus:border-[#245FD4] focus:ring-2 focus:ring-[#245FD4]/15"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                />
-                {searchQuery && (
+
+              {/* Right: Search Bar and Sorting Dropdown */}
+              <div className="flex items-center gap-3 w-full lg:w-auto">
+                <div className="relative flex-1 lg:w-[clamp(16rem,22vw,28rem)]">
+                  <svg
+                    className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search templates by name"
+                    aria-label="Search templates by name"
+                    className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-10 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-2xs outline-none transition focus:border-[#245FD4] focus:ring-2 focus:ring-[#245FD4]/15"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      aria-label="Clear template search"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 transition hover:text-slate-700"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                {/* Sort Dropdown */}
+                <div className="relative shrink-0" ref={sortDropdownRef}>
                   <button
                     type="button"
-                    onClick={() => setSearchQuery("")}
-                    aria-label="Clear template search"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 transition hover:text-slate-700"
+                    onClick={() => setSortDropdownOpen((prev) => !prev)}
+                    className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                    aria-expanded={sortDropdownOpen}
+                    aria-haspopup="true"
+                    aria-label="Sort templates"
                   >
-                    Clear
+                    <span>{SORT_OPTIONS.find((s) => s.value === currentSort)?.label || "Most Popular"}</span>
+                    <svg
+                      className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+                        sortDropdownOpen ? "rotate-180 text-[#245FD4]" : ""
+                      }`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
                   </button>
-                )}
+
+                  {sortDropdownOpen && (
+                    <div className="absolute right-0 mt-1.5 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl z-20 animate-in fade-in zoom-in-95">
+                      {SORT_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => {
+                            setCurrentSort(opt.value);
+                            setSortDropdownOpen(false);
+                          }}
+                          className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs sm:text-sm transition cursor-pointer text-left ${
+                            currentSort === opt.value
+                              ? "bg-blue-50/80 font-bold text-[#245FD4]"
+                              : "text-slate-700 hover:bg-slate-100 font-medium"
+                          }`}
+                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                        >
+                          <span>{opt.label}</span>
+                          {currentSort === opt.value && (
+                            <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

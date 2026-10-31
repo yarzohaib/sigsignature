@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Authenticating | SigSignature",
+  title: "Authenticating | Sig Signature",
   description: "Completing authentication with SigSignature...",
 };
 

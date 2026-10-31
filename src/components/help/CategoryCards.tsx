@@ -97,32 +97,42 @@ export default function CategoryCards() {
               key={cat.slug}
               href={`/help/guides?category=${cat.slug}`}
               aria-current={isActive ? "page" : undefined}
-              className={`group flex min-h-[190px] flex-col gap-5 rounded-2xl border bg-white p-5 sm:p-6 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
+              className={`group flex h-full min-h-[180px] flex-col justify-between rounded-2xl border p-5 sm:p-6 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
                 isActive
-                  ? "border-blue-600 bg-blue-50/40 ring-2 ring-blue-600/20 shadow-sm"
-                  : "border-[#E2E8F0] hover:border-[#245FD4]/40 hover:shadow-xs"
+                  ? "border-[#245FD4] bg-blue-50/50 ring-2 ring-[#245FD4]/20 shadow-sm"
+                  : "border-[#E2E8F0] bg-white hover:border-[#245FD4]/40 hover:shadow-sm"
               }`}
             >
               <div className="flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] transition group-hover:scale-105">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl transition group-hover:scale-105 ${
+                    isActive
+                      ? "bg-[#245FD4] text-white"
+                      : "bg-[#EFF6FF] text-[#245FD4]"
+                  }`}
+                >
                   <CategoryIcon type={cat.icon} />
                 </div>
                 <span
-                  className="text-xs font-medium text-[#94A3B8]"
+                  className={`text-xs font-medium ${
+                    isActive ? "text-[#245FD4] font-semibold" : "text-[#94A3B8]"
+                  }`}
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   {cat.guideCount} guides
                 </span>
               </div>
-              <div>
+              <div className="mt-4 flex-1 flex flex-col justify-end">
                 <h3
-                  className="text-base font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
+                  className={`text-base font-bold transition-colors ${
+                    isActive ? "text-[#245FD4]" : "text-[#1E293B] group-hover:text-[#245FD4]"
+                  }`}
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   {cat.title}
                 </h3>
                 <p
-                  className="mt-1 min-h-[36px] text-xs sm:text-[13px] text-[#64748B] leading-relaxed"
+                  className="mt-1.5 text-xs sm:text-[13px] text-[#64748B] leading-relaxed"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   {cat.description}

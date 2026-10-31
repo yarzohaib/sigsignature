@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Install Email Signature in Gmail Web & Mobile App | SigSignature
+* **Page Meta Title:** Install Email Signature in Gmail Web & Mobile App | Sig Signature
 * **Meta Description:** Complete instructions for installing your SigSignature into Google Workspace and personal @gmail.com accounts with zero formatting loss.
 * **Primary Target Keyword:** `install signature in gmail`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
@@ -71,7 +71,7 @@ If your organization requires a local mobile signature, use a concise 2-line pla
 | Symptom | Cause | Immediate Resolution |
 |---|---|---|
 | **Text Turns Purple in Threads** | Gmail detects identical text in previous reply history | Normal Gmail behavior; recipients see standard black text |
-| **Images Display Red "X" Box** | Image URL blocked or not HTTPS | SigSignature hosts on HTTPS CDNs; verify image links are active |
+| **Images Display Red "X" Box** | Image URL blocked or not HTTPS | Sig Signature hosts on HTTPS CDNs; verify image links are active |
 | **Signature Hidden Behind "..."** | Signature placed after quoted text | Check *"Insert signature before quoted text"* in Gmail settings |
 | **Double Line Breaks Injected** | Browser rich-text formatting bug | Always use Chrome or Edge when pasting into Gmail settings |
 

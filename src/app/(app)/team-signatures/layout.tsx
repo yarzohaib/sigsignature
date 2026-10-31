@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Team Signatures | SigSignature",
+  title: "Team Signatures | Sig Signature",
   description: "Deploy and synchronize branded email signatures across your entire organization.",
   robots: {
     index: false,

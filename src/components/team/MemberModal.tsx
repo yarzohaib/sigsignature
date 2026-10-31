@@ -369,14 +369,20 @@ export default function MemberModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-3 sm:p-4 backdrop-blur-xs overflow-y-auto cursor-pointer"
       role="dialog"
       aria-modal="true"
       aria-labelledby="member-modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !isSubmitting && !isUploadingPhoto) {
+          onClose();
+        }
+      }}
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl transition max-h-[92vh] flex flex-col overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl transition max-h-[92vh] flex flex-col overflow-hidden cursor-default"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#F1F5F9]">

@@ -5,18 +5,18 @@ import SectionBadge from "@/components/landing/SectionBadge";
 import { AboutPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "About Us | SigSignature",
+  title: "About Us | Sig Signature",
   description:
     "Sig Signature by The Nevon is a lightweight, deliverability-focused HTML email signature generator built for modern professionals and teams.",
   alternates: {
     canonical: "https://www.sigsignature.com/about",
   },
   openGraph: {
-    title: "About Us | SigSignature",
+    title: "About Us | Sig Signature",
     description:
       "Learn how SigSignature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures for modern professionals and teams.",
     url: "https://www.sigsignature.com/about",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     images: [
       {
         url: "https://www.sigsignature.com/og-image.png",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Us | SigSignature",
+    title: "About Us | Sig Signature",
     description:
       "Learn how SigSignature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures.",
     images: ["https://www.sigsignature.com/og-image.png"],

@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Manage Stripe Invoices, Payment Methods & Billing | SigSignature
+* **Page Meta Title:** Manage Stripe Invoices, Payment Methods & Billing | Sig Signature
 * **Meta Description:** How to update your credit card, download VAT/tax invoices, access the Stripe Customer Portal, and manage plan renewals in SigSignature.
 * **Primary Target Keyword:** `sigsignature billing invoices payment receipt`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

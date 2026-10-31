@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Format Email Signature Contact Details & Phone Links | SigSignature
+* **Page Meta Title:** Format Email Signature Contact Details & Phone Links | Sig Signature
 * **Meta Description:** Best practices for formatting job titles, international phone numbers (tel: links), company URLs, and calendar booking links in email signatures.
 * **Primary Target Keyword:** `format email signature contact info`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

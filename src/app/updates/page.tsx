@@ -5,18 +5,18 @@ import SectionBadge from "@/components/landing/SectionBadge";
 import { UpdatesPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Product Updates | SigSignature",
+  title: "Product Updates | Sig Signature",
   description:
     "Track the latest features, engine updates, bug fixes, and client compatibility improvements in Sig Signature.",
   alternates: {
     canonical: "https://www.sigsignature.com/updates",
   },
   openGraph: {
-    title: "Product Updates | SigSignature",
+    title: "Product Updates | Sig Signature",
     description:
       "Track new feature releases, email client compatibility upgrades, and performance enhancements across SigSignature.",
     url: "https://www.sigsignature.com/updates",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     images: [
       {
         url: "https://www.sigsignature.com/og-image.png",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Product Updates | SigSignature",
+    title: "Product Updates | Sig Signature",
     description:
       "Track new feature releases and email client compatibility upgrades across SigSignature.",
     images: ["https://www.sigsignature.com/og-image.png"],
@@ -111,19 +111,19 @@ const roadmapItems = [
     phase: "In Development",
     feature: "Team Signature Management",
     description: "Shared corporate signature templates with CSV bulk employee importing.",
-    statusColor: "bg-blue-100 text-[#1243A3] border-blue-200",
+    dotColor: "bg-blue-600",
   },
   {
     phase: "Planned",
     feature: "Click Analytics",
     description: "Real-time click tracking on promotional banners and custom social icons.",
-    statusColor: "bg-amber-100 text-amber-800 border-amber-200",
+    dotColor: "bg-amber-500",
   },
   {
     phase: "Research",
     feature: "Automated Provisioning API",
     description: "Direct synchronization with Google Workspace and Microsoft 365 directory users.",
-    statusColor: "bg-purple-100 text-purple-800 border-purple-200",
+    dotColor: "bg-indigo-500",
   },
 ];
 
@@ -246,9 +246,8 @@ export default function UpdatesPage() {
                   className="flex flex-col justify-between rounded-3xl border border-[#C1C1C1]/80 bg-white p-7 shadow-xs sm:p-8"
                 >
                   <div>
-                    <span
-                      className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold ${item.statusColor}`}
-                    >
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200/90 shadow-2xs text-slate-800">
+                      <span className={`w-1.5 h-1.5 rounded-full ${item.dotColor}`} />
                       {item.phase}
                     </span>
                     <h3 className="font-heading mt-5 text-xl font-semibold text-slate-900">

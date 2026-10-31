@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** How to Choose the Right Email Signature Template | SigSignature
+* **Page Meta Title:** How to Choose the Right Email Signature Template | Sig Signature
 * **Meta Description:** Compare Executive, Minimalist, Creative, and Corporate email signature templates. Learn how to select the best layout for your industry and role.
 * **Primary Target Keyword:** `email signature templates professional`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

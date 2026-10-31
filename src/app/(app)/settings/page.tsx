@@ -10,9 +10,6 @@ import NotificationsCard from "@/components/settings/NotificationsCard";
 import PlanUsageCard from "@/components/settings/PlanUsageCard";
 import SecurityCard from "@/components/settings/SecurityCard";
 import StartingPointCard from "@/components/settings/StartingPointCard";
-import SettingsActionConfirmModal, {
-  type SettingsAction,
-} from "@/components/settings/SettingsActionConfirmModal";
 import DataPrivacyCard from "@/components/settings/DataPrivacyCard";
 import { getLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import {
@@ -128,7 +125,6 @@ function SettingsContent() {
 
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
-  const [pendingAction, setPendingAction] = useState<SettingsAction | null>(null);
 
   // Toast feedback state
   const [toast, setToast] = useState<{
@@ -509,18 +505,18 @@ function SettingsContent() {
               <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 pt-1">
                 <button
                   type="button"
-                  onClick={() => setPendingAction("cancel")}
+                  onClick={handleCancel}
                   disabled={!isDirty || isSaving}
-                  className="rounded-xl border border-slate-200 bg-white px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                  className="rounded-xl border border-slate-200 bg-white px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPendingAction("save")}
+                  onClick={() => void handleSaveChanges()}
                   disabled={!isDirty || !isValid || isSaving}
-                  className="flex items-center gap-2 rounded-xl bg-[#022977] px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:bg-opacity-95 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                  className="flex items-center gap-2 rounded-xl bg-[#022977] px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:bg-opacity-95 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 cursor-pointer"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   {isSaving ? (
@@ -649,16 +645,6 @@ function SettingsContent() {
             </div>
           </main>
         )}
-
-      <SettingsActionConfirmModal
-        action={pendingAction}
-        onClose={() => setPendingAction(null)}
-        onConfirm={(action) => {
-          setPendingAction(null);
-          if (action === "save") void handleSaveChanges();
-          else handleCancel();
-        }}
-      />
 
       {/* Toast Notification */}
       {toast && (

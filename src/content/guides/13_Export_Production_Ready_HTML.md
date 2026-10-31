@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Export Production-Ready HTML Email Signatures | SigSignature
+* **Page Meta Title:** Export Production-Ready HTML Email Signatures | Sig Signature
 * **Meta Description:** Technical developer guide to exporting minified, production-grade HTML signatures and integrating them into CRMs, Apple Mail, and custom marketing platforms.
 * **Primary Target Keyword:** `export html email signature`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

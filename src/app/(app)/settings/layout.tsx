@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Account Settings | SigSignature",
+  title: "Account Settings | Sig Signature",
   description: "Manage your personal profile, security credentials, and company preferences.",
   robots: {
     index: false,

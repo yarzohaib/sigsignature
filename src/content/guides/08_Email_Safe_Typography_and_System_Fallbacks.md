@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Email-Safe Fonts & Fallback Stacks for Signatures | SigSignature
+* **Page Meta Title:** Email-Safe Fonts & Fallback Stacks for Signatures | Sig Signature
 * **Meta Description:** Discover which fonts render safely across Outlook, Gmail, and Apple Mail. Master multi-tier fallback stacks to prevent the Times New Roman trap.
 * **Primary Target Keyword:** `email safe fonts signature fallbacks`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

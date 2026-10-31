@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import NotFound from "../not-found";
 
 export const metadata: Metadata = {
-  title: "Page Not Found | SigSignature",
+  title: "Page Not Found | Sig Signature",
   description: "The page you are looking for does not exist on SigSignature.",
   robots: {
     index: false,

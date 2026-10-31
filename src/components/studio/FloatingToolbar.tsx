@@ -862,7 +862,7 @@ export default function FloatingToolbar({
                           ? "Fix invalid CTA destination URL"
                         : elementType === "cta"
                           ? "Set required CTA destination URL"
-                          : "Add link (optional)"
+                          : "Add link"
                     }
                     title={
                       hasValidLink
@@ -871,7 +871,7 @@ export default function FloatingToolbar({
                           ? "CTA destination URL is invalid"
                         : elementType === "cta"
                           ? "CTA destination URL is required"
-                          : "Add link (optional)"
+                          : "Add link"
                     }
                     onClick={() => {
                       setLinkError("");
@@ -901,7 +901,7 @@ export default function FloatingToolbar({
                           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                         </svg>
                         <span className="text-[11px] font-semibold text-slate-300">
-                          {elementType === "cta" ? "Add required URL" : "Add link (optional)"}
+                          {elementType === "cta" ? "Add required URL" : "Add link"}
                         </span>
                       </>
                     )}

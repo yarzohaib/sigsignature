@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Email Signature Brand Colors & Contrast Guide | SigSignature
+* **Page Meta Title:** Email Signature Brand Colors & Contrast Guide | Sig Signature
 * **Meta Description:** Master brand color palettes in email signatures. Learn the 1-accent color rule, WCAG AA contrast standards, and how to avoid rainbow clutter.
 * **Primary Target Keyword:** `email signature brand colors`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

@@ -9,7 +9,7 @@ export default function CtaBanner() {
 
   return (
     <section
-      className="relative mx-4 my-6 sm:my-8 md:my-0 rounded-[20px] md:mx-0 md:rounded-none overflow-hidden px-4 py-12 text-center text-white sm:py-20 lg:py-24 3xl:py-28"
+      className="relative mx-4 my-6 sm:my-8 md:my-0 rounded-[20px] md:mx-0 md:rounded-none overflow-hidden px-4 py-10 sm:py-14 lg:py-16 text-center text-white"
       style={{
         background: "linear-gradient(90deg, #245FD4 0%, #00359F 50%, #00143C 100%)",
         boxShadow: "inset 13px 12px 35.1px 0 rgba(0, 0, 0, 0.24)",

@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Help & Documentation | SigSignature",
+  title: "Help & Documentation | Sig Signature",
   description: "Documentation, installation guides, and email client setup instructions for Gmail, Outlook, Apple Mail, and Thunderbird.",
   alternates: {
     canonical: "https://www.sigsignature.com/help",
   },
   openGraph: {
-    title: "Help & Documentation | SigSignature",
+    title: "Help & Documentation | Sig Signature",
     description: "Documentation, installation guides, and email client setup instructions.",
     url: "https://www.sigsignature.com/help",
-    siteName: "SigSignature",
+    siteName: "Sig Signature",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Help & Documentation | SigSignature",
+    title: "Help & Documentation | Sig Signature",
     description: "Documentation, installation guides, and email client setup instructions.",
     images: ["/og-image.png"],
   },

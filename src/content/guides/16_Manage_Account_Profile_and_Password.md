@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Manage SigSignature Account, Profile & Password | SigSignature
+* **Page Meta Title:** Manage SigSignature Account, Profile & Password | Sig Signature
 * **Meta Description:** How to update your account profile name, upload an account avatar, change your password, and manage security settings in SigSignature.
 * **Primary Target Keyword:** `sigsignature account settings profile`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

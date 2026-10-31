@@ -9,7 +9,7 @@
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Dark Mode Email Signature Optimization Guide | SigSignature
+* **Page Meta Title:** Dark Mode Email Signature Optimization Guide | Sig Signature
 * **Meta Description:** Prevent ugly white logo bounding boxes and unreadable text in dark mode across Outlook, Gmail, and Apple Mail with these proven design techniques.
 * **Primary Target Keyword:** `dark mode email signature logo`
 * **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation

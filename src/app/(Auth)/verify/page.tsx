@@ -35,11 +35,13 @@ function VerifyEmailForm() {
 
   // Check login state on mount
   useEffect(() => {
-    const user = getStoredUser();
-    const token = getStoredToken();
-    if (user && token) {
-      setIsLoggedIn(true);
-    }
+    queueMicrotask(() => {
+      const user = getStoredUser();
+      const token = getStoredToken();
+      if (user && token) {
+        setIsLoggedIn(true);
+      }
+    });
   }, []);
 
   // Prevent multiple executions in StrictMode or re-renders
@@ -48,7 +50,6 @@ function VerifyEmailForm() {
   // Auto-verify as soon as the user arrives with a token
   useEffect(() => {
     if (!initialToken) {
-      setState("resend");
       return;
     }
 

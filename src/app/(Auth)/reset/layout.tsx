@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Reset Password | SigSignature",
+  title: "Reset Password | Sig Signature",
   description:
     "Set a new secure password for your SigSignature account.",
   robots: {

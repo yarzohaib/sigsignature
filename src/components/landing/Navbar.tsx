@@ -155,7 +155,20 @@ export default function Navbar() {
     : "";
   const displayEmail = user?.email || "";
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
-  const displaySrc = avatarUrl && failedUrl !== avatarUrl ? avatarUrl : "/placeholder-avatar.svg";
+  const hasValidAvatar = Boolean(avatarUrl && failedUrl !== avatarUrl);
+
+  const userInitials = useMemo(() => {
+    if (!displayName) return "M";
+    return (
+      displayName
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join("") || "M"
+    );
+  }, [displayName]);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -345,27 +358,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Mobile Right: User avatar (when logged in) + Hamburger Toggle */}
+          {/* Mobile Right: Hamburger Toggle (Avatar is hidden on mobile pill to avoid crowding; full profile is inside menu drawer) */}
           <div className="flex items-center gap-2">
-            {user && (
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
-                className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full ring-2 ring-brand/30 bg-slate-100 transition active:scale-95"
-                aria-label="View user profile"
-              >
-                <Image
-                  src={displaySrc}
-                  alt={displayName || "Profile photo"}
-                  width={32}
-                  height={32}
-                  unoptimized
-                  onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-                  className="h-full w-full object-cover"
-                />
-              </button>
-            )}
-
             {/* Mobile Hamburger Toggle (44px tap target, borderless) */}
             <button
               ref={buttonRef}
@@ -427,16 +421,20 @@ export default function Navbar() {
                   <div className="mt-2.5 flex flex-col gap-2 border-t border-slate-200/80 pt-3">
                     {/* User Credentials Card */}
                     <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100">
-                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/30 bg-slate-100">
-                        <Image
-                          src={displaySrc}
-                          alt={displayName || "Profile photo"}
-                          width={40}
-                          height={40}
-                          unoptimized
-                          onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-                          className="h-full w-full object-cover"
-                        />
+                      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-brand/30 bg-slate-100 text-xs font-bold text-slate-700">
+                        {hasValidAvatar ? (
+                          <Image
+                            src={avatarUrl!}
+                            alt={displayName || "Profile photo"}
+                            width={40}
+                            height={40}
+                            unoptimized
+                            onError={() => avatarUrl && setFailedUrl(avatarUrl)}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span aria-hidden="true">{userInitials}</span>
+                        )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p
@@ -611,17 +609,21 @@ export default function Navbar() {
                 aria-haspopup="true"
                 className="group flex items-center gap-3 rounded-full border border-slate-200 bg-transparent py-1.5 pr-4 pl-1.5 shadow-2xs backdrop-blur-sm transition hover:border-[#245FD4]/40 hover:bg-slate-50/80 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               >
-                {/* User Avatar Photo */}
-                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-brand/20 bg-slate-100 transition group-hover:ring-brand">
-                  <Image
-                    src={displaySrc}
-                    alt={displayName || "Profile photo"}
-                    width={36}
-                    height={36}
-                    unoptimized
-                    onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-                    className="h-full w-full object-cover"
-                  />
+                {/* User Avatar Photo or Dynamic Initials */}
+                <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-brand/20 bg-slate-100 text-[11px] font-bold text-slate-700 transition group-hover:ring-brand">
+                  {hasValidAvatar ? (
+                    <Image
+                      src={avatarUrl!}
+                      alt={displayName || "Profile photo"}
+                      width={32}
+                      height={32}
+                      unoptimized
+                      onError={() => avatarUrl && setFailedUrl(avatarUrl)}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span aria-hidden="true">{userInitials}</span>
+                  )}
                 </div>
 
                 {/* Name */}
@@ -661,16 +663,20 @@ export default function Navbar() {
                     {/* Header: User Credentials (Photo, Name, Email) */}
                     <div className="px-3.5 py-3 border-b border-slate-100 bg-slate-50/60">
                       <div className="flex items-center gap-2.5">
-                        <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-white">
-                          <Image
-                            src={displaySrc}
-                            alt={displayName || "Profile photo"}
-                            width={32}
-                            height={32}
-                            unoptimized
-                            onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-                            className="h-full w-full object-cover"
-                          />
+                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-white text-[11px] font-bold text-slate-700">
+                          {hasValidAvatar ? (
+                            <Image
+                              src={avatarUrl!}
+                              alt={displayName || "Profile photo"}
+                              width={32}
+                              height={32}
+                              unoptimized
+                              onError={() => avatarUrl && setFailedUrl(avatarUrl)}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <span aria-hidden="true">{userInitials}</span>
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p
