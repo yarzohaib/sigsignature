@@ -398,7 +398,7 @@ async function runFullVerification() {
 
     // Now page is loaded in EmptyTeamState. Click "Create signature" to open ChooseSignatureModal
     const createBtn = await page.$('button:has-text("Create signature")');
-    let modalChecks = { closeIconAligned: false, redundantButtonsHidden: false, backdropDismissed: false };
+    let modalChecks = { closeIconAligned: false, footerRenderedProperly: false, backdropDismissed: false };
 
     if (createBtn) {
       await createBtn.click();
@@ -406,7 +406,7 @@ async function runFullVerification() {
 
       modalChecks = await page.evaluate(() => {
         const modal = document.querySelector('div[role="dialog"]');
-        if (!modal) return { closeIconAligned: false, redundantButtonsHidden: false, backdropDismissed: false };
+        if (!modal) return { closeIconAligned: false, footerRenderedProperly: false, backdropDismissed: false };
 
         const header = modal.querySelector('div.flex.items-start.justify-between');
         const closeBtn = header?.querySelector('button[aria-label="Close modal"]');
