@@ -3,7 +3,7 @@
 > **Category:** GETTING STARTED GUIDE • `GETTING STARTED`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Design Strategy Team  
+> **Author:** Sig Signature Design Strategy Team  
 > **Canonical URL:** `/help/getting-started/choose-email-signature-template`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** How to Choose the Right Email Signature Template | Sig Signature
 * **Meta Description:** Compare Executive, Minimalist, Creative, and Corporate email signature templates. Learn how to select the best layout for your industry and role.
 * **Primary Target Keyword:** `email signature templates professional`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -20,7 +20,7 @@
 
 Your email signature is the final visual impression of every email you send. A creative freelancer communicating with a boutique design agency requires a completely different visual hierarchy than an enterprise consultant sending contracts to Fortune 500 legal teams.
 
-SigSignature categorizes templates into 4 foundational archetypes. Selecting the correct archetype ensures your email footer reinforces your professional credibility without creating visual friction.
+Sig Signature categorizes templates into 4 foundational archetypes. Selecting the correct archetype ensures your email footer reinforces your professional credibility without creating visual friction.
 
 ---
 
@@ -62,7 +62,7 @@ SigSignature categorizes templates into 4 foundational archetypes. Selecting the
 
 ## Step-by-Step: Switching Templates in the Design Studio
 
-1. In the SigSignature editor, click the **Templates** tab in the top navigation bar.
+1. In the Sig Signature editor, click the **Templates** tab in the top navigation bar.
 2. Select your desired archetype from the preview grid.
 3. Your existing contact details, uploaded avatar, and custom links will automatically map into the new layout architecture.
 4. Review the preview in both Desktop (600px) and Mobile (360px) viewports before saving.

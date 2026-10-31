@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "SigSignature",
-    short_name: "SigSignature",
+    name: "Sig Signature",
+    short_name: "Sig Signature",
     description: "Professional HTML Email Signature Generator",
     start_url: "/",
     display: "standalone",

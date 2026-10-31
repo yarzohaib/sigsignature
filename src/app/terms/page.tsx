@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Terms of Service | Sig Signature",
     description:
-      "Terms of Service governing the use of SigSignature email signature generator provided by The Nevon.",
+      "Terms of Service governing the use of Sig Signature email signature generator provided by The Nevon.",
     url: "https://www.sigsignature.com/terms",
     siteName: "Sig Signature",
     images: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "SigSignature Terms of Service",
+        alt: "Sig Signature Terms of Service",
       },
     ],
     locale: "en_US",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Terms of Service | Sig Signature",
-    description: "Terms of Service governing the use of SigSignature provided by The Nevon.",
+    description: "Terms of Service governing the use of Sig Signature provided by The Nevon.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

@@ -13,7 +13,7 @@ export default function ErrorBoundary({
 }) {
   useEffect(() => {
     // Log error to monitoring service (e.g. Sentry or console in dev)
-    console.error("SigSignature runtime error caught by error.tsx boundary:", error);
+    console.error("Sig Signature runtime error caught by error.tsx boundary:", error);
   }, [error]);
 
   return (

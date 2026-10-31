@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Contact Us | Sig Signature",
     description:
-      "Get in touch with the SigSignature team for technical support, custom template designs, and corporate partnership inquiries.",
+      "Get in touch with the Sig Signature team for technical support, custom template designs, and corporate partnership inquiries.",
     url: "https://www.sigsignature.com/contact",
     siteName: "Sig Signature",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Contact SigSignature Support",
+        alt: "Contact Sig Signature Support",
       },
     ],
     locale: "en_US",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact Us | Sig Signature",
     description:
-      "Get in touch with the SigSignature team for technical support and product inquiries.",
+      "Get in touch with the Sig Signature team for technical support and product inquiries.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

@@ -3,7 +3,7 @@
 > **Category:** GETTING STARTED GUIDE • `GETTING STARTED`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Deliverability Team  
+> **Author:** Sig Signature Deliverability Team  
 > **Canonical URL:** `/help/getting-started/format-contact-details`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Format Email Signature Contact Details & Phone Links | Sig Signature
 * **Meta Description:** Best practices for formatting job titles, international phone numbers (tel: links), company URLs, and calendar booking links in email signatures.
 * **Primary Target Keyword:** `format email signature contact info`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -36,13 +36,13 @@ Mobile operating systems (iOS and Android) automatically scan email bodies for p
 
 * **Standard Format:** Always include your international country code:  
   `+1 (555) 234-5678` or `+92 300 1234567`
-* **Under the Hood:** SigSignature wraps phone numbers in explicit `tel:` protocols with inline styling:  
+* **Under the Hood:** Sig Signature wraps phone numbers in explicit `tel:` protocols with inline styling:  
   `<a href="tel:+15552345678" style="color: inherit; text-decoration: none;">+1 (555) 234-5678</a>`  
   This prevents email clients from overriding your typography while enabling native 1-tap mobile dialing.
 
 ### 3. Web URLs & Verified Domains
 * Display clean, human-readable domain strings (e.g., `sigsignature.com` or `thenevon.com`).
-* SigSignature automatically binds the underlying `href` attribute with secure `https://` encryption.
+* Sig Signature automatically binds the underlying `href` attribute with secure `https://` encryption.
 * Never use raw URL shorteners (e.g., bit.ly) in your email signature as commercial spam filters flag shortened links as potential phishing vectors.
 
 ### 4. Direct Meeting Booking Links (Calendly, Cal.com)

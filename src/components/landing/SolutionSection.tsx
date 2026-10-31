@@ -40,7 +40,7 @@ export default function SolutionSection() {
             </h2>
 
             <p className="font-body mt-4 sm:mt-5 text-[15px] sm:text-base lg:text-base xl:text-lg 2xl:text-[20px] 3xl:text-[22px] leading-relaxed text-[#878787]">
-              SigSignature is an online email signature builder for professionals, freelancers, and business owners. Start with a template or a blank layout, add your contact details, and customize the design to match your brand. Save your signatures in your dashboard and return when your information changes.
+              Sig Signature is an online email signature builder for professionals, freelancers, and business owners. Start with a template or a blank layout, add your contact details, and customize the design to match your brand. Save your signatures in your dashboard and return when your information changes.
             </p>
 
             <RevealGroup stagger={0.1} as="ul" className="mt-6 space-y-3.5 sm:space-y-4">

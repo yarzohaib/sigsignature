@@ -3,7 +3,7 @@
 > **Category:** ACCOUNT & BILLING GUIDE • `ACCOUNT & BILLING`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** Team Plan Subscribers  
-> **Author:** SigSignature Enterprise Team  
+> **Author:** Sig Signature Enterprise Team  
 > **Canonical URL:** `/help/account-billing/team-workspace-members-roles`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Team Workspace: Members, Roles & Standard Signatures | Sig Signature
 * **Meta Description:** Centralize your company's email branding. Learn how to invite team members, assign Admin/Member roles, and deploy standardized signatures across your organization.
 * **Primary Target Keyword:** `manage team email signatures workspace`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -23,7 +23,7 @@ When a scaling company lacks a centralized email signature system, employee sign
 * Employees link to defunct marketing campaigns or broken social handles.
 * Required legal disclaimers and regulatory notices are omitted.
 
-SigSignature's **Team Workspace** gives administrators complete governance over company email branding. You design and lock the master corporate template once; team members simply populate their name and direct phone number.
+Sig Signature’s **Team Workspace** gives administrators complete governance over company email branding. You design and lock the master corporate template once; team members simply populate their name and direct phone number.
 
 ---
 
@@ -44,7 +44,7 @@ SigSignature's **Team Workspace** gives administrators complete governance over 
 ### Step 3: Inviting Team Members
 You can onboard team members using two methods:
 * **Method A (Email Invite):** Click **Invite Member**, type the employee's work email address (e.g., `alex@company.com`), select their role, and click **Send Invite**.
-* **Method B (CSV Bulk Upload):** For teams over 10 members, click **Import CSV**. Upload a spreadsheet containing columns: `Name`, `Email`, `Title`, `Phone`. SigSignature will generate individual signatures automatically!
+* **Method B (CSV Bulk Upload):** For teams over 10 members, click **Import CSV**. Upload a spreadsheet containing columns: `Name`, `Email`, `Title`, `Phone`. Sig Signature will generate individual signatures automatically!
 
 ### Step 4: Role Permissions Structure
 

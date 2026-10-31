@@ -11,7 +11,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("SigSignature global layout error caught:", error);
+    console.error("Sig Signature global layout error caught:", error);
   }, [error]);
 
   return (

@@ -3,7 +3,7 @@
 > **Category:** DESIGN & TEMPLATES GUIDE • `DESIGN & TEMPLATES`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Design System Lab  
+> **Author:** Sig Signature Design System Lab  
 > **Canonical URL:** `/help/design-templates/customize-brand-colors`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Email Signature Brand Colors & Contrast Guide | Sig Signature
 * **Meta Description:** Master brand color palettes in email signatures. Learn the 1-accent color rule, WCAG AA contrast standards, and how to avoid rainbow clutter.
 * **Primary Target Keyword:** `email signature brand colors`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -20,7 +20,7 @@
 
 Color in an email signature is an accent, not a canvas. When signatures feature five different colors (red titles, blue phone numbers, green website links, and orange social icons), the recipient's eye experiences visual fatigue, and the email takes on the appearance of an advertising banner.
 
-SigSignature enforces an **authoritative single-accent design system**. By selecting one primary brand color, your signature looks cohesive, premium, and calm across every inbox.
+Sig Signature enforces an **authoritative single-accent design system**. By selecting one primary brand color, your signature looks cohesive, premium, and calm across every inbox.
 
 ---
 

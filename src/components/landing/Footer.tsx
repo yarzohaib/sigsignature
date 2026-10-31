@@ -144,7 +144,7 @@ const isAuthenticated =
             </span>
           </Link>
           <p className="mt-3 max-w-lg text-center font-body text-[14px] leading-normal text-[#878787] sm:max-w-xl lg:max-w-none lg:whitespace-nowrap 3xl:text-[16px]">
-            SigSignature helps you create and customize professional email signatures online. Choose a template, preview your design, and export HTML or images.
+            Sig Signature helps you create and customize professional email signatures online. Choose a template, preview your design, and export HTML or images.
           </p>
         </motion.div>
 
@@ -325,7 +325,7 @@ const isAuthenticated =
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs sm:text-sm text-[#878787]">
           <p>
-            © 2026 Sig Signature. All rights reserved. | Source: SigSignature Deliverability Engine by{" "}
+            © 2026 Sig Signature. All rights reserved. | Source: Sig Signature Deliverability Engine by{" "}
             <Link
               href="https://www.thenevon.com"
               target="_blank"

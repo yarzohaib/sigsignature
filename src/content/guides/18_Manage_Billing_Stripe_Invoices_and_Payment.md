@@ -3,22 +3,22 @@
 > **Category:** ACCOUNT & BILLING GUIDE • `ACCOUNT & BILLING`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** Pro & Team Subscribers  
-> **Author:** SigSignature Finance & Billing Team  
+> **Author:** Sig Signature Finance & Billing Team  
 > **Canonical URL:** `/help/account-billing/billing-stripe-invoices-payment-methods`  
 
 ---
 
 ### SEO Metadata & Discovery Tags
 * **Page Meta Title:** Manage Stripe Invoices, Payment Methods & Billing | Sig Signature
-* **Meta Description:** How to update your credit card, download VAT/tax invoices, access the Stripe Customer Portal, and manage plan renewals in SigSignature.
+* **Meta Description:** How to update your credit card, download VAT/tax invoices, access the Stripe Customer Portal, and manage plan renewals in Sig Signature.
 * **Primary Target Keyword:** `sigsignature billing invoices payment receipt`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
 ## Overview: Frictionless Subscription Management
 
-SigSignature uses **Stripe** as our global payment infrastructure provider. Stripe handles all payment processing with bank-grade AES-256 encryption. We never store or process your credit card numbers on our local servers.
+Sig Signature uses **Stripe** as our global payment infrastructure provider. Stripe handles all payment processing with bank-grade AES-256 encryption. We never store or process your credit card numbers on our local servers.
 
 Through the integrated Stripe Customer Portal, you have complete self-service control over your payment methods, billing history, and tax invoices.
 
@@ -26,7 +26,7 @@ Through the integrated Stripe Customer Portal, you have complete self-service co
 
 ## Accessing the Billing Portal
 
-1. Log into your SigSignature dashboard.
+1. Log into your Sig Signature dashboard.
 2. Click **Pricing & Billing** in the left sidebar.
 3. Under the **Current Plan** overview, click **Manage Billing & Invoices**.
 4. You will be authenticated securely into the Stripe Customer Portal.

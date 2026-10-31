@@ -22,14 +22,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Free Email Signature Generator | Sig Signature",
   description:
-    "Create up to 3 email signatures free with SigSignature. Customize templates, preview your design, and export HTML or images. No coding required.",
+    "Create up to 3 email signatures free with Sig Signature. Customize templates, preview your design, and export HTML or images. No coding required.",
   alternates: {
     canonical: "https://www.sigsignature.com",
   },
   openGraph: {
     title: "Free Email Signature Generator | Sig Signature",
     description:
-      "Create up to 3 email signatures free with SigSignature. Customize templates, preview your design, and export HTML or images. No coding required.",
+      "Create up to 3 email signatures free with Sig Signature. Customize templates, preview your design, and export HTML or images. No coding required.",
     url: "https://www.sigsignature.com",
     siteName: "Sig Signature",
     images: [
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Free Email Signature Generator | Sig Signature",
     description:
-      "Create up to 3 email signatures free with SigSignature. Customize templates, preview your design, and export HTML or images. No coding required.",
+      "Create up to 3 email signatures free with Sig Signature. Customize templates, preview your design, and export HTML or images. No coding required.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

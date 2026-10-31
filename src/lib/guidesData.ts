@@ -1,4 +1,4 @@
-// Auto-generated full technical guides dataset for SigSignature
+// Auto-generated full technical guides dataset for Sig Signature
 // Sourced from 19 master documentation guides across Getting Started, Design & Templates, Export & Installation, and Account & Billing.
 
 export interface GuideStep {
@@ -64,13 +64,13 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Step-by-step walkthrough to design, customize, and preview a bulletproof HTML email signature tailored for your personal brand or team.",
     "readTime": "3 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Deliverability Team",
+    "author": "Sig Signature Deliverability Team",
     "isPopular": true,
     "overview": [
-      "An email signature is not a graphic banner; it is a critical deliverability asset. Unlike standard web pages, email clients (especially Microsoft Outlook and Gmail) use legacy HTML rendering engines. SigSignature automatically compiles your visual design into email-safe nested tables, 100% inline CSS, and Outlook MSO conditionals to guarantee consistent rendering across every inbox."
+      "An email signature is not a graphic banner; it is a critical deliverability asset. Unlike standard web pages, email clients (especially Microsoft Outlook and Gmail) use legacy HTML rendering engines. Sig Signature automatically compiles your visual design into email-safe nested tables, 100% inline CSS, and Outlook MSO conditionals to guarantee consistent rendering across every inbox."
     ],
     "prerequisites": [
-      "Ensure you are logged into your SigSignature account at sigsignature.com. Free accounts can generate and export personal signatures immediately without any credit card required."
+      "Ensure you are logged into your Sig Signature account at sigsignature.com. Free accounts can generate and export personal signatures immediately without any credit card required."
     ],
     "sections": [
       {
@@ -170,11 +170,11 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Compare Executive, Minimalist, Creative, and Corporate email signature templates. Learn how to select the best layout for your industry and role.",
     "readTime": "3 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Design Strategy Team",
+    "author": "Sig Signature Design Strategy Team",
     "isPopular": false,
     "overview": [
       "Your email signature is the final visual impression of every email you send. A creative freelancer communicating with a boutique design agency requires a completely different visual hierarchy than an enterprise consultant sending contracts to Fortune 500 legal teams.",
-      "SigSignature categorizes templates into 4 foundational archetypes. Selecting the correct archetype ensures your email footer reinforces your professional credibility without creating visual friction."
+      "Sig Signature categorizes templates into 4 foundational archetypes. Selecting the correct archetype ensures your email footer reinforces your professional credibility without creating visual friction."
     ],
     "sections": [
       {
@@ -230,7 +230,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Open Templates Tab",
-            "description": "In the SigSignature editor, click the Templates tab in the top navigation bar."
+            "description": "In the Sig Signature editor, click the Templates tab in the top navigation bar."
           },
           {
             "number": 2,
@@ -307,7 +307,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Best practices for formatting job titles, international phone numbers (tel: links), company URLs, and calendar booking links in email signatures.",
     "readTime": "2 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Deliverability Team",
+    "author": "Sig Signature Deliverability Team",
     "isPopular": false,
     "overview": [
       "When email recipients inspect your signature, they are usually hunting for one specific piece of information: your phone number, your calendar booking link, or your official job title. If that information is buried inside five lines of secondary addresses and disorganized links, the signature fails its primary objective.",
@@ -334,7 +334,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "description": "Mobile operating systems (iOS and Android) automatically scan email bodies for phone patterns and turn them into hyperlinks. If improperly formatted, Apple Mail will turn your phone number into an unstyled bright blue link that clashes with your brand palette. +1 (555) 234-5678 or +92 300 1234567 <a href=\"tel:+15552345678\" style=\"color: inherit; text-decoration: none;\">+1 (555) 234-5678</a> This prevents email clients from overriding your typography while enabling native 1-tap mobile dialing.",
             "substeps": [
               "Standard Format: Always include your international country code:",
-              "Under the Hood: SigSignature wraps phone numbers in explicit tel: protocols with inline styling:"
+              "Under the Hood: Sig Signature wraps phone numbers in explicit tel: protocols with inline styling:"
             ]
           },
           {
@@ -343,7 +343,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "description": "",
             "substeps": [
               "Display clean, human-readable domain strings (e.g., sigsignature.com or thenevon.com).",
-              "SigSignature automatically binds the underlying href attribute with secure https:// encryption.",
+              "Sig Signature automatically binds the underlying href attribute with secure https:// encryption.",
               "Never use raw URL shorteners (e.g., bit.ly) in your email signature as commercial spam filters flag shortened links as potential phishing vectors."
             ]
           },
@@ -431,15 +431,15 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "categorySlug": "getting-started",
     "eyebrow": "GETTING STARTED GUIDE",
     "title": "Live Preview: Inspect Desktop (600px) and Mobile (360px) Views",
-    "subtitle": "Learn how to test your email signature in desktop (600px) and mobile (360px) viewports inside the SigSignature editor before exporting.",
+    "subtitle": "Learn how to test your email signature in desktop (600px) and mobile (360px) viewports inside the Sig Signature editor before exporting.",
     "readTime": "2 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature QA Engineering Team",
+    "author": "Sig Signature QA Engineering Team",
     "isPopular": false,
     "overview": [
       "Over 55% of all commercial emails are opened on mobile devices (Apple Mail for iPhone and the Gmail mobile app). Yet most professionals design their signatures on a 27-inch desktop monitor.",
       "When an email signature designed at 600px width hits a 375px mobile screen, one of two disastrous things happens:\n1. The email client scales the entire email down to fit the screen, making the body text microscopic and unreadable.\n2. The columns fail to collapse, forcing the recipient to scroll horizontally to read your contact details.",
-      "SigSignature's built-in Live Dual-Viewport Inspector allows you to audit responsive behavior in real time before exporting a single line of code."
+      "Sig Signature’s built-in Live Dual-Viewport Inspector allows you to audit responsive behavior in real time before exporting a single line of code."
     ],
     "sections": [
       {
@@ -449,7 +449,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Activating the Preview Mode",
-            "description": "In the SigSignature Design Studio, locate the viewport toggle in the top-right toolbar:",
+            "description": "In the Sig Signature Design Studio, locate the viewport toggle in the top-right toolbar:",
             "substeps": [
               "Desktop View (600px): Simulates wide reading panes in Outlook 365, Gmail Web, and Apple Mail on macOS.",
               "Mobile View (360px): Simulates modern iOS and Android viewport constraints."
@@ -470,7 +470,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "title": "What to Inspect in Mobile Mode (360px)",
             "description": "",
             "substeps": [
-              "Column Stacking: SigSignature uses responsive table architecture. Inspect how horizontal modules stack vertically on narrow screens.",
+              "Column Stacking: Sig Signature uses responsive table architecture. Inspect how horizontal modules stack vertically on narrow screens.",
               "Text Wrapping: Ensure job titles and company names do not wrap awkwardly into single-word lines (e.g., breaking \"Executive\" onto a new line).",
               "Tap Target Spacing: Verify that social icons and phone links have at least 8px of padding between them so users can tap them without mis-clicking."
             ]
@@ -521,7 +521,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "keyTakeaways": [
       "Never deploy an email signature without inspecting both Desktop and Mobile viewports.",
       "Keep column widths flexible and text strings concise to prevent awkward mobile line wraps.",
-      "SigSignature automatically handles the underlying responsive table math so you never have to edit media queries manually."
+      "Sig Signature automatically handles the underlying responsive table math so you never have to edit media queries manually."
     ]
   },
   {
@@ -535,7 +535,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Complete diagnostic guide to solving blurry photos, giant Outlook logos, circular crop distortion, and unwanted table gaps in email signatures.",
     "readTime": "3 min read",
     "appliesTo": "Retina Screens, Outlook, Gmail, Webmail",
-    "author": "SigSignature Deliverability & Rendering Lab",
+    "author": "Sig Signature Deliverability & Rendering Lab",
     "isPopular": true,
     "overview": [
       "Images in email signatures are notoriously fragile. Because email clients do not support modern CSS standards like object-fit: cover or responsive aspect-ratio properties, minor markup mistakes can cause your company logo to blow up to 1200px wide in Outlook or look blurry on iPhones.",
@@ -643,11 +643,11 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Master brand color palettes in email signatures. Learn the 1-accent color rule, WCAG AA contrast standards, and how to avoid rainbow clutter.",
     "readTime": "3 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Design System Lab",
+    "author": "Sig Signature Design System Lab",
     "isPopular": false,
     "overview": [
       "Color in an email signature is an accent, not a canvas. When signatures feature five different colors (red titles, blue phone numbers, green website links, and orange social icons), the recipient's eye experiences visual fatigue, and the email takes on the appearance of an advertising banner.",
-      "SigSignature enforces an authoritative single-accent design system. By selecting one primary brand color, your signature looks cohesive, premium, and calm across every inbox."
+      "Sig Signature enforces an authoritative single-accent design system. By selecting one primary brand color, your signature looks cohesive, premium, and calm across every inbox."
     ],
     "sections": [
       {
@@ -785,7 +785,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "How to upload headshots and company logos at 2x Retina resolution with explicit HTML width/height attributes so they never appear blurry or oversized.",
     "readTime": "3 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Assets & Delivery Team",
+    "author": "Sig Signature Assets & Delivery Team",
     "isPopular": false,
     "overview": [
       "Most modern laptops, iPhones, and Android smartphones feature high-DPI displays (Retina, OLED, 4K). These displays pack 2x to 3x more physical hardware pixels into every square inch.",
@@ -798,7 +798,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
         "paragraphs": [
           "To achieve crisp rendering on high-DPI screens:\n> Upload an image whose physical pixel dimensions are exactly double (2x) the target display dimensions.",
           "Example for Headshots: \n Target Display Size in Signature: 75px x 75px \n Upload Source Dimensions: 150px x 150px\n Example for Company Logos: \n Target Display Size in Signature: 140px width x 40px height \n Upload Source Dimensions: 280px width x 80px height",
-          "SigSignature automatically sets the explicit HTML attribute width=\"75\" while serving the 150px source asset. The browser squeezes the crisp image into the smaller slot, achieving pixel-perfect clarity."
+          "Sig Signature automatically sets the explicit HTML attribute width=\"75\" while serving the 150px source asset. The browser squeezes the crisp image into the smaller slot, achieving pixel-perfect clarity."
         ]
       },
       {
@@ -838,7 +838,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Open Images Tab",
-            "description": "In the SigSignature editor, click on Images in the left sidebar."
+            "description": "In the Sig Signature editor, click on Images in the left sidebar."
           },
           {
             "number": 2,
@@ -863,7 +863,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 5,
             "title": "Save and Deploy",
-            "description": "Click Apply Image. SigSignature instantly optimizes the file and pushes it to our global HTTPS CDN."
+            "description": "Click Apply Image. Sig Signature instantly optimizes the file and pushes it to our global HTTPS CDN."
           }
         ]
       },
@@ -923,12 +923,12 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Discover which fonts render safely across Outlook, Gmail, and Apple Mail. Master multi-tier fallback stacks to prevent the Times New Roman trap.",
     "readTime": "3 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Typography Lab",
+    "author": "Sig Signature Typography Lab",
     "isPopular": false,
     "overview": [
       "In web development, you can import any custom font using Google Fonts or Adobe Typekit. In email development, attempting to use an external web font without proper defensive coding creates a notorious disaster: The Times New Roman Trap.",
       "When Microsoft Outlook for Windows encounters a font that is not pre-installed on the recipient's computer (or linked via external @import tags), it silently fails. Instead of falling back to a clean sans-serif font like Arial, Outlook's Word engine defaults to 12pt serif Times New Roman, completely destroying your visual branding.",
-      "SigSignature uses multi-tiered, battle-tested font stacks to ensure your typography remains clean and professional everywhere."
+      "Sig Signature uses multi-tiered, battle-tested font stacks to ensure your typography remains clean and professional everywhere."
     ],
     "sections": [
       {
@@ -939,9 +939,9 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
         ]
       },
       {
-        "heading": "How SigSignature Implements Safe Fallback Stacks",
+        "heading": "How Sig Signature Implements Safe Fallback Stacks",
         "paragraphs": [
-          "When you select a modern font in SigSignature (such as Plus Jakarta Sans or Inter), our compiler does not simply output font-family: 'Inter';. Instead, it writes a defensive, cascading font stack directly onto every table cell:"
+          "When you select a modern font in Sig Signature (such as Plus Jakarta Sans or Inter), our compiler does not simply output font-family: 'Inter';. Instead, it writes a defensive, cascading font stack directly onto every table cell:"
         ],
         "codeSnippet": {
           "language": "html",
@@ -1019,7 +1019,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Prevent ugly white logo bounding boxes and unreadable text in dark mode across Outlook, Gmail, and Apple Mail with these proven design techniques.",
     "readTime": "3 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Rendering Lab",
+    "author": "Sig Signature Rendering Lab",
     "isPopular": false,
     "overview": [
       "Over 40% of smartphone and desktop users now read emails with Dark Mode enabled. However, \"Dark Mode\" is not a standardized web technology in email. Each major email client applies its own aggressive color inversion algorithm:",
@@ -1069,7 +1069,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Open Live Preview",
-            "description": "In the SigSignature editor, preview your signature in both Desktop and Mobile views."
+            "description": "In the Sig Signature editor, preview your signature in both Desktop and Mobile views."
           },
           {
             "number": 2,
@@ -1144,12 +1144,12 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Add verified social media icons, app store badges, calendar buttons, and promotional CTAs to your email signature without triggering spam filters.",
     "readTime": "2 min read",
     "appliesTo": "All Plans & Templates",
-    "author": "SigSignature Growth & Integration Team",
+    "author": "Sig Signature Growth & Integration Team",
     "isPopular": false,
     "overview": [
       "Your email signature is not just a digital business card; it is an owned marketing touchpoint. Every email you send to clients, leads, and partners represents an opportunity to drive traffic to your LinkedIn profile, showcase your company portfolio, or book a discovery meeting.",
       "However, over-stuffing signatures with too many icons, broken links, or heavy graphic banners can trigger corporate spam filters.",
-      "SigSignature provides optimized social icon modules and promotional CTA slots engineered for high click-through rates and zero deliverability penalties."
+      "Sig Signature provides optimized social icon modules and promotional CTA slots engineered for high click-through rates and zero deliverability penalties."
     ],
     "sections": [
       {
@@ -1182,7 +1182,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
         ]
       },
       {
-        "heading": "4 Icon Visual Styles in SigSignature",
+        "heading": "4 Icon Visual Styles in Sig Signature",
         "paragraphs": [
           "In the Social Icons tab of the Design Studio, choose from 4 curated styles to match your brand aesthetic:"
         ],
@@ -1219,7 +1219,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
       {
         "heading": "Industry Badges & Compliance Accreditations",
         "paragraphs": [
-          "If your organization holds professional certifications, SigSignature allows you to place compact accreditation badges in the secondary footer:\n Security & Compliance: SOC2 Type II, ISO 27001, HIPAA Verified, GDPR Compliant.\n Industry Accreditations: Bar Association, Certified Financial Planner (CFP), Google Partner.\n Format: Badges should be compact (maximum 35px height) and displayed in grayscale or subtle monochrome to avoid distracting from your primary contact details."
+          "If your organization holds professional certifications, Sig Signature allows you to place compact accreditation badges in the secondary footer:\n Security & Compliance: SOC2 Type II, ISO 27001, HIPAA Verified, GDPR Compliant.\n Industry Accreditations: Bar Association, Certified Financial Planner (CFP), Google Partner.\n Format: Badges should be compact (maximum 35px height) and displayed in grayscale or subtle monochrome to avoid distracting from your primary contact details."
         ]
       }
     ],
@@ -1237,10 +1237,10 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "categorySlug": "export-installation",
     "eyebrow": "EXPORT & INSTALLATION GUIDE",
     "title": "Install Your Signature in Gmail (Web & Mobile)",
-    "subtitle": "Complete instructions for installing your SigSignature into Google Workspace and personal @gmail.com accounts with zero formatting loss.",
+    "subtitle": "Complete instructions for installing your Sig Signature into Google Workspace and personal @gmail.com accounts with zero formatting loss.",
     "readTime": "2 min read",
     "appliesTo": "Gmail Web, Google Workspace, iOS & Android",
-    "author": "SigSignature Technical Support",
+    "author": "Sig Signature Technical Support",
     "isPopular": true,
     "overview": [
       "Gmail Web uses a rich-text WYSIWYG editor that sanitizes pasted markup. When raw code is pasted improperly, Gmail can strip CSS styles, inject unwanted double line breaks, or turn signature text purple in email threads.",
@@ -1253,10 +1253,10 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
         "steps": [
           {
             "number": 1,
-            "title": "Copy the Signature from SigSignature",
+            "title": "Copy the Signature from Sig Signature",
             "description": "",
             "substeps": [
-              "In your SigSignature dashboard, open your finalized signature.",
+              "In your Sig Signature dashboard, open your finalized signature.",
               "Click Copy Visual Signature (or click Copy Signature to Clipboard).",
               "Do not copy raw HTML code for Gmail Web; copy the rendered visual binary output directly to your clipboard."
             ]
@@ -1277,7 +1277,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "description": "",
             "substeps": [
               "On the General tab, scroll down to the Signature section.",
-              "Click + Create new, name your signature (e.g., SigSignature Professional), and click Create."
+              "Click + Create new, name your signature (e.g., Sig Signature Professional), and click Create."
             ]
           },
           {
@@ -1338,7 +1338,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             [
               "Images Display Red \"X\" Box",
               "Image URL blocked or not HTTPS",
-              "SigSignature hosts on HTTPS CDNs; verify image links are active"
+              "Sig Signature hosts on HTTPS CDNs; verify image links are active"
             ],
             [
               "Signature Hidden Behind \"...\"",
@@ -1371,14 +1371,14 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Mastering Outlook email signature setup across Windows desktop, Microsoft 365 OWA, and macOS with perfect image rendering and MSO table support.",
     "readTime": "4 min read",
     "appliesTo": "Outlook 2016/2019/2021, Microsoft 365, Outlook Web, Outlook Mac",
-    "author": "SigSignature Outlook Engineering Team",
+    "author": "Sig Signature Outlook Engineering Team",
     "isPopular": true,
     "sections": [
       {
         "heading": "The Outlook Challenge: Microsoft Word Rendering Engine",
         "paragraphs": [
           "Desktop Outlook for Windows does not use a modern browser rendering engine (like Blink or WebKit). Instead, it uses Microsoft Word to render HTML emails. This creates notorious compatibility challenges: unsupported modern CSS (flexbox, grid, border-radius), distorted images on high-DPI screens, and ignored web fonts.",
-          "SigSignature incorporates Microsoft Office XML tags (<!--[if mso]>) and table constraints to guarantee your signature renders flawlessly."
+          "Sig Signature incorporates Microsoft Office XML tags (<!--[if mso]>) and table constraints to guarantee your signature renders flawlessly."
         ]
       },
       {
@@ -1390,7 +1390,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Visual Signature",
-            "description": "In SigSignature, click Copy Visual Signature."
+            "description": "In Sig Signature, click Copy Visual Signature."
           },
           {
             "number": 2,
@@ -1431,7 +1431,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Visual Signature",
-            "description": "In SigSignature, click Copy Visual Signature."
+            "description": "In Sig Signature, click Copy Visual Signature."
           },
           {
             "number": 2,
@@ -1471,7 +1471,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 9,
             "title": "Click OK to save.",
-            "description": "[!IMPORTANT] Outlook High-DPI Fix: If your logo appears oversized in Outlook Desktop, ensure you did not manually resize the image by dragging corner handles in Outlook's editor. Outlook's editor will strip SigSignature's MSO width tags. Always delete, re-copy from SigSignature, and paste cleanly."
+            "description": "[!IMPORTANT] Outlook High-DPI Fix: If your logo appears oversized in Outlook Desktop, ensure you did not manually resize the image by dragging corner handles in Outlook's editor. Outlook's editor will strip Sig Signature’s MSO width tags. Always delete, re-copy from Sig Signature, and paste cleanly."
           }
         ]
       },
@@ -1482,7 +1482,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Visual Signature",
-            "description": "In SigSignature, click Copy Visual Signature."
+            "description": "In Sig Signature, click Copy Visual Signature."
           },
           {
             "number": 2,
@@ -1534,22 +1534,22 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             [
               "Giant Logo on Windows",
               "User dragged corner handles in Outlook editor",
-              "Delete signature, re-copy from SigSignature, and paste without editing"
+              "Delete signature, re-copy from Sig Signature, and paste without editing"
             ],
             [
               "Thin Line Borders Disappear",
               "Outlook Word engine rounds 0.5px borders to zero",
-              "SigSignature uses explicit 1px solid table borders natively"
+              "Sig Signature uses explicit 1px solid table borders natively"
             ],
             [
               "Times New Roman Font Bug",
               "Outlook failed to find custom web font",
-              "SigSignature injects universal system fallbacks (Arial/Calibri)"
+              "Sig Signature injects universal system fallbacks (Arial/Calibri)"
             ],
             [
               "Extra Spacing Below Rows",
               "Outlook injected default paragraph spacing",
-              "SigSignature forces margin: 0; padding: 0; mso-line-height-rule: exactly;"
+              "Sig Signature forces margin: 0; padding: 0; mso-line-height-rule: exactly;"
             ]
           ]
         }
@@ -1558,7 +1558,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "keyTakeaways": [
       "Never drag image corner handles inside Outlook's built-in signature editor.",
       "Outlook on the Web (OWA) provides the fastest, most reliable setup across corporate teams.",
-      "SigSignature's built-in MSO tags guarantee that table borders and spacing stay locked in desktop Outlook."
+      "Sig Signature’s built-in MSO tags guarantee that table borders and spacing stay locked in desktop Outlook."
     ]
   },
   {
@@ -1572,7 +1572,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Technical developer guide to exporting minified, production-grade HTML signatures and integrating them into CRMs, Apple Mail, and custom marketing platforms.",
     "readTime": "2 min read",
     "appliesTo": "HubSpot, Salesforce, Apple Mail, CRM Platforms",
-    "author": "SigSignature Core Platform Team",
+    "author": "Sig Signature Core Platform Team",
     "isPopular": true,
     "sections": [
       {
@@ -1583,7 +1583,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
         ]
       },
       {
-        "heading": "Export Options in SigSignature",
+        "heading": "Export Options in Sig Signature",
         "paragraphs": [],
         "steps": [
           {
@@ -1630,7 +1630,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
               "In HubSpot, click the Settings Gear in top navigation.",
               "In left sidebar, navigate to General → Email tab.",
               "In the Signature section, click Edit signature → Click the HTML (Source Code) button.",
-              "Paste your raw SigSignature HTML code and click Save."
+              "Paste your raw Sig Signature HTML code and click Save."
             ]
           },
           {
@@ -1640,7 +1640,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "substeps": [
               "Click your Profile Avatar in top right → Click Settings.",
               "In Quick Find, search for My Email Settings.",
-              "In the Email Signature box, paste your SigSignature markup and click Save."
+              "In the Email Signature box, paste your Sig Signature markup and click Save."
             ]
           }
         ]
@@ -1681,7 +1681,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ],
     "keyTakeaways": [
       "Use \"Copy Visual Signature\" for webmail clients (Gmail/Outlook); use \"Copy Raw HTML\" for CRMs and marketing software.",
-      "All SigSignature code is 100% inline and minified for maximum deliverability.",
+      "All Sig Signature code is 100% inline and minified for maximum deliverability.",
       "Images are permanently hosted on secure, high-speed CDN servers."
     ]
   },
@@ -1696,7 +1696,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Step-by-step setup for Apple Mail on macOS Sequoia/Sonoma and iOS 18/17. Fix font distortion and learn the shake-to-undo formatting restore trick.",
     "readTime": "3 min read",
     "appliesTo": "Apple Mail macOS, iPhone & iPad iOS",
-    "author": "SigSignature Apple Ecosystem Team",
+    "author": "Sig Signature Apple Ecosystem Team",
     "isPopular": false,
     "overview": [
       "Apple Mail (both macOS and iOS) uses the modern WebKit rendering engine. WebKit provides the highest standards compliance of any email client in the world: perfect support for rounded borders, high-DPI Retina assets, and web typography.",
@@ -1711,7 +1711,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Visual Signature",
-            "description": "In your SigSignature dashboard, open your finalized signature and click Copy Visual Signature."
+            "description": "In your Sig Signature dashboard, open your finalized signature and click Copy Visual Signature."
           },
           {
             "number": 2,
@@ -1729,7 +1729,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "description": "",
             "substeps": [
               "In the left column, select the email account you want to use.",
-              "Click the + (Plus) button at the bottom of the middle column to create a new signature. Name it (e.g., SigSignature Work).",
+              "Click the + (Plus) button at the bottom of the middle column to create a new signature. Name it (e.g., Sig Signature Work).",
               "In the right-hand edit pane, delete any default text.",
               "Paste your signature (Cmd+V)."
             ]
@@ -1811,7 +1811,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
         [
           "Phone Numbers Turn Bright Blue",
           "iOS auto-detects phone numbers and injects links",
-          "SigSignature wraps phone numbers in styled tel: tags"
+          "Sig Signature wraps phone numbers in styled tel: tags"
         ],
         [
           "Images Don't Load on Mobile",
@@ -1837,11 +1837,11 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "How to install your HTML email signature into Yahoo Mail, Mozilla Thunderbird, ProtonMail, and cPanel Roundcube webmail without broken tables.",
     "readTime": "3 min read",
     "appliesTo": "Yahoo Mail, Thunderbird, ProtonMail, Roundcube",
-    "author": "SigSignature Webmail Support Team",
+    "author": "Sig Signature Webmail Support Team",
     "isPopular": false,
     "overview": [
       "While Gmail and Outlook dominate the corporate market, millions of professionals and agencies rely on independent email clients: Yahoo Mail for business, Mozilla Thunderbird for Linux/privacy workflows, ProtonMail for encrypted communications, and cPanel Roundcube for custom domain webmail.",
-      "Because SigSignature compiles to 100% inline CSS and standard HTML tables, your signature integrates seamlessly into every platform."
+      "Because Sig Signature compiles to 100% inline CSS and standard HTML tables, your signature integrates seamlessly into every platform."
     ],
     "sections": [
       {
@@ -1851,7 +1851,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Visual Signature",
-            "description": "Open your signature in SigSignature and click Copy Visual Signature."
+            "description": "Open your signature in Sig Signature and click Copy Visual Signature."
           },
           {
             "number": 2,
@@ -1896,7 +1896,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "title": "Method A",
             "description": "HTML File Attachment (Recommended)",
             "substeps": [
-              "In SigSignature, click Export HTML → Click Download .html File. Save it to a permanent folder on your computer.",
+              "In Sig Signature, click Export HTML → Click Download .html File. Save it to a permanent folder on your computer.",
               "Open Thunderbird.",
               "Right-click your email account in the left sidebar → Select Settings.",
               "In the main Account Settings panel, check the box labeled:",
@@ -1910,7 +1910,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "title": "Method B",
             "description": "Direct HTML Source Paste",
             "substeps": [
-              "In SigSignature, click Export HTML → Copy Raw HTML.",
+              "In Sig Signature, click Export HTML → Copy Raw HTML.",
               "In Thunderbird Account Settings, check the box \"Use HTML\" in the Signature text section.",
               "Paste your raw HTML code directly into the text box."
             ]
@@ -1924,7 +1924,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Visual Signature",
-            "description": "In SigSignature, click Copy Visual Signature."
+            "description": "In Sig Signature, click Copy Visual Signature."
           },
           {
             "number": 2,
@@ -1960,7 +1960,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Copy Raw HTML",
-            "description": "In SigSignature, click Export HTML → Copy Raw HTML."
+            "description": "In Sig Signature, click Export HTML → Copy Raw HTML."
           },
           {
             "number": 2,
@@ -2032,7 +2032,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "keyTakeaways": [
       "Thunderbird and Roundcube support direct raw HTML pasting via their code view tools.",
       "Yahoo Mail and ProtonMail require copying the \"Visual Signature\" directly to clipboard.",
-      "All signatures render consistently because SigSignature avoids unsupported external styles."
+      "All signatures render consistently because Sig Signature avoids unsupported external styles."
     ]
   },
   {
@@ -2042,14 +2042,14 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "category": "Account & billing",
     "categorySlug": "account-billing",
     "eyebrow": "ACCOUNT & BILLING GUIDE",
-    "title": "Manage Your SigSignature Account, Profile & Password",
-    "subtitle": "How to update your account profile name, upload an account avatar, change your password, and manage security settings in SigSignature.",
+    "title": "Manage Your Sig Signature Account, Profile & Password",
+    "subtitle": "How to update your account profile name, upload an account avatar, change your password, and manage security settings in Sig Signature.",
     "readTime": "2 min read",
     "appliesTo": "All Accounts & Users",
-    "author": "SigSignature Account Operations",
+    "author": "Sig Signature Account Operations",
     "isPopular": false,
     "overview": [
-      "Your SigSignature account houses your saved signature configurations, uploaded high-resolution assets, custom team templates, and billing history. Keeping your profile updated ensures accurate team notifications and seamless customer support.",
+      "Your Sig Signature account houses your saved signature configurations, uploaded high-resolution assets, custom team templates, and billing history. Keeping your profile updated ensures accurate team notifications and seamless customer support.",
       "This guide explains how to manage your personal profile, update security credentials, and handle registered email modifications."
     ],
     "sections": [
@@ -2073,7 +2073,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "description": "Under the Profile Settings section:",
             "substeps": [
               "Full Name: Update your legal or preferred display name. This name is used for team workspace invites and account invoicing.",
-              "Profile Avatar: Upload a PNG or JPEG photo (up to 2MB). A square 1:1 aspect ratio is recommended. This avatar serves as your user profile icon in the SigSignature dashboard.",
+              "Profile Avatar: Upload a PNG or JPEG photo (up to 2MB). A square 1:1 aspect ratio is recommended. This avatar serves as your user profile icon in the Sig Signature dashboard.",
               "Click Save Profile Changes. A confirmation toast will indicate that your details have been updated."
             ]
           },
@@ -2118,7 +2118,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
       {
         "heading": "Deleting an Account",
         "paragraphs": [
-          "If you wish to permanently delete your SigSignature account:\n Go to Settings → Scroll to the Danger Zone at the bottom.\n Click Delete Account Permanently.\n Confirm your password.\n Note: Deleting your account will immediately remove all saved signatures and revoke active team workspace seats. However, any email signatures already exported into your email clients will continue to function normally."
+          "If you wish to permanently delete your Sig Signature account:\n Go to Settings → Scroll to the Danger Zone at the bottom.\n Click Delete Account Permanently.\n Confirm your password.\n Note: Deleting your account will immediately remove all saved signatures and revoke active team workspace seats. However, any email signatures already exported into your email clients will continue to function normally."
         ]
       }
     ],
@@ -2136,13 +2136,13 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "categorySlug": "account-billing",
     "eyebrow": "ACCOUNT & BILLING GUIDE",
     "title": "Upgrade to Pro or Team Plan & Unlock Premium Features",
-    "subtitle": "Compare Free, Pro, and Team plans on SigSignature. Unlock unlimited signature slots, custom branding, analytics, and centralized team deployment.",
+    "subtitle": "Compare Free, Pro, and Team plans on Sig Signature. Unlock unlimited signature slots, custom branding, analytics, and centralized team deployment.",
     "readTime": "2 min read",
     "appliesTo": "Free, Pro & Team Tiers",
-    "author": "SigSignature Growth Operations",
+    "author": "Sig Signature Growth Operations",
     "isPopular": false,
     "overview": [
-      "SigSignature offers tiered plans designed for independent creators, growing consultancies, and multi-seat corporate organizations.",
+      "Sig Signature offers tiered plans designed for independent creators, growing consultancies, and multi-seat corporate organizations.",
       "Whether you need a single clean personal signature or centralized management for a 50-person sales organization, this guide helps you choose the optimal plan and execute an upgrade in under 60 seconds."
     ],
     "sections": [
@@ -2182,14 +2182,14 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 4,
             "title": "Immediate Feature Activation",
-            "description": "Upon payment completion, Stripe instantly redirects you back to your SigSignature dashboard. All plan limits are automatically lifted, and premium templates are unlocked immediately."
+            "description": "Upon payment completion, Stripe instantly redirects you back to your Sig Signature dashboard. All plan limits are automatically lifted, and premium templates are unlocked immediately."
           }
         ]
       },
       {
         "heading": "14-Day Money-Back Guarantee",
         "paragraphs": [
-          "We want you to be 100% satisfied with your email signatures. If you upgrade to Pro or Team and find that SigSignature does not satisfy your workflow requirements, email support@thenevon.com within 14 days of purchase for a prompt, no-questions-asked full refund."
+          "We want you to be 100% satisfied with your email signatures. If you upgrade to Pro or Team and find that Sig Signature does not satisfy your workflow requirements, email support@thenevon.com within 14 days of purchase for a prompt, no-questions-asked full refund."
         ]
       }
     ],
@@ -2265,13 +2265,13 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "categorySlug": "account-billing",
     "eyebrow": "ACCOUNT & BILLING GUIDE",
     "title": "Manage Billing, Stripe Invoices, Receipts & Payment Methods",
-    "subtitle": "How to update your credit card, download VAT/tax invoices, access the Stripe Customer Portal, and manage plan renewals in SigSignature.",
+    "subtitle": "How to update your credit card, download VAT/tax invoices, access the Stripe Customer Portal, and manage plan renewals in Sig Signature.",
     "readTime": "2 min read",
     "appliesTo": "Pro & Team Subscribers",
-    "author": "SigSignature Finance & Billing Team",
+    "author": "Sig Signature Finance & Billing Team",
     "isPopular": false,
     "overview": [
-      "SigSignature uses Stripe as our global payment infrastructure provider. Stripe handles all payment processing with bank-grade AES-256 encryption. We never store or process your credit card numbers on our local servers.",
+      "Sig Signature uses Stripe as our global payment infrastructure provider. Stripe handles all payment processing with bank-grade AES-256 encryption. We never store or process your credit card numbers on our local servers.",
       "Through the integrated Stripe Customer Portal, you have complete self-service control over your payment methods, billing history, and tax invoices."
     ],
     "sections": [
@@ -2282,7 +2282,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
           {
             "number": 1,
             "title": "Log into Dashboard",
-            "description": "Log into your SigSignature dashboard."
+            "description": "Log into your Sig Signature dashboard."
           },
           {
             "number": 2,
@@ -2397,11 +2397,11 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "subtitle": "Centralize your company's email branding. Learn how to invite team members, assign Admin/Member roles, and deploy standardized signatures across your organization.",
     "readTime": "3 min read",
     "appliesTo": "Team Plan Subscribers",
-    "author": "SigSignature Enterprise Team",
+    "author": "Sig Signature Enterprise Team",
     "isPopular": false,
     "overview": [
       "When a scaling company lacks a centralized email signature system, employee signatures quickly degenerate into chaos:\n Sales reps create their own signatures with outdated logos and inconsistent colors.\n Employees link to defunct marketing campaigns or broken social handles.\n Required legal disclaimers and regulatory notices are omitted.",
-      "SigSignature's Team Workspace gives administrators complete governance over company email branding. You design and lock the master corporate template once; team members simply populate their name and direct phone number."
+      "Sig Signature’s Team Workspace gives administrators complete governance over company email branding. You design and lock the master corporate template once; team members simply populate their name and direct phone number."
     ],
     "sections": [
       {
@@ -2460,7 +2460,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
             "description": "You can onboard team members using two methods:",
             "substeps": [
               "Method A (Email Invite): Click Invite Member, type the employee's work email address (e.g., alex@company.com), select their role, and click Send Invite.",
-              "Method B (CSV Bulk Upload): For teams over 10 members, click Import CSV. Upload a spreadsheet containing columns: Name, Email, Title, Phone. SigSignature will generate individual signatures automatically!"
+              "Method B (CSV Bulk Upload): For teams over 10 members, click Import CSV. Upload a spreadsheet containing columns: Name, Email, Title, Phone. Sig Signature will generate individual signatures automatically!"
             ]
           },
           {

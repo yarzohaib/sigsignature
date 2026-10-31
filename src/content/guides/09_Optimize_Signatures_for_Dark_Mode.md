@@ -3,7 +3,7 @@
 > **Category:** DESIGN & TEMPLATES GUIDE • `DESIGN & TEMPLATES`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Rendering Lab  
+> **Author:** Sig Signature Rendering Lab  
 > **Canonical URL:** `/help/design-templates/dark-mode-email-signature`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Dark Mode Email Signature Optimization Guide | Sig Signature
 * **Meta Description:** Prevent ugly white logo bounding boxes and unreadable text in dark mode across Outlook, Gmail, and Apple Mail with these proven design techniques.
 * **Primary Target Keyword:** `dark mode email signature logo`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -59,7 +59,7 @@ If your email signature is not engineered defensively, your black company logo w
 
 ## How to Test Dark Mode Before Sending
 
-1. In the SigSignature editor, preview your signature in both Desktop and Mobile views.
+1. In the Sig Signature editor, preview your signature in both Desktop and Mobile views.
 2. Send a live test email to:
    * A personal iPhone with iOS Dark Mode toggled ON.
    * A desktop Outlook account with Dark Theme enabled.

@@ -3,22 +3,22 @@
 > **Category:** ACCOUNT & BILLING GUIDE • `ACCOUNT & BILLING`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** Free, Pro & Team Tiers  
-> **Author:** SigSignature Growth Operations  
+> **Author:** Sig Signature Growth Operations  
 > **Canonical URL:** `/help/account-billing/upgrade-pro-team-plan`  
 
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Upgrade SigSignature Plan: Pro & Team Features | Sig Signature
-* **Meta Description:** Compare Free, Pro, and Team plans on SigSignature. Unlock unlimited signature slots, custom branding, analytics, and centralized team deployment.
+* **Page Meta Title:** Upgrade Sig Signature Plan: Pro & Team Features | Sig Signature
+* **Meta Description:** Compare Free, Pro, and Team plans on Sig Signature. Unlock unlimited signature slots, custom branding, analytics, and centralized team deployment.
 * **Primary Target Keyword:** `sigsignature pricing pro team upgrade`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
-## Overview: Choosing the Right SigSignature Tier
+## Overview: Choosing the Right Sig Signature Tier
 
-SigSignature offers tiered plans designed for independent creators, growing consultancies, and multi-seat corporate organizations.
+Sig Signature offers tiered plans designed for independent creators, growing consultancies, and multi-seat corporate organizations.
 
 Whether you need a single clean personal signature or centralized management for a 50-person sales organization, this guide helps you choose the optimal plan and execute an upgrade in under 60 seconds.
 
@@ -56,13 +56,13 @@ Whether you need a single clean personal signature or centralized management for
 4. Click **Subscribe**.
 
 ### Step 4: Immediate Feature Activation
-Upon payment completion, Stripe instantly redirects you back to your SigSignature dashboard. All plan limits are automatically lifted, and premium templates are unlocked immediately.
+Upon payment completion, Stripe instantly redirects you back to your Sig Signature dashboard. All plan limits are automatically lifted, and premium templates are unlocked immediately.
 
 ---
 
 ## 14-Day Money-Back Guarantee
 
-We want you to be 100% satisfied with your email signatures. If you upgrade to Pro or Team and find that SigSignature does not satisfy your workflow requirements, email `support@thenevon.com` within 14 days of purchase for a prompt, no-questions-asked full refund.
+We want you to be 100% satisfied with your email signatures. If you upgrade to Pro or Team and find that Sig Signature does not satisfy your workflow requirements, email `support@thenevon.com` within 14 days of purchase for a prompt, no-questions-asked full refund.
 
 ---
 

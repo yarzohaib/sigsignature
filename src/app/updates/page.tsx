@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Product Updates | Sig Signature",
     description:
-      "Track new feature releases, email client compatibility upgrades, and performance enhancements across SigSignature.",
+      "Track new feature releases, email client compatibility upgrades, and performance enhancements across Sig Signature.",
     url: "https://www.sigsignature.com/updates",
     siteName: "Sig Signature",
     images: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "SigSignature Product Updates",
+        alt: "Sig Signature Product Updates",
       },
     ],
     locale: "en_US",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Product Updates | Sig Signature",
     description:
-      "Track new feature releases and email client compatibility upgrades across SigSignature.",
+      "Track new feature releases and email client compatibility upgrades across Sig Signature.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

@@ -1,6 +1,6 @@
 # Email Signature Template Designs & Safe Rules
 
-This directory contains individual design renderers for SigSignature email templates. Every design exports a `render(data: TemplateSignatureData): string` function and registers in `index.ts`.
+This directory contains individual design renderers for Sig Signature email templates. Every design exports a `render(data: TemplateSignatureData): string` function and registers in `index.ts`.
 
 ---
 

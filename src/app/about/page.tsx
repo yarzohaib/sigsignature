@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "About Us | Sig Signature",
     description:
-      "Learn how SigSignature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures for modern professionals and teams.",
+      "Learn how Sig Signature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures for modern professionals and teams.",
     url: "https://www.sigsignature.com/about",
     siteName: "Sig Signature",
     images: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "About SigSignature",
+        alt: "About Sig Signature",
       },
     ],
     locale: "en_US",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "About Us | Sig Signature",
     description:
-      "Learn how SigSignature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures.",
+      "Learn how Sig Signature by The Nevon engineers deliverability-first, pixel-perfect HTML email signatures.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

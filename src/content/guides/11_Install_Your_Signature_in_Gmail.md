@@ -3,16 +3,16 @@
 > **Category:** EXPORT & INSTALLATION GUIDE • `EXPORT & INSTALLATION`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** Gmail Web, Google Workspace, iOS & Android  
-> **Author:** SigSignature Technical Support  
+> **Author:** Sig Signature Technical Support  
 > **Canonical URL:** `/help/export-installation/install-signature-gmail`  
 
 ---
 
 ### SEO Metadata & Discovery Tags
 * **Page Meta Title:** Install Email Signature in Gmail Web & Mobile App | Sig Signature
-* **Meta Description:** Complete instructions for installing your SigSignature into Google Workspace and personal @gmail.com accounts with zero formatting loss.
+* **Meta Description:** Complete instructions for installing your Sig Signature into Google Workspace and personal @gmail.com accounts with zero formatting loss.
 * **Primary Target Keyword:** `install signature in gmail`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -26,8 +26,8 @@ Following this verified procedure ensures your table structure and images remain
 
 ## Installation Walkthrough: Gmail on the Web
 
-### Step 1: Copy the Signature from SigSignature
-1. In your SigSignature dashboard, open your finalized signature.
+### Step 1: Copy the Signature from Sig Signature
+1. In your Sig Signature dashboard, open your finalized signature.
 2. Click **Copy Visual Signature** (or click *Copy Signature to Clipboard*).
 3. **Do not copy raw HTML code for Gmail Web**; copy the rendered visual binary output directly to your clipboard.
 
@@ -38,7 +38,7 @@ Following this verified procedure ensures your table structure and images remain
 
 ### Step 3: Navigate to Signature Settings
 1. On the **General** tab, scroll down to the **Signature** section.
-2. Click **+ Create new**, name your signature (e.g., *SigSignature Professional*), and click **Create**.
+2. Click **+ Create new**, name your signature (e.g., *Sig Signature Professional*), and click **Create**.
 
 ### Step 4: Paste and Configure Defaults
 1. Click inside the empty signature text box on the right.

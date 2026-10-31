@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Privacy Policy | Sig Signature",
     description:
-      "Learn how SigSignature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
+      "Learn how Sig Signature and The Nevon collect, use, store, and protect your personal data and uploaded assets.",
     url: "https://www.sigsignature.com/privacy",
     siteName: "Sig Signature",
     images: [
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "SigSignature Privacy Policy",
+        alt: "Sig Signature Privacy Policy",
       },
     ],
     locale: "en_US",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Privacy Policy | Sig Signature",
     description:
-      "Learn how SigSignature and The Nevon collect, use, and protect your personal data.",
+      "Learn how Sig Signature and The Nevon collect, use, and protect your personal data.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

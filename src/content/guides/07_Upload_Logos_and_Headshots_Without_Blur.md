@@ -3,7 +3,7 @@
 > **Category:** DESIGN & TEMPLATES GUIDE • `DESIGN & TEMPLATES`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Assets & Delivery Team  
+> **Author:** Sig Signature Assets & Delivery Team  
 > **Canonical URL:** `/help/design-templates/upload-logo-headshot-retina`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Crisp Retina Logos & Headshots for Email Signatures | Sig Signature
 * **Meta Description:** How to upload headshots and company logos at 2x Retina resolution with explicit HTML width/height attributes so they never appear blurry or oversized.
 * **Primary Target Keyword:** `crisp email signature logo retina`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -38,7 +38,7 @@ To achieve crisp rendering on high-DPI screens:
   Target Display Size in Signature: `140px width x 40px height`  
   Upload Source Dimensions: `280px width x 80px height`
 
-SigSignature automatically sets the explicit HTML attribute `width="75"` while serving the 150px source asset. The browser squeezes the crisp image into the smaller slot, achieving pixel-perfect clarity.
+Sig Signature automatically sets the explicit HTML attribute `width="75"` while serving the 150px source asset. The browser squeezes the crisp image into the smaller slot, achieving pixel-perfect clarity.
 
 ---
 
@@ -60,14 +60,14 @@ While SVGs are the gold standard for web design, **email clients strictly block 
 
 ## Step-by-Step Upload Walkthrough
 
-1. In the SigSignature editor, click on **Images** in the left sidebar.
+1. In the Sig Signature editor, click on **Images** in the left sidebar.
 2. Select whether you are uploading an **Avatar (Headshot)** or a **Company Logo**.
 3. Drag and drop your 2x image file into the upload zone.
 4. Use the interactive cropping modal:
    * **Circle:** Best for headshots; centers the face with balanced padding.
    * **Rounded Rect (8px):** Clean modern corner rounding for square logos.
    * **Sharp Square (0px):** Architectural corporate standard.
-5. Click **Apply Image**. SigSignature instantly optimizes the file and pushes it to our global HTTPS CDN.
+5. Click **Apply Image**. Sig Signature instantly optimizes the file and pushes it to our global HTTPS CDN.
 
 ---
 

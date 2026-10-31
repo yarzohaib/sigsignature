@@ -51,7 +51,7 @@ export function getSiteMetadata(
       default: "Sig Signature | Professional Email Signature Generator",
     },
     description:
-      "SigSignature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
+      "Sig Signature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
     keywords: [
       "email signature generator",
       "html email signature",

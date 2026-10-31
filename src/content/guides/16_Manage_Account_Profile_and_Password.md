@@ -1,24 +1,24 @@
-# Manage Your SigSignature Account, Profile & Password
+# Manage Your Sig Signature Account, Profile & Password
 
 > **Category:** ACCOUNT & BILLING GUIDE • `ACCOUNT & BILLING`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** All Accounts & Users  
-> **Author:** SigSignature Account Operations  
+> **Author:** Sig Signature Account Operations  
 > **Canonical URL:** `/help/account-billing/manage-account-profile-password`  
 
 ---
 
 ### SEO Metadata & Discovery Tags
-* **Page Meta Title:** Manage SigSignature Account, Profile & Password | Sig Signature
-* **Meta Description:** How to update your account profile name, upload an account avatar, change your password, and manage security settings in SigSignature.
+* **Page Meta Title:** Manage Sig Signature Account, Profile & Password | Sig Signature
+* **Meta Description:** How to update your account profile name, upload an account avatar, change your password, and manage security settings in Sig Signature.
 * **Primary Target Keyword:** `sigsignature account settings profile`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
 ## Overview: Account Administration & Security
 
-Your SigSignature account houses your saved signature configurations, uploaded high-resolution assets, custom team templates, and billing history. Keeping your profile updated ensures accurate team notifications and seamless customer support.
+Your Sig Signature account houses your saved signature configurations, uploaded high-resolution assets, custom team templates, and billing history. Keeping your profile updated ensures accurate team notifications and seamless customer support.
 
 This guide explains how to manage your personal profile, update security credentials, and handle registered email modifications.
 
@@ -34,7 +34,7 @@ This guide explains how to manage your personal profile, update security credent
 ### 2. Updating Profile Information
 Under the **Profile Settings** section:
 * **Full Name:** Update your legal or preferred display name. This name is used for team workspace invites and account invoicing.
-* **Profile Avatar:** Upload a PNG or JPEG photo (up to 2MB). A square 1:1 aspect ratio is recommended. This avatar serves as your user profile icon in the SigSignature dashboard.
+* **Profile Avatar:** Upload a PNG or JPEG photo (up to 2MB). A square 1:1 aspect ratio is recommended. This avatar serves as your user profile icon in the Sig Signature dashboard.
 * Click **Save Profile Changes**. A confirmation toast will indicate that your details have been updated.
 
 ### 3. Updating Your Password
@@ -61,7 +61,7 @@ If your organization has rebranded or your work email has changed:
 
 ## Deleting an Account
 
-If you wish to permanently delete your SigSignature account:
+If you wish to permanently delete your Sig Signature account:
 * Go to **Settings** -> Scroll to the **Danger Zone** at the bottom.
 * Click **Delete Account Permanently**.
 * Confirm your password.

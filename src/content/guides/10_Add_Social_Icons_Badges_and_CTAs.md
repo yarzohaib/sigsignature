@@ -3,7 +3,7 @@
 > **Category:** DESIGN & TEMPLATES GUIDE • `DESIGN & TEMPLATES`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Growth & Integration Team  
+> **Author:** Sig Signature Growth & Integration Team  
 > **Canonical URL:** `/help/design-templates/social-icons-badges-cta`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Add Social Icons, Custom Badges & CTAs to Signatures | Sig Signature
 * **Meta Description:** Add verified social media icons, app store badges, calendar buttons, and promotional CTAs to your email signature without triggering spam filters.
 * **Primary Target Keyword:** `add social icons email signature`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -22,7 +22,7 @@ Your email signature is not just a digital business card; it is an owned marketi
 
 However, over-stuffing signatures with too many icons, broken links, or heavy graphic banners can trigger corporate spam filters.
 
-SigSignature provides optimized social icon modules and promotional CTA slots engineered for high click-through rates and zero deliverability penalties.
+Sig Signature provides optimized social icon modules and promotional CTA slots engineered for high click-through rates and zero deliverability penalties.
 
 ---
 
@@ -39,7 +39,7 @@ Corporate email security filters (like Barracuda, Proofpoint, and Google Workspa
 
 ---
 
-## 4 Icon Visual Styles in SigSignature
+## 4 Icon Visual Styles in Sig Signature
 
 In the **Social Icons** tab of the Design Studio, choose from 4 curated styles to match your brand aesthetic:
 
@@ -67,7 +67,7 @@ Pro and Team accounts can add a promotional banner directly below the signature 
 
 ## Industry Badges & Compliance Accreditations
 
-If your organization holds professional certifications, SigSignature allows you to place compact accreditation badges in the secondary footer:
+If your organization holds professional certifications, Sig Signature allows you to place compact accreditation badges in the secondary footer:
 * **Security & Compliance:** SOC2 Type II, ISO 27001, HIPAA Verified, GDPR Compliant.
 * **Industry Accreditations:** Bar Association, Certified Financial Planner (CFP), Google Partner.
 * **Format:** Badges should be compact (maximum 35px height) and displayed in grayscale or subtle monochrome to avoid distracting from your primary contact details.

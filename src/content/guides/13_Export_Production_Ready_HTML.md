@@ -3,7 +3,7 @@
 > **Category:** EXPORT & INSTALLATION GUIDE • `EXPORT & INSTALLATION`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** HubSpot, Salesforce, Apple Mail, CRM Platforms  
-> **Author:** SigSignature Core Platform Team  
+> **Author:** Sig Signature Core Platform Team  
 > **Canonical URL:** `/help/export-installation/export-html-embed-code`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Export Production-Ready HTML Email Signatures | Sig Signature
 * **Meta Description:** Technical developer guide to exporting minified, production-grade HTML signatures and integrating them into CRMs, Apple Mail, and custom marketing platforms.
 * **Primary Target Keyword:** `export html email signature`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -27,7 +27,7 @@ Modern web development techniques (Flexbox, CSS Grid, external stylesheets, SVG 
 
 ---
 
-## Export Options in SigSignature
+## Export Options in Sig Signature
 
 ### Option 1: Copy Visual Signature (Clipboard)
 * **Best For:** Direct visual pasting into webmail clients (Gmail, Outlook Web, Yahoo Mail, Thunderbird).
@@ -52,12 +52,12 @@ Modern web development techniques (Flexbox, CSS Grid, external stylesheets, SVG 
 1. In HubSpot, click the **Settings Gear (⚙️)** in top navigation.
 2. In left sidebar, navigate to **General** -> **Email** tab.
 3. In the *Signature* section, click **Edit signature** -> Click the **HTML (Source Code)** button.
-4. Paste your raw SigSignature HTML code and click **Save**.
+4. Paste your raw Sig Signature HTML code and click **Save**.
 
 ### Salesforce Sales Cloud
 1. Click your Profile Avatar in top right -> Click **Settings**.
 2. In Quick Find, search for **My Email Settings**.
-3. In the *Email Signature* box, paste your SigSignature markup and click **Save**.
+3. In the *Email Signature* box, paste your Sig Signature markup and click **Save**.
 
 ---
 
@@ -74,5 +74,5 @@ Modern web development techniques (Flexbox, CSS Grid, external stylesheets, SVG 
 
 ## Key Takeaways
 * Use "Copy Visual Signature" for webmail clients (Gmail/Outlook); use "Copy Raw HTML" for CRMs and marketing software.
-* All SigSignature code is 100% inline and minified for maximum deliverability.
+* All Sig Signature code is 100% inline and minified for maximum deliverability.
 * Images are permanently hosted on secure, high-speed CDN servers.

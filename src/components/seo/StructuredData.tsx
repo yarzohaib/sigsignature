@@ -2,7 +2,7 @@ export function OrganizationJsonLd() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "SigSignature",
+    "name": "Sig Signature",
     "alternateName": "Sig Signature by The Nevon",
     "url": "https://www.sigsignature.com",
     "logo": "https://www.sigsignature.com/logo.svg",
@@ -38,11 +38,11 @@ export function WebSiteJsonLd() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "SigSignature",
+    "name": "Sig Signature",
     "alternateName": [
       "Sig Signature",
-      "SigSignature by The Nevon",
-      "SigSignature Email Signature Generator"
+      "Sig Signature by The Nevon",
+      "Sig Signature Email Signature Generator"
     ],
     "url": "https://www.sigsignature.com",
     "description": "Free professional HTML email signature generator engineered for modern professionals and teams.",
@@ -90,12 +90,12 @@ export function WebApplicationJsonLd() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "SigSignature",
+    "name": "Sig Signature",
     "url": "https://www.sigsignature.com",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "All (Web Browser)",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
-    "description": "SigSignature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
+    "description": "Sig Signature is a lightweight, deliverability-focused HTML email signature generator engineered for modern professionals and teams.",
     "offers": {
       "@type": "AggregateOffer",
       "priceCurrency": "USD",
@@ -152,11 +152,11 @@ export function AboutPageJsonLd() {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     "url": "https://www.sigsignature.com/about",
-    "name": "About SigSignature",
-    "description": "SigSignature by The Nevon is a deliverability-focused HTML email signature generator built for modern professionals and enterprise teams.",
+    "name": "About Sig Signature",
+    "description": "Sig Signature by The Nevon is a deliverability-focused HTML email signature generator built for modern professionals and enterprise teams.",
     "mainEntity": {
       "@type": "Organization",
-      "name": "SigSignature",
+      "name": "Sig Signature",
       "url": "https://www.sigsignature.com",
       "parentOrganization": {
         "@type": "Organization",
@@ -179,8 +179,8 @@ export function TeamPageJsonLd() {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     "url": "https://www.sigsignature.com/team",
-    "name": "Meet the SigSignature Team",
-    "description": "The builders, designers, and problem solvers behind SigSignature and The Nevon.",
+    "name": "Meet the Sig Signature Team",
+    "description": "The builders, designers, and problem solvers behind Sig Signature and The Nevon.",
     "mainEntity": [
       {
         "@type": "Person",
@@ -188,7 +188,7 @@ export function TeamPageJsonLd() {
         "jobTitle": "CEO and Founder",
         "worksFor": {
           "@type": "Organization",
-          "name": "SigSignature"
+          "name": "Sig Signature"
         },
         "sameAs": "https://www.linkedin.com/in/nadir1214/"
       },
@@ -198,7 +198,7 @@ export function TeamPageJsonLd() {
         "jobTitle": "Lead Full-Stack Developer",
         "worksFor": {
           "@type": "Organization",
-          "name": "SigSignature"
+          "name": "Sig Signature"
         },
         "sameAs": "https://www.linkedin.com/in/zohaib-yar/"
       },
@@ -208,7 +208,7 @@ export function TeamPageJsonLd() {
         "jobTitle": "Head of SEO, AEO & GEO",
         "worksFor": {
           "@type": "Organization",
-          "name": "SigSignature"
+          "name": "Sig Signature"
         },
         "sameAs": "https://www.linkedin.com/in/abdul-moiz-shahzad-92b240441/"
       },
@@ -218,7 +218,7 @@ export function TeamPageJsonLd() {
         "jobTitle": "QA & Social Operations",
         "worksFor": {
           "@type": "Organization",
-          "name": "SigSignature"
+          "name": "Sig Signature"
         },
         "sameAs": "https://www.linkedin.com/in/ali-aun/"
       },
@@ -228,7 +228,7 @@ export function TeamPageJsonLd() {
         "jobTitle": "UI/UX Designer",
         "worksFor": {
           "@type": "Organization",
-          "name": "SigSignature"
+          "name": "Sig Signature"
         },
         "sameAs": "https://www.linkedin.com/in/mishal-rajpoot-79323741b"
       }
@@ -248,11 +248,11 @@ export function ContactPageJsonLd() {
     "@context": "https://schema.org",
     "@type": "ContactPage",
     "url": "https://www.sigsignature.com/contact",
-    "name": "Contact SigSignature Support",
-    "description": "Get in touch with the SigSignature engineering and customer support team.",
+    "name": "Contact Sig Signature Support",
+    "description": "Get in touch with the Sig Signature engineering and customer support team.",
     "mainEntity": {
       "@type": "Organization",
-      "name": "SigSignature",
+      "name": "Sig Signature",
       "url": "https://www.sigsignature.com",
       "contactPoint": {
         "@type": "ContactPoint",
@@ -276,8 +276,8 @@ export function UpdatesPageJsonLd() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "url": "https://www.sigsignature.com/updates",
-    "name": "SigSignature Changelog & Product Updates",
-    "description": "Latest feature releases, templates, deliverability upgrades, and bug fixes for SigSignature."
+    "name": "Sig Signature Changelog & Product Updates",
+    "description": "Latest feature releases, templates, deliverability upgrades, and bug fixes for Sig Signature."
   };
 
   return (
@@ -323,11 +323,11 @@ export function PricingPageJsonLd() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": "SigSignature Email Signature Generator",
+    "name": "Sig Signature Email Signature Generator",
     "description": "Create up to 3 free email signatures with deliverability-first HTML. Upgrade to Pro for unlimited signatures and team management.",
     "brand": {
       "@type": "Brand",
-      "name": "SigSignature"
+      "name": "Sig Signature"
     },
     "offers": [
       {

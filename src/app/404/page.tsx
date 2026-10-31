@@ -3,7 +3,7 @@ import NotFound from "../not-found";
 
 export const metadata: Metadata = {
   title: "Page Not Found | Sig Signature",
-  description: "The page you are looking for does not exist on SigSignature.",
+  description: "The page you are looking for does not exist on Sig Signature.",
   robots: {
     index: false,
     follow: false,

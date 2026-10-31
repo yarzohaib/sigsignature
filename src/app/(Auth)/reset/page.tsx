@@ -138,7 +138,7 @@ function ResetPasswordForm() {
           Create New Password
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Enter a new password to securely access your SigSignature account.
+          Enter a new password to securely access your Sig Signature account.
         </p>
       </div>
 

@@ -323,7 +323,7 @@ function PricingContent() {
                     number: "02",
                     question: "What changes when I move to Pro?",
                     answer:
-                      "Upgrading to Pro unlocks unlimited signature creation, exclusive premium templates, team management capabilities, and removes SigSignature branding.",
+                      "Upgrading to Pro unlocks unlimited signature creation, exclusive premium templates, team management capabilities, and removes Sig Signature branding.",
                   },
                   {
                     number: "03",

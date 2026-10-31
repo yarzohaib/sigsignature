@@ -235,7 +235,7 @@ function LoginForm() {
       {/* Header */}
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
-          Log in to SigSignature
+          Log in to Sig Signature
         </h1>
         <p className="mt-2 text-sm text-slate-600">
           Welcome back! Log in to access your signatures.

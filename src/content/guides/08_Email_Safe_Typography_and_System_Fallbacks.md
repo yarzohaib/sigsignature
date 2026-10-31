@@ -3,7 +3,7 @@
 > **Category:** DESIGN & TEMPLATES GUIDE • `DESIGN & TEMPLATES`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Typography Lab  
+> **Author:** Sig Signature Typography Lab  
 > **Canonical URL:** `/help/design-templates/email-safe-fonts-fallbacks`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Email-Safe Fonts & Fallback Stacks for Signatures | Sig Signature
 * **Meta Description:** Discover which fonts render safely across Outlook, Gmail, and Apple Mail. Master multi-tier fallback stacks to prevent the Times New Roman trap.
 * **Primary Target Keyword:** `email safe fonts signature fallbacks`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -22,7 +22,7 @@ In web development, you can import any custom font using Google Fonts or Adobe T
 
 When Microsoft Outlook for Windows encounters a font that is not pre-installed on the recipient's computer (or linked via external `@import` tags), it silently fails. Instead of falling back to a clean sans-serif font like Arial, Outlook's Word engine defaults to 12pt serif Times New Roman, completely destroying your visual branding.
 
-SigSignature uses multi-tiered, battle-tested font stacks to ensure your typography remains clean and professional everywhere.
+Sig Signature uses multi-tiered, battle-tested font stacks to ensure your typography remains clean and professional everywhere.
 
 ---
 
@@ -39,9 +39,9 @@ These fonts are pre-installed on virtually 100% of all Windows, macOS, iOS, and 
 
 ---
 
-## How SigSignature Implements Safe Fallback Stacks
+## How Sig Signature Implements Safe Fallback Stacks
 
-When you select a modern font in SigSignature (such as Plus Jakarta Sans or Inter), our compiler does not simply output `font-family: 'Inter';`. Instead, it writes a defensive, cascading font stack directly onto every table cell:
+When you select a modern font in Sig Signature (such as Plus Jakarta Sans or Inter), our compiler does not simply output `font-family: 'Inter';`. Instead, it writes a defensive, cascading font stack directly onto every table cell:
 
 ```html
 <td style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; line-height: 18px; color: #1a1a1a;">

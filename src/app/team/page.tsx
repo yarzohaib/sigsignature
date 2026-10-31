@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Meet Our Team | Sig Signature",
     description:
-      "Meet the engineers, designers, and search strategists building SigSignature at The Nevon.",
+      "Meet the engineers, designers, and search strategists building Sig Signature at The Nevon.",
     url: "https://www.sigsignature.com/team",
     siteName: "Sig Signature",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "SigSignature Team",
+        alt: "Sig Signature Team",
       },
     ],
     locale: "en_US",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Meet Our Team | Sig Signature",
     description:
-      "Meet the engineers, designers, and search strategists building SigSignature at The Nevon.",
+      "Meet the engineers, designers, and search strategists building Sig Signature at The Nevon.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };

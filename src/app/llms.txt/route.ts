@@ -1,12 +1,12 @@
 export const dynamic = "force-static";
 
 export async function GET() {
-  const content = `# SigSignature
+  const content = `# Sig Signature
 
 > Free, deliverability-optimized HTML email signature generator for professionals and teams.
 
 ## Overview
-SigSignature (developed by The Nevon) is a modern web application that generates production-grade, 100% table-based inline HTML email signatures. It solves formatting breakdown, image attachment issues, and email clipping across major email providers.
+Sig Signature (developed by The Nevon) is a modern web application that generates production-grade, 100% table-based inline HTML email signatures. It solves formatting breakdown, image attachment issues, and email clipping across major email providers.
 
 ## Key Technical Specifications
 - Output Payload: Under 10KB to ensure signatures are never clipped by Gmail (102KB clipping threshold).

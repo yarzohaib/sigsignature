@@ -3,7 +3,7 @@
 > **Category:** EXPORT & INSTALLATION GUIDE • `EXPORT & INSTALLATION`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** Apple Mail macOS, iPhone & iPad iOS  
-> **Author:** SigSignature Apple Ecosystem Team  
+> **Author:** Sig Signature Apple Ecosystem Team  
 > **Canonical URL:** `/help/export-installation/install-signature-apple-mail`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Install Email Signature in Apple Mail on Mac & iPhone | Sig Signature
 * **Meta Description:** Step-by-step setup for Apple Mail on macOS Sequoia/Sonoma and iOS 18/17. Fix font distortion and learn the shake-to-undo formatting restore trick.
 * **Primary Target Keyword:** `install email signature apple mail mac iphone`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -31,7 +31,7 @@ This guide details the exact steps to achieve flawless rendering across Mac, iPh
 ## Part 1: Installing on macOS Apple Mail (Sequoia, Sonoma, Ventura)
 
 ### Step 1: Copy Visual Signature
-In your SigSignature dashboard, open your finalized signature and click **Copy Visual Signature**.
+In your Sig Signature dashboard, open your finalized signature and click **Copy Visual Signature**.
 
 ### Step 2: Open Apple Mail Signatures Setting
 1. Open the **Mail** app on your Mac.
@@ -40,7 +40,7 @@ In your SigSignature dashboard, open your finalized signature and click **Copy V
 
 ### Step 3: Create and Paste
 1. In the left column, select the email account you want to use.
-2. Click the **+** (Plus) button at the bottom of the middle column to create a new signature. Name it (e.g., *SigSignature Work*).
+2. Click the **+** (Plus) button at the bottom of the middle column to create a new signature. Name it (e.g., *Sig Signature Work*).
 3. In the right-hand edit pane, delete any default text.
 4. Paste your signature (**Cmd+V**).
 

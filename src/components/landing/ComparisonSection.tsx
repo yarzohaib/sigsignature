@@ -56,7 +56,7 @@ export default function ComparisonSection() {
             </h2>
           </Reveal>
           <p className="mx-auto mt-3 max-w-[330px] font-body text-[13px] leading-relaxed text-slate-600 sm:max-w-none sm:text-base lg:mt-4">
-            Compare custom HTML email signature development with SigSignature’s online email signature generator. Choose the approach that best fits your design needs, budget, and workflow.
+            Compare custom HTML email signature development with Sig Signature’s online email signature generator. Choose the approach that best fits your design needs, budget, and workflow.
           </p>
         </div>
 

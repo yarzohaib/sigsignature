@@ -65,7 +65,7 @@ export default function ComparisonTable({ rows }: ComparisonTableProps) {
                 <span className="mt-1 block font-heading text-[12px] font-semibold leading-[1.3] text-[#25324C]">{row.developer}</span>
               </div>
               <div className="min-h-[78px] rounded-[14px] bg-gradient-to-br from-[#315EEA] to-[#163B9D] p-2.5">
-                <span className="block font-body text-[9px] font-medium text-white/85">SigSignature</span>
+                <span className="block font-body text-[9px] font-medium text-white/85">Sig Signature</span>
                 <span className="mt-1 block font-heading text-[12px] font-semibold leading-[1.3] text-white">{row.sigSignature}</span>
               </div>
             </div>
@@ -114,7 +114,7 @@ export default function ComparisonTable({ rows }: ComparisonTableProps) {
                   style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.35)" }}
                   className="relative z-10 w-[37%] border-b border-white/35 bg-transparent px-6 py-6 font-heading text-lg font-semibold text-white sm:px-8 sm:py-7 lg:py-8 lg:text-[28px] leading-[100%] tracking-normal"
                 >
-                  SigSignature
+                  Sig Signature
                 </th>
               </tr>
             </thead>

@@ -3,16 +3,16 @@
 > **Category:** GETTING STARTED GUIDE • `GETTING STARTED`  
 > **Estimated Reading Time:** 2 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature QA Engineering Team  
+> **Author:** Sig Signature QA Engineering Team  
 > **Canonical URL:** `/help/getting-started/preview-desktop-mobile-signature`  
 
 ---
 
 ### SEO Metadata & Discovery Tags
 * **Page Meta Title:** Test Email Signature Mobile & Desktop Preview | Sig Signature
-* **Meta Description:** Learn how to test your email signature in desktop (600px) and mobile (360px) viewports inside the SigSignature editor before exporting.
+* **Meta Description:** Learn how to test your email signature in desktop (600px) and mobile (360px) viewports inside the Sig Signature editor before exporting.
 * **Primary Target Keyword:** `test email signature mobile preview`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -24,14 +24,14 @@ When an email signature designed at 600px width hits a 375px mobile screen, one 
 1. The email client scales the entire email down to fit the screen, making the body text microscopic and unreadable.
 2. The columns fail to collapse, forcing the recipient to scroll horizontally to read your contact details.
 
-SigSignature's built-in **Live Dual-Viewport Inspector** allows you to audit responsive behavior in real time before exporting a single line of code.
+Sig Signature’s built-in **Live Dual-Viewport Inspector** allows you to audit responsive behavior in real time before exporting a single line of code.
 
 ---
 
 ## How to Use the Live Preview Inspector
 
 ### 1. Activating the Preview Mode
-In the SigSignature Design Studio, locate the viewport toggle in the top-right toolbar:
+In the Sig Signature Design Studio, locate the viewport toggle in the top-right toolbar:
 * **Desktop View (600px):** Simulates wide reading panes in Outlook 365, Gmail Web, and Apple Mail on macOS.
 * **Mobile View (360px):** Simulates modern iOS and Android viewport constraints.
 
@@ -41,7 +41,7 @@ In the SigSignature Design Studio, locate the viewport toggle in the top-right t
 * **Banner Width:** If you use a marketing banner, confirm it does not exceed the standard 600px maximum width.
 
 ### 3. What to Inspect in Mobile Mode (360px)
-* **Column Stacking:** SigSignature uses responsive table architecture. Inspect how horizontal modules stack vertically on narrow screens.
+* **Column Stacking:** Sig Signature uses responsive table architecture. Inspect how horizontal modules stack vertically on narrow screens.
 * **Text Wrapping:** Ensure job titles and company names do not wrap awkwardly into single-word lines (e.g., breaking "Executive" onto a new line).
 * **Tap Target Spacing:** Verify that social icons and phone links have at least 8px of padding between them so users can tap them without mis-clicking.
 
@@ -71,4 +71,4 @@ Before clicking **Export HTML** or **Copy Visual Signature**:
 ## Key Takeaways
 * Never deploy an email signature without inspecting both Desktop and Mobile viewports.
 * Keep column widths flexible and text strings concise to prevent awkward mobile line wraps.
-* SigSignature automatically handles the underlying responsive table math so you never have to edit media queries manually.
+* Sig Signature automatically handles the underlying responsive table math so you never have to edit media queries manually.

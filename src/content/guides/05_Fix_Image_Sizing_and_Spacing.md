@@ -3,7 +3,7 @@
 > **Category:** DESIGN & TEMPLATES GUIDE • `DESIGN & TEMPLATES`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** Retina Screens, Outlook, Gmail, Webmail  
-> **Author:** SigSignature Deliverability & Rendering Lab  
+> **Author:** Sig Signature Deliverability & Rendering Lab  
 > **Canonical URL:** `/help/design-templates/fix-image-sizing-spacing`  
 
 ---
@@ -12,7 +12,7 @@
 * **Page Meta Title:** Fix Email Signature Image Sizing & Spacing Bugs | Sig Signature
 * **Meta Description:** Complete diagnostic guide to solving blurry photos, giant Outlook logos, circular crop distortion, and unwanted table gaps in email signatures.
 * **Primary Target Keyword:** `fix email signature image size outlook`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
@@ -38,7 +38,7 @@ This guide provides tested, verified fixes for the 4 most common image bugs in e
 * **The Symptom:** An email sent to a recipient on Outlook for Windows displays your company logo at massive, screen-filling size.
 * **The Cause:** Microsoft Word's rendering engine completely ignores CSS rules such as `max-width: 100%`, `width: 70px`, or `height: auto` in `<style>` blocks. It reads strictly the physical pixel dimensions of the image file or the HTML attribute `width="..."`.
 * **The Fix (Explicit HTML Attributes):**
-  SigSignature automatically injects both inline CSS styles AND hardcoded HTML tag attributes:
+  Sig Signature automatically injects both inline CSS styles AND hardcoded HTML tag attributes:
   `<img src="..." width="70" height="70" style="display: block; width: 70px; height: 70px; border: 0;" />`
   This forces Outlook's Word engine to constrain the image regardless of source file dimensions.
 
@@ -46,13 +46,13 @@ This guide provides tested, verified fixes for the 4 most common image bugs in e
 * **The Symptom:** A circular headshot avatar appears distorted as an egg or oval.
 * **The Cause:** The uploaded image had rectangular dimensions (e.g., 400x300px), but the template enforced a 1:1 square crop. Without `object-fit`, email engines squash the unequal dimensions.
 * **The Fix (Pre-Crop to 1:1 Square):**
-  Always crop your headshot to an exact 1:1 square aspect ratio before uploading, or use SigSignature's built-in image cropper to center your face inside a perfect square bounding box.
+  Always crop your headshot to an exact 1:1 square aspect ratio before uploading, or use Sig Signature’s built-in image cropper to center your face inside a perfect square bounding box.
 
 ### Issue 4: Random White Gaps or Padding Below Images
 * **The Symptom:** An unwanted 3px to 5px gap appears directly underneath your logo or banner, disrupting table borders.
 * **The Cause:** By default, HTML renders images as `inline` elements, allocating baseline vertical space for font descenders (like letters "y" and "g").
 * **The Fix (`display: block;`):**
-  Always apply `style="display: block;"` to all signature image elements. SigSignature applies this rule natively to every image container.
+  Always apply `style="display: block;"` to all signature image elements. Sig Signature applies this rule natively to every image container.
 
 ---
 

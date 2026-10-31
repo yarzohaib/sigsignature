@@ -3,7 +3,7 @@
 > **Category:** GETTING STARTED GUIDE • `GETTING STARTED`  
 > **Estimated Reading Time:** 3 min read  
 > **Applies to:** All Plans & Templates  
-> **Author:** SigSignature Deliverability Team  
+> **Author:** Sig Signature Deliverability Team  
 > **Canonical URL:** `/help/getting-started/create-first-email-signature`  
 
 ---
@@ -12,15 +12,15 @@
 * **Page Meta Title:** Create Your First Email Signature | Sig Signature Help Center
 * **Meta Description:** Step-by-step walkthrough to design, customize, and preview a bulletproof HTML email signature tailored for your personal brand or team.
 * **Primary Target Keyword:** `create email signature`
-* **Related Topics & Search Queries:** email signature help, HTML email signature setup, SigSignature documentation
+* **Related Topics & Search Queries:** email signature help, HTML email signature setup, Sig Signature documentation
 
 ---
 
 ## Overview & Prerequisites
 
-An email signature is not a graphic banner; it is a critical deliverability asset. Unlike standard web pages, email clients (especially Microsoft Outlook and Gmail) use legacy HTML rendering engines. SigSignature automatically compiles your visual design into email-safe nested tables, 100% inline CSS, and Outlook MSO conditionals to guarantee consistent rendering across every inbox.
+An email signature is not a graphic banner; it is a critical deliverability asset. Unlike standard web pages, email clients (especially Microsoft Outlook and Gmail) use legacy HTML rendering engines. Sig Signature automatically compiles your visual design into email-safe nested tables, 100% inline CSS, and Outlook MSO conditionals to guarantee consistent rendering across every inbox.
 
-**Prerequisite:** Ensure you are logged into your SigSignature account at `sigsignature.com`. Free accounts can generate and export personal signatures immediately without any credit card required.
+**Prerequisite:** Ensure you are logged into your Sig Signature account at `sigsignature.com`. Free accounts can generate and export personal signatures immediately without any credit card required.
 
 ---
 

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Sign Up | Sig Signature",
   description:
-    "Create a free SigSignature account to design up to 3 professional email signatures with live preview and HTML export.",
+    "Create a free Sig Signature account to design up to 3 professional email signatures with live preview and HTML export.",
   alternates: {
     canonical: "https://www.sigsignature.com/signup",
   },

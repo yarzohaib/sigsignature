@@ -132,7 +132,7 @@ export default function AllGuidesPage() {
               className="inline-block rounded-full bg-[#EFF6FF] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#245FD4]"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
-              SigSignature Knowledge Base
+              Sig Signature Knowledge Base
             </span>
             <h1
               className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#0F172A]"
