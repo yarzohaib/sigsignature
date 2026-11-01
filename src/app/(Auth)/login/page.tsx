@@ -59,6 +59,8 @@ function LoginForm() {
 
   // Reset button loading state on pageshow (e.g. Back/Forward cache restoration)
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
     function handlePageShow() {
       setOauthLoading(null);
       setIsLoading(false);

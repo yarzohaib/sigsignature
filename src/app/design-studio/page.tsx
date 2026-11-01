@@ -445,60 +445,12 @@ function DesignStudioContent() {
     const elements = state.elements || [];
     const canvas = state.canvas || { width: 600, height: 200 };
 
-    // Resolve user account details
-    const userFullName =
-      `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
-      state.fullName?.trim() ||
-      "";
-    const userEmail = user?.email?.trim() || state.email?.trim() || "";
-
-    const hasNameOnCanvas = Boolean(
-      userFullName &&
-        elements.some(
-          (el) =>
-            el.type === "text" &&
-            ((el as FreeTextElement).bind === "name" ||
-              (el as FreeTextElement).text?.trim().toLowerCase() === userFullName.toLowerCase())
-        )
-    );
-
-    const hasEmailOnCanvas = Boolean(
-      userEmail &&
-        elements.some(
-          (el) =>
-            el.type === "text" &&
-            ((el as FreeTextElement).bind === "email" ||
-              (el as FreeTextElement).text?.trim().toLowerCase() === userEmail.toLowerCase())
-        )
-    );
-
-    let text = "Your text here";
-    let size: "sm" | "md" | "lg" = "md";
-    let bold = false;
-    let bind: "name" | "email" | undefined = undefined;
-    let icon: "phone" | "email" | "website" | "address" | undefined = undefined;
-    let w = 240;
-    let h = 24;
-    let toastMsg = "Text added";
-
-    if (userFullName && !hasNameOnCanvas) {
-      text = userFullName;
-      size = "lg";
-      bold = true;
-      bind = "name";
-      w = Math.max(180, Math.min(320, userFullName.length * 11 + 24));
-      h = 24;
-      toastMsg = "Name added from your account";
-    } else if (userEmail && !hasEmailOnCanvas) {
-      text = userEmail;
-      size = "sm";
-      bold = false;
-      bind = "email";
-      icon = "email";
-      w = Math.max(200, Math.min(320, userEmail.length * 8 + 24));
-      h = 20;
-      toastMsg = "Email added from your account";
-    }
+    const text = "Your text here";
+    const size: "sm" | "md" | "lg" = "md";
+    const bold = false;
+    const w = 200;
+    const h = 24;
+    const toastMsg = "Text added";
 
     const spot = findFreeSpot({ w, h }, elements, canvas);
     const id = generateUniqueId("txt");
@@ -513,8 +465,6 @@ function DesignStudioContent() {
       y: spot.y,
       w,
       h,
-      ...(bind ? { bind } : {}),
-      ...(icon ? { icon } : {}),
     };
     dispatch({ type: "ADD_ELEMENT", payload: newEl });
     setSelectedId(id);
@@ -525,50 +475,6 @@ function DesignStudioContent() {
   function handleAddImageClick() {
     if ((state.elements?.length || 0) >= 40) {
       showToast("Maximum of 40 elements reached.");
-      return;
-    }
-
-    const storedAvatar = getStoredAvatarUrl();
-    const accountAvatar =
-      storedAvatar?.trim() ||
-      user?.avatarUrl?.trim() ||
-      (state.avatarUrl?.trim() &&
-      state.avatarUrl.trim() !== "/daniel-wilson.png" &&
-      !state.avatarUrl.trim().endsWith("/daniel-wilson.png")
-        ? state.avatarUrl.trim()
-        : "");
-
-    const elements = state.elements || [];
-    const hasAccountPhotoOnCanvas = Boolean(
-      accountAvatar &&
-        elements.some(
-          (el) =>
-            el.type === "image" &&
-            ((el as FreeImageElement).url === accountAvatar ||
-              (el as FreeImageElement).bind === "photo")
-        )
-    );
-
-    // If user has a saved avatar on their account and it's not yet on canvas, insert it
-    if (accountAvatar && !hasAccountPhotoOnCanvas) {
-      const canvas = state.canvas || { width: 600, height: 200 };
-      const w = 72;
-      const h = 72;
-      const spot = findFreeSpot({ w, h }, elements, canvas);
-      const id = generateUniqueId("img");
-      const newEl: FreeElement = {
-        id,
-        type: "image",
-        url: accountAvatar,
-        x: spot.x,
-        y: spot.y,
-        w,
-        h,
-        bind: "photo",
-      };
-      dispatch({ type: "ADD_ELEMENT", payload: newEl });
-      setSelectedId(id);
-      showToast("Photo added from your account");
       return;
     }
 
@@ -1357,6 +1263,117 @@ function DesignStudioContent() {
               scrollbarGutter: "stable",
             }}
           >
+            {/* TEAM FIELDS SECTION */}
+            <div className="pb-2">
+              <button
+                type="button"
+                onClick={() => toggleSection("teamFields")}
+                aria-expanded={openSections.teamFields}
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Team fields
+                  </span>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
+                    openSections.teamFields ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.teamFields && (
+                <div className="mt-3.5">
+                  <p
+                    className="text-xs text-slate-500 mb-2.5 leading-relaxed"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    Click an unlinked field to add it to the canvas. To link an existing element, select it and use the Team field menu in its toolbar. Linked fields use each team member&apos;s own details.
+                  </p>
+                  <div className="space-y-1.5" role="list" aria-label="Team fields">
+                    {(
+                      [
+                        { key: "name", label: "Name" },
+                        { key: "jobTitle", label: "Job title" },
+                        { key: "email", label: "Email" },
+                        { key: "phone", label: "Phone" },
+                        { key: "website", label: "Website" },
+                        { key: "photo", label: "Photo" },
+                      ] as const
+                    ).map((field) => {
+                      const linked = (state.elements || []).find(
+                        (el) => "bind" in el && (el as { bind?: string }).bind === field.key
+                      );
+                      const isLinked = Boolean(linked);
+                      const isSelected = linked && selectedId === linked.id;
+
+                      return (
+                        <button
+                          key={field.key}
+                          type="button"
+                          onClick={() => {
+                            if (linked) {
+                              setSelectedId(linked.id);
+                              return;
+                            }
+                            handleAddTeamField(field.key);
+                          }}
+                          className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium transition cursor-pointer border ${
+                            isSelected
+                              ? "bg-[#EFF6FF] text-[#245FD4] border-[#245FD4]/40 shadow-2xs font-semibold"
+                              : "bg-white text-[#1E293B] border-slate-200/80 hover:bg-slate-50 hover:border-slate-300"
+                          }`}
+                          aria-label={`Team field ${field.label}: ${isLinked ? "linked" : "unlinked"}`}
+                        >
+                          <span className="text-[12px]">{field.label}</span>
+                          <div className="flex items-center gap-1.5">
+                            {isLinked ? (
+                              <svg
+                                className="h-4 w-4 text-emerald-600 shrink-0"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-label="Linked"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            ) : (
+                              <span
+                                className="h-2 w-2 rounded-full bg-slate-300 shrink-0"
+                                title="Not linked"
+                                aria-label="Not linked"
+                              />
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* 1. ADD ELEMENTS SECTION */}
             <div className="border-b border-[#E2E8F0] pb-5 mb-5">
               <button
@@ -1525,7 +1542,211 @@ function DesignStudioContent() {
               )}
             </div>
 
-            {/* 2. FONTS SECTION */}
+            {/* 3. COLORS SECTION */}
+            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
+              <button
+                type="button"
+                onClick={() => toggleSection("colors")}
+                aria-expanded={openSections.colors}
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.97-4.48-9-10-9z" />
+                    </svg>
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Colors
+                  </span>
+                  {selectedElement && (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider") && (
+                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
+                      {selectedElement.type}
+                    </span>
+                  )}
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
+                    openSections.colors ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.colors && (
+                <div className="mt-3.5">
+                  <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
+                    SOLID COLORS
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2.5 mt-2">
+                    {STUDIO_SOLID_COLORS.map((color) => {
+                      const isElementScope =
+                        selectedElement &&
+                        (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider");
+                      const activeColor = isElementScope
+                        ? (selectedElement.color || state.themeColor)
+                        : state.themeColor;
+                      const isSelected = activeColor?.toLowerCase() === color.toLowerCase();
+                      const isWhite = color.toUpperCase() === "#FFFFFF";
+
+                      const handleColorSelect = () => {
+                        if (isElementScope) {
+                          dispatch({
+                            type: "UPDATE_ELEMENT",
+                            payload: { id: selectedElement.id, updates: { color } },
+                          });
+                        } else {
+                          dispatch({ type: "SET_COLOR", payload: color });
+                        }
+                      };
+
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          aria-label={`Select color ${color}`}
+                          onClick={handleColorSelect}
+                          className={`h-6 w-6 rounded-full transition transform hover:scale-110 focus:outline-none ${
+                            isWhite ? "border border-[#CBD5E1]" : ""
+                          } ${
+                            isSelected
+                              ? "ring-2 ring-offset-2 ring-[#245FD4] scale-110"
+                              : "hover:ring-1 hover:ring-slate-300"
+                          }`}
+                          style={{ backgroundColor: color }}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
+                        GRADIENT COLORS
+                      </span>
+                      <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
+                        Premium
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2.5 mt-2">
+                      {[
+                        "linear-gradient(135deg, #4F46E5, #9333EA)",
+                        "linear-gradient(135deg, #F97316, #EF4444)",
+                        "linear-gradient(135deg, #14B8A6, #22C55E)",
+                        "linear-gradient(135deg, #A855F7, #EC4899)",
+                      ].map((grad, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          aria-label={`Premium gradient ${idx + 1}`}
+                          onClick={handlePremiumClick}
+                          className="h-6 w-6 rounded-full opacity-95 hover:opacity-100 transition transform hover:scale-105 cursor-pointer shadow-2xs"
+                          style={{ background: grad }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 8. BUTTON STYLES SECTION */}
+            <div className="pb-2">
+              <button
+                type="button"
+                onClick={() => toggleSection("buttons")}
+                aria-expanded={openSections.buttons}
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="6" width="18" height="12" rx="3" />
+                    </svg>
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Button Styles
+                  </span>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
+                    openSections.buttons ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.buttons && (
+                <div className="mt-3.5">
+                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Button Styles">
+                    {[
+                      { id: "solid", label: "Solid", isSolid: true },
+                      { id: "outline", label: "Outline", isSolid: false },
+                    ].map((btn) => {
+                      const isSelected = (state.design?.buttonStyle || "solid") === btn.id;
+                      return (
+                        <div
+                          key={btn.id}
+                          role="radio"
+                          aria-checked={isSelected}
+                          tabIndex={0}
+                          onClick={() =>
+                            dispatch({
+                              type: "SET_BUTTON_STYLE",
+                              payload: btn.id as StudioButtonStyle,
+                            })
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              dispatch({
+                                type: "SET_BUTTON_STYLE",
+                                payload: btn.id as StudioButtonStyle,
+                              });
+                            }
+                          }}
+                          className={`flex flex-col items-center justify-center rounded-[10px] border p-3 cursor-pointer transition select-none ${
+                            isSelected
+                              ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
+                              : "border-[#E2E8F0] bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div
+                            className={`rounded-md px-3 py-1 text-[11px] font-semibold ${
+                              btn.isSolid
+                                ? "bg-[#245FD4] text-white"
+                                : "border border-[#245FD4] text-[#245FD4] bg-white"
+                            }`}
+                          >
+                            Book a Call
+                          </div>
+                          <span className="mt-2 text-[11px] font-medium text-[#1E293B]">
+                            {btn.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          {/* 2. FONTS SECTION */}
             <div className="border-b border-[#E2E8F0] pb-5 mb-5">
               <button
                 type="button"
@@ -1671,202 +1892,6 @@ function DesignStudioContent() {
                   >
                     Fonts that are not installed on the reader&apos;s device fall back to Arial.
                   </p>
-                </div>
-              )}
-            </div>
-
-            {/* 3. COLORS SECTION */}
-            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
-              <button
-                type="button"
-                onClick={() => toggleSection("colors")}
-                aria-expanded={openSections.colors}
-                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.97-4.48-9-10-9z" />
-                    </svg>
-                  </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Colors
-                  </span>
-                  {selectedElement && (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider") && (
-                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
-                      {selectedElement.type}
-                    </span>
-                  )}
-                </div>
-                <svg
-                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
-                    openSections.colors ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openSections.colors && (
-                <div className="mt-3.5">
-                  <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                    SOLID COLORS
-                  </span>
-                  <div className="flex flex-wrap items-center gap-2.5 mt-2">
-                    {STUDIO_SOLID_COLORS.map((color) => {
-                      const isElementScope =
-                        selectedElement &&
-                        (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider");
-                      const activeColor = isElementScope
-                        ? (selectedElement.color || state.themeColor)
-                        : state.themeColor;
-                      const isSelected = activeColor?.toLowerCase() === color.toLowerCase();
-                      const isWhite = color.toUpperCase() === "#FFFFFF";
-
-                      const handleColorSelect = () => {
-                        if (isElementScope) {
-                          dispatch({
-                            type: "UPDATE_ELEMENT",
-                            payload: { id: selectedElement.id, updates: { color } },
-                          });
-                        } else {
-                          dispatch({ type: "SET_COLOR", payload: color });
-                        }
-                      };
-
-                      return (
-                        <button
-                          key={color}
-                          type="button"
-                          aria-label={`Select color ${color}`}
-                          onClick={handleColorSelect}
-                          className={`h-6 w-6 rounded-full transition transform hover:scale-110 focus:outline-none ${
-                            isWhite ? "border border-[#CBD5E1]" : ""
-                          } ${
-                            isSelected
-                              ? "ring-2 ring-offset-2 ring-[#245FD4] scale-110"
-                              : "hover:ring-1 hover:ring-slate-300"
-                          }`}
-                          style={{ backgroundColor: color }}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
-                        GRADIENT COLORS
-                      </span>
-                      <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                        Premium
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2.5 mt-2">
-                      {[
-                        "linear-gradient(135deg, #4F46E5, #9333EA)",
-                        "linear-gradient(135deg, #F97316, #EF4444)",
-                        "linear-gradient(135deg, #14B8A6, #22C55E)",
-                        "linear-gradient(135deg, #A855F7, #EC4899)",
-                      ].map((grad, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          aria-label={`Premium gradient ${idx + 1}`}
-                          onClick={handlePremiumClick}
-                          className="h-6 w-6 rounded-full opacity-95 hover:opacity-100 transition transform hover:scale-105 cursor-pointer shadow-2xs"
-                          style={{ background: grad }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 4. SHAPES SECTION */}
-            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
-              <button
-                type="button"
-                onClick={() => toggleSection("shapes")}
-                aria-expanded={openSections.shapes}
-                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="4" />
-                    </svg>
-                  </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Shapes
-                  </span>
-                  {selectedElement && (
-                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
-                      {selectedElement.type}
-                    </span>
-                  )}
-                </div>
-                <svg
-                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
-                    openSections.shapes ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openSections.shapes && (
-                <div className="mt-3.5">
-                  <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Shape Selection">
-                    {[
-                      { id: "rounded", label: "Rounded", rx: "rounded-lg" },
-                      { id: "square", label: "Square", rx: "rounded-none" },
-                      { id: "pill", label: "Pill", rx: "rounded-full" },
-                    ].map((shape) => {
-                      const activeShape = selectedElement?.shape || state.design?.shape || "rounded";
-                      const isSelected = activeShape === shape.id;
-                      return (
-                        <div
-                          key={shape.id}
-                          role="radio"
-                          aria-checked={isSelected}
-                          tabIndex={0}
-                          onClick={() => handleShapeChange(shape.id as StudioShape)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handleShapeChange(shape.id as StudioShape);
-                            }
-                          }}
-                          className={`flex flex-col items-center justify-center rounded-[10px] border p-3 cursor-pointer transition select-none ${
-                            isSelected
-                              ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
-                              : "border-[#E2E8F0] bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <div className={`h-8 w-8 border border-slate-300 bg-slate-100 ${shape.rx}`} />
-                          <span className="mt-2 text-[11px] font-medium text-[#1E293B]">
-                            {shape.label}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
                 </div>
               )}
             </div>
@@ -2043,6 +2068,86 @@ function DesignStudioContent() {
               )}
             </div>
 
+            {/* 4. SHAPES SECTION */}
+            <div className="border-b border-[#E2E8F0] pb-5 mb-5">
+              <button
+                type="button"
+                onClick={() => toggleSection("shapes")}
+                aria-expanded={openSections.shapes}
+                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="4" />
+                    </svg>
+                  </div>
+                  <span
+                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Shapes
+                  </span>
+                  {selectedElement && (
+                    <span className="text-[10px] font-semibold text-[#245FD4] bg-[#EFF6FF] px-2 py-0.5 rounded-full capitalize">
+                      {selectedElement.type}
+                    </span>
+                  )}
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
+                    openSections.shapes ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {openSections.shapes && (
+                <div className="mt-3.5">
+                  <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Shape Selection">
+                    {[
+                      { id: "rounded", label: "Rounded", rx: "rounded-lg" },
+                      { id: "square", label: "Square", rx: "rounded-none" },
+                      { id: "pill", label: "Pill", rx: "rounded-full" },
+                    ].map((shape) => {
+                      const activeShape = selectedElement?.shape || state.design?.shape || "rounded";
+                      const isSelected = activeShape === shape.id;
+                      return (
+                        <div
+                          key={shape.id}
+                          role="radio"
+                          aria-checked={isSelected}
+                          tabIndex={0}
+                          onClick={() => handleShapeChange(shape.id as StudioShape)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleShapeChange(shape.id as StudioShape);
+                            }
+                          }}
+                          className={`flex flex-col items-center justify-center rounded-[10px] border p-3 cursor-pointer transition select-none ${
+                            isSelected
+                              ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
+                              : "border-[#E2E8F0] bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div className={`h-8 w-8 border border-slate-300 bg-slate-100 ${shape.rx}`} />
+                          <span className="mt-2 text-[11px] font-medium text-[#1E293B]">
+                            {shape.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* 7. QUICK ARRANGE (Previously Layout) */}
             <div className="border-b border-[#E2E8F0] pb-5 mb-5">
               <button
@@ -2175,206 +2280,7 @@ function DesignStudioContent() {
               )}
             </div>
 
-            {/* TEAM FIELDS SECTION */}
-            <div className="pb-2">
-              <button
-                type="button"
-                onClick={() => toggleSection("teamFields")}
-                aria-expanded={openSections.teamFields}
-                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Team fields
-                  </span>
-                </div>
-                <svg
-                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
-                    openSections.teamFields ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openSections.teamFields && (
-                <div className="mt-3.5">
-                  <p
-                    className="text-xs text-slate-500 mb-2.5 leading-relaxed"
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  >
-                    Click an unlinked field to add it to the canvas. To link an existing element, select it and use the Team field menu in its toolbar. Linked fields use each team member&apos;s own details.
-                  </p>
-                  <div className="space-y-1.5" role="list" aria-label="Team fields">
-                    {(
-                      [
-                        { key: "name", label: "Name" },
-                        { key: "jobTitle", label: "Job title" },
-                        { key: "email", label: "Email" },
-                        { key: "phone", label: "Phone" },
-                        { key: "website", label: "Website" },
-                        { key: "photo", label: "Photo" },
-                      ] as const
-                    ).map((field) => {
-                      const linked = (state.elements || []).find(
-                        (el) => "bind" in el && (el as { bind?: string }).bind === field.key
-                      );
-                      const isLinked = Boolean(linked);
-                      const isSelected = linked && selectedId === linked.id;
-
-                      return (
-                        <button
-                          key={field.key}
-                          type="button"
-                          onClick={() => {
-                            if (linked) {
-                              setSelectedId(linked.id);
-                              return;
-                            }
-                            handleAddTeamField(field.key);
-                          }}
-                          className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium transition cursor-pointer border ${
-                            isSelected
-                              ? "bg-[#EFF6FF] text-[#245FD4] border-[#245FD4]/40 shadow-2xs font-semibold"
-                              : "bg-white text-[#1E293B] border-slate-200/80 hover:bg-slate-50 hover:border-slate-300"
-                          }`}
-                          aria-label={`Team field ${field.label}: ${isLinked ? "linked" : "unlinked"}`}
-                        >
-                          <span className="text-[12px]">{field.label}</span>
-                          <div className="flex items-center gap-1.5">
-                            {isLinked ? (
-                              <svg
-                                className="h-4 w-4 text-emerald-600 shrink-0"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-label="Linked"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            ) : (
-                              <span
-                                className="h-2 w-2 rounded-full bg-slate-300 shrink-0"
-                                title="Not linked"
-                                aria-label="Not linked"
-                              />
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 8. BUTTON STYLES SECTION */}
-            <div className="pb-2">
-              <button
-                type="button"
-                onClick={() => toggleSection("buttons")}
-                aria-expanded={openSections.buttons}
-                className="flex w-full items-center justify-between text-left group p-1.5 -mx-1.5 rounded-lg transition-colors hover:bg-slate-100/70 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4]/40"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#EFF6FF] text-[#245FD4] shadow-2xs transition group-hover:scale-105">
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="6" width="18" height="12" rx="3" />
-                    </svg>
-                  </div>
-                  <span
-                    className="text-sm font-bold text-[#1E293B] group-hover:text-[#245FD4] transition-colors"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    Button Styles
-                  </span>
-                </div>
-                <svg
-                  className={`h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 ${
-                    openSections.buttons ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {openSections.buttons && (
-                <div className="mt-3.5">
-                  <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Button Styles">
-                    {[
-                      { id: "solid", label: "Solid", isSolid: true },
-                      { id: "outline", label: "Outline", isSolid: false },
-                    ].map((btn) => {
-                      const isSelected = (state.design?.buttonStyle || "solid") === btn.id;
-                      return (
-                        <div
-                          key={btn.id}
-                          role="radio"
-                          aria-checked={isSelected}
-                          tabIndex={0}
-                          onClick={() =>
-                            dispatch({
-                              type: "SET_BUTTON_STYLE",
-                              payload: btn.id as StudioButtonStyle,
-                            })
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              dispatch({
-                                type: "SET_BUTTON_STYLE",
-                                payload: btn.id as StudioButtonStyle,
-                              });
-                            }
-                          }}
-                          className={`flex flex-col items-center justify-center rounded-[10px] border p-3 cursor-pointer transition select-none ${
-                            isSelected
-                              ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
-                              : "border-[#E2E8F0] bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <div
-                            className={`rounded-md px-3 py-1 text-[11px] font-semibold ${
-                              btn.isSolid
-                                ? "bg-[#245FD4] text-white"
-                                : "border border-[#245FD4] text-[#245FD4] bg-white"
-                            }`}
-                          >
-                            Book a Call
-                          </div>
-                          <span className="mt-2 text-[11px] font-medium text-[#1E293B]">
-                            {btn.label}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </aside>
+            </aside>
 
           {/* ======================================================== */}
           {/* RIGHT: CANVAS AREA */}

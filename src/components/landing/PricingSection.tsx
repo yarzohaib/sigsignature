@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { getStoredToken } from "@/app/lib/auth";
 import { motion, useReducedMotion, type Variants } from "motion/react";
 import SectionBadge from "./SectionBadge";
 import Reveal from "@/components/motion/Reveal";
@@ -86,7 +87,12 @@ const itemVariants: Variants = {
 
 export default function PricingSection() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    setIsAuthenticated(Boolean(getStoredToken()));
+  }, []);
 
   function handleGoPremium() {
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
@@ -169,8 +175,8 @@ export default function PricingSection() {
                 <p className="mt-2 text-[14px] text-[#64748B]">Try us out first</p>
 
                 <div className="mt-6">
-                  <Link href="/signup" className="flex h-[46px] w-full items-center justify-center rounded-full bg-[#F1F5F9] text-[14px] font-semibold text-[#101828] transition-colors hover:bg-[#E8EEF6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
-                    Create Your Free Signature
+                  <Link href={isAuthenticated ? "/dashboard" : "/signup"} className="flex h-[46px] w-full items-center justify-center rounded-full bg-[#F1F5F9] text-[14px] font-semibold text-[#101828] transition-colors hover:bg-[#E8EEF6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2">
+                    {isAuthenticated ? "Go to Dashboard" : "Create Your Free Signature"}
                   </Link>
                 </div>
 

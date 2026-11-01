@@ -167,7 +167,8 @@ export default function ProfileCard({
             id="profile-first-name"
             type="text"
             value={firstName}
-            maxLength={60}
+            maxLength={50}
+            minLength={2}
             onChange={(e) => onFirstNameChange(e.target.value)}
             placeholder="John"
             className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#1E293B] placeholder-slate-400 transition focus:outline-none focus:ring-2 ${
@@ -195,7 +196,7 @@ export default function ProfileCard({
             id="profile-last-name"
             type="text"
             value={lastName}
-            maxLength={60}
+            maxLength={50}
             onChange={(e) => onLastNameChange(e.target.value)}
             placeholder="Doe"
             className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#1E293B] placeholder-slate-400 transition focus:outline-none focus:ring-2 ${

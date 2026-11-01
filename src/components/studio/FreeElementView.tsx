@@ -385,7 +385,7 @@ export default function FreeElementView({
         const ctaEl = element as FreeCtaElement;
         const ctaFontStack = resolveEmailFont(ctaEl.fontFamily || data.fontFamily || "Inter");
         const isSolid = buttonStyle !== "outline";
-        const btnRadius = getShapeBorderRadius(shape, "button");
+        const btnRadius = getShapeBorderRadius(element.shape || "rounded", "button");
         const ctaThemeColor = ctaEl.color || themeColor;
         const btnBg = isSolid ? ctaThemeColor : "transparent";
         const btnBorder = isSolid

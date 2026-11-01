@@ -105,13 +105,12 @@ export default function TemplateEditor({
       const storedUser = getStoredUser();
       const storedAvatar = getStoredAvatarUrl();
 
-      if (storedSettings) {
-        if (storedSettings.signatureFont) {
-          font = mapToValidTemplateFont(storedSettings.signatureFont);
-        }
-        if (storedSettings.brandColor) {
-          themeColor = storedSettings.brandColor;
-        }
+      // Only override font/themeColor if the user explicitly customized them away from default blue
+      if (storedSettings?.signatureFont) {
+        font = mapToValidTemplateFont(storedSettings.signatureFont);
+      }
+      if (storedSettings?.brandColor && storedSettings.brandColor !== "#245FD4") {
+        themeColor = storedSettings.brandColor;
       }
 
       if (storedUser) {
@@ -140,13 +139,13 @@ export default function TemplateEditor({
       templateId: template.id,
       layout: template.defaultData.layout,
       fontFamily: font,
-      themeColor,
+      themeColor: themeColor || template.defaultData.themeColor || "#245FD4",
       avatarUrl,
       fullName,
       companyName,
       email,
       socials: isNewSignature
-        ? { linkedin: "", twitter: "", facebook: "", instagram: "" }
+        ? (template.defaultData.socials || { linkedin: "https://linkedin.com", twitter: "https://twitter.com" })
         : base.socials,
     };
   });

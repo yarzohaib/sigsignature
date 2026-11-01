@@ -286,7 +286,7 @@ export function generateFreeHtml(
     if (el.type === "cta") {
       const ctaEl = el as FreeCtaElement;
       const isSolid = buttonStyle !== "outline";
-      const btnRadius = getShapeBorderRadius(el.shape || shape, "button");
+      const btnRadius = getShapeBorderRadius(el.shape || "rounded", "button");
       const ctaHref = ctaEl.url?.trim() ? safeUrl(normalizeWebsite(ctaEl.url)) : "#";
       const label = ctaEl.label?.trim() ? escapeHtml(ctaEl.label.trim()) : "Button";
       const ctaColor = ctaEl.color || themeColor;

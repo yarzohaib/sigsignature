@@ -36,6 +36,8 @@ function TemplatesContent() {
   const editId = searchParams.get("edit");
   const isNew = searchParams.get("new") === "true";
   const templateParam = searchParams.get("template");
+  const modeParam = searchParams.get("mode");
+  const isTeamMode = modeParam === "team";
 
   // Category filtering & sorting state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
@@ -64,7 +66,7 @@ function TemplatesContent() {
         setTemplateNotFound(false);
         setIsLoadingEdit(Boolean(isNew));
         if (isNew && !isCancelled) {
-          if (isSignatureLimitReached()) {
+          if (!isTeamMode && isSignatureLimitReached()) {
             setIsLimitModalOpen(true);
             setIsLoadingEdit(false);
             return;
@@ -209,7 +211,7 @@ function TemplatesContent() {
       router.push(`/signup?redirect=/templates&template=${encodeURIComponent(template.id)}`);
       return;
     }
-    if (isSignatureLimitReached()) {
+    if (!isTeamMode && isSignatureLimitReached()) {
       setIsLimitModalOpen(true);
       return;
     }

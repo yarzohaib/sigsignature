@@ -141,14 +141,13 @@ function PricingContent() {
                   {/* Button */}
                   <div className="mt-6">
                     {isFreePlanUser ? (
-                      <button
-                        type="button"
-                        disabled
-                        className="w-full h-[46px] rounded-full bg-[#F1F5F9] text-[#101828] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center cursor-default"
+                      <Link
+                        href="/dashboard"
+                        className="w-full h-[46px] rounded-full bg-[#F1F5F9] text-[#101828] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center transition-colors hover:bg-[#E2E8F0]"
                         style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                       >
                         Current Plan
-                      </button>
+                      </Link>
                     ) : (
                       <Link
                         href="/templates"

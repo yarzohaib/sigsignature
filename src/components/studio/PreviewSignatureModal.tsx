@@ -147,7 +147,7 @@ export default function PreviewSignatureModal({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#F8FAFC] flex justify-center items-start">
+        <div className="flex-1 min-h-[520px] overflow-y-auto p-6 sm:p-8 bg-[#F8FAFC] flex justify-center items-start">
           {activeTab === "email" ? (
             <div
               className="w-full bg-white rounded-xl border border-[#E2E8F0] shadow-xs transition-all duration-200 overflow-hidden"

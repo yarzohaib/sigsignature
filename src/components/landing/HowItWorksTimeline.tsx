@@ -108,7 +108,8 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                 anticipatePin: isDesktop ? 1 : 0,
                 invalidateOnRefresh: true,
                 onUpdate: (self) => {
-                  const active = Math.round(self.progress * (steps.length - 1));
+                  const p = self.progress;
+                  const active = p >= 0.82 ? 2 : p >= 0.48 ? 1 : 0;
                   if (active !== lastActive) {
                     lastActive = active;
                     setActive(active, isDesktop);

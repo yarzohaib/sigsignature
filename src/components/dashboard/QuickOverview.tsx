@@ -5,6 +5,8 @@ import Link from "next/link";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { getTeam } from "@/app/lib/api";
+import { syncLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
+import { getStoredUser } from "@/app/lib/auth";
 
 const CACHE_SIG_KEY = "sig_cached_signatures_count";
 const CACHE_TEAMS_KEY = "sig_cached_teams_count";
@@ -42,7 +44,7 @@ export default function QuickOverview() {
         // ignore localStorage access error
       }
     }
-    return 1;
+    return 0;
   });
 
   useEffect(() => {
@@ -54,9 +56,11 @@ export default function QuickOverview() {
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted) {
-          setTotalSignatures(list.length);
+          const user = getStoredUser();
+          const effectiveCount = syncLifetimeSignatureCount(list.length, user?.id);
+          setTotalSignatures(effectiveCount);
           try {
-            localStorage.setItem(CACHE_SIG_KEY, list.length.toString());
+            localStorage.setItem(CACHE_SIG_KEY, effectiveCount.toString());
           } catch {
             // ignore localStorage quota/disabled errors
           }
@@ -73,8 +77,8 @@ export default function QuickOverview() {
       // 3. Teams Count
       try {
         const teamData = await getTeam();
-        if (isMounted && teamData) {
-          const count = teamData.members ? teamData.members.length : 1;
+        if (isMounted) {
+          const count = teamData && teamData.members ? teamData.members.length : 0;
           setTeamsCount(count);
           try {
             localStorage.setItem(CACHE_TEAMS_KEY, count.toString());
@@ -83,7 +87,9 @@ export default function QuickOverview() {
           }
         }
       } catch {
-        // keep fallback or cached count
+        if (isMounted) {
+          setTeamsCount(0);
+        }
       }
     }
 

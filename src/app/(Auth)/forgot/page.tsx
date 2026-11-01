@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from "@/components/ui/TextField";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { requestForgotPassword } from "@/app/lib/api";
@@ -12,6 +12,10 @@ export default function ForgotPasswordPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
 
   function handleEmailChange(val: string) {
     setEmail(val);

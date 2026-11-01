@@ -1,11 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { getStoredToken } from "@/app/lib/auth";
 import { motion, useReducedMotion } from "motion/react";
 import { EASE_OUT_CUBIC, MOTION_VIEWPORT } from "@/components/motion/motionConfig";
 
 export default function CtaBanner() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    setIsAuthenticated(Boolean(getStoredToken()));
+  }, []);
 
   return (
     <section
@@ -61,7 +68,7 @@ export default function CtaBanner() {
           className="mt-8 flex justify-center"
         >
           <Link
-            href="/signup"
+            href={isAuthenticated ? "/dashboard" : "/signup"}
             style={{
               background:
                 "linear-gradient(180deg, #FFFFFF 0%, #D9F4FD 50%, #FDFEFF 100%)",
@@ -73,7 +80,7 @@ export default function CtaBanner() {
               aria-hidden="true"
               className="pointer-events-none absolute -inset-y-2 -inset-x-12 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 ease-out [@media(hover:hover)]:group-hover:translate-x-[360px]"
             />
-            <span className="relative z-10">Create Your Free Signature</span>
+            <span className="relative z-10">{isAuthenticated ? "Go to Dashboard" : "Create Your Free Signature"}</span>
           </Link>
         </motion.div>
 

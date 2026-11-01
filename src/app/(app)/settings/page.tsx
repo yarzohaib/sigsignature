@@ -225,12 +225,14 @@ function SettingsContent() {
     const trimmedFirst = formState.firstName.trim();
     if (!trimmedFirst) {
       errs.firstName = "First name is required.";
-    } else if (trimmedFirst.length > 60) {
-      errs.firstName = "First name cannot exceed 60 characters.";
+    } else if (trimmedFirst.length < 2) {
+      errs.firstName = "First name must be at least 2 characters.";
+    } else if (trimmedFirst.length > 50) {
+      errs.firstName = "First name cannot exceed 50 characters.";
     }
 
-    if (formState.lastName && formState.lastName.length > 60) {
-      errs.lastName = "Last name cannot exceed 60 characters.";
+    if (formState.lastName && formState.lastName.trim().length > 50) {
+      errs.lastName = "Last name cannot exceed 50 characters.";
     }
 
     if (formState.companyName && formState.companyName.length > 100) {

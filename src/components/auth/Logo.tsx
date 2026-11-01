@@ -9,17 +9,17 @@ export default function Logo({ className = "", variant = "white" }: LogoProps) {
   const isWhite = variant === "white";
 
   return (
-    <div className={`flex items-center gap-2 xl:gap-3 ${className}`}>
+    <div className={`flex items-center gap-2.5 sm:gap-3 xl:gap-3.5 ${className}`}>
       <Image
         src={isWhite ? "/logo-white.svg" : "/logo.svg"}
         alt="Sig Signature logo"
-        width={64}
-        height={36}
+        width={48}
+        height={26}
         priority
-        className="h-auto w-10 sm:w-12 xl:w-16"
+        className="h-6 w-auto sm:h-7 xl:h-8"
       />
       <span
-        className={`font-body text-base font-semibold sm:text-lg xl:text-xl ${
+        className={`font-heading text-lg font-semibold sm:text-xl xl:text-2xl ${
           isWhite ? "text-white" : "text-brand-dark"
         }`}
       >

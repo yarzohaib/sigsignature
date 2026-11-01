@@ -374,6 +374,11 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                 console.warn("Logout error:", err);
               } finally {
                 clearAuthSession();
+                try {
+                  sessionStorage.setItem("sig_flash_toast", "You have been logged out successfully.");
+                } catch {
+                  // Ignore
+                }
                 setIsLoggingOut(false);
                 router.replace("/login");
                 router.refresh();

@@ -131,6 +131,11 @@ export default function DashboardTopBar({
       console.warn("Logout error:", err);
     } finally {
       clearAuthSession();
+      try {
+        sessionStorage.setItem("sig_flash_toast", "You have been logged out successfully.");
+      } catch {
+        // Ignore
+      }
       setProfileDropdownOpen(false);
       setInternalLoggingOut(false);
       router.replace("/login");

@@ -90,6 +90,8 @@ function SignupForm() {
 
   // Reset button loading state and restore saved registration fields on pageshow (e.g. Back/Forward navigation)
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
     function handleRestore() {
       setOauthLoading(null);
       setIsLoading(false);

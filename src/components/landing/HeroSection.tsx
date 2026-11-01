@@ -1,7 +1,16 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getStoredToken } from "@/app/lib/auth";
 
 export default function HeroSection() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(Boolean(getStoredToken()));
+  }, []);
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-4.5rem)] lg:min-h-[calc(100vh-5rem)] flex-col justify-between overflow-hidden pt-[calc(88px+env(safe-area-inset-top,0px))] pb-4 sm:pt-[calc(92px+env(safe-area-inset-top,0px))] sm:pb-6 md:pt-4 lg:pb-6">
       {/* Top right light gradient blur (#C4DFFB at 50% opacity, blur ~324px as in Figma Ellipse 68) */}
@@ -28,10 +37,10 @@ export default function HeroSection() {
 
             <div className="mt-6 sm:mt-7 flex flex-col items-center sm:items-start gap-3 sm:flex-row sm:items-center w-full">
               <Link
-                href="/signup"
+                href={isAuthenticated ? "/dashboard" : "/signup"}
                 className="group inline-flex w-full max-w-[360px] sm:max-w-none sm:w-auto min-h-[48px] 2xl:min-h-[54px] items-center justify-center gap-2.5 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 2xl:px-10 2xl:py-4 font-body text-base 2xl:text-lg font-semibold text-white shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 [@media(hover:hover)]:hover:shadow-md active:scale-95"
               >
-                <span>Create Your Free Signature</span>
+                <span>{isAuthenticated ? "Go to Dashboard" : "Create Your Free Signature"}</span>
                 <svg
                   className="h-4 w-4 transition-transform group-hover:translate-x-1"
                   fill="none"

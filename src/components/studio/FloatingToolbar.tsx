@@ -1172,6 +1172,8 @@ export default function FloatingToolbar({
             }}
             className="w-[290px] rounded-xl bg-[#0F172A] p-3 shadow-2xl border border-slate-700 text-white animate-in fade-in zoom-in-95 duration-100"
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <span className="text-xs font-semibold text-slate-200">
