@@ -10,7 +10,7 @@ import {
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="scroll-mt-20 md:scroll-mt-18 overflow-x-clip bg-[#FCFCFC] pt-8 sm:pt-10 lg:pt-12 pb-14 sm:pb-16 lg:pb-24 3xl:pb-28">
+    <section id="features" className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#FCFCFC] pt-16 sm:pt-20 lg:pt-24 3xl:pt-28 pb-14 sm:pb-16 lg:pb-24 3xl:pb-28">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
@@ -18,10 +18,15 @@ export default function FeaturesSection() {
             <SectionBadge label="FEATURES" />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="mx-auto max-w-[1500px] font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
-              Tools to Create and Customize Your{" "}
-              <span className="text-[#1243A3]">Email Signature</span>
+            <h2 className="mx-auto max-w-[850px] font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
+              <span className="block">Tools to Create and Customize Your</span>
+              <span className="block text-[#1243A3]">Email Signature</span>
             </h2>
+          </Reveal>
+          <Reveal y={24} blur={8} delay={0.15}>
+            <p className="mx-auto mt-4 max-w-2xl font-body text-base text-slate-600 sm:text-lg">
+              Looking for a free email signature creator? Sig Signature gives you complete creative control to design, customize, and export professional email signatures in minutes.
+            </p>
           </Reveal>
         </div>
 

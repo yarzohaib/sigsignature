@@ -8,7 +8,7 @@ export const FAQ_DATA = [
   {
     question: "What is Sig Signature, and how does its email signature generator work?",
     answer:
-      "Sig Signature is an online email signature generator that helps individuals, freelancers, professionals, and teams create personalized signatures without writing HTML code. After signing up or logging in, choose a ready-made template or start with a blank canvas. Add your contact details, company information, website, and social media links, then customize the fonts, colors, layouts, logos, and profile photos in Design Studio. Preview and save your design, then export it as HTML or an image. Email applications may display the final signature differently, so testing is recommended.",
+      "Sig Signature is an advanced free email signature creator and generator that helps individuals, freelancers, professionals, and teams create personalized signatures without writing HTML code. After signing up or logging in, choose a ready-made template or start with a blank canvas. Add your contact details, company information, website, and social media links, then customize the fonts, colors, layouts, logos, and profile photos in Design Studio. Preview and save your design, then export it as HTML or an image. Email applications may display the final signature differently, so testing is recommended.",
   },
   {
     question: "Is Sig Signature's email signature generator free?",
@@ -73,11 +73,11 @@ export default function FaqSection() {
       {/* Inject Schema.org FAQPage Structured Data */}
       <FaqJsonLd faqs={FAQ_DATA} />
 
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col items-center text-center">
           <SectionBadge label="FAQS" />
-          <h2 className="font-heading mt-4 text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] font-bold tracking-tight text-slate-900 lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px]">
+          <h2 className="font-heading mt-4 text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] font-bold tracking-tight text-slate-900 lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] lg:whitespace-nowrap">
             Frequently Asked <span className="text-[#245FD4]">Questions</span>
           </h2>
           <p className="font-body mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
@@ -86,7 +86,7 @@ export default function FaqSection() {
         </div>
 
         {/* Accordion List */}
-        <div className="mt-12 space-y-4">
+        <div className="mx-auto mt-12 max-w-4xl space-y-4">
           {FAQ_DATA.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
