@@ -74,14 +74,32 @@ export function render(data: TemplateSignatureData): string {
     );
   }
 
+  if (data.optional?.address?.trim()) {
+    const iconUrl = emailIconUrl("minimal", themeColor, "address");
+    contactRows.push(
+      `<tr>
+        <td width="20" style="width:20px;padding:1px 6px 1px 0;vertical-align:middle;">
+          <img src="${escapeHtml(iconUrl)}" alt="Address" width="14" height="14" style="display:block;border:0;outline:none;text-decoration:none;" />
+        </td>
+        <td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:10px;line-height:1.3;color:#64748B;">
+          ${escapeHtml(data.optional.address.trim())}
+        </td>
+      </tr>`
+    );
+  }
+
   const contactsTable = contactRows.length > 0
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${contactRows.join("")}</table>`
     : "";
 
   const networks: Array<{ key: string; label: string; network: SocialNetwork }> = [
     { key: "linkedin", label: "LinkedIn", network: "linkedin" },
+    { key: "twitter", label: "Twitter", network: "twitter" },
+    { key: "facebook", label: "Facebook", network: "facebook" },
     { key: "instagram", label: "Instagram", network: "instagram" },
   ];
+
+  const iconStyle = data.socialIconsStyle || "circle";
 
   const socialLinks = networks
     .map(({ key, label, network }) => {
@@ -89,11 +107,11 @@ export function render(data: TemplateSignatureData): string {
       if (!rawUrl || !rawUrl.trim()) return "";
       const url = safeUrl(normalizeWebsite(rawUrl));
       if (!url) return "";
-      const iconUrl = emailIconUrl("circle", themeColor, network);
+      const iconUrl = emailIconUrl(iconStyle, themeColor, network);
       if (iconUrl) {
-        return `<a href="${url}" target="_blank" style="text-decoration:none;display:inline-block;margin-left:6px;"><img src="${escapeHtml(iconUrl)}" alt="${escapeHtml(label)}" width="18" height="18" style="display:block;border:0;outline:none;text-decoration:none;" /></a>`;
+        return `<a href="${url}" target="_blank" style="text-decoration:none;display:inline-block;margin-left:5px;"><img src="${escapeHtml(iconUrl)}" alt="${escapeHtml(label)}" width="18" height="18" style="display:block;border:0;outline:none;text-decoration:none;" /></a>`;
       }
-      return `<a href="${url}" target="_blank" style="font-family:${fontStack};font-size:9px;font-weight:bold;color:${themeColor};text-decoration:none;margin-left:6px;">${escapeHtml(label)}</a>`;
+      return `<a href="${url}" target="_blank" style="font-family:${fontStack};font-size:9px;font-weight:bold;color:${themeColor};text-decoration:none;margin-left:5px;">${escapeHtml(label)}</a>`;
     })
     .filter(Boolean);
 
@@ -101,21 +119,47 @@ export function render(data: TemplateSignatureData): string {
     ? `<div style="text-align:right;">${socialLinks.join("")}</div>`
     : "";
 
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#1E293B;width:100%;max-width:350px;">
+  const hasLogo = hasSafeImage(data.companyLogoUrl);
+  const logoCell = hasLogo
+    ? `<td style="vertical-align:middle;padding-left:10px;text-align:right;width:60px;">
+        <img src="${escapeHtml(data.companyLogoUrl!)}" alt="${escapeHtml(data.companyName || "Logo")}" width="52" height="auto" style="display:block;border:0;outline:none;max-width:52px;max-height:52px;object-fit:contain;margin-left:auto;" />
+      </td>`
+    : "";
+
+  const taglineRow = data.optional?.tagline?.trim()
+    ? `<div style="font-family:${fontStack};font-size:10px;font-style:italic;color:#64748B;margin-top:3px;line-height:1.2;">
+        ${escapeHtml(data.optional.tagline.trim())}
+      </div>`
+    : "";
+
+  const disclaimerRow = data.optional?.disclaimer?.trim()
+    ? `<tr>
+        <td colspan="4" style="padding-top:8px;">
+          <div style="font-family:${fontStack};font-size:9px;color:#94A3B8;line-height:1.3;border-top:1px solid #F1F5F9;padding-top:6px;">
+            ${escapeHtml(data.optional.disclaimer.trim())}
+          </div>
+        </td>
+      </tr>`
+    : "";
+
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#1E293B;width:100%;max-width:420px;">
     <tr>
       ${photoCell}
-      <td style="vertical-align:middle;padding-right:12px;">
+      <td style="vertical-align:middle;padding-right:10px;">
         <div style="font-family:${fontStack};font-size:14px;font-weight:700;color:#1E293B;line-height:1.2;">
           ${escapeHtml(data.fullName || "Sophia Clark")}
         </div>
-        <div style="font-family:${fontStack};font-size:11px;font-weight:600;color:#8B5CF6;margin-top:2px;margin-bottom:4px;line-height:1.2;">
-          ${escapeHtml(data.jobTitle || "HR Manager")}
+        <div style="font-family:${fontStack};font-size:11px;font-weight:600;color:#8B5CF6;margin-top:2px;margin-bottom:3px;line-height:1.2;">
+          ${escapeHtml(data.jobTitle || "HR Manager")}${data.companyName?.trim() ? ` <span style="color:#64748B;font-weight:400;">| ${escapeHtml(data.companyName.trim())}</span>` : ""}
         </div>
+        ${taglineRow}
         ${contactsTable}
       </td>
-      <td style="vertical-align:bottom;text-align:right;padding-bottom:2px;width:60px;">
+      ${logoCell}
+      <td style="vertical-align:bottom;text-align:right;padding-bottom:2px;min-width:60px;">
         ${socialsTable}
       </td>
     </tr>
+    ${disclaimerRow}
   </table>`;
 }

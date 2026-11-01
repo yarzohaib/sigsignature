@@ -4,7 +4,13 @@ import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getStoredAvatarUrl, getStoredRefreshToken, clearAuthSession, getStoredUser } from "@/app/lib/auth";
+import {
+  getStoredAvatarUrl,
+  getStoredRefreshToken,
+  clearAuthSession,
+  getStoredUser,
+  AUTH_AVATAR_PREVIEW_KEY,
+} from "@/app/lib/auth";
 import { logoutUser, UserProfile } from "@/app/lib/api";
 import { useOptionalUser } from "@/contexts/UserContext";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -23,7 +29,7 @@ type TopBarProps = {
 export default function DashboardTopBar({
   userName,
   userEmail,
-  avatarUrl = null,
+  avatarUrl,
   notificationCount = 0,
   onOpenMobileMenu,
   onLogout,
@@ -64,13 +70,29 @@ export default function DashboardTopBar({
   useEffect(() => {
     function handleAvatarUpdate(e: Event) {
       const customEvent = e as CustomEvent<string | null>;
-      setStoredAvatar(customEvent.detail ?? getStoredAvatarUrl());
+      setStoredAvatar(customEvent.detail !== undefined ? customEvent.detail : getStoredAvatarUrl());
+    }
+    function handleUserUpdate(e: Event) {
+      const customEvent = e as CustomEvent<UserProfile | null>;
+      if (customEvent.detail) {
+        setStoredAvatar(customEvent.detail.avatarUrl !== undefined ? customEvent.detail.avatarUrl : getStoredAvatarUrl());
+      }
     }
     window.addEventListener("sig_avatar_update", handleAvatarUpdate);
-    return () => window.removeEventListener("sig_avatar_update", handleAvatarUpdate);
+    window.addEventListener("sig_user_update", handleUserUpdate);
+    return () => {
+      window.removeEventListener("sig_avatar_update", handleAvatarUpdate);
+      window.removeEventListener("sig_user_update", handleUserUpdate);
+    };
   }, []);
 
-  const resolvedAvatar = avatarUrl || optionalUser?.avatarUrl || storedAvatar;
+  const isExplicitlyRemoved =
+    typeof window !== "undefined" &&
+    localStorage.getItem(AUTH_AVATAR_PREVIEW_KEY) === "removed";
+
+  const resolvedAvatar = isExplicitlyRemoved
+    ? null
+    : (avatarUrl || storedAvatar || optionalUser?.avatarUrl || null);
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
 
   // Check if onboarding setup guide has been acknowledged / completed

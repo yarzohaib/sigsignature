@@ -75,14 +75,29 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     return getStoredAvatarUrl();
   });
 
-  // Sync avatar events
+  // Sync avatar and user events across tabs/components
   useEffect(() => {
     function handleAvatarUpdate(e: Event) {
       const customEvent = e as CustomEvent<string | null>;
-      setAvatarUrl(customEvent.detail ?? getStoredAvatarUrl());
+      const nextAvatar = customEvent.detail !== undefined ? customEvent.detail : getStoredAvatarUrl();
+      setAvatarUrl(nextAvatar);
+      setUser((prev) => (prev ? { ...prev, avatarUrl: nextAvatar } : null));
+    }
+    function handleUserUpdate(e: Event) {
+      const customEvent = e as CustomEvent<UserProfile | null>;
+      if (customEvent.detail) {
+        setUser(customEvent.detail);
+        if (customEvent.detail.avatarUrl !== undefined) {
+          setAvatarUrl(customEvent.detail.avatarUrl);
+        }
+      }
     }
     window.addEventListener("sig_avatar_update", handleAvatarUpdate);
-    return () => window.removeEventListener("sig_avatar_update", handleAvatarUpdate);
+    window.addEventListener("sig_user_update", handleUserUpdate);
+    return () => {
+      window.removeEventListener("sig_avatar_update", handleAvatarUpdate);
+      window.removeEventListener("sig_user_update", handleUserUpdate);
+    };
   }, []);
 
   const refreshUser = useCallback(async (): Promise<UserProfile | null> => {
@@ -198,9 +213,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const contextValue = useMemo<UserContextValue>(
     () => ({
-      user,
+      user: user
+        ? {
+            ...user,
+            avatarUrl: avatarUrl !== undefined ? avatarUrl : user.avatarUrl ?? null,
+          }
+        : null,
       isLoadingUser,
-      avatarUrl: avatarUrl || user?.avatarUrl || null,
+      avatarUrl: avatarUrl !== undefined ? avatarUrl : user?.avatarUrl ?? null,
       displayName,
       displayEmail,
       refreshUser,

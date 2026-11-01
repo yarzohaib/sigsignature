@@ -337,8 +337,10 @@ function SettingsContent() {
       // 1. Send profile updates if any changed
       if (hasProfileChange) {
         updatedUser = await updateAccountProfile(profilePayload);
-        setStoredUser(updatedUser);
-        setStoredAvatarUrl(updatedUser.avatarUrl || null);
+        const resolvedUpdatedAvatar =
+          updatedUser.avatarUrl !== undefined ? updatedUser.avatarUrl : (formState.avatarUrl || null);
+        setStoredUser({ ...updatedUser, avatarUrl: resolvedUpdatedAvatar });
+        setStoredAvatarUrl(resolvedUpdatedAvatar);
       }
 
       // 2. Send settings updates if any changed

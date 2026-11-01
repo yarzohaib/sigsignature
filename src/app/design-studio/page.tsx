@@ -1062,6 +1062,19 @@ function DesignStudioContent() {
       return;
     }
 
+    const invalidWebsiteEl = state.elements?.find(
+      (el): el is FreeTextElement =>
+        el.type === "text" &&
+        (("bind" in el && el.bind === "website") || el.icon === "website") &&
+        Boolean(el.text?.trim()) &&
+        !isValidWebUrl(el.text)
+    );
+    if (invalidWebsiteEl) {
+      setSelectedId(invalidWebsiteEl.id);
+      showToast("Please enter a valid website address (e.g. company.com) before saving.");
+      return;
+    }
+
     if (!editingSignatureId && !editId && isSignatureLimitReached()) {
       setLimitModalOpen(true);
       return;
@@ -1218,6 +1231,51 @@ function DesignStudioContent() {
 
     dispatch({ type: "SET_SHAPE", payload: shape });
     showToast(`Updated canvas shape to ${shape}`);
+  }
+
+  function handleOpenPreview() {
+    const invalidWebsiteEl = state.elements?.find(
+      (el): el is FreeTextElement =>
+        el.type === "text" &&
+        (("bind" in el && el.bind === "website") || el.icon === "website") &&
+        Boolean(el.text?.trim()) &&
+        !isValidWebUrl(el.text)
+    );
+    if (invalidWebsiteEl) {
+      setSelectedId(invalidWebsiteEl.id);
+      showToast("Please enter a valid website address (e.g. company.com).");
+      return;
+    }
+
+    const invalidEmailEl = state.elements?.find(
+      (el): el is FreeTextElement =>
+        el.type === "text" &&
+        "bind" in el &&
+        el.bind === "email" &&
+        Boolean(el.text?.trim()) &&
+        !isValidEmail(el.text)
+    );
+    if (invalidEmailEl) {
+      setSelectedId(invalidEmailEl.id);
+      showToast("Please enter a valid email address.");
+      return;
+    }
+
+    const invalidPhoneEl = state.elements?.find(
+      (el): el is FreeTextElement =>
+        el.type === "text" &&
+        "bind" in el &&
+        el.bind === "phone" &&
+        Boolean(el.text?.trim()) &&
+        !isValidPhone(el.text)
+    );
+    if (invalidPhoneEl) {
+      setSelectedId(invalidPhoneEl.id);
+      showToast("Please enter a valid phone number.");
+      return;
+    }
+
+    setPreviewModalOpen(true);
   }
 
   return (
@@ -2367,7 +2425,7 @@ function DesignStudioContent() {
 
                 <button
                   type="button"
-                  onClick={() => setPreviewModalOpen(true)}
+                  onClick={handleOpenPreview}
                   className="flex h-[36px] items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-[14px] text-xs font-semibold text-[#1E293B] shadow-2xs transition hover:border-[#245FD4] hover:text-[#245FD4] whitespace-nowrap shrink-0"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
@@ -2820,7 +2878,7 @@ function DesignStudioContent() {
 
             <button
               type="button"
-              onClick={() => setPreviewModalOpen(true)}
+              onClick={handleOpenPreview}
               className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 text-xs font-semibold text-[#1E293B] shadow-2xs whitespace-nowrap hover:border-[#245FD4] transition"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >

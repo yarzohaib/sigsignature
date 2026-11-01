@@ -24,6 +24,7 @@ import {
   isValidEmail,
   sanitizePhone,
   isValidPhone,
+  isValidWebUrl,
   MAX_LENGTH,
 } from "@/lib/validation";
 
@@ -530,11 +531,18 @@ export default function FreeElementView({
               (element as FreeTextElement).text?.trim() &&
               !isValidPhone((element as FreeTextElement).text)
           );
-        const hasFormatError = isInvalidEmail || isInvalidPhone;
+        const isInvalidWebsite =
+          (element.bind === "website" || (element.type === "text" && (element as FreeTextElement).icon === "website")) &&
+          Boolean(
+            element.type === "text" &&
+              (element as FreeTextElement).text?.trim() &&
+              !isValidWebUrl((element as FreeTextElement).text)
+          );
+        const hasFormatError = isInvalidEmail || isInvalidPhone || isInvalidWebsite;
 
         return (
           <div
-            data-team-field-badge={element.bind}
+            data-team-field-badge={element.bind || "website"}
             className={`absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none ${
               hasFormatError ? "bg-rose-600" : "bg-[#449AFA]"
             }`}
@@ -544,6 +552,8 @@ export default function FreeElementView({
                 ? "Invalid Email"
                 : isInvalidPhone
                 ? "Invalid Phone"
+                : isInvalidWebsite
+                ? "Invalid Website"
                 : element.bind === "name"
                 ? "Name"
                 : element.bind === "jobTitle"
@@ -605,6 +615,28 @@ export default function FreeElementView({
               </button>
             </>
           )}
+        </div>
+      )}
+
+      {/* Selected multiline indicator */}
+      {isSelected && !isEditingText && element.type === "text" && (element as FreeTextElement).text?.includes("\n") && (
+        <div
+          className="absolute -bottom-6 left-0 z-30 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded shadow whitespace-nowrap animate-in fade-in"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <span className="text-slate-300">Styling applies to entire box</span>
+          <span className="text-slate-500">•</span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSplitLines?.(element.id, (element as FreeTextElement).text);
+            }}
+            className="text-blue-400 hover:text-blue-200 font-medium underline cursor-pointer"
+            title="Split lines into separate elements so each line can be styled individually"
+          >
+            Split lines to style individually
+          </button>
         </div>
       )}
 

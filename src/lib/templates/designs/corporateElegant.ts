@@ -75,7 +75,11 @@ export function render(data: TemplateSignatureData): string {
   const networks: Array<{ key: string; label: string; network: SocialNetwork }> = [
     { key: "linkedin", label: "LinkedIn", network: "linkedin" },
     { key: "twitter", label: "Twitter", network: "twitter" },
+    { key: "facebook", label: "Facebook", network: "facebook" },
+    { key: "instagram", label: "Instagram", network: "instagram" },
   ];
+
+  const iconStyle = data.socialIconsStyle || "circle";
 
   const socialLinks = networks
     .map(({ key, label, network }) => {
@@ -83,7 +87,7 @@ export function render(data: TemplateSignatureData): string {
       if (!rawUrl || !rawUrl.trim()) return "";
       const url = safeUrl(normalizeWebsite(rawUrl));
       if (!url) return "";
-      const iconUrl = emailIconUrl("circle", themeColor, network);
+      const iconUrl = emailIconUrl(iconStyle, themeColor, network);
       if (iconUrl) {
         return `<a href="${url}" target="_blank" style="text-decoration:none;display:inline-block;margin-right:5px;"><img src="${escapeHtml(iconUrl)}" alt="${escapeHtml(label)}" width="16" height="16" style="display:block;border:0;outline:none;text-decoration:none;" /></a>`;
       }

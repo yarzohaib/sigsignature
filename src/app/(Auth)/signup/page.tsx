@@ -66,6 +66,18 @@ function SignupForm() {
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
+  const [legalDocument, setLegalDocument] = useState<"terms" | "privacy" | null>(null);
+
+  useEffect(() => {
+    if (!legalDocument) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setLegalDocument(null);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [legalDocument]);
 
   // If error query param changes, adjust state directly during render (React pattern)
   const [prevErrorCode, setPrevErrorCode] = useState(errorCode);
@@ -451,25 +463,29 @@ function SignupForm() {
             />
             <label htmlFor="signup-agree-terms" className="cursor-pointer select-none">
               I agree with the{" "}
-              <Link
-                href="/terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setLegalDocument("terms");
+                }}
                 className="font-semibold text-brand hover:underline"
               >
                 Terms of Service
-              </Link>{" "}
+              </button>{" "}
               &amp;{" "}
-              <Link
-                href="/privacy"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setLegalDocument("privacy");
+                }}
                 className="font-semibold text-brand hover:underline"
               >
                 Privacy Policy
-              </Link>
+              </button>
             </label>
           </div>
           {errors.agree && <p className="text-sm text-red-600">{errors.agree}</p>}
@@ -510,6 +526,55 @@ function SignupForm() {
           )}
         </button>
       </form>
+
+      {legalDocument && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/45 p-0 backdrop-blur-[2px] sm:p-5"
+          onClick={() => setLegalDocument(null)}
+          role="presentation"
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="signup-legal-title"
+            className="flex h-[96dvh] max-h-[900px] w-full max-w-4xl flex-col overflow-hidden bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:h-[88dvh] sm:rounded-2xl sm:border sm:border-slate-200"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-4 sm:px-6">
+              <h2 id="signup-legal-title" className="font-heading text-base font-semibold text-slate-900 sm:text-lg">
+                {legalDocument === "terms" ? "Terms of Service" : "Privacy Policy"}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setLegalDocument(null)}
+                aria-label="Close legal document"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                  <path d="m18 6-12 12M6 6l12 12" />
+                </svg>
+              </button>
+            </header>
+            <iframe
+              key={legalDocument}
+              src={`/${legalDocument}`}
+              title={legalDocument === "terms" ? "Terms of Service" : "Privacy Policy"}
+              onLoad={(event) => {
+                const document = event.currentTarget.contentDocument;
+                if (!document || document.getElementById("signup-legal-embed-style")) return;
+                const style = document.createElement("style");
+                style.id = "signup-legal-embed-style";
+                style.textContent = `
+                  header, footer, body > div > div.border-t { display: none !important; }
+                  body > div { min-height: 0 !important; }
+                `;
+                document.head.appendChild(style);
+              }}
+              className="min-h-0 w-full flex-1 border-0"
+            />
+          </section>
+        </div>
+      )}
 
       <p className="text-center text-sm text-[#6889C9]">
         Already have an account?{" "}

@@ -124,13 +124,6 @@ function LoginForm() {
           } catch {
             // Ignore sessionStorage access errors
           }
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("sig_flash_toast", {
-                detail: "Successfully logged in! Welcome back.",
-              })
-            );
-          }
           router.push(target || redirectTarget);
           router.refresh();
         },
@@ -205,14 +198,6 @@ function LoginForm() {
           );
         } catch {
           // Ignore sessionStorage access errors
-        }
-
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("sig_flash_toast", {
-              detail: "Successfully logged in! Welcome back.",
-            })
-          );
         }
 
         router.push(redirectTarget);

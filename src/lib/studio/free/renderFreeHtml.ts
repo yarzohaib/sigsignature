@@ -17,7 +17,7 @@ import {
   resolveEmailFont,
   emailIconUrl,
 } from "@/lib/email-core";
-import { isValidEmail, sanitizePhone, isValidPhone } from "@/lib/validation";
+import { isValidEmail, sanitizePhone, isValidPhone, isValidWebUrl } from "@/lib/validation";
 import {
   THEME_PRESETS,
   getShapeBorderRadius,
@@ -166,6 +166,12 @@ export function generateFreeHtml(
           return "";
         }
       }
+      if (textEl.bind === "website" || textEl.icon === "website") {
+        const raw = textEl.text?.trim() || "";
+        if (raw && !isValidWebUrl(raw)) {
+          return "";
+        }
+      }
 
       // Link resolution
       let href = "";
@@ -185,7 +191,7 @@ export function generateFreeHtml(
         }
       } else if (textEl.bind === "website" || textEl.icon === "website") {
         const raw = textEl.text?.trim() || "";
-        if (raw) {
+        if (raw && isValidWebUrl(raw)) {
           href = safeUrl(normalizeWebsite(raw));
           displayText = raw;
         }
@@ -522,6 +528,9 @@ export function generateFreePlainText(data: StudioSignatureData): string {
         continue;
       }
       if (textEl.bind === "phone" && (!textEl.text || !isValidPhone(textEl.text))) {
+        continue;
+      }
+      if ((textEl.bind === "website" || textEl.icon === "website") && (!textEl.text || !isValidWebUrl(textEl.text))) {
         continue;
       }
       const text = textEl.text?.trim();

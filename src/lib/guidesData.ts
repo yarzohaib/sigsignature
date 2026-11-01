@@ -2552,6 +2552,7 @@ DETAILED_GUIDES["dark-mode-optimization"] = DETAILED_GUIDES["dark-mode-email-sig
 DETAILED_GUIDES["add-social-icons-ctas"] = DETAILED_GUIDES["social-icons-badges-cta"];
 DETAILED_GUIDES["install-gmail"] = DETAILED_GUIDES["install-signature-gmail"];
 DETAILED_GUIDES["install-outlook"] = DETAILED_GUIDES["add-signature-outlook"];
+DETAILED_GUIDES["add-outlook"] = DETAILED_GUIDES["add-signature-outlook"];
 DETAILED_GUIDES["export-html"] = DETAILED_GUIDES["export-html-embed-code"];
 DETAILED_GUIDES["install-apple-mail"] = DETAILED_GUIDES["install-signature-apple-mail"];
 DETAILED_GUIDES["install-webmail"] = DETAILED_GUIDES["install-signature-yahoo-thunderbird"];

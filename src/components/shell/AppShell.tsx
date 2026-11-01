@@ -22,7 +22,12 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 
       {/* Persistent Top Navigation Bar + Dynamic Page Canvas */}
       <div className="flex flex-1 flex-col min-w-0 h-screen overflow-hidden">
-        <DashboardTopBar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
+        <DashboardTopBar
+          avatarUrl={optionalUser?.avatarUrl || undefined}
+          userName={optionalUser?.displayName}
+          userEmail={optionalUser?.displayEmail}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
+        />
 
         {/* Page Scroll Canvas */}
         <div

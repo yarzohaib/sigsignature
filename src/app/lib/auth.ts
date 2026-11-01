@@ -76,6 +76,7 @@ export function getStoredAvatarUrl(): string | null {
   if (typeof window === "undefined") return null;
   try {
     const preview = localStorage.getItem(AUTH_AVATAR_PREVIEW_KEY);
+    if (preview === "removed") return null;
     if (preview) return preview;
     const user = getStoredUser();
     if (user?.avatarUrl) return user.avatarUrl;
@@ -101,13 +102,24 @@ export function setStoredAvatarUrl(url: string | null): void {
       if (user?.id) {
         localStorage.setItem(`sig_avatar_${user.id}`, url);
       }
+      if (user) {
+        user.avatarUrl = url;
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+      }
     } else {
-      localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+      localStorage.setItem(AUTH_AVATAR_PREVIEW_KEY, "removed");
       if (user?.id) {
         localStorage.removeItem(`sig_avatar_${user.id}`);
       }
+      if (user) {
+        user.avatarUrl = null;
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+      }
     }
     window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: url }));
+    if (user) {
+      window.dispatchEvent(new CustomEvent("sig_user_update", { detail: user }));
+    }
   } catch (err) {
     console.error("Failed to store avatar url:", err);
   }

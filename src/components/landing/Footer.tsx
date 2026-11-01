@@ -163,12 +163,12 @@ const isAuthenticated =
           {/* Products Group */}
           <motion.div
             variants={shouldReduceMotion ? undefined : columnVariants}
-            className="flex flex-col items-start text-left lg:items-center lg:text-center"
+            className="flex flex-col items-center text-center"
           >
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Products
             </h4>
-            <div className="mt-2 flex flex-col items-start sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-7">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-7">
               <Link
                 href="/#features"
                 onClick={(e) => handleNavAnchorClick(e, "features", "start")}
@@ -208,12 +208,12 @@ const isAuthenticated =
           {/* Company Group */}
           <motion.div
             variants={shouldReduceMotion ? undefined : columnVariants}
-            className="flex flex-col items-start text-left lg:items-center lg:text-center"
+            className="flex flex-col items-center text-center"
           >
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Company
             </h4>
-            <div className="mt-2 flex flex-col items-start sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-7">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-7">
               <Link href="/about" className={linkHoverClasses}>
                 About
               </Link>
@@ -232,12 +232,12 @@ const isAuthenticated =
           {/* Resources Group */}
           <motion.div
             variants={shouldReduceMotion ? undefined : columnVariants}
-            className="col-span-2 flex flex-col items-start text-left sm:col-span-1 lg:items-center lg:text-center"
+            className="col-span-2 flex flex-col items-center text-center sm:col-span-1"
           >
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Resources
             </h4>
-            <div className="mt-2 flex flex-col items-start sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-7">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-7">
               <Link
                 href="/#features"
                 onClick={(e) => handleNavAnchorClick(e, "features", "start")}

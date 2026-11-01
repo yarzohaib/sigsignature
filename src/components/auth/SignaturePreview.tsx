@@ -21,8 +21,8 @@ export default function SignaturePreview({ className = "", floating = false }: S
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#245FD4] to-[#022977]" />
             <div>
-              <p className="text-[15px] font-semibold text-slate-900">Muhammad Nadir</p>
-              <p className="text-[11px] text-slate-600">Head of TheNevon • CEO</p>
+              <p className="text-[15px] font-semibold text-slate-900">The Nevon</p>
+              <p className="text-[11px] text-slate-600">Leadership Platform</p>
             </div>
           </div>
           <span

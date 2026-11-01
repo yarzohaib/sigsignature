@@ -445,13 +445,13 @@ export default function FloatingToolbar({
                     aria-label="Split lines into separate elements"
                     title="Split multiline text into separate stacked elements so each line can be styled individually"
                     onClick={onSplitLines}
-                    className="flex h-7 px-2 items-center gap-1 rounded text-blue-300 hover:text-white hover:bg-blue-600/30 text-[11px] font-semibold transition focus:outline-none focus:ring-1 focus:ring-blue-400"
+                    className="flex h-7 px-2.5 items-center gap-1.5 rounded bg-blue-600/40 border border-blue-400/50 text-white hover:bg-blue-600/60 text-[11px] font-semibold transition focus:outline-none focus:ring-1 focus:ring-blue-400 shadow-xs"
                   >
-                    <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="w-3.5 h-3.5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M4 12h16" />
                       <path d="M12 4v16" />
                     </svg>
-                    <span className="hidden sm:inline">Split lines</span>
+                    <span>Split lines to style individually</span>
                   </button>
                 )}
 

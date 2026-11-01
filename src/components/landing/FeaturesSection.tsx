@@ -38,13 +38,13 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/Template.svg" alt="Pre-designed email signature templates icon" width={16} height={16} className="h-4 w-4" />
+                  <Image src="/Template.svg" alt="Pre-designed email signature templates icon" width={20} height={20} className="h-5 w-5" />
                 </FeatureIconTile>
-                <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                <span className="font-body text-sm font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
                 </span>
               </div>
-              <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+              <h3 className="font-heading mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
                 Start with a Template or Blank Layout
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
@@ -94,13 +94,13 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/Live.svg" alt="Live signature preview icon" width={18} height={11} className="h-3 w-auto" />
+                  <Image src="/Live.svg" alt="Live signature preview icon" width={22} height={14} className="h-4 w-auto" />
                 </FeatureIconTile>
-                <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                <span className="font-body text-sm font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
                 </span>
               </div>
-              <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+              <h3 className="font-heading mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
                 Preview Changes While You Edit
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
@@ -132,13 +132,13 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/Customization.svg" alt="Custom branding and styling options icon" width={18} height={18} className="h-4 w-4" />
+                  <Image src="/Customization.svg" alt="Custom branding and styling options icon" width={20} height={20} className="h-5 w-5" />
                 </FeatureIconTile>
-                <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                <span className="font-body text-sm font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
                 </span>
               </div>
-              <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+              <h3 className="font-heading mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
                 Customize Your Brand Details
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
@@ -163,11 +163,11 @@ export default function FeaturesSection() {
                 <FeatureIconTile>
                   <span className="font-mono text-xs font-semibold">&lt;/&gt;</span>
                 </FeatureIconTile>
-                <span className="font-body text-xs font-semibold tracking-wider uppercase">
+                <span className="font-body text-sm font-semibold tracking-wider uppercase">
                   FEATURE
                 </span>
               </div>
-              <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+              <h3 className="font-heading mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
                 Export Your Signature as HTML
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
@@ -194,13 +194,13 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/stash_image-light.svg" alt="Custom photo and logo upload icon" width={18} height={18} className="h-4 w-4" />
+                  <Image src="/stash_image-light.svg" alt="Custom photo and logo upload icon" width={20} height={20} className="h-5 w-5" />
                 </FeatureIconTile>
-                <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                <span className="font-body text-sm font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
                 </span>
               </div>
-              <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
+              <h3 className="font-heading mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
                 Download an Image Version
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
@@ -232,33 +232,39 @@ export default function FeaturesSection() {
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
-                  <Image src="/arcticons_nothing-icons.svg" alt="Clean design without bloat icon" width={18} height={18} className="h-4 w-4" />
+                  <Image src="/arcticons_nothing-icons.svg" alt="Clean design without bloat icon" width={20} height={20} className="h-5 w-5" />
                 </FeatureIconTile>
-                <span className="font-body text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                <span className="font-body text-sm font-semibold tracking-wider text-slate-400 uppercase">
                   FEATURE
                 </span>
               </div>
-              <h3 className="font-heading mt-3 text-xl font-semibold text-slate-900 sm:text-2xl">
-                Save and Update Your Signatures
+              <h3 className="font-heading mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
+                Save Multiple Signatures
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Keep your saved designs in your dashboard and update them when your role, contact details, or branding changes. The free plan includes up to 3 signatures.
+                Store multiple signatures, whether built from a template or from scratch, in your dashboard, and update them anytime.
               </p>
             </div>
 
             {/* Signature list preview items */}
             <FeatureCardVisual className="mt-8 space-y-2">
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs font-medium text-slate-700">
+              <div className="flex items-center justify-between rounded-xl border border-[#D8D8D8] bg-gradient-to-r from-[#F1F0ED] to-white px-4 py-2.5 text-xs font-medium text-slate-700">
                 <span>Personal Signature</span>
-                <span className="text-slate-400">⌄</span>
+                <svg className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs font-medium text-slate-700">
+              <div className="flex items-center justify-between rounded-xl border border-[#D8D8D8] bg-white px-4 py-2.5 text-xs font-medium text-slate-700">
                 <span>Business Signatures</span>
-                <span className="text-slate-400">⌄</span>
+                <svg className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs font-medium text-slate-700">
+              <div className="flex items-center justify-between rounded-xl border border-[#D8D8D8] bg-white px-4 py-2.5 text-xs font-medium text-slate-700">
                 <span>Marketing Signatures</span>
-                <span className="text-slate-400">⌄</span>
+                <svg className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
             </FeatureCardVisual>
           </FeatureCard>

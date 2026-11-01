@@ -82,9 +82,13 @@ export function render(data: TemplateSignatureData): string {
 
   const networks: Array<{ key: string; label: string; network: SocialNetwork }> = [
     { key: "linkedin", label: "LinkedIn", network: "linkedin" },
-    { key: "github", label: "GitHub", network: "github" },
     { key: "twitter", label: "Twitter", network: "twitter" },
+    { key: "facebook", label: "Facebook", network: "facebook" },
+    { key: "instagram", label: "Instagram", network: "instagram" },
+    { key: "github", label: "GitHub", network: "github" },
   ];
+
+  const iconStyle = data.socialIconsStyle || "filled";
 
   const socialLinks = networks
     .map(({ key, label, network }) => {
@@ -92,7 +96,7 @@ export function render(data: TemplateSignatureData): string {
       if (!rawUrl || !rawUrl.trim()) return "";
       const url = safeUrl(normalizeWebsite(rawUrl));
       if (!url) return "";
-      const iconUrl = emailIconUrl("filled", "#FFFFFF", network);
+      const iconUrl = emailIconUrl(iconStyle, "#FFFFFF", network);
       if (iconUrl) {
         return `<a href="${url}" target="_blank" style="text-decoration:none;display:inline-block;margin-right:6px;"><img src="${escapeHtml(iconUrl)}" alt="${escapeHtml(label)}" width="16" height="16" style="display:block;border:0;outline:none;text-decoration:none;" /></a>`;
       }

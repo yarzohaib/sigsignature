@@ -23,6 +23,7 @@ import {
   isValidEmail,
   sanitizePhone,
   isValidPhone,
+  isValidWebUrl,
   MAX_LENGTH,
 } from "@/lib/validation";
 
@@ -116,6 +117,11 @@ export default function EditDetailsModal({
       if (!trimmed) return "Phone number is required.";
       if (!isValidPhone(trimmed))
         return "Please enter a valid phone number (at least 6 digits).";
+    }
+    if (textEl.bind === "website" || textEl.icon === "website") {
+      if (!trimmed) return "Website address is required.";
+      if (!isValidWebUrl(trimmed))
+        return "Please enter a valid website address (e.g. company.com).";
     }
     return null;
   }, [selectedElement]);

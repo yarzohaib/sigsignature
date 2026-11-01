@@ -556,13 +556,16 @@ export default function TemplateEditor({
     // Do not accept invalid phone into signature preview
     const previewPhone = isValidPhone(formData.phone) ? formData.phone.trim() : "";
 
-    return generateTemplateHtml({
-      ...formData,
-      email: previewEmail,
-      phone: previewPhone,
-      socials: validSocials,
-      templateId: template.id,
-    });
+    return generateTemplateHtml(
+      {
+        ...formData,
+        email: previewEmail,
+        phone: previewPhone,
+        socials: validSocials,
+        templateId: template.id,
+      },
+      { preview: true }
+    );
   }, [formData, template.id]);
 
   const previewSrcDoc = useMemo(
@@ -703,11 +706,12 @@ export default function TemplateEditor({
           <select
             value={formData.socialIconsStyle}
             onChange={(e) => handleInputChange("socialIconsStyle", e.target.value)}
-            className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
+            className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none cursor-pointer"
+            title="Filled: solid icon badge | Outline: bordered icon | Circle: round disc"
           >
-            <option value="filled">Filled</option>
-            <option value="outline">Outline</option>
-            <option value="circle">Circle</option>
+            <option value="filled">Filled (Solid shape)</option>
+            <option value="outline">Outline (Bordered)</option>
+            <option value="circle">Circle (Round disc)</option>
           </select>
         </div>
       </div>
@@ -1024,7 +1028,7 @@ export default function TemplateEditor({
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-[#1E293B]">Company Logo</p>
-                      <p className="text-[11px] text-[#64748B] mt-0.5">Upload a square or wide logo (PNG, JPG, max 10MB).</p>
+                      <p className="text-[11px] text-[#64748B] mt-0.5">Upload a square or wide logo (PNG, JPG, max 10MB). Logo displays alongside your contact details in your signature.</p>
                       <div className="mt-2 flex items-center gap-2">
                         <button
                           type="button"
@@ -1312,7 +1316,7 @@ export default function TemplateEditor({
       <SaveSuccessModal
         isOpen={isSavedModalOpen}
         onClose={() => setIsSavedModalOpen(false)}
-        signatureData={formData}
+        signatureData={prepareDataForSave()}
         signatureName={formData.fullName || template.name}
       />
 

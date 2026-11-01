@@ -144,7 +144,7 @@ export default function PublicInvitePage() {
     const m: TeamMember = {
       id: "member-public",
       name: inviteData.member.name,
-      email: maskedEmail,
+      email: (inviteData.member as { email?: string }).email || maskedEmail,
       jobTitle: inviteData.member.jobTitle || "",
       phone: inviteData.member.phone || "",
       photoUrl: inviteData.member.photoUrl || "",

@@ -270,11 +270,19 @@ function FlashToastContent() {
   }, []);
 
   const addToast = useCallback((toastItem: ToastItem) => {
+    let isDuplicate = false;
     setToasts((prev) => {
+      // Prevent duplicate toasts with the identical message
+      if (prev.some((t) => t.message === toastItem.message)) {
+        isDuplicate = true;
+        return prev;
+      }
       // Keep up to 4 toasts at once to maintain clean UI
       const trimmed = prev.length >= 4 ? prev.slice(1) : prev;
       return [...trimmed, toastItem];
     });
+
+    if (isDuplicate) return;
 
     const duration = toastItem.duration || 4000;
     const timer = setTimeout(() => {

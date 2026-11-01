@@ -25,11 +25,48 @@ export function buildPreviewDocument(
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${SIGNATURE_FONTS_HREF}" rel="stylesheet">
 <style>
-html, body { margin: 0; padding: ${padding}px; background-color: #ffffff; -webkit-font-smoothing: antialiased; }
+html, body {
+  margin: 0;
+  padding: ${padding}px;
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
 ${BASE_RESET}
+#sig-preview-scaler {
+  display: inline-block;
+  transform-origin: top left;
+  max-width: 100%;
+}
 </style>
 </head>
-<body>${signatureHtml}</body>
+<body>
+<div id="sig-preview-scaler">
+${signatureHtml}
+</div>
+<script>
+  function adjustScale() {
+    var scaler = document.getElementById('sig-preview-scaler');
+    if (!scaler) return;
+    scaler.style.zoom = '1';
+    var contentWidth = scaler.scrollWidth || scaler.offsetWidth;
+    var availWidth = window.innerWidth - (${padding} * 2);
+    if (contentWidth > availWidth && availWidth > 0) {
+      var s = availWidth / contentWidth;
+      scaler.style.zoom = s;
+      document.body.style.overflowX = 'hidden';
+    } else {
+      scaler.style.zoom = '1';
+    }
+  }
+  window.addEventListener('resize', adjustScale);
+  window.addEventListener('load', adjustScale);
+  adjustScale();
+  setTimeout(adjustScale, 50);
+  setTimeout(adjustScale, 150);
+</script>
+</body>
 </html>`;
 }
 
