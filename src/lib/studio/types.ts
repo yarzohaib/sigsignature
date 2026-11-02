@@ -351,7 +351,8 @@ export function studioReducer(
 
       const canvas = state.canvas || { width: 600, height: 200 };
       const currentShape = state.design?.shape || "rounded";
-      const clamped = clampToCanvas(action.payload, canvas, currentShape);
+      const effectiveCanvas = { ...canvas, height: Math.max(canvas.height, 480) };
+      const clamped = clampToCanvas(action.payload, effectiveCanvas, currentShape);
       const newEl = { ...action.payload, ...clamped };
 
       if (currentElements.some((other) => rectsOverlap(newEl, other))) {

@@ -60,6 +60,7 @@ import {
   ALLOWED_STUDIO_FONTS,
 } from "@/lib/studio/types";
 import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
+import { getSocialElementHeight } from "@/lib/studio/shared";
 import PremiumLockedModal from "@/components/studio/PremiumLockedModal";
 import DesignStudioSkeleton from "@/components/skeletons/DesignStudioSkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
@@ -1989,6 +1990,54 @@ function DesignStudioContent() {
                       );
                     })}
                   </div>
+                  <div className="mt-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#94A3B8]">Icon size</span>
+                      {!selectedElement || selectedElement.type !== "social" ? (
+                        <span className="text-[10px] text-[#94A3B8]">Select a social group</span>
+                      ) : null}
+                    </div>
+                    <div className="grid grid-cols-3 gap-2" role="group" aria-label="Social icon size">
+                      {[
+                        { label: "Small", width: 105, height: 20 },
+                        { label: "Medium", width: 140, height: 24 },
+                        { label: "Large", width: 196, height: 34 },
+                      ].map((sizeOption) => {
+                        const isActive = selectedElement?.type === "social" && selectedElement.w === sizeOption.width;
+                        return (
+                          <button
+                            key={sizeOption.label}
+                            type="button"
+                            disabled={selectedElement?.type !== "social"}
+                            aria-pressed={isActive}
+                            onClick={() => {
+                              if (selectedElement?.type !== "social") return;
+                              dispatch({
+                                type: "RESIZE_ELEMENT",
+                                payload: {
+                                  id: selectedElement.id,
+                                  x: selectedElement.x,
+                                  y: selectedElement.y,
+                                  w: sizeOption.width,
+                                  h: sizeOption.height,
+                                },
+                              });
+                            }}
+                            className={`rounded-[10px] border px-2 py-2 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                              isActive
+                                ? "border-[#245FD4] bg-[#EFF6FF]/60 text-[#245FD4]"
+                                : "border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#245FD4]"
+                            }`}
+                          >
+                            {sizeOption.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="mt-2 text-[11px] leading-relaxed text-[#94A3B8]">
+                      Resizing the selected group also scales its icons.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -2607,9 +2656,13 @@ function DesignStudioContent() {
                       payload: {
                         id: selectedId!,
                         x: selectedElement.x,
-                        y: selectedElement.y,
+                        y: selectedElement.type === "social"
+                          ? selectedElement.y + (selectedElement.h - getSocialElementHeight(w)) / 2
+                          : selectedElement.y,
                         w,
-                        h: selectedElement.h,
+                        h: selectedElement.type === "social"
+                          ? getSocialElementHeight(w)
+                          : selectedElement.h,
                       },
                     })
                   }
@@ -2891,21 +2944,28 @@ function DesignStudioContent() {
   );
 }
 
+import { SidebarProvider } from "@/contexts/SidebarContext";
+import { UserProvider } from "@/contexts/UserContext";
+
 export default function DesignStudioPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-screen overflow-hidden bg-[#FCFCFC]">
-          <DashboardSidebar mobileOpen={false} onCloseMobile={() => {}} />
-          <div className="flex flex-1 flex-col overflow-hidden">
-        <h1 className="sr-only">Email Signature Design Studio - Free Custom Drag and Drop Builder</h1>
-            <DashboardTopBar onOpenMobileMenu={() => {}} />
-            <DesignStudioSkeleton />
-          </div>
-        </div>
-      }
-    >
-      <DesignStudioContent />
-    </Suspense>
+    <UserProvider>
+      <SidebarProvider>
+        <Suspense
+          fallback={
+            <div className="flex h-screen overflow-hidden bg-[#FCFCFC]">
+              <DashboardSidebar mobileOpen={false} onCloseMobile={() => {}} />
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <h1 className="sr-only">Email Signature Design Studio - Free Custom Drag and Drop Builder</h1>
+                <DashboardTopBar onOpenMobileMenu={() => {}} />
+                <DesignStudioSkeleton />
+              </div>
+            </div>
+          }
+        >
+          <DesignStudioContent />
+        </Suspense>
+      </SidebarProvider>
+    </UserProvider>
   );
 }

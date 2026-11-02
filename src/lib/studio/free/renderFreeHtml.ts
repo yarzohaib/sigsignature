@@ -21,6 +21,7 @@ import { isValidEmail, sanitizePhone, isValidPhone, isValidWebUrl } from "@/lib/
 import {
   THEME_PRESETS,
   getShapeBorderRadius,
+  getSocialIconSize,
   renderSocialLinksHtml,
 } from "../shared";
 
@@ -310,7 +311,13 @@ export function generateFreeHtml(
     }
 
     if (el.type === "social") {
-      return renderSocialLinksHtml(data, themeColor, fontStack, options?.preview);
+      return renderSocialLinksHtml(
+        data,
+        themeColor,
+        fontStack,
+        options?.preview,
+        getSocialIconSize(el.w)
+      );
     }
 
     return "";

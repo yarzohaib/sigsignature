@@ -18,7 +18,7 @@ import {
   emailIconUrl,
   SocialNetwork,
 } from "@/lib/email-core";
-import { THEME_PRESETS, getShapeBorderRadius } from "@/lib/studio/shared";
+import { THEME_PRESETS, getShapeBorderRadius, getSocialIconSize } from "@/lib/studio/shared";
 import { validateSocialUrl, TeamMemberSocialPlatform } from "@/lib/team/socials";
 import {
   isValidEmail,
@@ -432,6 +432,8 @@ export default function FreeElementView({
             ? []
             : networks;
         const style = data.socialIconsStyle || "filled";
+        const iconSize = getSocialIconSize(element.w);
+        const iconGap = Math.round(iconSize * 0.3);
 
         if (displayNetworks.length === 0) {
           return (
@@ -442,7 +444,7 @@ export default function FreeElementView({
         }
 
         return (
-          <div className="w-full h-full flex items-center gap-1.5 select-none overflow-hidden">
+          <div className="w-full h-full flex items-center select-none overflow-hidden" style={{ gap: `${iconGap}px` }}>
             {displayNetworks.map((n) => {
               const iconUrl =
                 getSocialIconSvgDataUrl(style, themeColor, n.network) ||
@@ -452,9 +454,10 @@ export default function FreeElementView({
                   key={n.key}
                   src={iconUrl}
                   alt={n.label}
-                  width={20}
-                  height={20}
-                  className="w-5 h-5 shrink-0 block"
+                  width={iconSize}
+                  height={iconSize}
+                  className="shrink-0 block"
+                  style={{ width: `${iconSize}px`, height: `${iconSize}px` }}
                   unoptimized
                   draggable={false}
                 />

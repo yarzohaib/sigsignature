@@ -15,11 +15,14 @@ export default function FeaturesSection() {
         {/* Section Header */}
         <div className="text-center">
           <Reveal y={16} blur={6} className="mb-2.5 sm:mb-3 inline-block">
-            <SectionBadge label="FEATURES" />
+            <SectionBadge
+              label="FEATURES"
+              className="border-[#CBD5E1] shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
+            />
           </Reveal>
           <Reveal y={24} blur={8} delay={0.1}>
-            <h2 className="mx-auto max-w-[850px] font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
-              <span className="block">Tools to Create and Customize Your</span>
+            <h2 className="mx-auto w-full max-w-[1400px] font-heading text-[clamp(1.8rem,1.125rem+2.25vw,2.7rem)] lg:text-[43px] xl:text-[49px] 2xl:text-[56px] 3xl:text-[61px] font-semibold tracking-tight text-slate-900 leading-tight lg:leading-[1.12] [text-wrap:balance]">
+              <span className="block lg:whitespace-nowrap">Tools to Create and Customize Your</span>
               <span className="block text-[#1243A3]">Email Signature</span>
             </h2>
           </Reveal>
@@ -111,15 +114,21 @@ export default function FeaturesSection() {
             {/* Live Preview Box */}
             <FeatureCardVisual className="mt-8 rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
               <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
-                  MN
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#020817]">
+                  <Image
+                    src="/the-nevon-mark.svg"
+                    alt="The Nevon logo"
+                    width={32}
+                    height={24}
+                    className="h-6 w-8 object-contain"
+                  />
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-xs font-bold text-slate-900 sm:text-sm">
-                    Muhammad Nadir
+                    The Nevon
                   </p>
                   <p className="truncate text-[11px] text-[#878787]">
-                    sardar@thenevon.com
+                    www.thenevon.com
                   </p>
                 </div>
               </div>
@@ -215,7 +224,7 @@ export default function FeaturesSection() {
                   <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-brand-dark to-brand" />
                   <div>
                     <p className="text-xs font-bold text-slate-900 sm:text-sm">
-                      Muhammad Nadir
+                      The Nevon
                     </p>
                     <p className="text-[11px] text-[#878787]">PNG / JPEG (2x Retina)</p>
                   </div>

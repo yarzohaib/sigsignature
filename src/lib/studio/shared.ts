@@ -38,6 +38,16 @@ export const THEME_PRESETS = {
 
 export type ThemePresetName = keyof typeof THEME_PRESETS;
 
+// A social group starts at 20px icons in the default 140px-wide element and
+// scales with its width when resized on the free canvas.
+export function getSocialIconSize(elementWidth: number): number {
+  return Math.max(8, Math.min(48, Math.round(elementWidth / 7)));
+}
+
+export function getSocialElementHeight(elementWidth: number): number {
+  return Math.max(12, Math.round(getSocialIconSize(elementWidth) * 1.2));
+}
+
 export function getShapeBorderRadius(
   shape: StudioShape = "rounded",
   type: "card" | "button" | "image" = "button"
@@ -53,7 +63,8 @@ export function renderSocialLinksHtml(
   data: StudioSignatureData,
   themeColor: string,
   fontStack: string,
-  isPreview = false
+  isPreview = false,
+  iconSize = 20
 ): string {
   const networks: {
     key: string;
@@ -116,7 +127,7 @@ export function renderSocialLinksHtml(
     if (!href) continue;
 
     const isLast = i === targetNetworks.length - 1;
-    const paddingRight = isLast ? 0 : 6;
+    const paddingRight = isLast ? 0 : Math.round(iconSize * 0.3);
 
     const iconUrl = isPreview
       ? getSocialIconSvgDataUrl(style, themeColor, network)
@@ -127,7 +138,7 @@ export function renderSocialLinksHtml(
         <a href="${href}" target="_blank" style="display:inline-block;text-decoration:none;line-height:0;font-size:0;">
           <img src="${escapeHtml(
             iconUrl
-          )}" alt="${label}" width="20" height="20" style="display:block;border:0;outline:none;text-decoration:none;width:20px;height:20px;" />
+          )}" alt="${label}" width="${iconSize}" height="${iconSize}" style="display:block;border:0;outline:none;text-decoration:none;width:${iconSize}px;height:${iconSize}px;" />
         </a>
       </td>`);
     } else {

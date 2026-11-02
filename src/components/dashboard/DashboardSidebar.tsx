@@ -8,6 +8,7 @@ import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getStoredRefreshToken, clearAuthSession } from "@/app/lib/auth";
 import { logoutUser } from "@/app/lib/api";
 import { useOptionalUser } from "@/contexts/UserContext";
+import { useSidebar } from "@/contexts/SidebarContext";
 import {
   getLifetimeSignatureCount,
   syncLifetimeSignatureCount,
@@ -35,6 +36,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
   const pathname = usePathname();
   const router = useRouter();
   const optionalUser = useOptionalUser();
+  const { isCollapsed, toggleSidebar } = useSidebar();
   // Keep the server render and the browser's first hydration render identical.
   // Browser storage is read after mount in the effect below.
   const [signatureCount, setSignatureCount] = useState<number>(0);
@@ -181,30 +183,35 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
         />
       )}
 
-      {/* Sidebar Container: fixed 256px width on every screen size */}
+      {/* Sidebar Container: responsive width (256px expanded, 72px collapsed on desktop) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-full max-h-screen w-[256px] shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden border-r border-[#E2E8F0] bg-white px-5 py-4 transition-all duration-300 ease-in-out sidebar-scrollbar lg:static lg:translate-x-0 ${
-          mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex h-full max-h-screen shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden border-r border-[#E2E8F0] bg-white transition-all duration-200 ease-in-out sidebar-scrollbar lg:static lg:translate-x-0 ${
+          isCollapsed ? "lg:w-[72px] lg:px-2.5 py-4 w-[256px] px-5" : "w-[256px] px-5 py-4"
+        } ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}
       >
         <div className="flex flex-col shrink-0">
-          {/* Logo Section */}
-          <div className="flex items-center justify-between pb-3.5">
+          {/* Logo Section & Collapse Toggle */}
+          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:flex-col lg:gap-2 justify-between" : "justify-between"}`}>
             <Link
               href="/dashboard"
-              className="flex items-center gap-2.5 transition hover:opacity-90"
+              className={`flex items-center gap-2.5 transition hover:opacity-90 ${
+                isCollapsed ? "lg:justify-center" : ""
+              }`}
               onClick={onCloseMobile}
+              title="Sig Signature Dashboard"
             >
               <Image
                 src="/logo.svg"
                 alt="Sig Signature"
                 width={36}
                 height={20}
-                className="h-6 w-auto"
+                className="h-6 w-auto shrink-0"
                 priority
               />
               <span
-                className="font-semibold text-[#022977] text-[16px]"
+                className={`font-semibold text-[#022977] text-[16px] whitespace-nowrap transition-opacity duration-200 ${
+                  isCollapsed ? "lg:hidden" : "block"
+                }`}
                 style={{
                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                   letterSpacing: "0%",
@@ -214,6 +221,45 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                 Sig Signature
               </span>
             </Link>
+
+            {/* Collapse/Expand Toggle Button (Desktop) */}
+            {isCollapsed ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleSidebar();
+                }}
+                className="hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer mx-auto mt-1"
+                aria-label="Expand sidebar (Cmd + B)"
+                title="Expand sidebar (Cmd + B / Ctrl + B)"
+              >
+                <svg className="h-4 w-4 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                  <polyline points="13 15 16 12 13 9" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleSidebar();
+                }}
+                className="hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                aria-label="Collapse sidebar (Cmd + B)"
+                title="Collapse sidebar (Cmd + B / Ctrl + B)"
+              >
+                <svg className="h-4 w-4 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                  <polyline points="15 9 12 12 15 15" />
+                </svg>
+              </button>
+            )}
 
             {/* Mobile close button */}
             <button
@@ -229,7 +275,10 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
           </div>
 
           {/* Navigation Links */}
-          <nav className="mt-1 flex flex-col space-y-1 -mx-2" aria-label="Sidebar Navigation">
+          <nav
+            className={`mt-1 flex flex-col space-y-1 ${isCollapsed ? "lg:mx-0 -mx-2" : "-mx-2"}`}
+            aria-label="Sidebar Navigation"
+          >
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -241,32 +290,50 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                 (item.href === "/help" && pathname.startsWith("/help")) ||
                 (item.href === "/settings" && pathname.startsWith("/settings"));
               return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  prefetch={true}
-                  onClick={(e) => {
-                    if (item.href.startsWith("#")) {
-                      e.preventDefault();
-                    }
-                    onCloseMobile?.();
-                  }}
-                  className={`flex items-center gap-3 rounded-xl px-2 py-2 transition-colors font-medium text-[15px] ${
-                    isActive
-                      ? "bg-[#EFF6FF] text-[#245FD4]"
-                      : "text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]"
-                  }`}
-                  style={{
-                    fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-                    letterSpacing: "0%",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  <span className={isActive ? "text-[#245FD4]" : "text-[#64748B]"}>
-                    {item.icon}
-                  </span>
-                  <span>{item.name}</span>
-                </Link>
+                <div key={item.name} className="relative group">
+                  <Link
+                    href={item.href}
+                    prefetch={true}
+                    onClick={(e) => {
+                      if (item.href.startsWith("#")) {
+                        e.preventDefault();
+                      }
+                      onCloseMobile?.();
+                    }}
+                    className={`flex items-center gap-3 rounded-xl px-2.5 py-2 transition-colors font-medium text-[15px] ${
+                      isCollapsed ? "lg:justify-center lg:px-0 lg:h-10 lg:w-10 lg:mx-auto" : ""
+                    } ${
+                      isActive
+                        ? "bg-[#EFF6FF] text-[#245FD4]"
+                        : "text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]"
+                    }`}
+                    style={{
+                      fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                      letterSpacing: "0%",
+                      verticalAlign: "middle",
+                    }}
+                    aria-label={item.name}
+                  >
+                    <span className={isActive ? "text-[#245FD4]" : "text-[#64748B]"}>
+                      {item.icon}
+                    </span>
+                    <span className={isCollapsed ? "lg:hidden" : "block"}>
+                      {item.name}
+                    </span>
+                  </Link>
+
+                  {/* Hover Tooltip when sidebar is collapsed on desktop */}
+                  {isCollapsed && (
+                    <div
+                      role="tooltip"
+                      className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden lg:group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                    >
+                      {item.name}
+                      <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
@@ -275,133 +342,195 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
         {/* Bottom Cards Section */}
         <div className="mt-auto flex flex-col gap-2.5 pt-3 shrink-0">
           {/* Card 1: Unlock Premium Features */}
-          <div className="rounded-2xl bg-[#EFF6FF] p-3.5 text-center">
-            <div className="mx-auto mb-2 flex h-6 w-6 items-center justify-center rounded-lg bg-[#245FD4] text-white shadow-xs">
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
-              </svg>
-            </div>
-            <h4
-              className="text-[13px] font-bold text-[#1E293B]"
-              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-            >
-              Unlock Premium Features
-            </h4>
-            <p
-              className="mt-0.5 text-[11px] leading-[16px] text-[#64748B]"
-              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-            >
-              Upgrade to premium and access powerful features and advanced customization.
-            </p>
-            <Link
-              href="/pricing"
-              onClick={onCloseMobile}
-              className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
-              style={{
-                fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-                letterSpacing: "0%",
-              }}
-            >
-              Upgrade Now
-            </Link>
-          </div>
-
-          {/* Card 2: Free Plan 0/3 Signatures */}
-          <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-[#64748B]">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="text-[11px] font-normal text-[#64748B]"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  Free Plan
-                </span>
-                <span
-                  className="text-[12px] font-bold text-[#1E293B]"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  {signatureCount} / 3 Signatures
-                </span>
-              </div>
-            </div>
-
-            {/* Plan progress bar */}
-            <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-              <div
-                className={`h-full rounded-full bg-[#245FD4] transition-all duration-300 ${
-                  signatureCount === 0 ? "w-0 opacity-0" : ""
-                }`}
-                style={{
-                  width: `${Math.min(100, Math.max(0, (signatureCount / 3) * 100))}%`,
-                }}
-              />
-            </div>
-
-            <div className="mt-2 flex items-center justify-between">
+          {isCollapsed ? (
+            <div className="relative group lg:flex hidden justify-center">
               <Link
                 href="/pricing"
                 onClick={onCloseMobile}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs"
+                aria-label="Unlock Premium Features"
               >
-                <span>Upgrade Plan</span>
-                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                 </svg>
               </Link>
+              <div
+                role="tooltip"
+                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Unlock Premium Features
+                <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-2xl bg-[#EFF6FF] p-3.5 text-center">
+              <div className="mx-auto mb-2 flex h-6 w-6 items-center justify-center rounded-lg bg-[#245FD4] text-white shadow-xs">
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                </svg>
+              </div>
+              <h4
+                className="text-[13px] font-bold text-[#1E293B]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                Unlock Premium Features
+              </h4>
+              <p
+                className="mt-0.5 text-[11px] leading-[16px] text-[#64748B]"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Upgrade to premium and access powerful features and advanced customization.
+              </p>
+              <Link
+                href="/pricing"
+                onClick={onCloseMobile}
+                className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
+                style={{
+                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                  letterSpacing: "0%",
+                }}
+              >
+                Upgrade Now
+              </Link>
+            </div>
+          )}
+
+          {/* Card 2: Free Plan 0/3 Signatures */}
+          {isCollapsed ? (
+            <div className="relative group lg:flex hidden justify-center">
+              <Link
+                href="/pricing"
+                onClick={onCloseMobile}
+                className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300 transition shadow-2xs"
+                aria-label={`Quota: ${signatureCount}/3`}
+              >
+                <span className="text-[11px] font-bold text-[#1E293B]">{signatureCount}/3</span>
+              </Link>
+              <div
+                role="tooltip"
+                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                {signatureCount} / 3 Signatures used
+                <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-[#64748B]">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="flex flex-col">
+                  <span
+                    className="text-[11px] font-normal text-[#64748B]"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    Free Plan
+                  </span>
+                  <span
+                    className="text-[12px] font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    {signatureCount} / 3 Signatures
+                  </span>
+                </div>
+              </div>
+
+              {/* Plan progress bar */}
+              <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div
+                  className={`h-full rounded-full bg-[#245FD4] transition-all duration-300 ${
+                    signatureCount === 0 ? "w-0 opacity-0" : ""
+                  }`}
+                  style={{
+                    width: `${Math.min(100, Math.max(0, (signatureCount / 3) * 100))}%`,
+                  }}
+                />
+              </div>
+
+              <div className="mt-2 flex items-center justify-between">
+                <Link
+                  href="/pricing"
+                  onClick={onCloseMobile}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  <span>Upgrade Plan</span>
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Logout Button */}
-          <button
-            type="button"
-            disabled={isLoggingOut}
-            onClick={async () => {
-              if (optionalUser?.logout) {
-                await optionalUser.logout();
-                return;
-              }
-              setIsLoggingOut(true);
-              try {
-                const refreshToken = getStoredRefreshToken();
-                await logoutUser(refreshToken || undefined);
-              } catch (err) {
-                console.warn("Logout error:", err);
-              } finally {
-                clearAuthSession();
-                try {
-                  sessionStorage.setItem("sig_flash_toast", "You have been logged out successfully.");
-                } catch {
-                  // Ignore
+          <div className="relative group">
+            <button
+              type="button"
+              disabled={isLoggingOut}
+              onClick={async () => {
+                if (optionalUser?.logout) {
+                  await optionalUser.logout();
+                  return;
                 }
-                setIsLoggingOut(false);
-                router.replace("/login");
-                router.refresh();
-              }
-            }}
-            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50/80 disabled:opacity-60 cursor-pointer text-left"
-            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-          >
-            <svg
-              className="h-4 w-4 text-rose-500"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+                setIsLoggingOut(true);
+                try {
+                  const refreshToken = getStoredRefreshToken();
+                  await logoutUser(refreshToken || undefined);
+                } catch (err) {
+                  console.warn("Logout error:", err);
+                } finally {
+                  clearAuthSession();
+                  try {
+                    sessionStorage.setItem("sig_flash_toast", "You have been logged out successfully.");
+                  } catch {
+                    // Ignore
+                  }
+                  setIsLoggingOut(false);
+                  router.replace("/login");
+                  router.refresh();
+                }
+              }}
+              className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50/80 disabled:opacity-60 cursor-pointer text-left ${
+                isCollapsed ? "lg:justify-center lg:px-0 lg:h-10 lg:w-10 lg:mx-auto" : ""
+              }`}
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              aria-label="Log out"
             >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            <span>{isLoggingOut ? "Logging out..." : "Log out"}</span>
-          </button>
+              <svg
+                className="h-4 w-4 text-rose-500 shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span className={isCollapsed ? "lg:hidden" : "block"}>
+                {isLoggingOut ? "Logging out..." : "Log out"}
+              </span>
+            </button>
+
+            {isCollapsed && (
+              <div
+                role="tooltip"
+                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden lg:group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Log out
+                <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+              </div>
+            )}
+          </div>
         </div>
       </aside>
     </>

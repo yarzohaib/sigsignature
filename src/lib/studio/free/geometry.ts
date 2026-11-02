@@ -83,8 +83,18 @@ export function snap(value: number, step = 4): number {
 }
 
 /**
- * Scans top to bottom, left to right in 8px steps to find the first spot
- * where a new element can be placed without overlapping existing elements.
+ * Finds a free spot on the canvas for a new or duplicated element.
+ *
+ * Universal Center Insertion & Smart Vertical Stacking:
+ * 1. Computes the target horizontal center: `x = snap((canvas.width - w) / 2, 4)`.
+ * 2. If the canvas is empty, places the element vertically centered on the canvas.
+ * 3. If elements exist, tests candidate positions in order:
+ *    a. Stacking cleanly below existing elements with a consistent 16px gap (below lowest element or colliding elements).
+ *    b. The exact canvas vertical center `(canvas.height - h) / 2` if free and non-colliding.
+ *    c. Stacking cleanly above existing elements with a consistent 16px gap (if room allows).
+ * 4. If priority vertical positions are blocked, scans vertically at center X.
+ * 5. If center column is fully occupied, searches outward horizontally from the center (`dx = 0, +8, -8, +16, -16...`).
+ * 6. Fallback: clamps to canvas shape and stacks below the lowest element centered horizontally.
  */
 export function findFreeSpot(
   size: { w: number; h: number },
@@ -92,43 +102,120 @@ export function findFreeSpot(
   canvas: CanvasSize,
   shape?: string
 ): { x: number; y: number } {
+  const GAP = 16;
   const step = 8;
   const w = Math.max(8, Math.min(canvas.width, size.w));
   const h = Math.max(8, size.h);
-  const maxX = Math.max(0, canvas.width - w);
-  // Scan up to canvas height, or extend if elements exceed height
-  const maxScanY = Math.max(canvas.height, 480) - h;
+  const targetX = Math.round((canvas.width - w) / 2);
+  const maxAllowedY = Math.max(canvas.height, 480) - h;
+  const effectiveCanvas: CanvasSize = {
+    width: canvas.width,
+    height: Math.max(canvas.height, 480),
+  };
 
-  for (let y = 0; y <= maxScanY; y += step) {
-    for (let x = 0; x <= maxX; x += step) {
-      const candidate: Rect = { x, y, w, h };
-      const clamped = clampToCanvas(candidate, canvas, shape);
-      if (clamped.x !== candidate.x || clamped.y !== candidate.y) {
-        continue;
+  function isValid(x: number, y: number): boolean {
+    if (y < 8 || y > maxAllowedY) return false;
+    const candidate: Rect = { x, y, w, h };
+    const clamped = clampToCanvas(candidate, effectiveCanvas, shape);
+    if (clamped.x !== candidate.x || clamped.y !== candidate.y) {
+      return false;
+    }
+    return !elements.some((el) => rectsOverlap(candidate, el));
+  }
+
+  // If no elements exist, place centered on canvas
+  if (elements.length === 0) {
+    const centerY = snap((canvas.height - h) / 2, 4);
+    const clamped = clampToCanvas(
+      { x: targetX, y: centerY, w, h },
+      effectiveCanvas,
+      shape
+    );
+    return { x: clamped.x, y: clamped.y };
+  }
+
+  // Candidate generation for smart vertical stacking at center X:
+  const lowestBottom = elements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+  const highestTop = elements.reduce((min, el) => Math.min(min, el.y), canvas.height);
+  const centerY = snap((canvas.height - h) / 2, 4);
+
+  // Collect candidate Y coordinates in priority order
+  const yCandidates: number[] = [];
+
+  // Priority 1: Below the lowest element on the canvas (clean 16px gap)
+  yCandidates.push(snap(lowestBottom + GAP, 4));
+
+  // Priority 2: Below individual elements that intersect with the center column
+  const centerIntersecting = elements
+    .filter((el) => el.x < targetX + w && el.x + el.w > targetX)
+    .sort((a, b) => b.y + b.h - (a.y + a.h)); // Start from lower elements
+
+  for (const el of centerIntersecting) {
+    yCandidates.push(snap(el.y + el.h + GAP, 4));
+  }
+
+  // Priority 3: The exact center of the canvas if free
+  yCandidates.push(centerY);
+
+  // Priority 4: Above individual elements in the center column
+  for (const el of centerIntersecting) {
+    yCandidates.push(snap(el.y - h - GAP, 4));
+  }
+
+  // Priority 5: Above the highest element on canvas
+  yCandidates.push(snap(highestTop - h - GAP, 4));
+
+  // Check unique candidate Y positions at targetX
+  const testedY = new Set<number>();
+  for (const y of yCandidates) {
+    if (testedY.has(y)) continue;
+    testedY.add(y);
+    if (isValid(targetX, y)) {
+      return { x: targetX, y };
+    }
+  }
+
+  // If priority candidates are blocked, scan vertically at targetX in 8px increments
+  for (let y = 8; y <= maxAllowedY; y += step) {
+    if (!testedY.has(y) && isValid(targetX, y)) {
+      return { x: targetX, y };
+    }
+  }
+
+  // If center column is completely blocked, search outward horizontally from center
+  const maxX = Math.max(0, canvas.width - w);
+  const maxOffset = Math.max(targetX, maxX - targetX);
+  for (let offset = step; offset <= maxOffset; offset += step) {
+    const xRight = targetX + offset;
+    if (xRight <= maxX) {
+      for (let y = 8; y <= maxAllowedY; y += step) {
+        if (isValid(xRight, y)) {
+          return { x: xRight, y };
+        }
       }
-      const hasOverlap = elements.some((el) => rectsOverlap(candidate, el));
-      if (!hasOverlap) {
-        return { x, y };
+    }
+    const xLeft = targetX - offset;
+    if (xLeft >= 0) {
+      for (let y = 8; y <= maxAllowedY; y += step) {
+        if (isValid(xLeft, y)) {
+          return { x: xLeft, y };
+        }
       }
     }
   }
 
-  // Fallback: place below lowest element if no slot found in current area
-  const lowestBottom = elements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-  const fallbackPos = clampToCanvas(
+  // Final fallback: place below lowest element centered horizontally
+  const fallback = clampToCanvas(
     {
-      x: 0,
-      y: snap(lowestBottom + 8, step),
+      x: targetX,
+      y: snap(lowestBottom + GAP, 4),
       w,
       h,
     },
-    canvas,
+    effectiveCanvas,
     shape
   );
-  return {
-    x: fallbackPos.x,
-    y: fallbackPos.y,
-  };
+  return { x: fallback.x, y: fallback.y };
 }
 
 /**

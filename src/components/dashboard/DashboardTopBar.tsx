@@ -170,11 +170,11 @@ export default function DashboardTopBar({
   return (
     <header className="sticky top-0 z-30 flex h-[66px] w-full items-center justify-between border-b border-[#E2E8F0] bg-white px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 shrink-0 transition-all">
       {/* Left side: Mobile menu toggle */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={onOpenMobileMenu}
-          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 lg:hidden"
+          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 lg:hidden cursor-pointer"
           aria-label="Open navigation menu"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

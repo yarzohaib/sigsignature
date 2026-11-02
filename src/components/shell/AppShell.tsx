@@ -5,6 +5,7 @@ import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import GettingStartedModal from "@/components/dashboard/GettingStartedModal";
 import { UserProvider, useOptionalUser } from "@/contexts/UserContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import { getStoredUser } from "@/app/lib/auth";
 
 function AppShellContent({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
-      {/* Persistent 256px Fixed Sidebar across all app pages */}
+      {/* Collapsible Sidebar across all app pages */}
       <DashboardSidebar
         mobileOpen={mobileMenuOpen}
         onCloseMobile={() => setMobileMenuOpen(false)}
@@ -48,7 +49,9 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider>
-      <AppShellContent>{children}</AppShellContent>
+      <SidebarProvider>
+        <AppShellContent>{children}</AppShellContent>
+      </SidebarProvider>
     </UserProvider>
   );
 }

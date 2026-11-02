@@ -6,7 +6,7 @@ import {
   FreeElement,
 } from "@/types/studio";
 import { StudioAction } from "@/lib/studio/types";
-import { THEME_PRESETS, getShapeBorderRadius } from "@/lib/studio/shared";
+import { THEME_PRESETS, getShapeBorderRadius, getSocialElementHeight } from "@/lib/studio/shared";
 import {
   rectsOverlap,
   clampToCanvas,
@@ -359,8 +359,15 @@ export default function FreeCanvas({
         }
 
         // Maintain aspect ratio for corner media handles
-        if (isMedia && (h === "nw" || h === "ne" || h === "se" || h === "sw")) {
+        if ((isMedia || el.type === "social") && (h === "nw" || h === "ne" || h === "se" || h === "sw")) {
           nextH = Math.max(8, Math.round(nextW / resizeState.aspectRatio));
+        }
+
+        // Social icon groups keep their box height in step with width so the
+        // scaled icons remain fully visible when users resize a side handle.
+        if (el.type === "social" && (h === "e" || h === "w")) {
+          nextH = getSocialElementHeight(nextW);
+          nextY = resizeState.origY + (resizeState.origH - nextH) / 2;
         }
 
         if (!e.altKey) {
