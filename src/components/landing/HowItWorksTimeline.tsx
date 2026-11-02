@@ -27,36 +27,25 @@ export interface HowItWorksTimelineProps {
  */
 export default function HowItWorksTimeline({ steps, children }: HowItWorksTimelineProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const hLineRef = useRef<HTMLDivElement>(null);
   const circleRefs = useRef<(HTMLDivElement | null)[]>([]);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!section || !viewport || !track) return;
 
-    const setActive = (active: number, animateSteps: boolean) => {
+    const setActive = (active: number) => {
       circleRefs.current.forEach((el, i) => {
         if (el) el.dataset.active = i === active ? "true" : "false";
       });
-      if (!animateSteps) {
-        stepRefs.current.forEach((el, i) => {
-          if (el) el.dataset.active = i <= active ? "true" : "false";
-        });
-      }
-      if (animateSteps) {
-        stepRefs.current.forEach((el, i) => {
-          if (!el) return;
-          gsap.to(el, {
-            scale: i === active ? 1.06 : 0.96,
-            y: i === active ? -10 : 0,
-            duration: 0.4,
-            ease: "power2.out",
-            transformOrigin: "center top",
-            overwrite: "auto",
-          });
-        });
-      }
+      stepRefs.current.forEach((el, i) => {
+        if (el) el.dataset.active = i <= active ? "true" : "false";
+      });
     };
 
     const ctx = gsap.context(() => {
@@ -64,8 +53,8 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
 
       mm.add(
         {
-          desktop: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
-          mobile: "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+          desktop: "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+          mobile: "(max-width: 1023px) and (prefers-reduced-motion: no-preference)",
           reduce: "(prefers-reduced-motion: reduce)",
         },
         (context) => {
@@ -90,7 +79,8 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
 
           // initial state
           gsap.set(hLineRef.current, { scaleX: 0 });
-          setActive(0, isDesktop);
+          gsap.set(track, { x: 0 });
+          setActive(0);
 
           let lastActive = 0;
 
@@ -99,27 +89,33 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
               scrollTrigger: {
                 trigger: section,
                 start: isDesktop ? "top top" : "top 70%",
-                end: () =>
-                  isDesktop
-                    ? `+=${Math.round(window.innerHeight * 1.2)}`
-                    : "bottom 65%",
+                end: () => {
+                  if (!isDesktop) return "bottom 65%";
+                  const distance = Math.max(track.scrollWidth - viewport.clientWidth, 0);
+                  return `+=${Math.max(Math.round(distance * 1.2), window.innerHeight * 0.8)}`;
+                },
                 scrub: 0.8,
                 pin: isDesktop,
                 anticipatePin: isDesktop ? 1 : 0,
                 invalidateOnRefresh: true,
                 onUpdate: (self) => {
                   const p = self.progress;
-                  const active = p >= 0.82 ? 2 : p >= 0.48 ? 1 : 0;
+                  const active = Math.round(p * (steps.length - 1));
                   if (active !== lastActive) {
                     lastActive = active;
-                    setActive(active, isDesktop);
+                    setActive(active);
                   }
                 },
               },
             })
+            .to(isDesktop ? track : {}, isDesktop ? {
+              x: () => -Math.max(track.scrollWidth - viewport.clientWidth, 0),
+              ease: "none",
+            } : { duration: 1 })
             .to(
               isDesktop ? hLineRef.current : {},
-              isDesktop ? { scaleX: 1, ease: "none" } : { duration: 1 }
+              isDesktop ? { scaleX: 1, ease: "none" } : { duration: 1 },
+              0
             );
 
           return () => {
@@ -148,21 +144,23 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
         {children}
 
         {/* Steps */}
-        <div
-          className="relative mt-6 w-full sm:mt-10 md:mt-16"
-        >
+        <div ref={viewportRef} className="relative mt-6 w-full overflow-hidden sm:mt-10 md:mt-16">
           {/* Desktop horizontal line */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-[96px] hidden h-[2px] w-screen -translate-x-1/2 bg-[#C1C1C1] md:block"
-          />
-          <div
-            ref={hLineRef}
-            aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-[96px] hidden h-[2px] w-screen -translate-x-1/2 origin-left bg-[#245FD4] md:block"
-          />
+            className="pointer-events-none absolute left-1/2 top-[44px] hidden h-[2px] w-screen -translate-x-1/2 bg-[#C1C1C1] lg:block"
+          >
+            <div
+              ref={hLineRef}
+              className="absolute inset-0 origin-left bg-[#245FD4]"
+              style={{ transform: "scaleX(0)" }}
+            />
+          </div>
 
-          <div className="grid grid-cols-1 gap-9 sm:gap-8 md:grid-cols-3 md:gap-8 lg:gap-14 xl:gap-16">
+          <div
+            ref={trackRef}
+            className="grid grid-cols-1 gap-9 sm:grid-cols-2 sm:gap-8 lg:flex lg:w-max lg:flex-nowrap lg:gap-[clamp(120px,9vw,176px)] lg:py-4 lg:pl-[9vw] lg:pr-[9vw]"
+          >
             {steps.map((item, index) => (
               <div
                 key={item.step}
@@ -170,27 +168,27 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                   stepRefs.current[index] = el;
                 }}
                 data-active="false"
-                className="relative flex flex-col items-start gap-3 opacity-55 transition-[opacity,transform] duration-500 ease-out data-[active=true]:translate-x-0 data-[active=true]:opacity-100 data-[active=false]:translate-x-1 md:flex-col md:items-center md:gap-0 md:opacity-100 md:transition-none md:transform-none"
+                className="relative flex w-full flex-col items-start gap-3 opacity-55 transition-[opacity,transform] duration-500 ease-out data-[active=true]:translate-x-0 data-[active=true]:opacity-100 data-[active=false]:translate-x-1 lg:w-[min(480px,38vw)] lg:shrink-0 lg:gap-0 lg:opacity-100 lg:transition-none lg:transform-none"
               >
-                <div className="relative z-10 flex h-[40px] w-[40px] shrink-0 items-center justify-center md:h-[74px] md:w-[74px]">
+                <div className="relative z-10 flex h-[40px] w-[40px] shrink-0 items-center justify-center lg:h-[56px] lg:w-[56px]">
                   <div
                     ref={(el) => {
                       circleRefs.current[index] = el;
                     }}
                     data-active="false"
-                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] bg-gradient-to-b from-[#245FD4] to-[#022977] text-white shadow-xs transition-[background,color,box-shadow,transform] duration-300 ease-out data-[active=true]:scale-110 data-[active=true]:border-transparent data-[active=true]:shadow-[0_0_0_6px_rgba(36,95,212,0.14),0_0_18px_rgba(36,95,212,0.22)] md:h-[74px] md:w-[74px] md:data-[active=true]:scale-100 md:data-[active=true]:shadow-[0_0_0_8px_rgba(36,95,212,0.2),0_0_24px_rgba(36,95,212,0.28)]"
+                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] bg-gradient-to-b from-[#245FD4] to-[#022977] text-white shadow-xs transition-[background,color,box-shadow,transform] duration-300 ease-out data-[active=true]:scale-110 data-[active=true]:border-transparent data-[active=true]:shadow-[0_0_0_5px_rgba(36,95,212,0.14),0_0_14px_rgba(36,95,212,0.22)] lg:h-[56px] lg:w-[56px] lg:data-[active=true]:scale-110 lg:data-[active=true]:shadow-[0_0_0_6px_rgba(36,95,212,0.2),0_0_18px_rgba(36,95,212,0.28)]"
                   >
-                    <span className="font-heading text-[15px] font-bold text-white md:text-[28px]">
+                    <span className="font-heading text-[13px] font-bold text-white lg:text-[21px]">
                       {item.step}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex-1 md:flex-none md:text-center">
-                  <h3 className="font-heading mt-0 text-lg font-semibold text-slate-900 sm:text-xl md:mt-11 md:text-[17px] lg:text-[19px] xl:text-[21px] 2xl:text-2xl leading-snug xl:whitespace-nowrap 2xl:whitespace-nowrap">
+                <div className="flex-1 lg:flex-none lg:text-left">
+                  <h3 className="font-heading mt-0 text-base font-semibold text-slate-900 sm:text-lg lg:mt-8 lg:text-base xl:text-lg 2xl:text-lg 3xl:text-xl leading-snug">
                     {item.title}
                   </h3>
-                  <p className="font-body mt-2 text-sm leading-relaxed text-[#878787] sm:mt-3 sm:text-base">
+                  <p className="font-body mt-2 max-w-[480px] text-[13px] leading-relaxed text-[#878787] sm:mt-2.5 sm:text-sm lg:text-sm xl:text-[15px]">
                     {item.description}
                   </p>
                 </div>
