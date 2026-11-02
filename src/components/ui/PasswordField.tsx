@@ -39,10 +39,10 @@ export default function PasswordField({
           aria-label={visible ? "Hide password" : "Show password"}
           aria-pressed={visible}
           title={visible ? "Hide password" : "Show password"}
-          className={`absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] focus-visible:ring-offset-1 active:scale-90 ${
+          className={`absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg bg-transparent transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] focus-visible:ring-offset-1 active:scale-90 ${
             visible
-              ? "text-[#245FD4] bg-blue-50/80 hover:bg-blue-100/80"
-              : "text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              ? "text-[#245FD4]"
+              : "text-slate-400 hover:text-slate-700"
           }`}
         >
           {visible ? (

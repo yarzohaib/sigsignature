@@ -144,7 +144,7 @@ export default function PublicInvitePage() {
     const m: TeamMember = {
       id: "member-public",
       name: inviteData.member.name,
-      email: (inviteData.member as { email?: string }).email || maskedEmail,
+      email: inviteData.member.email || maskedEmail,
       jobTitle: inviteData.member.jobTitle || "",
       phone: inviteData.member.phone || "",
       photoUrl: inviteData.member.photoUrl || "",
@@ -507,7 +507,7 @@ export default function PublicInvitePage() {
               className="mt-2 text-xs sm:text-[14px] text-[#64748B]"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              <span className="font-semibold text-[#1E293B]">{teamName}</span> set this up for you ({maskedEmail})
+              <span className="font-semibold text-[#1E293B]">{teamName}</span> set this up for you ({inviteData?.member?.email || maskedEmail})
             </p>
           </div>
 

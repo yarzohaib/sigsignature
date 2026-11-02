@@ -137,6 +137,7 @@ export type StudioAction =
       };
     }
   | { type: "SPLIT_TEXT_ELEMENT"; payload: { id: string; text?: string } }
+  | { type: "COMMIT_TEXT_EDIT"; payload: { id: string; text: string; height: number } }
   | { type: "MIGRATE_FLOW_TO_FREE" };
 
 export function studioReducer(
@@ -655,6 +656,58 @@ export function studioReducer(
       return {
         ...state,
         elements: resultElements,
+      };
+    }
+
+    case "COMMIT_TEXT_EDIT": {
+      const currentElements = state.elements || [];
+      const target = currentElements.find((el) => el.id === action.payload.id);
+      if (!target || target.type !== "text") return state;
+
+      const newText = action.payload.text;
+      const minHeight = target.size === "lg" ? 28 : target.size === "sm" ? 20 : 24;
+      const targetHeight = Math.max(minHeight, snap(action.payload.height, 4));
+      const deltaH = targetHeight - target.h;
+
+      let nextElements: FreeElement[];
+
+      if (deltaH > 0) {
+        // Elements horizontally intersecting and positioned below target
+        const pushIds = new Set(
+          currentElements
+            .filter(
+              (other) =>
+                other.id !== target.id &&
+                other.x < target.x + target.w &&
+                other.x + other.w > target.x &&
+                other.y >= target.y + target.h - 4
+            )
+            .map((el) => el.id)
+        );
+
+        nextElements = currentElements.map((el) => {
+          if (el.id === target.id) {
+            return { ...el, text: newText, h: targetHeight };
+          }
+          if (pushIds.has(el.id)) {
+            return { ...el, y: el.y + deltaH };
+          }
+          return el;
+        });
+      } else {
+        nextElements = currentElements.map((el) =>
+          el.id === target.id ? { ...el, text: newText, h: targetHeight } : el
+        );
+      }
+
+      const canvas = state.canvas || { width: 600, height: 200 };
+      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
+
+      return {
+        ...state,
+        canvas: { width: 600, height: nextHeight },
+        elements: nextElements,
       };
     }
 

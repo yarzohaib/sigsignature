@@ -3,6 +3,7 @@ import type { TeamMemberSocialPlatform } from "@/lib/team/socials";
 
 export interface PublicInviteMember {
   name: string;
+  email?: string;
   maskedEmail: string;
   jobTitle: string;
   phone: string;

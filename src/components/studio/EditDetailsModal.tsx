@@ -13,6 +13,7 @@ import {
   FreeBannerElement,
 } from "@/types/studio";
 import { StudioAction, ALLOWED_STUDIO_FONTS } from "@/lib/studio/types";
+import { measureRenderedTextHeight } from "@/lib/studio/shared";
 import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import {
@@ -314,9 +315,18 @@ export default function EditDetailsModal({
                       const text = isBoundPhone
                         ? sanitizePhone(raw).slice(0, MAX_LENGTH.PHONE)
                         : raw.slice(0, isBoundEmail ? MAX_LENGTH.EMAIL : 500);
+                      const textEl = selectedElement as FreeTextElement;
+                      const measuredH = measureRenderedTextHeight({
+                        text,
+                        width: selectedElement.w,
+                        size: textEl.size,
+                        fontFamily: textEl.fontFamily || state.fontFamily,
+                        bold: textEl.bold,
+                        hasIcon: Boolean(textEl.icon),
+                      });
                       dispatch({
-                        type: "UPDATE_ELEMENT",
-                        payload: { id: selectedElement.id, updates: { text } },
+                        type: "COMMIT_TEXT_EDIT",
+                        payload: { id: selectedElement.id, text, height: measuredH },
                       });
                     }}
                     disabled={isLockedIdentity}

@@ -707,11 +707,18 @@ export default function FreeCanvas({
                   }}
                   onStartDrag={handleStartDrag}
                   onStartResize={handleStartResize}
-                  onTextChange={(id, text) => {
-                    dispatch({
-                      type: "UPDATE_ELEMENT",
-                      payload: { id, updates: { text } },
-                    });
+                  onTextChange={(id, text, height) => {
+                    if (height !== undefined) {
+                      dispatch({
+                        type: "COMMIT_TEXT_EDIT",
+                        payload: { id, text, height },
+                      });
+                    } else {
+                      dispatch({
+                        type: "UPDATE_ELEMENT",
+                        payload: { id, updates: { text } },
+                      });
+                    }
                   }}
                   onTextGrowth={handleTextGrowth}
                   onSplitLines={(id, text) => {

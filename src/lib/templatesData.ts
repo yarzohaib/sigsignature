@@ -154,10 +154,7 @@ export const AVAILABLE_TEMPLATES: TemplateItem[] = [
         facebook: "https://facebook.com/danielwilson",
         instagram: "",
       },
-      optional: {
-        address: "123 Business Ave, New York, NY 10001",
-        tagline: "Tagline goes here",
-      },
+      optional: {},
     },
   },
   {

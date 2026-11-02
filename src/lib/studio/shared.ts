@@ -7,6 +7,7 @@ import {
   emailIconUrl,
   getSocialIconSvgDataUrl,
   SocialNetwork,
+  resolveEmailFont,
 } from "@/lib/email-core";
 
 export const THEME_PRESETS = {
@@ -155,4 +156,63 @@ export function renderSocialLinksHtml(
       ${cells.join("\n      ")}
     </tr>
   </table>`;
+}
+
+let measureEl: HTMLDivElement | null = null;
+
+/**
+ * Calculates the exact pixel height needed by a text element given its
+ * content, width, font size, line height, and styling.
+ * Uses browser DOM layout engine when available; falls back to exact text metrics in SSR/Node.
+ */
+export function measureRenderedTextHeight(params: {
+  text: string;
+  width: number;
+  size?: "sm" | "md" | "lg";
+  fontFamily?: string;
+  bold?: boolean;
+  hasIcon?: boolean;
+}): number {
+  const fontSize = params.size === "lg" ? 16 : params.size === "sm" ? 12 : 14;
+  const lineHeight = params.size === "lg" ? 22 : params.size === "sm" ? 16 : 18;
+  const minHeight = params.size === "lg" ? 28 : params.size === "sm" ? 20 : 24;
+  const usableWidth = Math.max(40, params.hasIcon ? params.width - 24 : params.width);
+
+  if (typeof document !== "undefined") {
+    if (!measureEl) {
+      measureEl = document.createElement("div");
+      measureEl.setAttribute("aria-hidden", "true");
+      measureEl.style.position = "fixed";
+      measureEl.style.left = "-9999px";
+      measureEl.style.top = "-9999px";
+      measureEl.style.visibility = "hidden";
+      measureEl.style.pointerEvents = "none";
+      document.body.appendChild(measureEl);
+    }
+
+    measureEl.style.width = `${usableWidth}px`;
+    measureEl.style.fontFamily = resolveEmailFont(params.fontFamily || "Inter");
+    measureEl.style.fontSize = `${fontSize}px`;
+    measureEl.style.lineHeight = `${lineHeight}px`;
+    measureEl.style.fontWeight = params.bold ? "700" : "400";
+    measureEl.style.whiteSpace = "pre-wrap";
+    measureEl.style.wordBreak = "break-word";
+    measureEl.style.padding = "0";
+    measureEl.style.margin = "0";
+    measureEl.style.border = "none";
+    measureEl.textContent = params.text || "A";
+
+    const measured = Math.ceil(measureEl.offsetHeight || measureEl.scrollHeight);
+    return Math.max(minHeight, measured);
+  }
+
+  // SSR / Node fallback calculation:
+  const avgCharWidth = fontSize * 0.55;
+  const charsPerLine = Math.max(1, Math.floor(usableWidth / avgCharWidth));
+  const paragraphs = (params.text || "").split("\n");
+  let totalLines = 0;
+  for (const p of paragraphs) {
+    totalLines += Math.max(1, Math.ceil(p.length / charsPerLine));
+  }
+  return Math.max(minHeight, totalLines * lineHeight);
 }

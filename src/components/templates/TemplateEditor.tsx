@@ -16,7 +16,10 @@ import {
   setStoredAvatarUrl,
 } from "@/app/lib/auth";
 import { SIGNATURE_COLOR_SWATCHES } from "@/lib/signatureConstants";
-import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
+import {
+  generateTemplateHtml,
+  getTemplateOptionalCapabilities,
+} from "@/lib/templates/renderTemplateHtml";
 import {
   VALID_TEMPLATE_FONTS,
   mapToValidTemplateFont,
@@ -159,6 +162,14 @@ export default function TemplateEditor({
     social: false,
     optional: false,
   });
+
+  // Dynamic template optional capabilities (probes if template supports address, disclaimer, tagline)
+  const optionalCapabilities = useMemo(() => {
+    return getTemplateOptionalCapabilities(
+      formData.templateId || template.id,
+      formData.layout
+    );
+  }, [formData.templateId, template.id, formData.layout]);
 
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
@@ -1073,17 +1084,19 @@ export default function TemplateEditor({
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">Tagline</label>
-                  <input
-                    type="text"
-                    value={formData.optional.tagline || ""}
-                    maxLength={MAX_LENGTH.TAGLINE}
-                    onChange={(e) => handleOptionalChange("tagline", e.target.value)}
-                    placeholder="e.g. Elevate your presence"
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
-                </div>
+                {optionalCapabilities.supportsTagline && (
+                  <div>
+                    <label className="text-[11px] font-semibold text-[#64748B]">Tagline</label>
+                    <input
+                      type="text"
+                      value={formData.optional.tagline || ""}
+                      maxLength={MAX_LENGTH.TAGLINE}
+                      onChange={(e) => handleOptionalChange("tagline", e.target.value)}
+                      placeholder="e.g. Elevate your presence"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1149,69 +1162,75 @@ export default function TemplateEditor({
             )}
           </div>
 
-          {/* Section 4: Optional Information */}
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all">
-            <button
-              type="button"
-              onClick={() => toggleSection("optional")}
-              className="flex w-full items-center justify-between text-left"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                </span>
-                <h3
-                  className="text-[15px] font-bold text-[#1E293B]"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  Optional
-                </h3>
-              </div>
-              <svg
-                className={`h-4 w-4 text-slate-400 transition-transform ${openSections.optional ? "rotate-180" : ""}`}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+          {/* Section 4: Optional Information (only rendered if template supports address or disclaimer) */}
+          {optionalCapabilities.hasAnyOptional && (
+            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all">
+              <button
+                type="button"
+                onClick={() => toggleSection("optional")}
+                className="flex w-full items-center justify-between text-left"
               >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </span>
+                  <h3
+                    className="text-[15px] font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Optional
+                  </h3>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 transition-transform ${openSections.optional ? "rotate-180" : ""}`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
 
-            {openSections.optional && (
-              <div className="mt-4 pt-3 border-t border-slate-100 space-y-3">
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">Office Address</label>
-                  <input
-                    type="text"
-                    value={formData.optional.address || ""}
-                    maxLength={MAX_LENGTH.ADDRESS}
-                    onChange={(e) => handleOptionalChange("address", e.target.value)}
-                    placeholder="e.g. 123 Business Ave, New York, NY 10001"
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
+              {openSections.optional && (
+                <div className="mt-4 pt-3 border-t border-slate-100 space-y-3">
+                  {optionalCapabilities.supportsAddress && (
+                    <div>
+                      <label className="text-[11px] font-semibold text-[#64748B]">Office Address</label>
+                      <input
+                        type="text"
+                        value={formData.optional.address || ""}
+                        maxLength={MAX_LENGTH.ADDRESS}
+                        onChange={(e) => handleOptionalChange("address", e.target.value)}
+                        placeholder="e.g. 123 Business Ave, New York, NY 10001"
+                        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                      />
+                    </div>
+                  )}
+                  {optionalCapabilities.supportsDisclaimer && (
+                    <div>
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Servicing Region / Disclaimer Notice
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.optional.disclaimer || ""}
+                        maxLength={MAX_LENGTH.DISCLAIMER}
+                        onChange={(e) => handleOptionalChange("disclaimer", e.target.value)}
+                        placeholder="e.g. Proudly servicing Metropolitan & Regional Areas"
+                        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                      />
+                      <p className="mt-1 text-[10px] text-[#94A3B8]">
+                        Displayed in the signature footer bar or disclaimer notice.
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="text-[11px] font-semibold text-[#64748B]">
-                    Servicing Region / Disclaimer Notice
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.optional.disclaimer || ""}
-                    maxLength={MAX_LENGTH.DISCLAIMER}
-                    onChange={(e) => handleOptionalChange("disclaimer", e.target.value)}
-                    placeholder="e.g. Proudly servicing Metropolitan & Regional Areas"
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                  />
-                  <p className="mt-1 text-[10px] text-[#94A3B8]">
-                    Displayed in the signature footer bar or disclaimer notice.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Right Column: Interactive Email Live Preview Window matching Figma */}

@@ -312,7 +312,32 @@ export async function copySignatureRich(
     }
   }
 
-  // 2. Fallback: off-screen contenteditable container with document.execCommand("copy")
+  // 2. Fallback: intercept 'copy' event with document.execCommand("copy")
+  if (typeof document !== "undefined") {
+    let copiedViaEvent = false;
+    const handleCopy = (e: ClipboardEvent) => {
+      if (e.clipboardData) {
+        e.clipboardData.setData("text/html", cleanHtml);
+        e.clipboardData.setData("text/plain", plainText);
+        e.preventDefault();
+        copiedViaEvent = true;
+      }
+    };
+
+    document.addEventListener("copy", handleCopy);
+    try {
+      const success = document.execCommand("copy");
+      if (success || copiedViaEvent) {
+        return true;
+      }
+    } catch {
+      // Continue to DOM-based copy fallback
+    } finally {
+      document.removeEventListener("copy", handleCopy);
+    }
+  }
+
+  // 3. Fallback: off-screen contenteditable container with document.execCommand("copy")
   if (typeof document !== "undefined" && typeof window !== "undefined") {
     const container = document.createElement("div");
     container.setAttribute("aria-hidden", "true");
@@ -322,11 +347,8 @@ export async function copySignatureRich(
     container.style.position = "fixed";
     container.style.left = "-9999px";
     container.style.top = "-9999px";
-    container.style.width = "1px";
-    container.style.height = "1px";
-    container.style.opacity = "0";
-    container.style.pointerEvents = "none";
-    container.style.overflow = "hidden";
+    container.style.opacity = "0.01";
+    container.style.zIndex = "-9999";
 
     document.body.appendChild(container);
 

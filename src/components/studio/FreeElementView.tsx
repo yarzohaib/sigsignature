@@ -18,7 +18,12 @@ import {
   emailIconUrl,
   SocialNetwork,
 } from "@/lib/email-core";
-import { THEME_PRESETS, getShapeBorderRadius, getSocialIconSize } from "@/lib/studio/shared";
+import {
+  THEME_PRESETS,
+  getShapeBorderRadius,
+  getSocialIconSize,
+  measureRenderedTextHeight,
+} from "@/lib/studio/shared";
 import { validateSocialUrl, TeamMemberSocialPlatform } from "@/lib/team/socials";
 import {
   isValidEmail,
@@ -40,7 +45,7 @@ interface FreeElementViewProps {
   onSelect: (id: string, e: React.PointerEvent | React.MouseEvent) => void;
   onStartDrag: (id: string, e: React.PointerEvent) => void;
   onStartResize: (id: string, handle: ResizeHandle, e: React.PointerEvent) => void;
-  onTextChange: (id: string, text: string) => void;
+  onTextChange: (id: string, text: string, height?: number) => void;
   onTextGrowth?: (id: string, deltaH: number) => void;
   domRef?: (node: HTMLDivElement | null) => void;
   showEditorOverlays?: boolean;
@@ -159,8 +164,17 @@ export default function FreeElementView({
 
   function handleTextBlur() {
     setIsEditingText(false);
-    if (element.type === "text" && localText !== element.text) {
-      onTextChange(element.id, localText);
+    if (element.type === "text") {
+      const textEl = element as FreeTextElement;
+      const measuredH = measureRenderedTextHeight({
+        text: localText,
+        width: element.w,
+        size: textEl.size,
+        fontFamily: textEl.fontFamily || data.fontFamily,
+        bold: textEl.bold,
+        hasIcon: Boolean(textEl.icon),
+      });
+      onTextChange(element.id, localText, measuredH);
     }
   }
 
@@ -169,6 +183,25 @@ export default function FreeElementView({
       setIsEditingText(false);
       setLocalText(element.type === "text" ? element.text : "");
       e.stopPropagation();
+      return;
+    }
+
+    if (e.key === "Enter") {
+      if (e.shiftKey) {
+        // Shift + Enter: inserts newline in textarea, checks height expansion
+        setTimeout(() => {
+          if (textareaRef.current && onTextGrowth) {
+            const scrollH = textareaRef.current.scrollHeight;
+            if (scrollH > element.h) {
+              onTextGrowth(element.id, scrollH - element.h);
+            }
+          }
+        }, 0);
+      } else {
+        // Enter without Shift: commits and saves the multi-line text edit
+        e.preventDefault();
+        textareaRef.current?.blur();
+      }
     }
   }
 
@@ -181,7 +214,7 @@ export default function FreeElementView({
     const val = raw.slice(0, max);
     setLocalText(val);
 
-    // Check if height needs to grow
+    // Dynamic height expansion during typing
     if (textareaRef.current && onTextGrowth) {
       const scrollH = textareaRef.current.scrollHeight;
       if (scrollH > element.h) {
@@ -200,6 +233,15 @@ export default function FreeElementView({
     const max = isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500;
     const next = (current.slice(0, start) + sanitizedPlain + current.slice(end)).slice(0, max);
     setLocalText(next);
+
+    setTimeout(() => {
+      if (textareaRef.current && onTextGrowth) {
+        const scrollH = textareaRef.current.scrollHeight;
+        if (scrollH > element.h) {
+          onTextGrowth(element.id, scrollH - element.h);
+        }
+      }
+    }, 0);
   }
 
   // Render element content
@@ -217,10 +259,10 @@ export default function FreeElementView({
         if (textEl.icon) {
           const iconSrc = getSocialIconSvgDataUrl("minimal", themeColor, textEl.icon);
           return (
-            <div className="w-full h-full flex items-center">
+            <div className="w-full h-full flex items-start">
               <div
-                style={{ width: 22, height: "100%" }}
-                className="shrink-0 flex items-center justify-start select-none pointer-events-none"
+                style={{ width: 22, height: lineHeight }}
+                className="shrink-0 flex items-center justify-start select-none pointer-events-none mt-[1px]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -233,7 +275,7 @@ export default function FreeElementView({
                   draggable={false}
                 />
               </div>
-              <div className="flex-1 h-full min-w-0 flex items-center">
+              <div className="flex-1 h-full min-w-0 flex items-start">
                 {isEditingText ? (
                   <textarea
                     ref={textareaRef}
@@ -251,11 +293,14 @@ export default function FreeElementView({
                       fontWeight,
                       color,
                       textAlign: align,
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
                     }}
                   />
                 ) : (
                   <div
-                    className="w-full h-full overflow-hidden select-none break-words flex items-center"
+                    className="w-full h-full select-none"
                     style={{
                       fontFamily: elementFontStack,
                       fontSize: `${fontSize}px`,
@@ -263,6 +308,9 @@ export default function FreeElementView({
                       fontWeight,
                       color,
                       textAlign: align,
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
                     }}
                   >
                     {textEl.text || (
@@ -293,6 +341,9 @@ export default function FreeElementView({
                 fontWeight,
                 color,
                 textAlign: align,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                overflowWrap: "break-word",
               }}
             />
           );
@@ -300,7 +351,7 @@ export default function FreeElementView({
 
         return (
           <div
-            className="w-full h-full overflow-hidden select-none break-words"
+            className="w-full h-full select-none"
             style={{
               fontFamily: elementFontStack,
               fontSize: `${fontSize}px`,
@@ -308,6 +359,9 @@ export default function FreeElementView({
               fontWeight,
               color,
               textAlign: align,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
             }}
           >
             {textEl.text || (

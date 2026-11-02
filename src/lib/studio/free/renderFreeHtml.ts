@@ -198,9 +198,10 @@ export function generateFreeHtml(
         }
       }
 
+      const formattedHtml = escapeHtml(displayText).replace(/\r\n|\n|\r/g, "<br />");
       const contentHtml = href
-        ? `<a href="${href}" style="color:${color};text-decoration:none;">${escapeHtml(displayText)}</a>`
-        : escapeHtml(displayText);
+        ? `<a href="${href}" style="color:${color};text-decoration:none;">${formattedHtml}</a>`
+        : formattedHtml;
 
       if (textEl.icon) {
         const iconColor = textEl.color || data.themeColor;
@@ -208,11 +209,11 @@ export function generateFreeHtml(
         const textWidth = Math.max(1, el.w - 22);
         return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${el.w}" style="border-collapse:collapse;width:${el.w}px;">
   <tr>
-    <td width="22" valign="middle" style="width:22px;vertical-align:middle;padding:0;">
-      <img src="${iconUrl}" width="16" height="16" alt="${escapeHtml(textEl.icon)}" style="display:block;border:0;outline:none;text-decoration:none;" />
+    <td width="22" valign="top" style="width:22px;vertical-align:top;padding:0;">
+      <img src="${iconUrl}" width="16" height="16" alt="${escapeHtml(textEl.icon)}" style="display:block;border:0;outline:none;text-decoration:none;margin-top:1px;" />
     </td>
-    <td valign="middle" style="vertical-align:middle;padding:0;">
-      <div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:break-word;">
+    <td valign="top" style="vertical-align:top;padding:0;">
+      <div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:break-word;white-space:pre-wrap;">
         ${contentHtml}
       </div>
     </td>
@@ -220,7 +221,7 @@ export function generateFreeHtml(
 </table>`;
       }
 
-      return `<div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;">
+      return `<div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;white-space:pre-wrap;">
   ${contentHtml}
 </div>`;
     }

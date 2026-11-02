@@ -4,6 +4,65 @@ import { getSocialIconSvgDataUrl, SocialNetwork } from "@/lib/email-core";
 
 export * from "./designs";
 
+export interface TemplateOptionalCapabilities {
+  supportsAddress: boolean;
+  supportsDisclaimer: boolean;
+  supportsTagline: boolean;
+  hasAnyOptional: boolean;
+}
+
+const capabilitiesCache = new Map<string, TemplateOptionalCapabilities>();
+
+/**
+ * Dynamically probes whether a given template (or layout fallback) supports
+ * optional fields (address, disclaimer, tagline) by inspecting rendered HTML output.
+ * Caches results per templateId/layout to run instantly with zero overhead.
+ */
+export function getTemplateOptionalCapabilities(
+  templateId?: string | null,
+  layout?: string | null
+): TemplateOptionalCapabilities {
+  const cacheKey = `${(templateId || "").toLowerCase().trim()}:${(layout || "").toLowerCase().trim()}`;
+  const cached = capabilitiesCache.get(cacheKey);
+  if (cached) return cached;
+
+  const testData: TemplateSignatureData = {
+    templateId: templateId || undefined,
+    layout: (layout as any) || "two-column",
+    fullName: "Test Name",
+    jobTitle: "Test Title",
+    companyName: "Test Company",
+    email: "test@example.com",
+    phone: "123456",
+    website: "https://example.com",
+    avatarUrl: "",
+    themeColor: "#245FD4",
+    fontFamily: "Arial",
+    socialIconsStyle: "filled",
+    socials: { linkedin: "", twitter: "", facebook: "" },
+    optional: {
+      address: "__ADDR_PROBE__",
+      disclaimer: "__DISC_PROBE__",
+      tagline: "__TAG_PROBE__",
+    },
+  };
+
+  const html = generateTemplateHtml(testData);
+  const supportsAddress = html.includes("__ADDR_PROBE__");
+  const supportsDisclaimer = html.includes("__DISC_PROBE__");
+  const supportsTagline = html.includes("__TAG_PROBE__");
+
+  const result: TemplateOptionalCapabilities = {
+    supportsAddress,
+    supportsDisclaimer,
+    supportsTagline,
+    hasAnyOptional: supportsAddress || supportsDisclaimer,
+  };
+
+  capabilitiesCache.set(cacheKey, result);
+  return result;
+}
+
 /**
  * Generates an email-safe, table-based HTML string for any template signature.
  * Strictly dispatches through the designs registry with fallback support for older saved signatures.
@@ -39,6 +98,7 @@ export function generateTemplateHtml(
  */
 export function generateTemplatePlainText(data: TemplateSignatureData): string {
   const lines: string[] = [];
+  const caps = getTemplateOptionalCapabilities(data.templateId, data.layout);
 
   if (data.fullName?.trim()) {
     lines.push(data.fullName.trim());
@@ -58,13 +118,13 @@ export function generateTemplatePlainText(data: TemplateSignatureData): string {
   if (data.website?.trim()) {
     lines.push(data.website.trim());
   }
-  if (data.optional?.address?.trim()) {
+  if (caps.supportsAddress && data.optional?.address?.trim()) {
     lines.push(data.optional.address.trim());
   }
-  if (data.optional?.tagline?.trim()) {
+  if (caps.supportsTagline && data.optional?.tagline?.trim()) {
     lines.push(data.optional.tagline.trim());
   }
-  if (data.optional?.disclaimer?.trim()) {
+  if (caps.supportsDisclaimer && data.optional?.disclaimer?.trim()) {
     lines.push(data.optional.disclaimer.trim());
   }
 
