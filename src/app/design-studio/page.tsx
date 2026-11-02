@@ -452,7 +452,8 @@ function DesignStudioContent() {
     const h = 24;
     const toastMsg = "Text added";
 
-    const spot = findFreeSpot({ w, h }, elements, canvas);
+    const shape = state.design?.shape || "rounded";
+    const spot = findFreeSpot({ w, h }, elements, canvas, shape);
     const id = generateUniqueId("txt");
     const newEl: FreeElement = {
       id,
@@ -503,7 +504,8 @@ function DesignStudioContent() {
           : "");
 
       if (accountAvatar) {
-        const spot = findFreeSpot({ w: 72, h: 72 }, elements, canvas);
+        const shape = state.design?.shape || "rounded";
+        const spot = findFreeSpot({ w: 72, h: 72 }, elements, canvas, shape);
         const id = generateUniqueId("img");
         const newEl: FreeElement = {
           id,
@@ -571,7 +573,8 @@ function DesignStudioContent() {
       h = 20;
     }
 
-    const spot = findFreeSpot({ w, h }, elements, canvas);
+    const shape = state.design?.shape || "rounded";
+    const spot = findFreeSpot({ w, h }, elements, canvas, shape);
     const id = generateUniqueId("txt");
     const newEl: FreeElement = {
       id,
@@ -636,7 +639,8 @@ function DesignStudioContent() {
         showToast("Image updated!");
       } else {
         const canvas = state.canvas || { width: 600, height: 200 };
-        const spot = findFreeSpot({ w, h }, state.elements || [], canvas);
+        const shape = state.design?.shape || "rounded";
+        const spot = findFreeSpot({ w, h }, state.elements || [], canvas, shape);
         const id = `img_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         const newEl: FreeElement = {
           id,
@@ -710,7 +714,8 @@ function DesignStudioContent() {
         showToast("Logo updated!");
       } else {
         const canvas = state.canvas || { width: 600, height: 200 };
-        const spot = findFreeSpot({ w, h }, state.elements || [], canvas);
+        const shape = state.design?.shape || "rounded";
+        const spot = findFreeSpot({ w, h }, state.elements || [], canvas, shape);
         const id = `logo_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         const newEl: FreeElement = {
           id,
@@ -740,7 +745,8 @@ function DesignStudioContent() {
       return;
     }
     const canvas = state.canvas || { width: 600, height: 200 };
-    const spot = findFreeSpot({ w: 240, h: 1 }, state.elements || [], canvas);
+    const shape = state.design?.shape || "rounded";
+    const spot = findFreeSpot({ w: 240, h: 1 }, state.elements || [], canvas, shape);
     const id = `div_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const newEl: FreeElement = {
       id,
@@ -773,7 +779,8 @@ function DesignStudioContent() {
     }
 
     const canvas = state.canvas || { width: 600, height: 200 };
-    const spot = findFreeSpot({ w: 140, h: 24 }, state.elements || [], canvas);
+    const shape = state.design?.shape || "rounded";
+    const spot = findFreeSpot({ w: 140, h: 24 }, state.elements || [], canvas, shape);
     const id = `soc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const newEl: FreeElement = {
       id,
@@ -796,7 +803,8 @@ function DesignStudioContent() {
       return;
     }
     const canvas = state.canvas || { width: 600, height: 200 };
-    const spot = findFreeSpot({ w: 140, h: 36 }, state.elements || [], canvas);
+    const shape = state.design?.shape || "rounded";
+    const spot = findFreeSpot({ w: 140, h: 36 }, state.elements || [], canvas, shape);
     const id = `cta_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const newEl: FreeElement = {
       id,

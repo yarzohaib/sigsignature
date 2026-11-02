@@ -389,8 +389,8 @@ function SettingsContent() {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      showToast("Image size must be less than 2 MB.", true);
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("Image size must be less than 10 MB.", true);
       return;
     }
 

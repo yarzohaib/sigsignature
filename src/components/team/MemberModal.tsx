@@ -7,6 +7,7 @@ import type { Team, TeamMember } from "@/types/team";
 import { addTeamMember, updateTeamMember, ApiError } from "@/app/lib/api";
 import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
+import ImageCropModal from "@/components/common/ImageCropModal";
 import { renderTeamMemberHtml } from "@/lib/team/render";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
 import Select from "@/components/ui/Select";
@@ -56,6 +57,8 @@ export default function MemberModal({
   const [jobTitle, setJobTitle] = useState(member?.jobTitle || "");
   const [phone, setPhone] = useState(member?.phone || "");
   const [photoUrl, setPhotoUrl] = useState(member?.photoUrl || "");
+  const [memberCropSrc, setMemberCropSrc] = useState<string | null>(null);
+  const [memberCropFileName, setMemberCropFileName] = useState<string>("avatar.png");
 
   // Per-member social links state (Do NOT prefill with owner links)
   const [socials, setSocials] = useState<TeamMemberSocial[]>(() => {
@@ -141,27 +144,45 @@ export default function MemberModal({
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-      setPhotoError("Photo must be less than 2MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      setPhotoError("Photo must be less than 10MB.");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       return;
     }
 
+    const objectUrl = URL.createObjectURL(file);
+    setMemberCropSrc(objectUrl);
+    setMemberCropFileName(file.name);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  const handleCloseMemberCrop = () => {
+    if (memberCropSrc) {
+      URL.revokeObjectURL(memberCropSrc);
+    }
+    setMemberCropSrc(null);
+  };
+
+  const handleApplyMemberCrop = async (croppedFile: File) => {
     setIsUploadingPhoto(true);
     try {
-      const compressedBlob = await compressImageToBlob(file, 400, 0.85, "avatar");
+      const compressedBlob = await compressImageToBlob(croppedFile, 400, 0.85, "avatar");
       const uploadedUrl = await uploadSignatureImage(compressedBlob, "avatar");
       setPhotoUrl(uploadedUrl);
+      setPhotoError(null);
     } catch (err: unknown) {
       console.error("Failed to upload photo:", err);
       const msg = err instanceof Error ? err.message : "Failed to upload photo.";
       setPhotoError(msg);
     } finally {
       setIsUploadingPhoto(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      handleCloseMemberCrop();
     }
-  }
+  };
 
   function handleRemovePhoto() {
     setPhotoUrl("");
@@ -748,6 +769,17 @@ export default function MemberModal({
           </button>
         </div>
       </div>
+
+      {/* Interactive Team Member Photo Crop Modal */}
+      <ImageCropModal
+        isOpen={Boolean(memberCropSrc)}
+        imageSrc={memberCropSrc}
+        fileName={memberCropFileName}
+        title="Crop Member Photo"
+        description="Drag to reposition and zoom the member profile photo within the circle."
+        onClose={handleCloseMemberCrop}
+        onApply={handleApplyMemberCrop}
+      />
     </div>
   );
 }

@@ -27,15 +27,51 @@ export function rectsOverlap(a: Rect, b: Rect): boolean {
 
 /**
  * Clamps a rectangle within the canvas boundaries.
+ * If shape is 'pill', constrains the horizontal bounds according to the curved pill ends at the given y position.
  * Enforces minimum w and h of 8.
  */
-export function clampToCanvas(rect: Rect, canvas: CanvasSize): Rect {
+export function clampToCanvas(
+  rect: Rect,
+  canvas: CanvasSize,
+  shape?: string
+): Rect {
   const w = Math.max(8, Math.min(canvas.width, rect.w));
   const h = Math.max(8, Math.min(canvas.height, rect.h));
-  const maxX = Math.max(0, canvas.width - w);
+  const rawMaxX = Math.max(0, canvas.width - w);
   const maxY = Math.max(0, canvas.height - h);
-  const x = Math.max(0, Math.min(maxX, rect.x));
   const y = Math.max(0, Math.min(maxY, rect.y));
+
+  let minX = 0;
+  let maxX = rawMaxX;
+
+  if (shape === "pill") {
+    // Radius of circular pill caps
+    const r = canvas.height / 2;
+    if (r > 0) {
+      // Top and bottom y coordinates of element relative to circle center (r)
+      const dyTop = Math.abs(y - r);
+      const dyBottom = Math.abs(y + h - r);
+      const maxDy = Math.max(dyTop, dyBottom);
+
+      if (maxDy < r) {
+        // Curve offset: dx = r - sqrt(r^2 - dy^2)
+        const dx = r - Math.sqrt(r * r - maxDy * maxDy);
+        minX = Math.ceil(dx);
+        maxX = Math.floor(canvas.width - dx - w);
+      } else {
+        // At the extreme top or bottom edge of the pill
+        minX = Math.ceil(r);
+        maxX = Math.floor(canvas.width - r - w);
+      }
+
+      if (minX > maxX) {
+        minX = Math.max(0, (canvas.width - w) / 2);
+        maxX = minX;
+      }
+    }
+  }
+
+  const x = Math.max(minX, Math.min(maxX, rect.x));
   return { x, y, w, h };
 }
 
@@ -53,7 +89,8 @@ export function snap(value: number, step = 4): number {
 export function findFreeSpot(
   size: { w: number; h: number },
   elements: FreeElement[],
-  canvas: CanvasSize
+  canvas: CanvasSize,
+  shape?: string
 ): { x: number; y: number } {
   const step = 8;
   const w = Math.max(8, Math.min(canvas.width, size.w));
@@ -65,6 +102,10 @@ export function findFreeSpot(
   for (let y = 0; y <= maxScanY; y += step) {
     for (let x = 0; x <= maxX; x += step) {
       const candidate: Rect = { x, y, w, h };
+      const clamped = clampToCanvas(candidate, canvas, shape);
+      if (clamped.x !== candidate.x || clamped.y !== candidate.y) {
+        continue;
+      }
       const hasOverlap = elements.some((el) => rectsOverlap(candidate, el));
       if (!hasOverlap) {
         return { x, y };
@@ -74,9 +115,19 @@ export function findFreeSpot(
 
   // Fallback: place below lowest element if no slot found in current area
   const lowestBottom = elements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
+  const fallbackPos = clampToCanvas(
+    {
+      x: 0,
+      y: snap(lowestBottom + 8, step),
+      w,
+      h,
+    },
+    canvas,
+    shape
+  );
   return {
-    x: 0,
-    y: snap(lowestBottom + 8, step),
+    x: fallbackPos.x,
+    y: fallbackPos.y,
   };
 }
 
@@ -90,10 +141,11 @@ export function resolveOverlap(
   moved: FreeElement,
   others: FreeElement[],
   canvas: CanvasSize,
-  original: { x: number; y: number }
+  original: { x: number; y: number },
+  shape?: string
 ): { x: number; y: number } {
   // If no overlap at current position and inside canvas, it is valid
-  const currentClamped = clampToCanvas(moved, canvas);
+  const currentClamped = clampToCanvas(moved, canvas, shape);
   const isDirectlyValid =
     currentClamped.x === moved.x &&
     currentClamped.y === moved.y &&
@@ -123,13 +175,8 @@ export function resolveOverlap(
 
   // Filter candidates that are inside the canvas and overlap-free
   const validCandidates = candidates.filter((cand) => {
-    // Must be inside canvas
-    if (
-      cand.x < 0 ||
-      cand.x + moved.w > canvas.width ||
-      cand.y < 0 ||
-      cand.y + moved.h > canvas.height
-    ) {
+    const clampedCand = clampToCanvas({ x: cand.x, y: cand.y, w: moved.w, h: moved.h }, canvas, shape);
+    if (clampedCand.x !== cand.x || clampedCand.y !== cand.y) {
       return false;
     }
     const testRect: Rect = { x: cand.x, y: cand.y, w: moved.w, h: moved.h };

@@ -168,13 +168,23 @@ export function studioReducer(
       if (!isPremiumUser && !ALLOWED_STUDIO_SHAPES.includes(action.payload as StudioShape)) {
         return state;
       }
+      const newShape = action.payload as StudioShape;
+      const canvas = state.canvas || { width: 600, height: 200 };
+
+      // Clamping elements to keep within active shape bounds (e.g. pill curves)
+      const adjustedElements = (state.elements || []).map((el) => {
+        const clamped = clampToCanvas(el, canvas, newShape);
+        return { ...el, ...clamped };
+      });
+
       return {
         ...state,
         design: {
           theme: state.design?.theme || "corporate",
           buttonStyle: state.design?.buttonStyle || "solid",
-          shape: action.payload as StudioShape,
+          shape: newShape,
         },
+        elements: adjustedElements,
       };
     }
 
@@ -340,7 +350,8 @@ export function studioReducer(
       if (currentElements.length >= 40) return state;
 
       const canvas = state.canvas || { width: 600, height: 200 };
-      const clamped = clampToCanvas(action.payload, canvas);
+      const currentShape = state.design?.shape || "rounded";
+      const clamped = clampToCanvas(action.payload, canvas, currentShape);
       const newEl = { ...action.payload, ...clamped };
 
       if (currentElements.some((other) => rectsOverlap(newEl, other))) {
@@ -364,9 +375,10 @@ export function studioReducer(
       if (!target) return state;
 
       const canvas = state.canvas || { width: 600, height: 200 };
+      const currentShape = state.design?.shape || "rounded";
       const patch = action.payload.updates ?? action.payload.item ?? {};
       const updatedCandidate = { ...target, ...patch } as FreeElement;
-      const clamped = clampToCanvas(updatedCandidate, canvas);
+      const clamped = clampToCanvas(updatedCandidate, canvas, currentShape);
       const finalEl = { ...updatedCandidate, ...clamped };
 
       const isGeometryChange =
@@ -401,12 +413,13 @@ export function studioReducer(
       if (!target || target.locked) return state;
 
       const canvas = state.canvas || { width: 600, height: 200 };
+      const currentShape = state.design?.shape || "rounded";
       const candidate = {
         ...target,
         x: snap(action.payload.x, 4),
         y: snap(action.payload.y, 4),
       };
-      const clamped = clampToCanvas(candidate, canvas);
+      const clamped = clampToCanvas(candidate, canvas, currentShape);
       const finalEl = { ...candidate, ...clamped };
 
       const others = currentElements.filter((el) => el.id !== action.payload.id);
@@ -433,6 +446,7 @@ export function studioReducer(
       if (!target || target.locked) return state;
 
       const canvas = state.canvas || { width: 600, height: 200 };
+      const currentShape = state.design?.shape || "rounded";
       const candidate = {
         ...target,
         x: snap(action.payload.x, 4),
@@ -440,7 +454,7 @@ export function studioReducer(
         w: Math.max(8, snap(action.payload.w, 4)),
         h: Math.max(8, snap(action.payload.h, 4)),
       };
-      const clamped = clampToCanvas(candidate, canvas);
+      const clamped = clampToCanvas(candidate, canvas, currentShape);
       const finalEl = { ...candidate, ...clamped };
 
       const others = currentElements.filter((el) => el.id !== action.payload.id);
@@ -477,7 +491,8 @@ export function studioReducer(
       if (!target) return state;
 
       const canvas = state.canvas || { width: 600, height: 200 };
-      const spot = findFreeSpot({ w: target.w, h: target.h }, currentElements, canvas);
+      const currentShape = state.design?.shape || "rounded";
+      const spot = findFreeSpot({ w: target.w, h: target.h }, currentElements, canvas, currentShape);
 
       const newEl: FreeElement = {
         ...target,

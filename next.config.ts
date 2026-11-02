@@ -48,6 +48,11 @@ const nextConfig: NextConfig = {
         destination: "/verify",
         permanent: true,
       },
+      {
+        source: "/unsubscribe",
+        destination: "/privacy",
+        permanent: true,
+      },
     ];
   },
   async headers() {

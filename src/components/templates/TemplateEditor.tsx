@@ -23,6 +23,7 @@ import {
 } from "@/lib/templates/designs/shared";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
+import ImageCropModal from "@/components/common/ImageCropModal";
 import { buildPreviewDocument } from "@/lib/signatures/previewDocument";
 import {
   validateSocialUrl,
@@ -166,6 +167,8 @@ export default function TemplateEditor({
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   // Photo uploading state
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [avatarCropSrc, setAvatarCropSrc] = useState<string | null>(null);
+  const [avatarCropFileName, setAvatarCropFileName] = useState<string>("avatar.png");
   // Logo uploading state
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
@@ -345,9 +348,25 @@ export default function TemplateEditor({
       return;
     }
 
+    const objectUrl = URL.createObjectURL(file);
+    setAvatarCropSrc(objectUrl);
+    setAvatarCropFileName(file.name);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  const handleCloseAvatarCrop = () => {
+    if (avatarCropSrc) {
+      URL.revokeObjectURL(avatarCropSrc);
+    }
+    setAvatarCropSrc(null);
+  };
+
+  const handleApplyAvatarCrop = async (croppedFile: File) => {
     const previousAvatar = formData.avatarUrl;
     // Show an immediate local preview using URL.createObjectURL while uploading, and revoke it afterward
-    const objectUrl = URL.createObjectURL(file);
+    const objectUrl = URL.createObjectURL(croppedFile);
     setFormData((prev) => ({
       ...prev,
       avatarUrl: objectUrl,
@@ -356,7 +375,7 @@ export default function TemplateEditor({
 
     try {
       // Compress to blob (max 400px, quality 0.85, kind: "avatar")
-      const compressedBlob = await compressImageToBlob(file, 400, 0.85, "avatar");
+      const compressedBlob = await compressImageToBlob(croppedFile, 400, 0.85, "avatar");
       // Upload to S3 via backend presign endpoint
       const publicUrl = await uploadSignatureImage(compressedBlob, "avatar");
 
@@ -381,11 +400,9 @@ export default function TemplateEditor({
     } finally {
       URL.revokeObjectURL(objectUrl);
       setIsUploadingPhoto(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      handleCloseAvatarCrop();
     }
-  }
+  };
 
   // Reset photo to user default photo or template photo
   function handleResetPhoto() {
@@ -1320,6 +1337,15 @@ export default function TemplateEditor({
       <LimitOverwriteModal
         isOpen={isLimitModalOpen}
         onClose={() => setIsLimitModalOpen(false)}
+      />
+
+      {/* Interactive Avatar Crop Modal */}
+      <ImageCropModal
+        isOpen={Boolean(avatarCropSrc)}
+        imageSrc={avatarCropSrc}
+        fileName={avatarCropFileName}
+        onClose={handleCloseAvatarCrop}
+        onApply={handleApplyAvatarCrop}
       />
     </div>
   );

@@ -163,17 +163,12 @@ export default function FreeCanvas({
           w: selectedEl.w,
           h: selectedEl.h,
         };
-        const others = elements.filter((el) => el.id !== selectedId);
-
-        if (
-          candidate.x < 0 ||
-          candidate.x + candidate.w > canvasWidth ||
-          candidate.y < 0 ||
-          candidate.y + candidate.h > canvasHeight
-        ) {
+        const clampedCand = clampToCanvas(candidate, { width: canvasWidth, height: canvasHeight }, shape);
+        if (clampedCand.x !== candidate.x || clampedCand.y !== candidate.y) {
           return;
         }
 
+        const others = elements.filter((el) => el.id !== selectedId);
         const hasOverlap = others.some((other) => rectsOverlap(candidate, other));
         if (!hasOverlap) {
           dispatch({
@@ -186,7 +181,7 @@ export default function FreeCanvas({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedId, elements, canvasWidth, canvasHeight, dispatch, onSelect]);
+  }, [selectedId, elements, canvasWidth, canvasHeight, shape, dispatch, onSelect]);
 
   // Handle Drag Start
   const handleStartDrag = useCallback(
@@ -266,9 +261,14 @@ export default function FreeCanvas({
           candY = snap(candY, 4);
         }
 
-        // Clamp to canvas boundaries
-        candX = Math.max(0, Math.min(canvasWidth - dragState.w, candX));
-        candY = Math.max(0, Math.min(canvasHeight - dragState.h, candY));
+        // Clamp to canvas boundaries and current card shape (pill curve insets)
+        const clampedDrag = clampToCanvas(
+          { x: candX, y: candY, w: dragState.w, h: dragState.h },
+          { width: canvasWidth, height: canvasHeight },
+          shape
+        );
+        candX = clampedDrag.x;
+        candY = clampedDrag.y;
 
         // Alignment guides calculation
         const newGuides: GuideLine[] = [];
@@ -373,7 +373,8 @@ export default function FreeCanvas({
         // Clamp to canvas bounds
         const clamped = clampToCanvas(
           { x: nextX, y: nextY, w: nextW, h: nextH },
-          { width: canvasWidth, height: canvasHeight }
+          { width: canvasWidth, height: canvasHeight },
+          shape
         );
 
         const others = elements.filter((item) => item.id !== resizeState.elementId);
@@ -402,6 +403,7 @@ export default function FreeCanvas({
       canvasHeight,
       elements,
       dispatch,
+      shape,
     ]
   );
 
@@ -437,7 +439,8 @@ export default function FreeCanvas({
               candidate,
               others,
               { width: canvasWidth, height: canvasHeight },
-              { x: dragState.origX, y: dragState.origY }
+              { x: dragState.origX, y: dragState.origY },
+              shape
             );
 
             if (resolved.x === dragState.origX && resolved.y === dragState.origY) {
@@ -514,6 +517,7 @@ export default function FreeCanvas({
       canvasHeight,
       dispatch,
       onToast,
+      shape,
     ]
   );
 

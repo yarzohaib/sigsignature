@@ -2,6 +2,8 @@
 
 import { useRef, ChangeEvent, useState } from "react";
 import Image from "next/image";
+import ImageCropModal from "@/components/common/ImageCropModal";
+import { isAllowedJpgOrPng } from "@/lib/imageUtils";
 
 interface ProfileCardProps {
   firstName: string;
@@ -38,6 +40,8 @@ export default function ProfileCard({
 }: ProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
+  const [cropFileName, setCropFileName] = useState<string>("avatar.png");
   const hasValidAvatar = Boolean(avatarUrl && failedUrl !== avatarUrl);
 
   const userInitials = [firstName, lastName]
@@ -48,13 +52,40 @@ export default function ProfileCard({
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      onAvatarUpload(file);
+    if (!file) return;
+
+    if (!isAllowedJpgOrPng(file)) {
+      alert("Please select a JPG or PNG image file.");
+      if (e.target) e.target.value = "";
+      return;
     }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Image size must be less than 10 MB.");
+      if (e.target) e.target.value = "";
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setCropImageSrc(objectUrl);
+    setCropFileName(file.name);
+
     // Reset file input value so re-selecting same file triggers change
     if (e.target) {
       e.target.value = "";
     }
+  };
+
+  const handleCloseCrop = () => {
+    if (cropImageSrc) {
+      URL.revokeObjectURL(cropImageSrc);
+    }
+    setCropImageSrc(null);
+  };
+
+  const handleApplyCrop = (croppedFile: File) => {
+    onAvatarUpload(croppedFile);
+    handleCloseCrop();
   };
 
   return (
@@ -275,6 +306,15 @@ export default function ProfileCard({
           )}
         </div>
       </div>
+
+      {/* Interactive Profile Photo Cropper Modal */}
+      <ImageCropModal
+        isOpen={Boolean(cropImageSrc)}
+        imageSrc={cropImageSrc}
+        fileName={cropFileName}
+        onClose={handleCloseCrop}
+        onApply={handleApplyCrop}
+      />
     </div>
   );
 }

@@ -143,6 +143,27 @@ export async function acceptPublicInvite(token: string): Promise<void> {
   const code = typeof obj?.code === "string" ? obj.code : "";
 
   if (!res.ok) {
+    // The POST may have been committed even if its response was lost or the
+    // server returned an error while completing follow-up work. Re-read the
+    // invite before showing a failure so retries stay idempotent.
+    try {
+      const invite = await fetchPublicInvite(token);
+      if (invite.status === "accepted" || invite.member?.status === "accepted") {
+        return;
+      }
+    } catch {
+      // Preserve the original accept response as the actionable error.
+    }
+
+    // The endpoint is idempotent: if an earlier click already recorded the
+    // installation, treat a retry as successful instead of trapping the user
+    // on the confirmation screen.
+    if (
+      res.status === 409 &&
+      (code === "ALREADY_ACCEPTED" || code === "INVITE_ALREADY_ACCEPTED")
+    ) {
+      return;
+    }
     if (res.status === 404 || code === "INVITE_NOT_FOUND") {
       throw new PublicInviteError("INVITE_NOT_FOUND", "This link is not valid");
     }
