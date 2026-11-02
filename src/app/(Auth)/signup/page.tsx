@@ -8,6 +8,7 @@ import PasswordField from "@/components/ui/PasswordField";
 import { GoogleIcon, GithubIcon } from "@/components/auth/icons";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
 import { signupUser, startOAuth, type OAuthProvider } from "@/app/lib/api";
+import PrivacyPolicyContent from "@/components/legal/PrivacyPolicyContent";
 
 function getOAuthErrorMessage(code: string | null): string | null {
   if (!code) return null;
@@ -531,50 +532,54 @@ function SignupForm() {
 
       {legalDocument && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/45 p-0 backdrop-blur-[2px] sm:p-5"
+          className="fixed inset-0 z-[100] flex justify-end bg-slate-950/45 backdrop-blur-[2px] animate-in fade-in duration-200"
           onClick={() => setLegalDocument(null)}
           role="presentation"
         >
-          <section
+          <aside
             role="dialog"
             aria-modal="true"
-            aria-labelledby="signup-legal-title"
-            className="flex h-[96dvh] max-h-[900px] w-full max-w-4xl flex-col overflow-hidden bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:h-[88dvh] sm:rounded-2xl sm:border sm:border-slate-200"
+            aria-label={legalDocument === "terms" ? "Terms of Service" : "Privacy Policy"}
+            className="relative flex h-full w-full max-w-4xl flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300 overflow-hidden"
             onClick={(event) => event.stopPropagation()}
           >
-            <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-4 sm:px-6">
-              <h2 id="signup-legal-title" className="font-heading text-base font-semibold text-slate-900 sm:text-lg">
-                {legalDocument === "terms" ? "Terms of Service" : "Privacy Policy"}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setLegalDocument(null)}
-                aria-label="Close legal document"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-              >
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                  <path d="m18 6-12 12M6 6l12 12" />
-                </svg>
-              </button>
-            </header>
-            <iframe
-              key={legalDocument}
-              src={`/${legalDocument}`}
-              title={legalDocument === "terms" ? "Terms of Service" : "Privacy Policy"}
-              onLoad={(event) => {
-                const document = event.currentTarget.contentDocument;
-                if (!document || document.getElementById("signup-legal-embed-style")) return;
-                const style = document.createElement("style");
-                style.id = "signup-legal-embed-style";
-                style.textContent = `
-                  header, footer, body > div > div.border-t { display: none !important; }
-                  body > div { min-height: 0 !important; }
-                `;
-                document.head.appendChild(style);
-              }}
-              className="min-h-0 w-full flex-1 border-0"
-            />
-          </section>
+            {/* Floating Close Button without any header bar */}
+            <button
+              type="button"
+              onClick={() => setLegalDocument(null)}
+              aria-label="Close"
+              className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 shadow-xs transition hover:bg-slate-200 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                <path d="m18 6-12 12M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Scrollable Content Container */}
+            <div className="flex-1 overflow-y-auto">
+              {legalDocument === "privacy" ? (
+                <PrivacyPolicyContent isDrawer={true} />
+              ) : (
+                <iframe
+                  key={legalDocument}
+                  src={`/${legalDocument}`}
+                  title="Terms of Service"
+                  onLoad={(event) => {
+                    const document = event.currentTarget.contentDocument;
+                    if (!document || document.getElementById("signup-legal-embed-style")) return;
+                    const style = document.createElement("style");
+                    style.id = "signup-legal-embed-style";
+                    style.textContent = `
+                      header, footer, body > div > div.border-t { display: none !important; }
+                      body > div { min-height: 0 !important; }
+                    `;
+                    document.head.appendChild(style);
+                  }}
+                  className="h-full w-full border-0"
+                />
+              )}
+            </div>
+          </aside>
         </div>
       )}
 
