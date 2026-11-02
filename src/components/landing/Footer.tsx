@@ -144,7 +144,7 @@ const isAuthenticated =
             </span>
           </Link>
           <p className="mt-3 max-w-lg text-center font-body text-[14px] leading-normal text-[#878787] sm:max-w-xl lg:max-w-none lg:whitespace-nowrap 3xl:text-[16px]">
-            Sig Signature helps you create and customize professional email signatures online. Choose a template, preview your design, and export HTML or images.
+            Professional email signatures ensure every email reflects a consistent and professional brand identity.
           </p>
         </motion.div>
 
@@ -158,7 +158,7 @@ const isAuthenticated =
           whileInView={shouldReduceMotion ? undefined : "visible"}
           viewport={MOTION_VIEWPORT}
           variants={shouldReduceMotion ? undefined : footerContainerVariants}
-          className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-10 sm:mt-12 lg:flex lg:flex-row lg:items-start lg:justify-around lg:gap-14 3xl:gap-20"
+          className="mt-10 grid grid-cols-2 gap-8 sm:mt-12 sm:grid-cols-3 sm:gap-6 lg:gap-10"
         >
           {/* Products Group */}
           <motion.div
@@ -168,7 +168,7 @@ const isAuthenticated =
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Products
             </h4>
-            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-7">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
               <Link
                 href="/#features"
                 onClick={(e) => handleNavAnchorClick(e, "features", "start")}
@@ -213,15 +213,12 @@ const isAuthenticated =
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Company
             </h4>
-            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-7">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
               <Link href="/about" className={linkHoverClasses}>
                 About
               </Link>
               <Link href="/team" className={linkHoverClasses}>
-                Team
-              </Link>
-              <Link href="/use-cases" className={linkHoverClasses}>
-                Use Cases
+                Our Team
               </Link>
               <Link href="/contact" className={linkHoverClasses}>
                 Contact Us
@@ -240,7 +237,7 @@ const isAuthenticated =
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Resources
             </h4>
-            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-7">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
               <Link
                 href="/#features"
                 onClick={(e) => handleNavAnchorClick(e, "features", "start")}
@@ -250,15 +247,6 @@ const isAuthenticated =
               </Link>
               <Link href="/template" className={linkHoverClasses}>
                 Templates
-              </Link>
-              <Link href="/gmail-signature-generator" className={linkHoverClasses}>
-                Gmail Generator
-              </Link>
-              <Link href="/outlook-signature-generator" className={linkHoverClasses}>
-                Outlook Generator
-              </Link>
-              <Link href="/blog" className={linkHoverClasses}>
-                Blog
               </Link>
               <Link href="/signup" className={linkHoverClasses}>
                 Free Signature
@@ -335,19 +323,20 @@ const isAuthenticated =
 
       {/* Bottom Legal & Copyright Bar: stacked on phones, split on tablets & desktop */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs sm:text-sm text-[#878787]">
-          <p>
-            © 2026 Sig Signature. All rights reserved. | Source: Sig Signature Deliverability Engine by{" "}
+        <div className="grid grid-cols-1 items-center gap-3 text-center text-xs text-[#878787] sm:grid-cols-3 sm:text-sm">
+          <p className="sm:text-left">© 2026 Sig Signature. All rights reserved.</p>
+          <p className="text-[#353A3E]">
+            Powered by{" "}
             <Link
               href="https://www.thenevon.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#1243A3] hover:text-[#022977] font-medium"
+              className="font-semibold text-[#022977] hover:text-[#245FD4]"
             >
-              The Nevon
+              @THE NEVON
             </Link>
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center justify-center gap-6 sm:justify-end">
             <Link href="/terms" className={legalLinkHoverClasses}>
               Terms of Service
             </Link>
