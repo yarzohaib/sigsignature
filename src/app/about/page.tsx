@@ -409,7 +409,7 @@ export default function AboutPage() {
         >
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-12 sm:pb-16 border-b border-white/15">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-10 sm:pb-14">
               <h2 className="font-heading text-3xl font-medium tracking-tight text-white sm:text-4xl lg:text-[48px] lg:leading-[1.12]">
                 Thoughtful by design. <br />
                 Practical by nature.
@@ -419,13 +419,22 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* 3 Pillars */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            {/* 3 Pillars with separate, non-continuous horizontal top lines */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
               {/* Pillar 1 */}
-              <div>
-                <div className="text-white/80 mb-4">
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              <div className="border-t border-white/20 pt-8 sm:pt-10">
+                <div className="text-white mb-4">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polygon points="3 11 22 2 13 21 11 13 3 11" />
                   </svg>
                 </div>
                 <h3 className="font-heading text-lg sm:text-xl font-semibold text-white">
@@ -437,10 +446,21 @@ export default function AboutPage() {
               </div>
 
               {/* Pillar 2 */}
-              <div>
-                <div className="text-white/80 mb-4">
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" />
+              <div className="border-t border-white/20 pt-8 sm:pt-10">
+                <div className="text-white mb-4">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M3 9h18" />
+                    <path d="M9 21V9" />
                   </svg>
                 </div>
                 <h3 className="font-heading text-lg sm:text-xl font-semibold text-white">
@@ -452,10 +472,21 @@ export default function AboutPage() {
               </div>
 
               {/* Pillar 3 */}
-              <div>
-                <div className="text-white/80 mb-4">
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+              <div className="border-t border-white/20 pt-8 sm:pt-10">
+                <div className="text-white mb-4">
+                  <svg
+                    className="h-6 w-6 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m18 16 4-4-4-4" />
+                    <path d="m6 8-4 4 4 4" />
+                    <path d="m14.5 4-5 16" />
                   </svg>
                 </div>
                 <h3 className="font-heading text-lg sm:text-xl font-semibold text-white">
