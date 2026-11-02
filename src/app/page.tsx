@@ -4,6 +4,7 @@ import HeroSection from "@/components/landing/HeroSection";
 import ProblemSection from "@/components/landing/ProblemSection";
 import SolutionSection from "@/components/landing/SolutionSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
+import PopularTemplatesSection from "@/components/landing/PopularTemplatesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import ComparisonSection from "@/components/landing/ComparisonSection";
 import PricingSection from "@/components/landing/PricingSection";
@@ -77,6 +78,7 @@ export default function LandingPage() {
         <ProblemSection />
         <SolutionSection />
         <FeaturesSection />
+        <PopularTemplatesSection />
         <HowItWorksSection />
         <ComparisonSection />
         <PricingSection />

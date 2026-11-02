@@ -220,6 +220,9 @@ const isAuthenticated =
               <Link href="/team" className={linkHoverClasses}>
                 Team
               </Link>
+              <Link href="/use-cases" className={linkHoverClasses}>
+                Use Cases
+              </Link>
               <Link href="/contact" className={linkHoverClasses}>
                 Contact Us
               </Link>
@@ -245,8 +248,17 @@ const isAuthenticated =
               >
                 Email Signature
               </Link>
-              <Link href="/templates" className={linkHoverClasses}>
+              <Link href="/template" className={linkHoverClasses}>
                 Templates
+              </Link>
+              <Link href="/gmail-signature-generator" className={linkHoverClasses}>
+                Gmail Generator
+              </Link>
+              <Link href="/outlook-signature-generator" className={linkHoverClasses}>
+                Outlook Generator
+              </Link>
+              <Link href="/blog" className={linkHoverClasses}>
+                Blog
               </Link>
               <Link href="/signup" className={linkHoverClasses}>
                 Free Signature

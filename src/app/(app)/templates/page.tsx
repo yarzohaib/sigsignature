@@ -111,15 +111,33 @@ function TemplatesContent() {
           return;
         }
 
-        if (templateParam && !isCancelled) {
-          const matched = AVAILABLE_TEMPLATES.find((t) => t.id === templateParam);
+        const storedSelected = typeof window !== "undefined" ? localStorage.getItem("sig_selected_template") : null;
+        const targetTemplateParam = templateParam || storedSelected;
+
+        if (targetTemplateParam && !isCancelled) {
+          const matched = AVAILABLE_TEMPLATES.find((t) => t.id === targetTemplateParam);
           if (matched) {
+            const user = getStoredUser();
+            if (!user) {
+              router.push(`/login?redirect=${encodeURIComponent(`/templates?template=${matched.id}`)}`);
+              setIsLoadingEdit(false);
+              return;
+            }
+            try {
+              localStorage.removeItem("sig_selected_template");
+            } catch {}
             setEditingSignatureId(undefined);
             setEditingSignatureData(undefined);
             setEditingTemplate(matched);
             setIsLoadingEdit(false);
             return;
           }
+        }
+
+        const user = getStoredUser();
+        if (!user && !isCancelled) {
+          router.replace("/template");
+          return;
         }
         return;
       }
@@ -189,16 +207,17 @@ function TemplatesContent() {
   const handleSelectTemplate = (template: TemplateItem) => {
     const user = getStoredUser();
     if (!user) {
-      router.push(`/signup?redirect=/templates&template=${encodeURIComponent(template.id)}`);
+      try {
+        localStorage.setItem("sig_selected_template", template.id);
+      } catch {}
+      router.push(`/login?redirect=${encodeURIComponent(`/templates?template=${template.id}`)}`);
       return;
     }
     if (!isTeamMode && isSignatureLimitReached()) {
       setIsLimitModalOpen(true);
       return;
     }
-    setEditingSignatureId(undefined);
-    setEditingSignatureData(undefined);
-    setEditingTemplate(template);
+    router.push(`/templates?template=${encodeURIComponent(template.id)}`);
   };
 
   if (isLoadingEdit) {

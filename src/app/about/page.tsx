@@ -96,8 +96,8 @@ export default function AboutPage() {
 
       <main className="flex-1">
         {/* 1. HERO SECTION */}
-        {/* On mobile: pt-28 sm:pt-32 lg:pt-36 ensures ample top breathing room below the fixed floating mobile navbar */}
-        <section className="pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20">
+        {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
+        <section className="pt-20 pb-14 sm:pt-24 sm:pb-16 lg:pt-24 lg:pb-20">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-4xl text-center">
               <h1 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-[52px] lg:leading-[1.15]">
@@ -332,7 +332,7 @@ export default function AboutPage() {
 
                 <div className="mt-8">
                   <Link
-                    href="/templates"
+                    href="/template"
                     className="inline-flex items-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 py-3 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
                     <span>See What You Can Create</span>

@@ -353,8 +353,8 @@ export default function Navbar() {
               className="h-6 w-auto"
               priority
             />
-            <span className="font-heading text-base font-semibold text-brand-dark">
-              Sig Signature
+            <span className="font-heading text-base font-semibold text-slate-900">
+              Sig <span className="text-[#022977]">Signature</span>
             </span>
           </Link>
 
@@ -396,25 +396,46 @@ export default function Navbar() {
             >
               <nav className="flex flex-col">
                 <Link
-                  href="/#features"
-                  onClick={(e) => handleNavAnchorClick(e, "features", "start")}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
                 >
-                  Features
+                  About Us
                 </Link>
                 <Link
-                  href="/#how-it-works"
-                  onClick={(e) => handleNavAnchorClick(e, "how-it-works", "start")}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                  href="/team"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
                 >
-                  How It Works
+                  Our Team
+                </Link>
+                <Link
+                  href="/blog"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                >
+                  Blog
+                </Link>
+                <Link
+                  href="/use-cases"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                >
+                  Use Cases
                 </Link>
                 <Link
                   href="/#pricing"
                   onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
                 >
                   Pricing
+                </Link>
+                <Link
+                  href="/template"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                >
+                  Templates
                 </Link>
 
                 {user ? (
@@ -569,33 +590,49 @@ export default function Navbar() {
               className="h-7 w-auto sm:h-8"
               priority
             />
-            <span className="font-heading text-lg font-semibold text-brand-dark sm:text-xl 3xl:text-2xl">
-              Sig Signature
+            <span className="font-heading text-lg font-semibold sm:text-xl 3xl:text-2xl text-slate-900">
+              Sig <span className="text-[#022977]">Signature</span>
             </span>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="flex items-center gap-10">
+          <nav className="flex items-center gap-7 lg:gap-8 xl:gap-9">
             <Link
-              href="/#features"
-              onClick={(e) => handleNavAnchorClick(e, "features", "start")}
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] transition hover:text-brand min-h-[44px] flex items-center"
+              href="/about"
+              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
             >
-              Features
+              About Us
             </Link>
             <Link
-              href="/#how-it-works"
-              onClick={(e) => handleNavAnchorClick(e, "how-it-works", "start")}
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] transition hover:text-brand min-h-[44px] flex items-center"
+              href="/team"
+              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
             >
-              How It Works
+              Our Team
+            </Link>
+            <Link
+              href="/blog"
+              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/use-cases"
+              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+            >
+              Use Cases
             </Link>
             <Link
               href="/#pricing"
               onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] transition hover:text-brand min-h-[44px] flex items-center"
+              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
             >
               Pricing
+            </Link>
+            <Link
+              href="/template"
+              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+            >
+              Templates
             </Link>
           </nav>
 

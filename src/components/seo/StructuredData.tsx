@@ -355,3 +355,98 @@ export function PricingPageJsonLd() {
     />
   );
 }
+
+export function UseCasesPageJsonLd() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "url": "https://www.sigsignature.com/use-cases",
+    "name": "Use Cases | Sig Signature",
+    "description":
+      "Explore how professionals, sales teams, recruiters, and founders turn every email into an on-brand touchpoint with Sig Signature.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Sig Signature",
+      "url": "https://www.sigsignature.com"
+    }
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function BlogPageJsonLd() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "url": "https://www.sigsignature.com/blog",
+    "name": "The Journal & Blog | Sig Signature",
+    "description":
+      "A fresh perspective on email signatures, thoughtful branding and the details that make work feel more professional.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Sig Signature",
+      "url": "https://www.sigsignature.com",
+      "logo": "https://www.sigsignature.com/logo.svg"
+    }
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function BlogPostJsonLd({
+  title,
+  description,
+  url,
+  publishedAt,
+  authorName,
+  imageUrl,
+}: {
+  title: string;
+  description: string;
+  url: string;
+  publishedAt: string;
+  authorName: string;
+  imageUrl?: string;
+}) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": url
+    },
+    "headline": title,
+    "description": description,
+    "image": imageUrl || "https://www.sigsignature.com/og-image.png",
+    "datePublished": publishedAt,
+    "author": {
+      "@type": "Organization",
+      "name": authorName
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Sig Signature",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.sigsignature.com/logo.svg"
+      }
+    }
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}

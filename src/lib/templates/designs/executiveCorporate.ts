@@ -18,7 +18,6 @@ export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor);
   const fontStack = resolveEmailFont(data.fontFamily);
 
-  const hasAvatar = hasSafeImage(data.avatarUrl);
   const hasLogo = hasSafeImage(data.companyLogoUrl);
 
     const compWords = (data.companyName || "Sterling & Co.").trim().split(/\s+/).filter(Boolean);
@@ -48,9 +47,7 @@ export function render(data: TemplateSignatureData): string {
           </tr>
         </table>`;
 
-    const nameContent = hasAvatar
-      ? `<img src="${escapeHtml(data.avatarUrl)}" alt="${escapeHtml(data.fullName || "Name")}" width="220" class="name-image" style="display:block;border:0;width:220px;max-width:220px;height:auto;" />`
-      : `<div style="font-family:${fontStack};font-size:22px;font-weight:700;color:#353A3D;letter-spacing:0.5px;line-height:1.2;padding-bottom:2px;">${escapeHtml(data.fullName || "")}</div>`;
+    const nameContent = `<div style="font-family:${fontStack};font-size:22px;font-weight:700;color:#353A3D;letter-spacing:0.5px;line-height:1.2;padding-bottom:2px;">${escapeHtml(data.fullName || "")}</div>`;
 
     const contactItems: string[] = [];
     if (data.phone?.trim()) {

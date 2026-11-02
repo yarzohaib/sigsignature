@@ -60,8 +60,8 @@ export default function ContactPage() {
       />
 
       <main className="flex-1">
-        {/* On mobile: pt-28 sm:pt-32 lg:pt-36 ensures ample top breathing room below the fixed floating mobile navbar */}
-        <section className="pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-24">
+        {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
+        <section className="pt-20 pb-14 sm:pt-24 sm:pb-16 lg:pt-24 lg:pb-24">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title & Subtitle */}
             <div className="max-w-3xl">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import GettingStartedModal from "@/components/dashboard/GettingStartedModal";
@@ -50,7 +50,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <UserProvider>
       <SidebarProvider>
-        <AppShellContent>{children}</AppShellContent>
+        <Suspense fallback={<div className="min-h-screen bg-[#F8FAFC]" />}>
+          <AppShellContent>{children}</AppShellContent>
+        </Suspense>
       </SidebarProvider>
     </UserProvider>
   );

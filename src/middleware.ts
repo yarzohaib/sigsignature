@@ -16,7 +16,6 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/signatures") ||
     pathname.startsWith("/team-signatures") ||
-    pathname.startsWith("/templates") ||
     pathname.startsWith("/settings") ||
     pathname.startsWith("/pricing")
   ) {

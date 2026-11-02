@@ -193,8 +193,8 @@ export default function TeamPage() {
 
       <main className="flex-1">
         {/* HERO & TEAM SECTION */}
-        {/* On mobile: pt-28 sm:pt-32 lg:pt-36 ensures ample top breathing room below the fixed floating mobile navbar */}
-        <section className="pt-28 pb-12 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20">
+        {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
+        <section className="pt-20 pb-12 sm:pt-24 sm:pb-16 lg:pt-24 lg:pb-20">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title & Subtitle */}
             <div className="max-w-3xl">
@@ -207,7 +207,13 @@ export default function TeamPage() {
             </div>
 
             {/* Leadership Card (Sardar Muhammad Nadir) */}
-            <div className="mt-8 sm:mt-10 rounded-3xl bg-[#164CA4] p-6 sm:p-8 lg:p-10 text-white shadow-sm border border-white/10">
+            <div
+              className="mt-8 sm:mt-10 rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-sm border border-white/10"
+              style={{
+                background:
+                  "linear-gradient(93.58deg, #1C52C9 0%, #0C43B1 36.06%, #02215F 100%)",
+              }}
+            >
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 justify-between">
                 {/* Left: Avatar + Info */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-7 flex-1">
@@ -242,7 +248,13 @@ export default function TeamPage() {
             </div>
 
             {/* Team Members Card (Mishal, Zohaib, Ali Aun, M. Moiz) */}
-            <div className="mt-6 sm:mt-8 rounded-3xl bg-[#08204D] p-6 sm:p-8 lg:p-10 text-white shadow-sm border border-white/10">
+            <div
+              className="mt-6 sm:mt-8 rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-sm border border-white/10"
+              style={{
+                background:
+                  "linear-gradient(121.54deg, #1C52C9 2.58%, #0E2863 47.92%, #001749 97.84%)",
+              }}
+            >
               <div className="divide-y divide-white/10">
                 {teamMembers.map((member) => (
                   <div

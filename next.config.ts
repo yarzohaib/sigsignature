@@ -53,6 +53,21 @@ const nextConfig: NextConfig = {
         destination: "/privacy",
         permanent: true,
       },
+      {
+        source: "/usecase",
+        destination: "/use-cases",
+        permanent: true,
+      },
+      {
+        source: "/use-case",
+        destination: "/use-cases",
+        permanent: true,
+      },
+      {
+        source: "/usecases",
+        destination: "/use-cases",
+        permanent: true,
+      },
     ];
   },
   async headers() {

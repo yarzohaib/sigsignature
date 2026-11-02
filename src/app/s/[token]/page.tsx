@@ -12,6 +12,7 @@ import {
 } from "@/lib/team/publicInvite";
 import { renderTeamMemberHtml, renderTeamMemberPlainText } from "@/lib/team/render";
 import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
+import { buildDownloadDocument } from "@/lib/signatures/previewDocument";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
 import type { Team, TeamMember, TeamData } from "@/types/team";
 
@@ -40,6 +41,7 @@ export default function PublicInvitePage() {
 
   const [copiedHtml, setCopiedHtml] = useState(false);
   const [copiedPlainText, setCopiedPlainText] = useState(false);
+  const [downloadedHtml, setDownloadedHtml] = useState(false);
   const [activeTab, setActiveTab] = useState<EmailClientTab>("gmail");
 
   useEffect(() => {
@@ -198,6 +200,27 @@ export default function PublicInvitePage() {
     } catch {
       // Fallback
     }
+  }
+
+  function handleDownloadHtml() {
+    if (!fullHtml) return;
+
+    const fileName = (syntheticMember?.name || teamName || "signature")
+      .trim()
+      .replace(/[^a-z0-9-_]+/gi, "_")
+      .replace(/^_+|_+$/g, "") || "signature";
+    const documentHtml = buildDownloadDocument(fullHtml, syntheticMember?.name || teamName);
+    const blob = new Blob([documentHtml], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${fileName}_signature.html`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setDownloadedHtml(true);
+    window.setTimeout(() => setDownloadedHtml(false), 2500);
   }
 
   // Accept Handler
@@ -575,6 +598,29 @@ export default function PublicInvitePage() {
                 </>
               ) : (
                 <span>Copy as plain text</span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDownloadHtml}
+              className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-xs sm:text-sm font-medium transition active:scale-95 cursor-pointer shadow-2xs ${
+                downloadedHtml
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-slate-200 bg-white text-[#1E293B] hover:bg-slate-50"
+              }`}
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              {downloadedHtml ? (
+                <span>HTML downloaded!</span>
+              ) : (
+                <>
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <path d="m7 10 5 5 5-5M12 15V3" />
+                  </svg>
+                  <span>Download HTML</span>
+                </>
               )}
             </button>
           </div>

@@ -22,7 +22,9 @@ Sig Signature (developed by The Nevon) is a modern web application that generate
 ## Core Navigation Links
 - Home: https://www.sigsignature.com
 - Design Studio: https://www.sigsignature.com/design-studio
-- Templates Gallery: https://www.sigsignature.com/templates
+- Templates Gallery: https://www.sigsignature.com/template
+- Gmail Signature Generator: https://www.sigsignature.com/gmail-signature-generator
+- Outlook Signature Generator: https://www.sigsignature.com/outlook-signature-generator
 - Pricing: https://www.sigsignature.com#pricing
 - About The Nevon: https://www.sigsignature.com/about
 - Support & Contact: https://www.sigsignature.com/contact

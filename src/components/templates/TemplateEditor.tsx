@@ -88,6 +88,7 @@ export default function TemplateEditor({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const supportsProfilePhoto = template.id !== "executive-corporate";
 
   // Current signature ID being edited (persisted after first save)
   const [currentSignatureId, setCurrentSignatureId] = useState<string | undefined>(editingSignatureId);
@@ -100,7 +101,7 @@ export default function TemplateEditor({
     let font = mapToValidTemplateFont(base.fontFamily);
 
     let themeColor = base.themeColor;
-    let avatarUrl = base.avatarUrl;
+    let avatarUrl = supportsProfilePhoto ? base.avatarUrl : "";
     let fullName = base.fullName;
     let companyName = base.companyName;
     let email = base.email;
@@ -131,11 +132,13 @@ export default function TemplateEditor({
         }
       }
 
-      const shouldIncludePhoto = storedSettings?.includePhoto !== false;
-      if (!shouldIncludePhoto) {
-        avatarUrl = "";
-      } else if (storedAvatar) {
-        avatarUrl = storedAvatar;
+      if (supportsProfilePhoto) {
+        const shouldIncludePhoto = storedSettings?.includePhoto !== false;
+        if (!shouldIncludePhoto) {
+          avatarUrl = "";
+        } else if (storedAvatar) {
+          avatarUrl = storedAvatar;
+        }
       }
     }
 
@@ -246,8 +249,7 @@ export default function TemplateEditor({
 
     setFormData((prev) => {
       let nextAvatar = prev.avatarUrl;
-      const shouldIncludePhoto = storedSettings?.includePhoto !== false;
-      if (!shouldIncludePhoto) {
+      if (!supportsProfilePhoto || storedSettings?.includePhoto === false) {
         nextAvatar = "";
       } else if (storedAvatar) {
         nextAvatar = storedAvatar;
@@ -290,7 +292,7 @@ export default function TemplateEditor({
         email: nextEmail,
       };
     });
-  }, [initialData, editingSignatureId]);
+  }, [initialData, editingSignatureId, supportsProfilePhoto]);
 
   function showToast(title: string, subtitle: string, isError = false) {
     setToastMessage({ title, subtitle, isError });
@@ -420,7 +422,7 @@ export default function TemplateEditor({
     const storedSettings = getStoredSettings();
     const storedAvatar = getStoredAvatarUrl();
     const defaultAvatar =
-      storedSettings?.includePhoto === false
+      !supportsProfilePhoto || storedSettings?.includePhoto === false
         ? ""
         : (storedAvatar || template.defaultData.avatarUrl);
 
@@ -779,7 +781,8 @@ export default function TemplateEditor({
             {openSections.personal && (
               <div className="mt-4 pt-3 border-t border-slate-100 space-y-4">
                 {/* Photo Upload Row (Requirement: User can upload their own photo) */}
-                <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
+                {supportsProfilePhoto && (
+                  <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
                   <div className="flex items-center gap-3.5">
                     <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white border border-slate-200 shadow-xs">
                       <Image
@@ -846,7 +849,8 @@ export default function TemplateEditor({
                       <span>This is a sample photo. Upload your own photo, otherwise your signature will be exported without a photo.</span>
                     </div>
                   )} */}
-                </div>
+                  </div>
+                )}
 
                 {/* Text input fields (2-column grid matching Figma) */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
