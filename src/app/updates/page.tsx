@@ -150,7 +150,7 @@ export default function UpdatesPage() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-12 pb-6 sm:pt-16 sm:pb-6 lg:pt-20 lg:pb-6">
+        <section className="relative overflow-hidden pt-28 pb-8 sm:pt-32 sm:pb-10 lg:pt-36 lg:pb-12">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
             <div className="mx-auto max-w-4xl text-center">
               <div className="mb-6 flex items-center justify-center">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
-import SectionBadge from "@/components/landing/SectionBadge";
 import ContactForm from "@/components/contact/ContactForm";
 import { ContactPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 
@@ -38,101 +38,10 @@ export const metadata: Metadata = {
   },
 };
 
-const contactChannels = [
-  {
-    department: "Product & Support",
-    email: "team@thenevon.com",
-    scope: "Assistance with signature setup, formatting, client compatibility, and bug inquiries.",
-    actionText: "Contact Support Team",
-    icon: (
-      <svg
-        className="h-6 w-6 shrink-0 aspect-square text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
-        />
-      </svg>
-    ),
-  },
-  {
-    department: "Design & Custom Templates",
-    email: "design@thenevon.com",
-    scope: "Custom corporate signature designs, layout styling, and brand identity requests.",
-    actionText: "Contact Design Team",
-    icon: (
-      <svg
-        className="h-6 w-6 shrink-0 aspect-square text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.39m3.42 3.415a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.416a6.717 6.717 0 01-1.622 3.39m4.765-4.649a6.717 6.717 0 013.39-1.622"
-        />
-      </svg>
-    ),
-  },
-  {
-    department: "Executive Office & Partnerships",
-    email: "sardar@thenevon.com",
-    scope: "Executive leadership, strategic enterprise partnerships, and corporate licensing.",
-    actionText: "Contact Executive Office",
-    icon: (
-      <svg
-        className="h-6 w-6 shrink-0 aspect-square text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006A47.886 47.886 0 0012 13.5c-2.348 0-4.632-.168-6.863-.494m0 0a2.18 2.18 0 01-.75-1.661V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0015 3h-6a2.25 2.25 0 00-2.25 2.25v1.5m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-    ),
-  },
-  {
-    department: "People & Culture (HR)",
-    email: "hr@thenevon.com",
-    scope: "Talent recruitment, workplace culture, and career inquiries across The Nevon.",
-    actionText: "Contact HR Team",
-    icon: (
-      <svg
-        className="h-6 w-6 shrink-0 aspect-square text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.999-3.199a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-        />
-      </svg>
-    ),
-  },
-];
-
 export default function ContactPage() {
   return (
     <div className="relative isolate flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
-      {/* Background ambient lighting from Figma system */}
+      {/* Background ambient lighting matching Figma design system */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px] overflow-hidden"
@@ -151,94 +60,119 @@ export default function ContactPage() {
       />
 
       <main className="flex-1">
-        {/* HERO SECTION */}
-        <section className="relative overflow-hidden pt-6 pb-4 sm:pt-8 sm:pb-5 lg:pt-10 lg:pb-6">
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div className="mx-auto max-w-4xl text-center">
-              <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                <SectionBadge label="CONTACT US" />
-              </div>
-
-              <h1 className="font-heading text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-[54px] lg:leading-[1.12]">
-                <span className="text-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] bg-clip-text text-transparent">
-                  Get in touch
-                </span>{" "}
-                with our team.
+        {/* On mobile: pt-28 sm:pt-32 lg:pt-36 ensures ample top breathing room below the fixed floating mobile navbar */}
+        <section className="pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-24">
+          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+            {/* Header: Title & Subtitle */}
+            <div className="max-w-3xl">
+              <h1 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[42px] lg:leading-[1.17]">
+                Good conversations. <span className="text-[#245FD4]">Better signatures.</span>
               </h1>
-
-              <p className="mx-auto mt-6 max-w-2xl font-body text-base leading-relaxed text-slate-600 sm:text-lg lg:text-[19px]">
-                Have a technical question, partnership proposal, or feedback regarding Sig Signature?
-                Contact our team directly through our dedicated channels or inquiry form.
+              <p className="mt-3 font-body text-sm text-[#5A5A5A] sm:text-base leading-relaxed">
+                Need a hand, have a product question, or want to share an idea? You&apos;re in the right place to connect.
               </p>
             </div>
-          </div>
-        </section>
 
-        {/* DIRECT CONTACT CHANNELS */}
-        <section className="pt-4 pb-12 sm:pt-4 sm:pb-16 lg:pt-6">
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-              {contactChannels.map((item) => (
-                <div
-                  key={item.department}
-                  className="flex flex-col justify-between rounded-3xl border border-[#245FD4]/30 bg-gradient-to-b from-white to-blue-50/30 p-7 shadow-xs sm:p-8"
-                >
-                  <div>
-                    <div
-                      style={{
-                        background: "linear-gradient(180deg, #245FD4 0%, #022977 100%)",
-                      }}
-                      className="flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-2xl shadow-xs"
-                    >
-                      {item.icon}
+            {/* Main 2-Column Responsive Layout */}
+            <div className="mt-10 lg:mt-12 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+              {/* Left Column: Info Cards & Quick Help */}
+              <div className="order-2 lg:order-1 lg:col-span-4 space-y-6">
+                {/* Card 1: How can we help? */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-xs">
+                  <h2 className="font-heading text-lg font-bold text-slate-900 tracking-tight">
+                    How can we help?
+                  </h2>
+                  <div className="mt-5 space-y-5">
+                    {/* Item 1 */}
+                    <div className="flex items-start gap-3.5">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
+                        <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-sm font-bold text-slate-900">
+                          A little technical help
+                        </h3>
+                        <p className="mt-0.5 font-body text-xs text-slate-500 leading-relaxed">
+                          Tell us about your editor, export, or email-client issue.
+                        </p>
+                      </div>
                     </div>
 
-                    <h2 className="font-heading mt-6 text-lg font-semibold text-slate-900 sm:text-xl">
-                      {item.department}
-                    </h2>
-                    <p className="mt-2.5 font-body text-sm leading-relaxed text-slate-600">
-                      {item.scope}
-                    </p>
-                  </div>
+                    {/* Item 2 */}
+                    <div className="flex items-start gap-3.5">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
+                        <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a3 3 0 00-4.5 0m4.5 0H9.75m4.5 0v.75A2.25 2.25 0 0112 21.75a2.25 2.25 0 01-2.25-2.25v-.75m7.5-6.75a6 6 0 10-12 0c0 2.22 1.206 4.156 3 5.197v.553a1.5 1.5 0 001.5 1.5h3a1.5 1.5 0 001.5-1.5v-.553c1.794-1.041 3-2.977 3-5.197z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-sm font-bold text-slate-900">
+                          An idea worth sharing
+                        </h3>
+                        <p className="mt-0.5 font-body text-xs text-slate-500 leading-relaxed">
+                          Suggest a template, improvement, or a new way to use signatures.
+                        </p>
+                      </div>
+                    </div>
 
-                  <div className="mt-6 pt-4 border-t border-blue-100">
-                    <a
-                      href={`mailto:${item.email}`}
-                      className="inline-flex items-center gap-2 font-body text-sm font-semibold text-[#1243A3] transition hover:text-[#245FD4]"
-                    >
-                      <span>{item.actionText}</span>
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2.5"
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </a>
+                    {/* Item 3 */}
+                    <div className="flex items-start gap-3.5">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
+                        <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-sm font-bold text-slate-900">
+                          Privacy &amp; data
+                        </h3>
+                        <p className="mt-0.5 font-body text-xs text-slate-500 leading-relaxed">
+                          Ask about your information or make an account data request.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* DIRECT INQUIRY FORM */}
-        <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div className="mx-auto max-w-3xl text-center">
-              <SectionBadge label="DIRECT INQUIRY" className="mb-4" />
-              <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[46px] lg:leading-[1.15]">
-                Send Us a Message
-              </h2>
-              <p className="mt-4 font-body text-base text-[#878787] sm:text-lg">
-                Fill in the details below and our team will get back to you within 1 to 2 business days.
-              </p>
-            </div>
+                {/* Card 2: The answer may be one click away. */}
+                <div className="rounded-3xl border border-blue-200/70 bg-[#EFF6FF] p-6 sm:p-7 shadow-xs">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-[#245FD4] shadow-2xs">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                    </svg>
+                  </div>
+                  <h3 className="font-heading mt-3.5 text-base font-bold text-slate-900 tracking-tight">
+                    The answer may be one click away.
+                  </h3>
+                  <p className="mt-1 font-body text-xs text-slate-600 leading-relaxed">
+                    Explore setup guides for Gmail and Outlook, export tips, and common questions.
+                  </p>
+                  <Link
+                    href="/help"
+                    className="mt-4 inline-flex items-center gap-1.5 font-heading text-xs font-semibold text-[#245FD4] hover:underline"
+                  >
+                    <span>Visit Help &amp; Support</span>
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </Link>
+                </div>
 
-            <div className="mx-auto mt-12 max-w-3xl">
-              <ContactForm />
+                {/* Security note */}
+                <div className="flex items-center gap-2 text-[11px] text-slate-400 font-body px-1">
+                  <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                  </svg>
+                  <span>Please don&apos;t send passwords, payment details, or sensitive personal information.</span>
+                </div>
+              </div>
+
+              {/* Right Column: Interactive Contact Form */}
+              <div className="order-1 lg:order-2 lg:col-span-8">
+                <ContactForm />
+              </div>
             </div>
           </div>
         </section>
