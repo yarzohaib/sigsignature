@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef, Suspense } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TemplateGalleryCard from "@/components/templates/TemplateGalleryCard";
@@ -17,6 +17,7 @@ import { generateTemplateHtml } from "@/lib/templates/renderTemplateHtml";
 import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
 import { TemplatesPageJsonLd, BreadcrumbJsonLd } from "@/components/seo/StructuredData";
 import type { SavedSignature } from "@/types/signature";
+import Select from "@/components/ui/Select";
 
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
 type CategoryTab = (typeof CATEGORIES)[number];
@@ -43,8 +44,6 @@ function TemplatesContent() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentSort, setCurrentSort] = useState<SortValue>("popular");
-  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const sortDropdownRef = useRef<HTMLDivElement>(null);
 
   // Active template being customized (null = gallery view)
   const [editingTemplate, setEditingTemplate] = useState<TemplateItem | null>(null);
@@ -163,24 +162,6 @@ function TemplatesContent() {
       isCancelled = true;
     };
   }, [editId, isNew, templateParam, router]);
-
-  // Click outside to dismiss sorting menu
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (sortDropdownRef.current && !sortDropdownRef.current.contains(e.target as Node)) {
-        setSortDropdownOpen(false);
-      }
-    }
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setSortDropdownOpen(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   // Filter templates by category and name, then sort
   const filteredTemplates = useMemo(() => {
@@ -369,58 +350,14 @@ function TemplatesContent() {
                 </div>
 
                 {/* Sort Dropdown */}
-                <div className="relative shrink-0" ref={sortDropdownRef}>
-                  <button
-                    type="button"
-                    onClick={() => setSortDropdownOpen((prev) => !prev)}
-                    className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                    aria-expanded={sortDropdownOpen}
-                    aria-haspopup="true"
-                    aria-label="Sort templates"
-                  >
-                    <span>{SORT_OPTIONS.find((s) => s.value === currentSort)?.label || "Most Popular"}</span>
-                    <svg
-                      className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-                        sortDropdownOpen ? "rotate-180 text-[#245FD4]" : ""
-                      }`}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </button>
-
-                  {sortDropdownOpen && (
-                    <div className="absolute right-0 mt-1.5 w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl z-20 animate-in fade-in zoom-in-95">
-                      {SORT_OPTIONS.map((opt) => (
-                        <button
-                          key={opt.value}
-                          type="button"
-                          onClick={() => {
-                            setCurrentSort(opt.value);
-                            setSortDropdownOpen(false);
-                          }}
-                          className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs sm:text-sm transition cursor-pointer text-left ${
-                            currentSort === opt.value
-                              ? "bg-blue-50/80 font-bold text-[#245FD4]"
-                              : "text-slate-700 hover:bg-slate-100 font-medium"
-                          }`}
-                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                        >
-                          <span>{opt.label}</span>
-                          {currentSort === opt.value && (
-                            <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <Select
+                  value={currentSort}
+                  onValueChange={(value) => setCurrentSort(value as SortValue)}
+                  options={SORT_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
+                  aria-label="Sort templates"
+                  className="shrink-0 text-xs font-semibold sm:text-sm"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                />
               </div>
             </div>
 

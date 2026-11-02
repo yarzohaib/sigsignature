@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import Select from "@/components/ui/Select";
 import {
   StudioSignatureData,
   FreeElement,
@@ -351,46 +352,50 @@ export default function EditDetailsModal({
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Font Size
                   </label>
-                  <select
+                  <Select
+                    aria-label="Font Size"
                     value={(selectedElement as FreeTextElement).size}
-                    onChange={(e) => {
+                    onValueChange={(value) => {
                       dispatch({
                         type: "UPDATE_ELEMENT",
                         payload: {
                           id: selectedElement.id,
-                          updates: { size: e.target.value as "sm" | "md" | "lg" },
+                          updates: { size: value as "sm" | "md" | "lg" },
                         },
                       });
                     }}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
-                  >
-                    <option value="sm">Small (12px)</option>
-                    <option value="md">Medium (14px)</option>
-                    <option value="lg">Large (16px)</option>
-                  </select>
+                    options={[
+                      { value: "sm", label: "Small (12px)" },
+                      { value: "md", label: "Medium (14px)" },
+                      { value: "lg", label: "Large (16px)" },
+                    ]}
+                    className="w-full text-xs"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Text Alignment
                   </label>
-                  <select
+                  <Select
+                    aria-label="Text Alignment"
                     value={(selectedElement as FreeTextElement).align || "left"}
-                    onChange={(e) => {
+                    onValueChange={(value) => {
                       dispatch({
                         type: "UPDATE_ELEMENT",
                         payload: {
                           id: selectedElement.id,
-                          updates: { align: e.target.value as "left" | "center" | "right" },
+                          updates: { align: value as "left" | "center" | "right" },
                         },
                       });
                     }}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
-                  >
-                    <option value="left">Left</option>
-                    <option value="center">Center</option>
-                    <option value="right">Right</option>
-                  </select>
+                    options={[
+                      { value: "left", label: "Left" },
+                      { value: "center", label: "Center" },
+                      { value: "right", label: "Right" },
+                    ]}
+                    className="w-full text-xs"
+                  />
                 </div>
               </div>
 
@@ -399,25 +404,21 @@ export default function EditDetailsModal({
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Font Family
                   </label>
-                  <select
+                  <Select
+                    aria-label="Font Family"
                     value={(selectedElement as FreeTextElement).fontFamily || state.fontFamily || "Inter"}
-                    onChange={(e) => {
+                    onValueChange={(fontFamily) => {
                       dispatch({
                         type: "UPDATE_ELEMENT",
                         payload: {
                           id: selectedElement.id,
-                          updates: { fontFamily: e.target.value },
+                          updates: { fontFamily },
                         },
                       });
                     }}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
-                  >
-                    {ALLOWED_STUDIO_FONTS.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
+                    options={ALLOWED_STUDIO_FONTS.map((font) => ({ value: font, label: font }))}
+                    className="w-full text-xs"
+                  />
                 </div>
 
                 <div>
@@ -544,25 +545,21 @@ export default function EditDetailsModal({
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Font Family
                   </label>
-                  <select
+                  <Select
+                    aria-label="CTA Font Family"
                     value={(selectedElement as FreeCtaElement).fontFamily || state.fontFamily || "Inter"}
-                    onChange={(e) => {
+                    onValueChange={(fontFamily) => {
                       dispatch({
                         type: "UPDATE_ELEMENT",
                         payload: {
                           id: selectedElement.id,
-                          updates: { fontFamily: e.target.value },
+                          updates: { fontFamily },
                         },
                       });
                     }}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-[#245FD4] focus:outline-none"
-                  >
-                    {ALLOWED_STUDIO_FONTS.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
+                    options={ALLOWED_STUDIO_FONTS.map((font) => ({ value: font, label: font }))}
+                    className="w-full text-xs"
+                  />
                 </div>
 
                 <div>

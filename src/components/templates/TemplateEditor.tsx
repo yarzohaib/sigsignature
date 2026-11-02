@@ -2,6 +2,7 @@
 
 import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Select from "@/components/ui/Select";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
@@ -666,17 +667,12 @@ export default function TemplateEditor({
         {/* Font Picker */}
         <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3.5">
           <span className="text-[12px] font-medium text-[#64748B]">Font</span>
-          <select
+          <Select
             value={mapToValidTemplateFont(formData.fontFamily)}
-            onChange={(e) => handleInputChange("fontFamily", mapToValidTemplateFont(e.target.value))}
-            className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
-          >
-            {VALID_TEMPLATE_FONTS.map((fontName) => (
-              <option key={fontName} value={fontName}>
-                {fontName}
-              </option>
-            ))}
-          </select>
+            onValueChange={(fontName) => handleInputChange("fontFamily", mapToValidTemplateFont(fontName))}
+            options={VALID_TEMPLATE_FONTS.map((fontName) => ({ value: fontName, label: fontName }))}
+            className="h-9 rounded-lg bg-[#F8FAFC] px-2.5 text-xs font-semibold"
+          />
         </div>
 
         {/* Colors Swatches */}
@@ -702,16 +698,17 @@ export default function TemplateEditor({
         {/* Social Icons Style */}
         <div className="flex items-center gap-2">
           <span className="text-[12px] font-medium text-[#64748B]">Social Icons</span>
-          <select
+          <Select
             value={formData.socialIconsStyle}
-            onChange={(e) => handleInputChange("socialIconsStyle", e.target.value)}
-            className="rounded-lg border border-slate-200 bg-[#F8FAFC] px-2.5 py-1 text-xs font-semibold text-[#1E293B] focus:border-[#245FD4] focus:outline-none cursor-pointer"
+            onValueChange={(value) => handleInputChange("socialIconsStyle", value)}
+            options={[
+              { value: "filled", label: "Filled (Solid shape)" },
+              { value: "outline", label: "Outline (Bordered)" },
+              { value: "circle", label: "Circle (Round disc)" },
+            ]}
+            className="h-9 rounded-lg bg-[#F8FAFC] px-2.5 text-xs font-semibold"
             title="Filled: solid icon badge | Outline: bordered icon | Circle: round disc"
-          >
-            <option value="filled">Filled (Solid shape)</option>
-            <option value="outline">Outline (Bordered)</option>
-            <option value="circle">Circle (Round disc)</option>
-          </select>
+          />
         </div>
       </div>
 

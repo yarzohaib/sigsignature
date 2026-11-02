@@ -11,6 +11,7 @@ import {
   RefObject,
 } from "react";
 import { createPortal } from "react-dom";
+import Select from "@/components/ui/Select";
 import type { StudioShape } from "@/types/studio";
 import { ALLOWED_STUDIO_FONTS } from "@/lib/studio/types";
 import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
@@ -398,45 +399,20 @@ export default function FloatingToolbar({
                   B
                 </button>
 
-                <div className="relative">
-                  <button
-                    type="button"
-                    aria-label="Change text size (entire text box)"
-                    title="Change text size (applies to entire box)"
-                    onClick={() => setOpenMenu((prev) => (prev === "size" ? null : "size"))}
-                    className="flex h-7 px-2 items-center gap-1 rounded text-[11px] font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400 uppercase"
-                  >
-                    <span>{size}</span>
-                    <svg className="h-3 w-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </button>
-
-                  {openMenu === "size" && (
-                    <div className="absolute top-full mt-2 left-0 z-40 flex flex-col min-w-[90px] rounded-lg bg-[#0F172A] p-1 shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100">
-                      {(["sm", "md", "lg"] as const).map((s) => (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => {
-                            onSizeChange?.(s);
-                            setOpenMenu(null);
-                          }}
-                          className={`flex items-center justify-between rounded px-2.5 py-1.5 text-xs text-left transition ${
-                            size === s
-                              ? "bg-[#245FD4] text-white font-bold"
-                              : "text-slate-200 hover:bg-slate-800 hover:text-white"
-                          }`}
-                        >
-                          <span className="uppercase">{s}</span>
-                          <span className="text-[10px] text-slate-400">
-                            {s === "sm" ? "12px" : s === "md" ? "14px" : "16px"}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <Select
+                  value={size}
+                  onValueChange={(value) => onSizeChange?.(value as "sm" | "md" | "lg")}
+                  options={[
+                    { value: "sm", label: "Small (12px)" },
+                    { value: "md", label: "Medium (14px)" },
+                    { value: "lg", label: "Large (16px)" },
+                  ]}
+                  size="compact"
+                  appearance="dark"
+                  aria-label="Change text size (applies to entire box)"
+                  title="Change text size (applies to entire box)"
+                  className="w-[76px] uppercase"
+                />
 
                 {/* Split lines button if multiline */}
                 {hasMultipleLines && onSplitLines && (
@@ -560,50 +536,16 @@ export default function FloatingToolbar({
             {/* ELEMENT FONT (for text and cta) */}
             {(elementType === "text" || elementType === "cta") && onFontChange && (
               <>
-                <div className="relative">
-                  <button
-                    type="button"
-                    aria-label="Change font family (selected element)"
-                    title={`Font: ${fontFamily || "Default"} (selected element)`}
-                    onClick={() => setOpenMenu((prev) => (prev === "font" ? null : "font"))}
-                    className="flex h-7 px-2 items-center gap-1 rounded text-[11px] font-semibold text-slate-200 hover:text-white hover:bg-slate-700/60 transition focus:outline-none focus:ring-1 focus:ring-blue-400"
-                  >
-                    <span className="truncate max-w-[70px]">{fontFamily || "Font"}</span>
-                    <svg className="h-3 w-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </button>
-
-                  {openMenu === "font" && (
-                    <div className="absolute top-full mt-2 left-0 z-50 flex flex-col min-w-[120px] rounded-lg bg-[#0F172A] p-1 shadow-2xl border border-slate-700 animate-in fade-in zoom-in-95 duration-100">
-                      <div className="px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800 mb-1">
-                        Element Font
-                      </div>
-                      {ALLOWED_STUDIO_FONTS.map((f) => (
-                        <button
-                          key={f}
-                          type="button"
-                          onClick={() => {
-                            onFontChange(f);
-                            setOpenMenu(null);
-                          }}
-                          className={`flex items-center justify-between rounded px-2.5 py-1.5 text-xs text-left transition ${
-                            fontFamily === f
-                              ? "bg-[#245FD4] text-white font-bold"
-                              : "text-slate-200 hover:bg-slate-800 hover:text-white"
-                          }`}
-                        >
-                          <span>{f}</span>
-                          {fontFamily === f && (
-                            <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <Select
+                  value={fontFamily || "Inter"}
+                  onValueChange={onFontChange}
+                  options={ALLOWED_STUDIO_FONTS.map((font) => ({ value: font, label: font }))}
+                  size="compact"
+                  appearance="dark"
+                  aria-label="Change font family for selected element"
+                  title={`Font: ${fontFamily || "Default"} (selected element)`}
+                  className="w-[110px] text-[11px]"
+                />
 
                 <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
               </>

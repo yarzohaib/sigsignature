@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { getTeam } from "@/app/lib/api";
-import { syncLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
+import { getLifetimeSignatureCount, syncLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import { getStoredUser } from "@/app/lib/auth";
 
 const CACHE_SIG_KEY = "sig_cached_signatures_count";
@@ -19,7 +19,7 @@ export default function QuickOverview() {
         const cached = localStorage.getItem(CACHE_SIG_KEY);
         if (cached !== null) {
           const parsed = parseInt(cached, 10);
-          if (!isNaN(parsed)) return parsed;
+          if (!isNaN(parsed)) return Math.min(3, Math.max(0, parsed));
         }
       } catch {
         // ignore localStorage access error
@@ -49,18 +49,20 @@ export default function QuickOverview() {
 
   useEffect(() => {
     let isMounted = true;
+    let requestVersion = 0;
 
     async function fetchOverviewStats() {
+      const currentRequest = ++requestVersion;
       // 1. Total Signatures Count
       try {
         const repo = getSignatureRepository();
         const list = await repo.list();
-        if (isMounted) {
+        if (isMounted && currentRequest === requestVersion) {
           const user = getStoredUser();
           const effectiveCount = syncLifetimeSignatureCount(list.length, user?.id);
-          setTotalSignatures(effectiveCount);
+          setTotalSignatures(Math.min(3, effectiveCount));
           try {
-            localStorage.setItem(CACHE_SIG_KEY, effectiveCount.toString());
+            localStorage.setItem(CACHE_SIG_KEY, String(Math.min(3, effectiveCount)));
           } catch {
             // ignore localStorage quota/disabled errors
           }
@@ -70,14 +72,14 @@ export default function QuickOverview() {
       }
 
       // 2. Personal Templates
-      if (isMounted) {
+      if (isMounted && currentRequest === requestVersion) {
         setPersonalTemplatesCount(AVAILABLE_TEMPLATES.length);
       }
 
       // 3. Teams Count
       try {
         const teamData = await getTeam();
-        if (isMounted) {
+        if (isMounted && currentRequest === requestVersion) {
           const count = teamData && teamData.members ? teamData.members.length : 0;
           setTeamsCount(count);
           try {
@@ -87,7 +89,7 @@ export default function QuickOverview() {
           }
         }
       } catch {
-        if (isMounted) {
+        if (isMounted && currentRequest === requestVersion) {
           setTeamsCount(0);
         }
       }
@@ -96,6 +98,9 @@ export default function QuickOverview() {
     fetchOverviewStats();
 
     const handleUpdate = () => {
+      const user = getStoredUser();
+      const lifetimeCount = getLifetimeSignatureCount(user?.id);
+      setTotalSignatures((current) => Math.min(3, Math.max(current, lifetimeCount)));
       fetchOverviewStats();
     };
 

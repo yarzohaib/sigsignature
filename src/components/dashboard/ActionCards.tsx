@@ -1,9 +1,36 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
+import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
+import { getSignatureRepository } from "@/lib/signatures/repository";
 
 export default function ActionCards() {
+  const [isLimitReached, setIsLimitReached] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+
+  useEffect(() => {
+    let isCancelled = false;
+    async function checkQuota() {
+      try {
+        const repo = getSignatureRepository();
+        const list = await repo.list();
+        if (!isCancelled) {
+          setIsLimitReached(isSignatureLimitReached(list.length));
+        }
+      } catch {
+        if (!isCancelled) {
+          setIsLimitReached(isSignatureLimitReached(0));
+        }
+      }
+    }
+    checkQuota();
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
   return (
     <section className="grid w-full grid-cols-1 gap-3.5 sm:gap-4 lg:grid-cols-2 lg:gap-4 xl:gap-5 2xl:gap-6 shrink-0" aria-label="Signature Creation Options">
       {/* Card 1: Start From a Template */}
@@ -61,17 +88,32 @@ export default function ActionCards() {
 
           {/* Browse Templates Button with landing page gradient */}
           <div className="mt-3.5 sm:mt-4 lg:mt-2.5 xl:mt-3 2xl:mt-5 shrink-0">
-            <Link
-              href="/templates"
-              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
-              style={{
-                fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-                letterSpacing: "0%",
-              }}
-            >
-              <span className="whitespace-nowrap">Browse Templates</span>
-              <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
-            </Link>
+            {isLimitReached ? (
+              <button
+                type="button"
+                onClick={() => setIsPaywallOpen(true)}
+                className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-semibold text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight cursor-pointer"
+                style={{
+                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                  letterSpacing: "0%",
+                }}
+              >
+                <span className="whitespace-nowrap">Upgrade to Get More</span>
+                <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
+              </button>
+            ) : (
+              <Link
+                href="/templates"
+                className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
+                style={{
+                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                  letterSpacing: "0%",
+                }}
+              >
+                <span className="whitespace-nowrap">Browse Templates</span>
+                <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -130,20 +172,40 @@ export default function ActionCards() {
 
           {/* Start From Scratch Button with text color #022977 */}
           <div className="mt-3.5 sm:mt-4 lg:mt-2.5 xl:mt-3 2xl:mt-5 shrink-0">
-            <Link
-              href="/design-studio"
-              className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
-              style={{
-                fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-                letterSpacing: "0%",
-              }}
-            >
-              <span className="whitespace-nowrap">Start From Scratch</span>
-              <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
-            </Link>
+            {isLimitReached ? (
+              <button
+                type="button"
+                onClick={() => setIsPaywallOpen(true)}
+                className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-semibold text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight cursor-pointer"
+                style={{
+                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                  letterSpacing: "0%",
+                }}
+              >
+                <span className="whitespace-nowrap">Upgrade to Get More</span>
+                <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
+              </button>
+            ) : (
+              <Link
+                href="/design-studio"
+                className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#022977] bg-white px-5 text-center text-[#022977] shadow-xs transition hover:bg-blue-50/50 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
+                style={{
+                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                  letterSpacing: "0%",
+                }}
+              >
+                <span className="whitespace-nowrap">Start From Scratch</span>
+                <span aria-hidden="true" className="shrink-0 whitespace-nowrap transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
+
+      <LimitOverwriteModal
+        isOpen={isPaywallOpen}
+        onClose={() => setIsPaywallOpen(false)}
+      />
     </section>
   );
 }

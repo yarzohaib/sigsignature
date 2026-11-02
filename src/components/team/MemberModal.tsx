@@ -9,6 +9,7 @@ import { compressImageToBlob, isAllowedJpgOrPng } from "@/lib/imageUtils";
 import { uploadSignatureImage } from "@/lib/uploads";
 import { renderTeamMemberHtml } from "@/lib/team/render";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
+import Select from "@/components/ui/Select";
 import {
   isTeamMemberLimitReached,
   recordTeamMemberCreated,
@@ -579,32 +580,24 @@ export default function MemberModal({
                       <div key={index} className="space-y-1">
                         <div className="flex items-center gap-2">
                           {/* Platform select */}
-                          <select
+                          <Select
                             value={item.platform}
-                            onChange={(e) =>
-                              handlePlatformChange(
-                                index,
-                                e.target.value as TeamMemberSocialPlatform
-                              )
+                            onValueChange={(value) =>
+                              handlePlatformChange(index, value as TeamMemberSocialPlatform)
                             }
-                            className="w-[130px] sm:w-[145px] shrink-0 rounded-xl border border-[#E2E8F0] bg-white px-2.5 py-2 text-xs font-medium text-[#0B1A3D] transition focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/20 cursor-pointer"
-                          >
-                            {TEAM_SOCIAL_PLATFORMS.map((plat) => {
+                            aria-label={`Social platform ${index + 1}`}
+                            className="w-[130px] shrink-0 bg-white px-2.5 text-xs font-medium sm:w-[145px]"
+                            options={TEAM_SOCIAL_PLATFORMS.map((plat) => {
                               const isSelectedElsewhere = socials.some(
                                 (s, i) => i !== index && s.platform === plat
                               );
-                              return (
-                                <option
-                                  key={plat}
-                                  value={plat}
-                                  disabled={isSelectedElsewhere}
-                                >
-                                  {SOCIAL_PLATFORM_LABELS[plat]}
-                                  {isSelectedElsewhere ? " (Used)" : ""}
-                                </option>
-                              );
+                              return {
+                                value: plat,
+                                label: `${SOCIAL_PLATFORM_LABELS[plat]}${isSelectedElsewhere ? " (Used)" : ""}`,
+                                disabled: isSelectedElsewhere,
+                              };
                             })}
-                          </select>
+                          />
 
                           {/* URL input */}
                           <input

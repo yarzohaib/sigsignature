@@ -213,13 +213,21 @@ export default function ProfileCard({
 
         {/* Email address (disabled with notice) */}
         <div>
-          <label
-            htmlFor="profile-email"
-            className="block text-[13px] font-semibold text-[#1E293B] mb-1.5"
-            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-          >
-            Email address
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label
+              htmlFor="profile-email"
+              className="block text-[13px] font-semibold text-[#1E293B]"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              Email address
+            </label>
+            <span
+              className="text-[11px] font-medium text-slate-400"
+              title="Primary account login email is locked for account security"
+            >
+              Locked (Primary Login)
+            </span>
+          </div>
           <input
             id="profile-email"
             type="email"
@@ -228,12 +236,15 @@ export default function ProfileCard({
             className="w-full rounded-xl border border-[#E2E8F0] bg-slate-50 px-3.5 py-2.5 text-sm text-slate-500 cursor-not-allowed select-none"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           />
-          {/* <p
-            className="mt-1 text-[11px] text-[#94A3B8]"
+          <p
+            className="mt-1.5 text-[11px] text-[#64748B] flex items-center gap-1.5"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
-            Email changes are not available yet.
-          </p> */}
+            <svg className="h-3 w-3 text-slate-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+            </svg>
+            Primary email address is locked for account security. Contact support to update your login email.
+          </p>
         </div>
 
         {/* Company name */}

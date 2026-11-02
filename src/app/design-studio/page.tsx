@@ -844,14 +844,7 @@ function DesignStudioContent() {
       const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
 
       const canvasWidth = state.canvas?.width || 600;
-      const img = new Image();
-      img.src = publicUrl;
-      await new Promise((resolve) => {
-        img.onload = resolve;
-        img.onerror = resolve;
-      });
-      const aspect = (img.naturalWidth || 600) / Math.max(1, img.naturalHeight || 100);
-      const h = Math.min(160, Math.max(40, Math.round(canvasWidth / aspect)));
+      const canvasHeight = state.canvas?.height || 200;
 
       const isReplacing = state.elements?.some(
         (item) => item.id === selectedId && item.type === "banner"
@@ -859,21 +852,22 @@ function DesignStudioContent() {
       if (isReplacing && selectedId) {
         dispatch({
           type: "UPDATE_ELEMENT",
-          payload: { id: selectedId, updates: { url: publicUrl } },
+          payload: {
+            id: selectedId,
+            updates: { url: publicUrl, x: 0, y: 0, w: canvasWidth, h: canvasHeight },
+          },
         });
         showToast("Banner updated!");
       } else {
-        const canvas = state.canvas || { width: 600, height: 200 };
-        const spot = findFreeSpot({ w: canvasWidth, h }, state.elements || [], canvas);
         const id = `ban_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         const newEl: FreeElement = {
           id,
           type: "banner",
           url: publicUrl,
-          x: spot.x,
-          y: spot.y,
+          x: 0,
+          y: 0,
           w: canvasWidth,
-          h,
+          h: canvasHeight,
         };
         dispatch({ type: "ADD_ELEMENT", payload: newEl });
         setSelectedId(id);

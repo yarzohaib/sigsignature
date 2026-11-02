@@ -107,6 +107,9 @@ export function getSiteMetadata(
     },
     verification: {
       google: "DUyyrpNeKYNjkUUggUmFhX3q03kIWGrqg-2qJHNPcCI",
+      other: {
+        "msvalidate.01": "68434D213B77FA63AE8FFAA76729DCEE",
+      },
     },
     other: {
       "google-adsense-account": "ca-pub-2946217028626519",

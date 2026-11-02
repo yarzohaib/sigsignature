@@ -70,7 +70,7 @@ export default function ProblemSection() {
                   </div>
 
                   {/* Title & Description */}
-                  <div className="flex-1">
+                  <div className="flex-1 sm:flex sm:flex-col sm:justify-center">
                     <h3 className="font-heading text-lg sm:text-xl 3xl:text-2xl font-semibold text-slate-900">
                       {problem.title}
                     </h3>

@@ -74,6 +74,6 @@ export const config = {
      * - favicon.ico, sitemap.xml, robots.txt
      * - public files with image extensions
      */
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|BingSiteAuth.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml)$).*)",
   ],
 };

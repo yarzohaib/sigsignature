@@ -124,6 +124,10 @@ function MySignaturesContent() {
   };
 
   const handleDuplicate = async (id: string) => {
+    if (isSignatureLimitReached(signatures.length)) {
+      setIsLimitModalOpen(true);
+      return;
+    }
     try {
       const repo = getSignatureRepository();
       const duplicated = await repo.duplicate(id);
@@ -248,6 +252,7 @@ function MySignaturesContent() {
         {/* Page Header */}
         <SignaturesHeader
           onCreateClick={handleCreateNew}
+          onUpgradeClick={() => setIsLimitModalOpen(true)}
           isLimitReached={isLimitReached}
         />
 
@@ -312,7 +317,8 @@ function MySignaturesContent() {
           isOpen={Boolean(previewingSignature)}
           onClose={() => setPreviewingSignature(null)}
           html={renderSavedSignatureHtml(previewingSignature, { preview: true })}
-          showCanvasTab={false}
+          data={previewingSignature.kind === "studio" ? previewingSignature.data : undefined}
+          showCanvasTab={previewingSignature.kind === "studio"}
         />
       )}
 

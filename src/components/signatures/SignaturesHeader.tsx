@@ -4,11 +4,13 @@ import Link from "next/link";
 
 interface SignaturesHeaderProps {
   onCreateClick?: () => void;
+  onUpgradeClick?: () => void;
   isLimitReached?: boolean;
 }
 
 export default function SignaturesHeader({
   onCreateClick,
+  onUpgradeClick,
   isLimitReached = false,
 }: SignaturesHeaderProps) {
   return (
@@ -28,15 +30,26 @@ export default function SignaturesHeader({
         </p>
       </div>
 
-      {/* Button: Upgrade to Pro if 3/3 signatures reached, otherwise Create New Signature */}
+      {/* Button: Upgrade to Get More if 3/3 signatures reached, otherwise Create New Signature */}
       {isLimitReached ? (
-        <Link
-          href="/pricing"
-          className="flex h-[46px] w-full sm:w-[275px] items-center justify-center rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-[15px] font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-98 shrink-0"
-          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-        >
-          <span>Upgrade to Pro</span>
-        </Link>
+        onUpgradeClick ? (
+          <button
+            type="button"
+            onClick={onUpgradeClick}
+            className="flex h-[46px] w-full sm:w-[275px] items-center justify-center rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-[15px] font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-98 shrink-0 cursor-pointer"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <span>Upgrade to Get More</span>
+          </button>
+        ) : (
+          <Link
+            href="/pricing"
+            className="flex h-[46px] w-full sm:w-[275px] items-center justify-center rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-[15px] font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-98 shrink-0"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <span>Upgrade to Get More</span>
+          </Link>
+        )
       ) : (
         <Link
           href="/templates"

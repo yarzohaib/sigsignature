@@ -1,6 +1,7 @@
 "use client";
 
 import type { SavedSignature } from "@/types/signature";
+import Select from "@/components/ui/Select";
 
 export const EMAIL_SAFE_FONTS = [
   "Arimo",
@@ -91,27 +92,17 @@ export default function SignatureDefaultsCard({
           >
             Default signature
           </label>
-          <div className="relative">
-            <select
-              id="default-template-select"
-              value={currentTemplateId}
-              onChange={(e) => onTemplateChange(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2.5 text-sm text-[#1E293B] focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-blue-100 transition cursor-pointer pr-10"
-              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-            >
-              <option value="photo-pop">Photo Pop (Default)</option>
-              {savedSignatures.map((signature) => (
-                <option key={signature.id} value={signature.id}>
-                  {signature.name}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
-          </div>
+          <Select
+            id="default-template-select"
+            value={currentTemplateId}
+            onValueChange={onTemplateChange}
+            options={[
+              { value: "photo-pop", label: "Photo Pop (Default)" },
+              ...savedSignatures.map((signature) => ({ value: signature.id, label: signature.name })),
+            ]}
+            className="w-full"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          />
         </div>
 
         {/* Default export format */}
@@ -123,23 +114,17 @@ export default function SignatureDefaultsCard({
           >
             Default export format
           </label>
-          <div className="relative">
-            <select
-              id="default-export-select"
-              value={defaultExportFormat}
-              onChange={(e) => onExportFormatChange(e.target.value as "html" | "plain")}
-              className="w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2.5 text-sm text-[#1E293B] focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-blue-100 transition cursor-pointer pr-10"
-              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-            >
-              <option value="html">HTML</option>
-              <option value="plain">Plain text</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
-          </div>
+          <Select
+            id="default-export-select"
+            value={defaultExportFormat}
+            onValueChange={(value) => onExportFormatChange(value as "html" | "plain")}
+            options={[
+              { value: "html", label: "HTML" },
+              { value: "plain", label: "Plain text" },
+            ]}
+            className="w-full"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          />
         </div>
 
         {/* Signature font */}
@@ -151,26 +136,14 @@ export default function SignatureDefaultsCard({
           >
             Signature font
           </label>
-          <div className="relative">
-            <select
-              id="signature-font-select"
-              value={signatureFont}
-              onChange={(e) => onFontChange(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-[#E2E8F0] bg-white px-3.5 py-2.5 text-sm text-[#1E293B] focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-blue-100 transition cursor-pointer pr-10"
-              style={{ fontFamily: signatureFont }}
-            >
-              {EMAIL_SAFE_FONTS.map((font) => (
-                <option key={font} value={font} style={{ fontFamily: font }}>
-                  {font}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
-          </div>
+          <Select
+            id="signature-font-select"
+            value={signatureFont}
+            onValueChange={onFontChange}
+            options={EMAIL_SAFE_FONTS.map((font) => ({ value: font, label: font }))}
+            className="w-full"
+            style={{ fontFamily: signatureFont }}
+          />
         </div>
 
         {/* Brand color */}

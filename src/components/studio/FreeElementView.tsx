@@ -499,7 +499,7 @@ export default function FreeElementView({
           ? "1.5px solid #245FD4"
           : "none",
         outlineOffset: "1px",
-        zIndex: isSelected ? 20 : 1,
+        zIndex: isSelected ? 20 : element.type === "banner" ? 0 : 1,
       }}
       className={`group select-none ${
         !isSelected && !showCollision ? "hover:outline hover:outline-1 hover:outline-blue-300" : ""

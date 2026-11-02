@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Select from "@/components/ui/Select";
 
 export default function ContactForm() {
   useEffect(() => {
@@ -120,23 +121,19 @@ export default function ContactForm() {
         <label htmlFor="inquiryType" className="block font-heading text-sm font-semibold text-slate-800">
           Inquiry Type
         </label>
-        <div className="relative mt-2">
-          <select
+        <div className="mt-2">
+          <Select
             id="inquiryType"
             value={formData.inquiryType}
-            onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
-            className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 pr-10 font-body text-sm text-slate-900 transition-colors focus:border-[#245FD4] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#245FD4]/20"
-          >
-            <option value="Support">Support</option>
-            <option value="Sales & Enterprise">Sales &amp; Enterprise</option>
-            <option value="Product Feedback">Product Feedback</option>
-            <option value="General Inquiry">General Inquiry</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
+            onValueChange={(inquiryType) => setFormData({ ...formData, inquiryType })}
+            options={[
+              { value: "Support", label: "Support" },
+              { value: "Sales & Enterprise", label: "Sales & Enterprise" },
+              { value: "Product Feedback", label: "Product Feedback" },
+              { value: "General Inquiry", label: "General Inquiry" },
+            ]}
+            className="w-full bg-slate-50/50 py-3 font-body text-sm focus:bg-white"
+          />
         </div>
       </div>
 

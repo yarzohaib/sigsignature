@@ -663,7 +663,10 @@ export default function FreeCanvas({
           )}
 
           {/* Keep every element inside the canvas while leaving the canvas resize handle accessible. */}
-          <div className="absolute inset-0 overflow-hidden">
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{ borderRadius: cardRadius }}
+          >
             {elements.map((el) => {
               const isTarget = selectedId === el.id;
               const isDraggingThis = dragState?.elementId === el.id;
