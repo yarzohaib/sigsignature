@@ -1017,12 +1017,12 @@ export default function SaveSuccessModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-[760px] max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-9 shadow-2xl border border-slate-100 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-[720px] max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-7 md:p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
         {/* Close 'X' Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
           aria-label="Close modal"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1032,21 +1032,23 @@ export default function SaveSuccessModal({
         </button>
 
         {/* Heading & Subtitle */}
-        <h2
-          className="text-2xl sm:text-[28px] font-bold text-[#1E293B] leading-tight"
-          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-        >
-          Your Signature Is Ready
-        </h2>
-        <p
-          className="mt-1.5 text-xs sm:text-[14px] text-[#64748B] max-w-md"
-          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-        >
-          Copy it into your email app, or download the HTML file to keep.
-        </p>
+        <div className="shrink-0 flex flex-col items-center">
+          <h2
+            className="text-2xl sm:text-[28px] font-bold text-[#1E293B] leading-tight"
+            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+          >
+            Your Signature Is Ready
+          </h2>
+          <p
+            className="mt-1.5 text-xs sm:text-[14px] text-[#64748B] max-w-md"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            Copy it into your email app, or download the HTML file to keep.
+          </p>
+        </div>
 
         {/* Central Graphic Container with Dashed Trajectory, Envelope Icon, and Center Preview */}
-        <div className="relative my-4 h-[270px] w-full max-w-[640px] sm:my-6">
+        <div className="relative my-2 sm:my-3 h-[240px] sm:h-[250px] w-full max-w-[600px] shrink-0">
           {/* Background SVG Dashed Curve Line */}
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1068,9 +1070,9 @@ export default function SaveSuccessModal({
           </svg>
 
           {/* Left End: Envelope Icon Badge */}
-          <div className="absolute left-[8.125%] top-[69.63%] z-20 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#BFDBFE] bg-[#EBF3FF] shadow-xs sm:h-12 sm:w-12">
+          <div className="absolute left-[8.125%] top-[69.63%] z-20 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#BFDBFE] bg-[#EBF3FF] shadow-xs sm:h-11 sm:w-11">
             <svg
-              className="w-5 h-5 text-[#245FD4]"
+              className="w-4 h-4 text-[#245FD4] sm:w-5 sm:h-5"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -1086,7 +1088,7 @@ export default function SaveSuccessModal({
           {/* Right End: Paper Airplane / Arrow Head */}
           <div className="absolute left-[93.75%] top-[11.85%] z-20 -translate-x-1/2 -translate-y-1/2">
             <svg
-              className="h-7 w-7 rotate-[-32deg] text-[#245FD4] drop-shadow-xs sm:h-8 sm:w-8"
+              className="h-6 w-6 rotate-[-32deg] text-[#245FD4] drop-shadow-xs sm:h-7 sm:w-7"
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -1097,11 +1099,11 @@ export default function SaveSuccessModal({
           {/* Centered Blue Envelope & Signature Card Preview */}
           <div className="absolute inset-x-0 top-0 z-10 flex justify-center">
             {/* Signature card sits behind the envelope pocket, with its lower edge tucked inside. */}
-            <div className="relative z-10 w-[315px] max-w-[88vw] rounded-xl border border-slate-200 bg-white p-3 pb-12 text-left shadow-lg sm:w-[380px] sm:rounded-2xl sm:p-4 sm:pb-14">
+            <div className="relative z-10 w-[290px] sm:w-[340px] max-w-[85vw] rounded-xl border border-slate-200 bg-white p-2.5 pb-9 sm:p-3 sm:pb-11 text-left shadow-md">
               {/* Green Checkmark Circle Badge (Top-Right) */}
-              <div className="absolute -top-3.5 -right-3.5 z-30 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#22C55E] text-white shadow-md sm:h-10 sm:w-10">
+              <div className="absolute -top-3 -right-3 z-30 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#22C55E] text-white shadow-md sm:h-9 sm:w-9">
                 <svg
-                  className="h-5 w-5 sm:h-6 sm:w-6"
+                  className="h-4 w-4 sm:h-5 sm:w-5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1118,7 +1120,7 @@ export default function SaveSuccessModal({
             </div>
 
             {/* Front envelope pocket overlays more of the card so it appears tucked inside. */}
-            <div className="pointer-events-none absolute bottom-0 left-1/2 z-20 w-[min(420px,94vw)] -translate-x-1/2">
+            <div className="pointer-events-none absolute bottom-0 left-1/2 z-20 w-[min(370px,92vw)] sm:w-[390px] -translate-x-1/2">
               <svg
                 viewBox="0 0 420 125"
                 className="w-full h-auto drop-shadow-md"
@@ -1153,7 +1155,7 @@ export default function SaveSuccessModal({
         </div>
 
         {/* "What's Next?" Section Divider */}
-        <div className="flex items-center justify-center gap-4 my-4 sm:my-5 w-full max-w-[560px]">
+        <div className="flex items-center justify-center gap-4 my-2.5 sm:my-3.5 w-full max-w-[540px] shrink-0">
           <div className="h-px flex-1 bg-slate-200" />
           <span
             className="text-[13px] sm:text-[14px] font-bold text-[#1E293B]"
@@ -1165,7 +1167,7 @@ export default function SaveSuccessModal({
         </div>
 
         {/* Bottom Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 w-full max-w-[580px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 w-full max-w-[560px] relative z-30 shrink-0">
           {/* Button 1: Send Test Email (Primary Highlighted CTA) */}
           <button
             type="button"
@@ -1278,7 +1280,7 @@ export default function SaveSuccessModal({
         </div>
 
         {/* Webmail Quick Links Helper */}
-        <div className="mt-3.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[12px] text-slate-500 font-body">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[12px] text-slate-500 font-body shrink-0">
           <span>Using webmail?</span>
           <button
             type="button"

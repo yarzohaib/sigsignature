@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import PricingSkeleton from "@/components/skeletons/PricingSkeleton";
 import { getStoredUser, getStoredToken } from "@/app/lib/auth";
@@ -28,21 +29,33 @@ function CheckCircleIcon() {
 }
 
 function PricingContent() {
+  const router = useRouter();
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
 
   useEffect(() => {
-    const user = getStoredUser();
-    const token = getStoredToken();
-    if (user || token) {
-      setTimeout(() => {
-        setIsFreePlanUser(true);
-      }, 0);
+    function checkAuth() {
+      const user = getStoredUser();
+      const token = getStoredToken();
+      setIsFreePlanUser(Boolean(user || token));
     }
+    checkAuth();
+    window.addEventListener("sig_user_update", checkAuth);
+    window.addEventListener("storage", checkAuth);
+    return () => {
+      window.removeEventListener("sig_user_update", checkAuth);
+      window.removeEventListener("storage", checkAuth);
+    };
   }, []);
 
   function handleGoPremium() {
+    const user = getStoredUser();
+    const token = getStoredToken();
+    if (!user && !token) {
+      router.push("/signup?redirect=/pricing&plan=pro");
+      return;
+    }
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
     setTimeout(() => {
       setPremiumToast(null);
@@ -50,7 +63,7 @@ function PricingContent() {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col justify-start overflow-y-auto bg-[#F8FAFC] px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-5 xl:px-10 2xl:px-12">
+    <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC] px-4 pt-3 pb-8 sm:px-6 sm:pt-4 sm:pb-10 lg:px-8 lg:pt-4 lg:pb-12 xl:px-10 2xl:px-12">
       {/* Toast Notification */}
       {premiumToast && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-200">
@@ -150,8 +163,8 @@ function PricingContent() {
                       </Link>
                     ) : (
                       <Link
-                        href="/templates"
-                        className="w-full h-[46px] rounded-full bg-[#F1F5F9] text-[#101828] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center"
+                        href="/signup?redirect=/pricing"
+                        className="w-full h-[46px] rounded-full bg-[#F1F5F9] text-[#101828] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center transition-colors hover:bg-[#E2E8F0]"
                         style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                       >
                         Get Started
@@ -433,7 +446,7 @@ export default function PricingPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex w-full flex-1 flex-col justify-start overflow-y-auto bg-[#F8FAFC] px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-5 xl:px-10 2xl:px-12">
+        <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC] px-4 pt-3 pb-8 sm:px-6 sm:pt-4 sm:pb-10 lg:px-8 lg:pt-4 lg:pb-12 xl:px-10 2xl:px-12">
           <PricingSkeleton />
         </div>
       }

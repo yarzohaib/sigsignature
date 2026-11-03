@@ -49,13 +49,15 @@ export default function AdaptiveHelpShell({
     return <AppShell>{children}</AppShell>;
   }
 
-  // Unauthenticated Guests: Render clean public layout (Navbar + Content + Footer, NO sidebar)
+  // Unauthenticated Guests: Render clean public layout (Navbar + Content + Horizontal Divider + Footer, NO sidebar)
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] font-body text-slate-900">
       <Navbar />
-      <div className="flex-1 w-full pt-16 sm:pt-20 pb-16">
+      <div className="flex-1 w-full pt-16 md:pt-0">
         {children}
       </div>
+      {/* Full-width horizontal divider line above Footer */}
+      <div className="w-full border-t border-[#D7D7D7]" />
       <Footer />
     </div>
   );

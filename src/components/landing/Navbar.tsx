@@ -278,7 +278,7 @@ export default function Navbar() {
       const cardsEl = document.getElementById("pricing-cards") || document.getElementById("pricing");
       if (cardsEl) {
         cardsEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        history.pushState(null, "", "#pricing");
+        history.pushState(null, "", "pricing");
         return;
       }
     }
@@ -436,8 +436,7 @@ export default function Navbar() {
                   Use Cases
                 </Link>
                 <Link
-                  href="/#pricing"
-                  onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
+                  href="/pricing"
                   className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
                 >
                   Pricing
@@ -634,8 +633,7 @@ export default function Navbar() {
               Use Cases
             </Link>
             <Link
-              href="/#pricing"
-              onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
+              href="/pricing"
               className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
             >
               Pricing

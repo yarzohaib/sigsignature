@@ -16,8 +16,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/signatures") ||
     pathname.startsWith("/team-signatures") ||
-    pathname.startsWith("/settings") ||
-    pathname.startsWith("/pricing")
+    pathname.startsWith("/settings")
   ) {
     if (!hasSession) {
       const loginUrl = new URL("/login", request.url);
@@ -49,7 +48,6 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/signatures") ||
     pathname.startsWith("/team-signatures") ||
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/pricing") ||
     pathname.startsWith("/s/") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/auth/") ||

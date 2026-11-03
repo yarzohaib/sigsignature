@@ -27,7 +27,7 @@ import {
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import ImageCropModal from "@/components/common/ImageCropModal";
-import { buildPreviewDocument } from "@/lib/signatures/previewDocument";
+import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
 import {
   validateSocialUrl,
   SOCIAL_PLATFORM_EXAMPLES,
@@ -87,8 +87,12 @@ export default function TemplateEditor({
 }: TemplateEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const supportsProfilePhoto = template.id !== "executive-corporate";
+  const preferTableBounds = [
+    "corporate-elegant",
+    "executive-corporate",
+    "bold-block",
+  ].includes(template.id);
 
   // Current signature ID being edited (persisted after first save)
   const [currentSignatureId, setCurrentSignatureId] = useState<string | undefined>(editingSignatureId);
@@ -597,41 +601,6 @@ export default function TemplateEditor({
       { preview: true }
     );
   }, [formData, template.id]);
-
-  const previewSrcDoc = useMemo(
-    () => buildPreviewDocument(generatedHtml, { padding: 16 }),
-    [generatedHtml]
-  );
-
-  // Auto-size iframe height from content on load and whenever form data changes
-  const updateIframeHeight = useCallback(() => {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-    try {
-      const doc = iframe.contentDocument;
-      if (doc) {
-        const height = Math.max(
-          doc.body?.scrollHeight || 0,
-          doc.documentElement?.scrollHeight || 0
-        );
-        if (height > 0) {
-          iframe.style.height = `${height}px`;
-        }
-      }
-    } catch {
-      // Ignore cross-origin error if any
-    }
-  }, []);
-
-  useEffect(() => {
-    updateIframeHeight();
-    const t1 = setTimeout(updateIframeHeight, 50);
-    const t2 = setTimeout(updateIframeHeight, 200);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [generatedHtml, updateIframeHeight]);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 pb-12">
@@ -1255,21 +1224,13 @@ export default function TemplateEditor({
 
             {/* Email Body / Live Signature Canvas */}
             <div className="p-6 sm:p-7 min-h-[220px] flex items-center justify-center bg-white">
-              <div className="w-full rounded-xl border border-slate-100 bg-white shadow-xs overflow-hidden transition-all">
-                <iframe
-                  ref={iframeRef}
-                  sandbox="allow-same-origin"
-                  srcDoc={previewSrcDoc}
-                  onLoad={updateIframeHeight}
-                  title="Signature Preview"
-                  className="w-full border-0 block"
-                  style={{
-                    width: "100%",
-                    border: "none",
-                    minHeight: "140px",
-                    overflow: "hidden",
-                    backgroundColor: "#ffffff",
-                  }}
+              <div className="w-full rounded-xl border border-slate-100 bg-white shadow-xs overflow-hidden transition-all p-3 sm:p-5">
+                <SignaturePreviewFrame
+                  html={generatedHtml}
+                  aspectRatio={false}
+                  fitPadding={0.96}
+                  preferTableBounds={preferTableBounds}
+                  minHeight={140}
                 />
               </div>
             </div>

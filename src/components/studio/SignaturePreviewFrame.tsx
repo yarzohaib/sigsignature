@@ -181,15 +181,19 @@ export const SignaturePreviewFrame = forwardRef<
 
   // Monitor panel size changes with ResizeObserver
   useEffect(() => {
-    if (aspectRatio === false) return;
     const container = containerRef.current;
     if (!container) return;
 
     function updatePanel() {
       if (!container) return;
       const rect = container.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        setPanelSize({ width: rect.width, height: rect.height });
+      if (rect.width > 0) {
+        setPanelSize((prev) => {
+          if (prev.width === rect.width && prev.height === rect.height) {
+            return prev;
+          }
+          return { width: rect.width, height: rect.height };
+        });
       }
     }
 
@@ -197,7 +201,7 @@ export const SignaturePreviewFrame = forwardRef<
     const ro = new ResizeObserver(updatePanel);
     ro.observe(container);
     return () => ro.disconnect();
-  }, [aspectRatio]);
+  }, []);
 
   // Hook up load listeners for iframe, images, fonts and inner ResizeObserver
   const setupIframeListeners = useCallback(() => {
@@ -278,26 +282,38 @@ export const SignaturePreviewFrame = forwardRef<
     return { scale: s, left: l, top: t };
   }, [aspectRatio, panelSize, contentSize, fitPadding, allowUpscale]);
 
-  // Non-aspectRatio mode (e.g. PreviewSignatureModal)
+  // Non-aspectRatio mode (e.g. PreviewSignatureModal, TemplateEditor)
   if (aspectRatio === false) {
     const rawContentWidth = contentSize.width > 0 ? contentSize.width : 600;
-    const shouldScale =
-      typeof targetWidth === "number" &&
-      targetWidth > 0 &&
-      rawContentWidth > targetWidth;
-    const scale = shouldScale ? targetWidth / rawContentWidth : 1;
-    const scaledHeight = Math.ceil(unscaledHeight * scale);
+    const availableWidth =
+      typeof targetWidth === "number" && targetWidth > 0
+        ? targetWidth
+        : panelSize.width > 0
+        ? panelSize.width * fitPadding
+        : 0;
 
-    if (shouldScale) {
-      return (
+    const shouldScale = availableWidth > 0 && rawContentWidth > availableWidth;
+    const scale = shouldScale ? availableWidth / rawContentWidth : 1;
+    const scaledHeight = Math.ceil(unscaledHeight * scale);
+    const scaledWidth = Math.ceil(rawContentWidth * scale);
+
+    return (
+      <div
+        ref={containerRef}
+        className={`relative w-full select-none flex items-center justify-center ${className}`}
+        style={{
+          minHeight: `${minHeight}px`,
+        }}
+      >
         <div
           style={{
-            width: "100%",
+            width: `${scaledWidth}px`,
+            maxWidth: "100%",
             height: `${scaledHeight}px`,
             position: "relative",
             overflow: "hidden",
+            margin: "0 auto",
           }}
-          className={className}
         >
           <iframe
             ref={iframeRef}
@@ -316,23 +332,7 @@ export const SignaturePreviewFrame = forwardRef<
             title="Email Signature Preview"
           />
         </div>
-      );
-    }
-
-    return (
-      <iframe
-        ref={iframeRef}
-        sandbox="allow-same-origin"
-        srcDoc={srcDoc}
-        onLoad={setupIframeListeners}
-        className={`w-full border-0 transition-all ${className}`}
-        style={{
-          height: `${unscaledHeight}px`,
-          display: "block",
-          overflow: "hidden",
-        }}
-        title="Email Signature Preview"
-      />
+      </div>
     );
   }
 

@@ -30,6 +30,8 @@ async function run() {
   ]);
 
   const page = await context.newPage();
+  page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
+  page.on("pageerror", (err) => console.log("PAGE ERROR:", err));
 
   // Mock /api/v1/auth/me to return valid user across authenticated routes
   await page.route("**/api/v1/auth/me", (route) => {
@@ -63,6 +65,9 @@ async function run() {
     // ----------------------------------------------------
     console.log("Testing [z8tvbhx5a5] Cookie Consent Banner 'Reject All'...");
     await page.goto(`${baseUrl}/`);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await page.waitForTimeout(2000);
     const cookieBanner = page.locator('aside[aria-label="Cookie consent banner"]');
     await cookieBanner.waitFor({ state: "visible", timeout: 5000 });
 
@@ -122,7 +127,7 @@ async function run() {
     // ----------------------------------------------------
     console.log("Testing [z8tvbhwh0a] Privacy Policy email link underline decoration...");
     await page.goto(`${baseUrl}/privacy`);
-    const emailLink = page.locator('a[href="mailto:privacy@sigsignature.com"]');
+    const emailLink = page.locator('a[href="mailto:thenevon@sigsignature.com"]');
     await emailLink.waitFor({ state: "visible", timeout: 5000 });
 
     const styles = await emailLink.evaluate((el) => {
@@ -202,6 +207,63 @@ async function run() {
     await toastCard.waitFor({ state: "visible", timeout: 4000 });
     assert.ok(await toastCard.isVisible(), "Logout toast must be displayed on screen");
     console.log("  ✔ Logout toast notification verified!");
+
+    // ----------------------------------------------------
+    // Test 7: Sterling & Co. Template Preview Scaling & No Scrollbars (z8tvbhwzg9)
+    // ----------------------------------------------------
+    console.log("Testing [z8tvbhwzg9] Sterling & Co. Preview Frame scaling & overflow...");
+    await page.goto(`${baseUrl}/templates?template=executive-corporate`);
+    await page.waitForLoadState("domcontentloaded");
+
+    // Wait for the preview iframe to appear
+    const previewIframe = page.locator('iframe[title="Email Signature Preview"]');
+    await previewIframe.waitFor({ state: "visible", timeout: 8000 });
+
+    // Ensure the iframe has loaded content
+    const frame = page.frameLocator('iframe[title="Email Signature Preview"]');
+    const tableEl = frame.locator('table').first();
+    await tableEl.waitFor({ state: "visible", timeout: 5000 });
+
+    // Verify preview card container has NO horizontal scrollbar
+    const previewCard = page.locator('.sticky div.border-slate-100.bg-white.shadow-xs');
+    await previewCard.waitFor({ state: "visible", timeout: 3000 });
+
+    const scrollInfo = await previewCard.evaluate((el) => ({
+      scrollWidth: el.scrollWidth,
+      clientWidth: el.clientWidth,
+      scrollHeight: el.scrollHeight,
+      clientHeight: el.clientHeight,
+    }));
+
+    console.log(`  Preview card dimensions: clientWidth=${scrollInfo.clientWidth}px, scrollWidth=${scrollInfo.scrollWidth}px`);
+    assert.ok(
+      scrollInfo.scrollWidth <= scrollInfo.clientWidth + 1,
+      `Preview card has horizontal overflow! scrollWidth (${scrollInfo.scrollWidth}) > clientWidth (${scrollInfo.clientWidth})`
+    );
+
+    // Verify critical content is present and visible inside the iframe
+    const jobTitle = frame.locator('text="Managing Director & Partner"').first();
+    assert.ok(await jobTitle.isVisible(), "Job title 'Managing Director & Partner' must be visible in preview");
+
+    // Verify at laptop screen width (1024px)
+    console.log("  Checking responsive scaling at 1024px viewport...");
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.waitForTimeout(600);
+
+    const scrollInfo1024 = await previewCard.evaluate((el) => ({
+      scrollWidth: el.scrollWidth,
+      clientWidth: el.clientWidth,
+    }));
+    console.log(`  At 1024px: clientWidth=${scrollInfo1024.clientWidth}px, scrollWidth=${scrollInfo1024.scrollWidth}px`);
+    assert.ok(
+      scrollInfo1024.scrollWidth <= scrollInfo1024.clientWidth + 1,
+      `At 1024px, preview card has horizontal overflow! scrollWidth (${scrollInfo1024.scrollWidth}) > clientWidth (${scrollInfo1024.clientWidth})`
+    );
+
+    // Take screenshot of preview for artifact
+    await previewCard.screenshot({ path: "/Users/zohaib/.gemini/antigravity/brain/43efaccf-ce6f-41ad-ba5a-5201f13ceea4/sterling_preview_scaled.png" });
+    console.log("  ✔ Saved screenshot to sterling_preview_scaled.png");
+    console.log("  ✔ Sterling & Co. template preview scaling verified!");
 
     console.log("\n🎉 ALL PLAYWRIGHT E2E TESTS PASSED SUCCESSFULLY!");
   } finally {

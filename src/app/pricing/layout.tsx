@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AdaptivePricingShell from "@/components/pricing/AdaptivePricingShell";
 
 export const metadata: Metadata = {
   title: "Pricing & Plans | Sig Signature",
@@ -24,8 +25,15 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -34,5 +42,5 @@ export default function PricingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <AdaptivePricingShell>{children}</AdaptivePricingShell>;
 }

@@ -185,4 +185,50 @@ describe("QA Polish Subtasks Verification", () => {
       );
     });
   });
+
+  describe("z8tvbhwzg9: [Templates] Sterling & Co. template preview scaling & responsive fit", () => {
+    it("renders SignaturePreviewFrame with aspectRatio={false} and preferTableBounds in TemplateEditor", () => {
+      const editorPath = path.join(rootDir, "src/components/templates/TemplateEditor.tsx");
+      const content = fs.readFileSync(editorPath, "utf-8");
+
+      assert.ok(
+        content.includes("SignaturePreviewFrame"),
+        "TemplateEditor must use SignaturePreviewFrame for dynamic scaling"
+      );
+      assert.ok(
+        content.includes("aspectRatio={false}"),
+        "SignaturePreviewFrame in editor must use non-fixed aspectRatio to dynamically fit container"
+      );
+      assert.ok(
+        content.includes("preferTableBounds={preferTableBounds}"),
+        "SignaturePreviewFrame in editor must pass preferTableBounds for executive-corporate"
+      );
+      assert.ok(
+        content.includes('"executive-corporate"'),
+        "preferTableBounds must include executive-corporate"
+      );
+    });
+
+    it("SignaturePreviewFrame dynamically measures container width and scales content when aspectRatio is false", () => {
+      const framePath = path.join(rootDir, "src/components/studio/SignaturePreviewFrame.tsx");
+      const content = fs.readFileSync(framePath, "utf-8");
+
+      assert.ok(
+        content.includes("availableWidth ="),
+        "SignaturePreviewFrame should calculate availableWidth from panelSize and fitPadding"
+      );
+      assert.ok(
+        content.includes("shouldScale = availableWidth > 0 && rawContentWidth > availableWidth"),
+        "SignaturePreviewFrame should auto-scale down when rawContentWidth exceeds availableWidth"
+      );
+      assert.ok(
+        content.includes("transform: `scale(${scale})`"),
+        "SignaturePreviewFrame should apply standard transform scale"
+      );
+      assert.ok(
+        content.includes("overflow: \"hidden\""),
+        "Scaled wrapper must have overflow hidden to prevent horizontal scrollbars"
+      );
+    });
+  });
 });
