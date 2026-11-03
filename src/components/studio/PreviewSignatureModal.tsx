@@ -138,10 +138,20 @@ export default function PreviewSignatureModal({
             <button
               type="button"
               onClick={onClose}
-              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition hover:bg-slate-200/50 hover:text-slate-600 sm:static"
+              className="absolute right-3 top-3 flex h-9 w-9 shrink-0 items-center justify-center self-center rounded-lg text-slate-400 transition hover:bg-slate-200/50 hover:text-slate-600 sm:static"
               aria-label="Close preview"
             >
-              &times;
+              <svg
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <path d="m18 6-12 12M6 6l12 12" />
+              </svg>
             </button>
           </div>
         </div>
