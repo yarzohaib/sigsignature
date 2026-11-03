@@ -10,7 +10,7 @@ interface BlogCardVisualProps {
 export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisualProps) {
   if (coverImage) {
     return (
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-900">
+      <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-900">
         <Image
           src={coverImage}
           alt={title}
@@ -25,7 +25,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
   switch (type) {
     case "nevon-signature":
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#EEF2F6] p-5 sm:p-6 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#EEF2F6] p-5 sm:p-6 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
           {/* Signature Preview Card */}
           <div className="w-full max-w-[320px] rounded-xl border border-slate-200/90 bg-white p-4 shadow-sm">
             <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
 
     case "html-vs-image":
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#091C3E] p-4 sm:p-5 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#091C3E] p-4 sm:p-5 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
           <div className="grid grid-cols-2 gap-3 w-full max-w-[320px]">
             {/* HTML Tile */}
             <div className="flex flex-col items-center justify-center rounded-xl bg-[#0F2856] border border-blue-400/20 p-4 text-center shadow-inner">
@@ -103,7 +103,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
 
     case "envelope-at":
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#EBE7E0] flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#EBE7E0] flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
           {/* Diagonal White Envelope */}
           <div className="relative w-56 h-36 bg-[#FAFAF9] rounded-lg shadow-md -rotate-6 border border-slate-200/60 overflow-hidden flex items-center justify-center">
             {/* Envelope Flap Lines */}
@@ -130,7 +130,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
 
     case "calm-rollout":
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#ECE8E1] p-5 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#ECE8E1] p-5 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
           {/* Letter / Envelope Document */}
           <div className="relative w-56 h-32 bg-white rounded-lg shadow-md border-t-4 border-[#245FD4] p-3 -rotate-3 border-x border-b border-slate-200/80">
             <div className="h-2 w-16 bg-[#245FD4]/30 rounded-full" />
@@ -151,7 +151,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
 
     case "campaign-banner":
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#DCE8F9] p-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#DCE8F9] p-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-102">
           {/* Centered Navy Banner */}
           <div className="w-full max-w-[300px] rounded-xl bg-[#091D45] p-4 text-white shadow-md border border-blue-400/20">
             <span className="inline-block rounded-full bg-blue-500/20 px-2 py-0.5 font-body text-[9px] font-bold tracking-wider uppercase text-[#93C5FD]">
@@ -169,7 +169,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
 
     case "good-hierarchy":
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#091D45] p-5 flex flex-col items-center justify-center text-center transition-transform duration-300 group-hover:scale-102">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#091D45] p-5 flex flex-col items-center justify-center text-center transition-transform duration-300 group-hover:scale-102">
           <span className="font-heading text-4xl sm:text-5xl font-bold tracking-tight text-white select-none">
             Aa.
           </span>
@@ -185,7 +185,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
 
     default:
       return (
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#245FD4] to-[#022977] p-5 flex items-center justify-center text-white">
+        <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#245FD4] to-[#022977] p-5 flex items-center justify-center text-white">
           <span className="font-heading text-lg font-bold">SigSignature</span>
         </div>
       );

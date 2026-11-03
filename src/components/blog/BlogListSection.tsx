@@ -24,15 +24,15 @@ export default function BlogListSection() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <section id="journal" className="scroll-mt-24 pt-12 pb-20 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-28">
+    <section id="journal" className="scroll-mt-24 pt-4 pb-16 sm:pt-6 sm:pb-20 lg:pt-8 lg:pb-24">
       <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
         {/* Section Header Row matching Figma: Title + Search */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <h2
-            className="font-heading text-3xl sm:text-4xl lg:text-[42px] font-medium text-[#101B30] tracking-[-0.04em] leading-tight max-w-xl text-left"
+            className="font-heading text-3xl sm:text-4xl lg:text-[42px] font-medium text-[#101B30] tracking-[-0.04em] leading-tight text-left"
             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
           >
-            A little insight. A better sign-off.
+            A little insight. A better sign&#8209;off.
           </h2>
 
           {/* Search Pill Input matching Figma */}
@@ -98,10 +98,15 @@ export default function BlogListSection() {
             {filteredPosts.map((post: BlogPost) => (
               <article
                 key={post.slug}
-                className="group flex flex-col justify-between text-left"
+                className="group flex h-full flex-col justify-between text-left"
               >
                 <div>
-                  <Link href={`/blog/${post.slug}`} className="block overflow-hidden rounded-2xl">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    className="block overflow-hidden rounded-2xl"
+                  >
                     <BlogCardVisual
                       type={post.visualType}
                       coverImage={post.coverImage}
@@ -110,7 +115,7 @@ export default function BlogListSection() {
                   </Link>
 
                   <h3
-                    className="mt-5 font-heading text-xl sm:text-2xl font-medium text-[#101B30] tracking-[-0.03em] leading-[1.28] transition group-hover:text-[#245FD4]"
+                    className="mt-5 font-heading text-xl sm:text-2xl font-medium text-[#101B30] tracking-[-0.03em] leading-[1.28] transition group-hover:text-[#245FD4] line-clamp-2 min-h-[3rem] sm:min-h-[3.6rem]"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     <Link href={`/blog/${post.slug}`}>
@@ -119,7 +124,7 @@ export default function BlogListSection() {
                   </h3>
 
                   <p
-                    className="mt-2.5 font-body text-xs sm:text-sm text-[#687386] leading-relaxed"
+                    className="mt-2.5 font-body text-xs sm:text-sm text-[#687386] leading-relaxed line-clamp-3 min-h-[3.75rem]"
                     style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                   >
                     {post.excerpt}
@@ -133,7 +138,16 @@ export default function BlogListSection() {
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
                     <span>Read the story</span>
-                    <span aria-hidden="true">↗</span>
+                    <svg
+                      className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2.5"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                    </svg>
                   </Link>
                 </div>
               </article>
@@ -166,8 +180,8 @@ export default function BlogListSection() {
           </div>
         )}
 
-        {/* Integration Row matching Figma Image 4: "Your signature. At home in your inbox." */}
-        <div className="mt-20 sm:mt-24 pt-12 sm:pt-16 border-t border-slate-200/80 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 text-left">
+        {/* Integration Row matching Figma: "Your signature. At home in your inbox." */}
+        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-slate-200/80 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 text-left">
           <div>
             <h3
               className="font-heading text-2xl sm:text-3xl lg:text-[34px] font-medium text-[#101B30] tracking-[-0.03em] leading-[1.3]"
@@ -178,11 +192,11 @@ export default function BlogListSection() {
             </h3>
           </div>
 
-          {/* Integration Badges matching Figma */}
+          {/* Integration Badges matching Figma - uniform monochrome brand blue */}
           <div className="flex flex-wrap items-center gap-6 sm:gap-8">
             {/* Gmail */}
             <div className="flex items-center gap-2 text-slate-800 font-body text-xs sm:text-sm font-medium">
-              <svg className="h-4 w-4 text-[#EA4335]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <path d="m22 7-10 7L2 7" />
               </svg>
@@ -191,7 +205,7 @@ export default function BlogListSection() {
 
             {/* Outlook */}
             <div className="flex items-center gap-2 text-slate-800 font-body text-xs sm:text-sm font-medium">
-              <svg className="h-4 w-4 text-[#0078D4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <circle cx="12" cy="12" r="4" />
               </svg>

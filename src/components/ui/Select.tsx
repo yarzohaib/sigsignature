@@ -22,6 +22,7 @@ type SelectProps = {
   options: SelectOption[];
   onValueChange: (value: string) => void;
   id?: string;
+  name?: string;
   title?: string;
   disabled?: boolean;
   size?: "default" | "compact";
@@ -39,6 +40,7 @@ export default function Select({
   options,
   onValueChange,
   id,
+  name,
   title,
   disabled = false,
   size = "default",
@@ -93,14 +95,12 @@ export default function Select({
     if (!open) return;
     updatePosition();
     const handleResize = () => updatePosition();
-    const handleScroll = () => {
-      if (scrollFrameRef.current !== null) {
-        window.cancelAnimationFrame(scrollFrameRef.current);
+    const handleScroll = (event: Event) => {
+      const target = event.target as Node | null;
+      if (target && menuRef.current && menuRef.current.contains(target)) {
+        return;
       }
-      scrollFrameRef.current = window.requestAnimationFrame(() => {
-        scrollFrameRef.current = null;
-        updatePosition();
-      });
+      setOpen(false);
     };
     window.addEventListener("resize", handleResize);
     document.addEventListener("scroll", handleScroll, true);
@@ -184,6 +184,7 @@ export default function Select({
 
   return (
     <>
+      {name && <input type="hidden" name={name} value={value} />}
       <button
         ref={triggerRef}
         id={id}

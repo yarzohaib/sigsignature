@@ -61,7 +61,7 @@ export default function BlogPage() {
 
       <main className="flex-1">
         {/* 1. HERO SECTION matching Figma Screenshot 1 */}
-        <section className="pt-20 pb-12 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-18 text-center">
+        <section className="pt-16 pb-8 sm:pt-10 sm:pb-10 lg:pt-12 lg:pb-12 text-center">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-4xl text-center">
               {/* Heading: Good Emails. Great Endings. */}
@@ -85,7 +85,7 @@ export default function BlogPage() {
               <div className="mt-7 sm:mt-8 flex justify-center">
                 <a
                   href="#journal"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#245FD4] px-7 py-3 text-xs sm:text-sm font-semibold text-white shadow-sm transition hover:bg-[#1C4DB3] active:scale-98"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0B2568] hover:bg-[#071948] px-7 py-3 text-xs sm:text-sm font-semibold text-white shadow-sm transition active:scale-98"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   <span>Explore The Journal</span>

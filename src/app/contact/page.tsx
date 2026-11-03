@@ -78,16 +78,18 @@ export default function ContactPage() {
               {/* Left Column: Info Cards & Quick Help */}
               <div className="order-2 lg:order-1 lg:col-span-4 space-y-6">
                 {/* Card 1: How can we help? */}
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-xs">
+                <div className="rounded-3xl border border-slate-200/90 bg-[#F8FAFC] p-6 sm:p-7 shadow-xs">
                   <h2 className="font-heading text-lg font-bold text-slate-900 tracking-tight">
                     How can we help?
                   </h2>
                   <div className="mt-5 space-y-5">
                     {/* Item 1 */}
                     <div className="flex items-start gap-3.5">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-[#245FD4] shadow-xs">
                         <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+                          <circle cx="12" cy="12" r="9" />
+                          <circle cx="12" cy="12" r="4" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
                         </svg>
                       </div>
                       <div>
@@ -102,7 +104,7 @@ export default function ContactPage() {
 
                     {/* Item 2 */}
                     <div className="flex items-start gap-3.5">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-[#245FD4] shadow-xs">
                         <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 18h6m-5 4h4m1.09-8a6 6 0 1 0-6.18 0c.54.4.88 1.03.88 1.7V17h4.42v-1.3c0-.67.34-1.3.88-1.7Z" />
                         </svg>
@@ -119,7 +121,7 @@ export default function ContactPage() {
 
                     {/* Item 3 */}
                     <div className="flex items-start gap-3.5">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-[#245FD4] shadow-xs">
                         <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                         </svg>

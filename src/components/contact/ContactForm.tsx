@@ -28,6 +28,13 @@ const CLIENT_OPTIONS = [
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  message?: string;
+  terms?: string;
+}
+
 export default function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,6 +46,8 @@ export default function ContactForm() {
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [, setTouched] = useState<Record<string, boolean>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,19 +69,38 @@ export default function ContactForm() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const validate = () => {
+    const newErrors: FormErrors = {};
+    if (!name.trim()) {
+      newErrors.name = "Your name is required.";
+    }
+    if (!email.trim()) {
+      newErrors.email = "Email address is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+    if (!message.trim()) {
+      newErrors.message = "Your message is required.";
+    } else if (message.trim().length < 50) {
+      newErrors.message = `Message must be at least 50 characters (currently ${message.trim().length}).`;
+    }
+    if (!agreed) {
+      newErrors.terms = "You must agree to the privacy statement to proceed.";
+    }
+    return newErrors;
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setTouched({ name: true, email: true, message: true, terms: true });
+    const validationErrors = validate();
 
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      setErrorMessage("Please complete all required fields.");
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
-    if (!agreed) {
-      setErrorMessage("Please agree to the privacy statement to proceed.");
-      return;
-    }
-
+    setErrors({});
     setErrorMessage("");
     setStatus("submitting");
 
@@ -121,6 +149,7 @@ export default function ContactForm() {
 
   return (
     <form
+      noValidate
       onSubmit={handleSubmit}
       className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 lg:p-10 shadow-xs"
     >
@@ -139,36 +168,85 @@ export default function ContactForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {/* Your name */}
           <div>
-            <label htmlFor="contact-name" className="block font-heading text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-              Your name *
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="contact-name" className="block font-heading text-xs font-bold text-slate-800 uppercase tracking-wider">
+                Your name *
+              </label>
+              <span className="font-body text-[11px] text-slate-400">
+                {name.length}/16
+              </span>
+            </div>
             <input
               id="contact-name"
+              name="name"
               type="text"
-              required
-              maxLength={80}
+              maxLength={16}
               placeholder="John Doe"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/15"
+              onChange={(e) => {
+                setName(e.target.value.slice(0, 16));
+                if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+              }}
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, name: true }));
+                if (!name.trim()) {
+                  setErrors((prev) => ({ ...prev, name: "Your name is required." }));
+                }
+              }}
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? "contact-name-error" : undefined}
+              className={`w-full rounded-xl border bg-white px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 ${
+                errors.name
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                  : "border-slate-200 focus:border-[#245FD4] focus:ring-[#245FD4]/15"
+              }`}
             />
+            {errors.name && (
+              <p id="contact-name-error" className="mt-1.5 font-body text-xs text-red-600 font-medium">
+                {errors.name}
+              </p>
+            )}
           </div>
 
           {/* Email address */}
           <div>
-            <label htmlFor="contact-email" className="block font-heading text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
-              Email address *
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="contact-email" className="block font-heading text-xs font-bold text-slate-800 uppercase tracking-wider">
+                Email address *
+              </label>
+            </div>
             <input
               id="contact-email"
+              name="email"
               type="email"
-              required
               maxLength={120}
               placeholder="johndoe@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/15"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+              }}
+              onBlur={() => {
+                setTouched((prev) => ({ ...prev, email: true }));
+                if (!email.trim()) {
+                  setErrors((prev) => ({ ...prev, email: "Email address is required." }));
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+                  setErrors((prev) => ({ ...prev, email: "Please enter a valid email address." }));
+                }
+              }}
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? "contact-email-error" : undefined}
+              className={`w-full rounded-xl border bg-white px-4 py-3 font-body text-sm text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 ${
+                errors.email
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                  : "border-slate-200 focus:border-[#245FD4] focus:ring-[#245FD4]/15"
+              }`}
             />
+            {errors.email && (
+              <p id="contact-email-error" className="mt-1.5 font-body text-xs text-red-600 font-medium">
+                {errors.email}
+              </p>
+            )}
           </div>
         </div>
 
@@ -181,6 +259,7 @@ export default function ContactForm() {
             </label>
             <Select
               id="contact-about"
+              name="about"
               value={about}
               options={ABOUT_OPTIONS}
               onValueChange={setAbout}
@@ -195,6 +274,7 @@ export default function ContactForm() {
             </label>
             <Select
               id="contact-client"
+              name="emailClient"
               value={emailClient}
               options={CLIENT_OPTIONS}
               onValueChange={setEmailClient}
@@ -210,19 +290,44 @@ export default function ContactForm() {
               Your message *
             </label>
             <span className="font-body text-xs text-slate-400">
-              {message.length} / 2,000
+              {message.length.toLocaleString()} / 5,000
             </span>
           </div>
           <textarea
             id="contact-message"
+            name="message"
             rows={5}
-            required
-            maxLength={2000}
-            placeholder="Tell us a little about what you need help with..."
+            maxLength={5000}
+            placeholder="Tell us a little about what you need help with (min. 50 characters)..."
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full resize-y rounded-xl border border-slate-200 bg-white p-4 font-body text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/15"
+            onChange={(e) => {
+              setMessage(e.target.value.slice(0, 5000));
+              if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
+            }}
+            onBlur={() => {
+              setTouched((prev) => ({ ...prev, message: true }));
+              if (!message.trim()) {
+                setErrors((prev) => ({ ...prev, message: "Your message is required." }));
+              } else if (message.trim().length < 50) {
+                setErrors((prev) => ({
+                  ...prev,
+                  message: `Message must be at least 50 characters (currently ${message.trim().length}).`,
+                }));
+              }
+            }}
+            aria-invalid={!!errors.message}
+            aria-describedby={errors.message ? "contact-message-error" : undefined}
+            className={`w-full resize-y rounded-xl border bg-white p-4 font-body text-sm text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 ${
+              errors.message
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                : "border-slate-200 focus:border-[#245FD4] focus:ring-[#245FD4]/15"
+            }`}
           />
+          {errors.message && (
+            <p id="contact-message-error" className="mt-1.5 font-body text-xs text-red-600 font-medium">
+              {errors.message}
+            </p>
+          )}
         </div>
 
         {/* Row 4: File attachment */}
@@ -230,6 +335,7 @@ export default function ContactForm() {
           <input
             ref={fileInputRef}
             type="file"
+            name="attachment"
             accept=".png,.jpg,.jpeg,.pdf"
             onChange={handleFileChange}
             className="hidden"
@@ -296,14 +402,37 @@ export default function ContactForm() {
 
         {/* Row 5: Checkbox */}
         <div>
-          <label className="flex items-start gap-2.5 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              required
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#245FD4] focus:ring-[#245FD4] cursor-pointer"
-            />
+          <label htmlFor="contact-terms" className="flex items-start gap-3 cursor-pointer select-none">
+            <div className="relative flex items-center pt-0.5">
+              <input
+                id="contact-terms"
+                name="terms"
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => {
+                  setAgreed(e.target.checked);
+                  if (errors.terms) setErrors((prev) => ({ ...prev, terms: undefined }));
+                }}
+                aria-invalid={!!errors.terms}
+                aria-describedby={errors.terms ? "contact-terms-error" : undefined}
+                className="sr-only peer"
+              />
+              <div
+                className={`flex h-4.5 w-4.5 items-center justify-center rounded-md border transition-all duration-150 peer-focus-visible:ring-2 peer-focus-visible:ring-[#245FD4] peer-focus-visible:ring-offset-2 ${
+                  agreed
+                    ? "border-[#245FD4] bg-[#245FD4] text-white shadow-xs"
+                    : errors.terms
+                    ? "border-red-500 bg-white"
+                    : "border-slate-300 bg-white hover:border-slate-400"
+                }`}
+              >
+                {agreed && (
+                  <svg className="h-3 w-3 stroke-[3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                )}
+              </div>
+            </div>
             <span className="font-body text-xs text-slate-500 leading-relaxed">
               I agree to the use of these details to respond to my enquiry. See the{" "}
               <Link href="/privacy" className="text-[#245FD4] underline hover:text-[#022977]">
@@ -312,6 +441,11 @@ export default function ContactForm() {
               for more information.
             </span>
           </label>
+          {errors.terms && (
+            <p id="contact-terms-error" className="mt-1.5 font-body text-xs text-red-600 font-medium">
+              {errors.terms}
+            </p>
+          )}
         </div>
 
         {errorMessage && (
