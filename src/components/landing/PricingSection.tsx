@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { getStoredToken } from "@/app/lib/auth";
 import { motion, useReducedMotion, type Variants } from "motion/react";
@@ -87,12 +87,8 @@ const itemVariants: Variants = {
 
 export default function PricingSection() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated] = useState(() => Boolean(getStoredToken()));
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    setIsAuthenticated(Boolean(getStoredToken()));
-  }, []);
 
   function handleGoPremium() {
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");

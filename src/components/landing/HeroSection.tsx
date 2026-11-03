@@ -1,16 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getStoredToken } from "@/app/lib/auth";
 
 export default function HeroSection() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    setIsAuthenticated(Boolean(getStoredToken()));
-  }, []);
+  const [isAuthenticated] = useState(() => Boolean(getStoredToken()));
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-4.5rem)] lg:min-h-[calc(100vh-5rem)] flex-col justify-between overflow-hidden pt-[calc(88px+env(safe-area-inset-top,0px))] pb-4 sm:pt-[calc(92px+env(safe-area-inset-top,0px))] sm:pb-6 md:pt-4 lg:pb-6">
       {/* Top right light gradient blur (#C4DFFB at 50% opacity, blur ~324px as in Figma Ellipse 68) */}

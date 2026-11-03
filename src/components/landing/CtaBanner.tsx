@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { getStoredToken } from "@/app/lib/auth";
 import { motion, useReducedMotion } from "motion/react";
 import { EASE_OUT_CUBIC, MOTION_VIEWPORT } from "@/components/motion/motionConfig";
 
 export default function CtaBanner() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = useSyncExternalStore(
+    () => () => {},
+    () => Boolean(getStoredToken()),
+    () => false,
+  );
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    setIsAuthenticated(Boolean(getStoredToken()));
-  }, []);
 
   return (
     <section
