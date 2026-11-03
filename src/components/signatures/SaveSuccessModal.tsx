@@ -780,6 +780,7 @@ import { renderSignaturePng } from "@/lib/signatures/exportPng";
 import { buildDownloadDocument } from "@/lib/signatures/previewDocument";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
+import { toast } from "@/lib/toast";
 
 interface SaveSuccessModalProps {
   isOpen: boolean;
@@ -858,7 +859,6 @@ export default function SaveSuccessModal({
   const [copiedSignature, setCopiedSignature] = useState(false);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [, setIsDownloadingImage] = useState(false);
-  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
   function getHtmlAndPlainText(): {
     html: string;
@@ -916,13 +916,6 @@ export default function SaveSuccessModal({
 
   if (!isOpen) return null;
 
-  function showToast(msg: string) {
-    setFeedbackToast(msg);
-    setTimeout(() => {
-      setFeedbackToast(null);
-    }, 3000);
-  }
-
   // 1. Copy Signature as formatted rich text or plain text according to user defaults
   async function handleCopySignature() {
     try {
@@ -937,7 +930,7 @@ export default function SaveSuccessModal({
       markOnboardingStep("exported");
       setTimeout(() => setCopiedSignature(false), 2500);
     } catch {
-      showToast("Failed to copy signature. Please try again.");
+      toast.error("Failed to copy signature. Please try again.");
     }
   }
 
@@ -958,7 +951,61 @@ export default function SaveSuccessModal({
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     markOnboardingStep("exported");
-    showToast(message);
+    toast.success(message);
+  }
+
+  // 3. Send Test Email: Pre-fills subject & body and copies formatted signature to clipboard
+  async function handleSendTestEmail(client: "default" | "gmail" | "outlook" = "default") {
+    try {
+      const storedSettings = getStoredSettings();
+      if (storedSettings?.defaultExportFormat === "plain") {
+        await copyTextToClipboard(plainText);
+      } else {
+        await copySignatureRich(html, plainText);
+      }
+    } catch {
+      // Clipboard fallback
+    }
+
+    const subject = encodeURIComponent("Testing Email Signature");
+    const bodyText = encodeURIComponent(
+      "This is a Test Email to test the email signature made by Sig Signature\n\n"
+    );
+
+    if (client === "gmail") {
+      window.open(
+        `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${bodyText}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+      toast.copied(
+        "Signature copied to clipboard!",
+        "Opening Gmail compose — press Cmd+V (Mac) or Ctrl+V (Windows) to paste your signature.",
+        5000
+      );
+    } else if (client === "outlook") {
+      window.open(
+        `https://outlook.live.com/mail/0/deeplink/compose?subject=${subject}&body=${bodyText}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+      toast.copied(
+        "Signature copied to clipboard!",
+        "Opening Outlook compose — press Cmd+V (Mac) or Ctrl+V (Windows) to paste your signature.",
+        5000
+      );
+    } else {
+      // Default system mail app via mailto:
+      const mailtoUrl = `mailto:?subject=${subject}&body=${bodyText}`;
+      window.location.href = mailtoUrl;
+      toast.copied(
+        "Signature copied to clipboard!",
+        "Opening default mail app — press Cmd+V (Mac) or Ctrl+V (Windows) to paste your signature.",
+        5000
+      );
+    }
+
+    markOnboardingStep("exported");
   }
 
   return (
@@ -1117,13 +1164,35 @@ export default function SaveSuccessModal({
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
-        {/* Bottom Three Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5 w-full max-w-[580px]">
-          {/* Button 1: Copy Signature */}
+        {/* Bottom Action Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 w-full max-w-[580px]">
+          {/* Button 1: Send Test Email (Primary Highlighted CTA) */}
+          <button
+            type="button"
+            onClick={() => handleSendTestEmail("default")}
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#245FD4] px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-white shadow-xs transition hover:bg-[#1C52C9] active:scale-95 cursor-pointer"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg
+              className="w-4 h-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M22 2L11 13" />
+              <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+            <span>Send Test Email</span>
+          </button>
+
+          {/* Button 2: Copy Signature */}
           <button
             type="button"
             onClick={handleCopySignature}
-            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95"
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95 cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
             {copiedSignature ? (
@@ -1155,11 +1224,11 @@ export default function SaveSuccessModal({
             <span>{copiedSignature ? "Copied!" : "Copy Signature"}</span>
           </button>
 
-          {/* Button 2: Download Image */}
+          {/* Button 3: Download HTML */}
           <button
             type="button"
             onClick={() => downloadHtmlFile()}
-            className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95 disabled:opacity-60"
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95 disabled:opacity-60 cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
             <svg
@@ -1178,34 +1247,60 @@ export default function SaveSuccessModal({
             <span>Download HTML</span>
           </button>
 
-          {/* Button 3: Navigate to My Signature */}
+          {/* Button 4: Navigate to My Signatures */}
           <button
-  type="button"
-  onClick={() => {
-    onClose();
-    router.push("/signatures");
-  }}
-  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95"
-  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
->
-  <svg
-    className="w-4 h-4 shrink-0"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="8" y1="6" x2="21" y2="6" />
-    <line x1="8" y1="12" x2="21" y2="12" />
-    <line x1="8" y1="18" x2="21" y2="18" />
-    <line x1="3" y1="6" x2="3.01" y2="6" />
-    <line x1="3" y1="12" x2="3.01" y2="12" />
-    <line x1="3" y1="18" x2="3.01" y2="18" />
-  </svg>
-  <span>My Signatures</span>
-</button>
+            type="button"
+            onClick={() => {
+              onClose();
+              router.push("/signatures");
+            }}
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs sm:text-[13px] font-semibold text-[#1E293B] shadow-2xs transition hover:bg-slate-50 hover:border-slate-300 active:scale-95 cursor-pointer"
+            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+          >
+            <svg
+              className="w-4 h-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            <span>My Signatures</span>
+          </button>
+        </div>
+
+        {/* Webmail Quick Links Helper */}
+        <div className="mt-3.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[12px] text-slate-500 font-body">
+          <span>Using webmail?</span>
+          <button
+            type="button"
+            onClick={() => handleSendTestEmail("gmail")}
+            className="inline-flex items-center gap-1 font-semibold text-[#245FD4] hover:underline cursor-pointer"
+          >
+            <span>Open Gmail Web</span>
+            <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+          </button>
+          <span className="text-slate-300">•</span>
+          <button
+            type="button"
+            onClick={() => handleSendTestEmail("outlook")}
+            className="inline-flex items-center gap-1 font-semibold text-[#245FD4] hover:underline cursor-pointer"
+          >
+            <span>Open Outlook Web</span>
+            <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+          </button>
         </div>
 
         {/* <button
@@ -1224,22 +1319,6 @@ export default function SaveSuccessModal({
           onClose={() => setShowCopiedAlert(false)}
           className="animate-in fade-in slide-in-from-bottom-2 duration-200"
         />
-
-        {/* Inline Feedback Toast */}
-        {feedbackToast && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-xl bg-[#1E293B] px-4 py-2 text-xs sm:text-sm text-white shadow-xl animate-in slide-in-from-bottom-2 duration-150">
-            <svg
-              className="w-4 h-4 text-emerald-400"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span>{feedbackToast}</span>
-          </div>
-        )}
       </div>
     </div>
   );

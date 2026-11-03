@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,6 +18,7 @@ import {
 type SidebarProps = {
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onBeforeNavigate?: (href: string) => boolean;
 };
 
 const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count";
@@ -32,7 +34,7 @@ function getCachedSignatureCount(): number {
   }
 }
 
-export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: SidebarProps) {
+export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, onBeforeNavigate }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const optionalUser = useOptionalUser();
@@ -41,6 +43,20 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
   // Browser storage is read after mount in the effect below.
   const [signatureCount, setSignatureCount] = useState<number>(0);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  function handleLinkClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
+    const isRegularClick =
+      event.button === 0 &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey;
+
+    if (isRegularClick && onBeforeNavigate?.(href)) {
+      event.preventDefault();
+    }
+    onCloseMobile?.();
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -197,7 +213,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               className={`flex items-center gap-2.5 transition hover:opacity-90 ${
                 isCollapsed ? "lg:justify-center" : ""
               }`}
-              onClick={onCloseMobile}
+              onClick={(event) => handleLinkClick(event, "/dashboard")}
               title="Sig Signature Dashboard"
             >
               <Image
@@ -294,12 +310,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
                   <Link
                     href={item.href}
                     prefetch={true}
-                    onClick={(e) => {
-                      if (item.href.startsWith("#")) {
-                        e.preventDefault();
-                      }
-                      onCloseMobile?.();
-                    }}
+                    onClick={(event) => handleLinkClick(event, item.href)}
                     className={`flex items-center gap-3 rounded-xl px-2.5 py-2 transition-colors font-medium text-[15px] ${
                       isCollapsed ? "lg:justify-center lg:px-0 lg:h-10 lg:w-10 lg:mx-auto" : ""
                     } ${
@@ -346,7 +357,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
             <div className="relative group lg:flex hidden justify-center">
               <Link
                 href="/pricing"
-                onClick={onCloseMobile}
+                onClick={(event) => handleLinkClick(event, "/pricing")}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs"
                 aria-label="Unlock Premium Features"
               >
@@ -384,7 +395,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               </p>
               <Link
                 href="/pricing"
-                onClick={onCloseMobile}
+                onClick={(event) => handleLinkClick(event, "/pricing")}
                 className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
@@ -401,7 +412,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
             <div className="relative group lg:flex hidden justify-center">
               <Link
                 href="/pricing"
-                onClick={onCloseMobile}
+                onClick={(event) => handleLinkClick(event, "/pricing")}
                 className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300 transition shadow-2xs"
                 aria-label={`Quota: ${signatureCount}/3`}
               >
@@ -455,7 +466,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile }: 
               <div className="mt-2 flex items-center justify-between">
                 <Link
                   href="/pricing"
-                  onClick={onCloseMobile}
+                  onClick={(event) => handleLinkClick(event, "/pricing")}
                   className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >

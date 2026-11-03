@@ -1299,24 +1299,29 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
       {
         "heading": "Installing on Gmail Mobile App (iPhone & Android)",
         "paragraphs": [
-          "The Gmail mobile app does not sync rich-text HTML signatures from the web version by default. To send HTML signatures from mobile:"
+          "The native Gmail mobile app uses a lightweight plain-text editor for mobile signatures. Depending on your account type, use one of the two verified methods below:"
         ],
         "steps": [
           {
             "number": 1,
-            "title": "Method A",
-            "description": "Web-Synced Signatures (Recommended)",
+            "title": "Method A: Google Workspace Accounts (Server-Side Web Sync)",
+            "description": "Recommended for Google Workspace / custom business domain accounts.",
             "substeps": [
-              "In the Gmail mobile app, tap the Menu → Settings.",
-              "Tap your email account.",
-              "Locate Mobile Signature. Ensure this field is turned OFF / Empty.",
-              "When Mobile Signature is disabled, Google Workspace automatically pulls your server-side rich HTML signature when sending!"
+              "In the Gmail mobile app, tap the Menu (≡) → Settings.",
+              "Tap your Google Workspace email account.",
+              "Locate Mobile Signature. Ensure this toggle is turned OFF or left completely empty.",
+              "When the mobile signature setting is empty, Google Workspace servers automatically append your full web HTML signature upon sending. Note: The signature does not display in the mobile compose draft window, but arrives formatted in the recipient's inbox."
             ]
           },
           {
             "number": 2,
-            "title": "Method B",
-            "description": "Standalone Mobile Signature"
+            "title": "Method B: Personal @gmail.com Accounts (Concise Mobile Format)",
+            "description": "Recommended for personal @gmail.com accounts.",
+            "substeps": [
+              "Personal @gmail.com accounts do not automatically append web HTML signatures when sent from mobile apps.",
+              "In the Gmail app Settings → Mobile Signature, enter a clean 2-line professional closing (e.g., Full Name | Company / Portfolio Link).",
+              "Alternatively, sync your Gmail account into Apple Mail on iOS or Outlook Mobile, which both support rich-text HTML clipboard pasting."
+            ]
           }
         ]
       },
@@ -1357,7 +1362,7 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     "keyTakeaways": [
       "Always copy the Visual Signature (not raw HTML) when installing into Gmail Web.",
       "Check the box to insert your signature before quoted text to keep it visible in email threads.",
-      "Disable mobile text signatures in the Gmail app to enable server-side HTML sync."
+      "For Google Workspace accounts, leave mobile text signatures empty to enable automatic server-side HTML sync."
     ]
   },
   {

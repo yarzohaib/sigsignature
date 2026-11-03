@@ -7,7 +7,7 @@ interface GoogleTrackingProps {
 
 export function GoogleTracking({
   gtmId = process.env.NEXT_PUBLIC_GTM_ID,
-  gaId = process.env.NEXT_PUBLIC_GA_ID || "G-MZM2JLRVWY",
+  gaId = process.env.NEXT_PUBLIC_GA_ID || "G-Z3JCEBRBQ7",
 }: GoogleTrackingProps) {
   // If neither GTM nor GA ID is configured in the environment, render nothing
   if (!gtmId && !gaId) {
@@ -35,7 +35,7 @@ export function GoogleTracking({
         }}
       />
 
-      {/* 2. Google tag (gtag.js) for GA4: G-MZM2JLRVWY */}
+      {/* 2. Google tag (gtag.js) for GA4: G-Z3JCEBRBQ7 */}
       {gaId && (
         <>
           <Script

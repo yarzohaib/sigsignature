@@ -532,7 +532,7 @@ function SignupForm() {
 
       {legalDocument && (
         <div
-          className="fixed inset-0 z-[100] flex justify-end bg-slate-950/45 backdrop-blur-[2px] animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-[2px] animate-in fade-in duration-200 sm:p-6"
           onClick={() => setLegalDocument(null)}
           role="presentation"
         >
@@ -540,7 +540,7 @@ function SignupForm() {
             role="dialog"
             aria-modal="true"
             aria-label={legalDocument === "terms" ? "Terms of Service" : "Privacy Policy"}
-            className="relative flex h-full w-full max-w-4xl flex-col bg-white shadow-2xl animate-in slide-in-from-right duration-300 overflow-hidden"
+            className="relative flex h-[92dvh] w-full max-w-5xl flex-col overflow-hidden rounded-[24px] border border-white/70 bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200 sm:h-[88dvh] sm:rounded-[30px]"
             onClick={(event) => event.stopPropagation()}
           >
             {/* Floating Close Button without any header bar */}
@@ -548,7 +548,7 @@ function SignupForm() {
               type="button"
               onClick={() => setLegalDocument(null)}
               aria-label="Close"
-              className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 shadow-xs transition hover:bg-slate-200 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer"
+              className="absolute right-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-500 shadow-sm transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand cursor-pointer sm:right-5 sm:top-5"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
                 <path d="m18 6-12 12M6 6l12 12" />
@@ -556,7 +556,7 @@ function SignupForm() {
             </button>
 
             {/* Scrollable Content Container */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               {legalDocument === "privacy" ? (
                 <PrivacyPolicyContent isDrawer={true} />
               ) : (
@@ -570,8 +570,9 @@ function SignupForm() {
                     const style = document.createElement("style");
                     style.id = "signup-legal-embed-style";
                     style.textContent = `
-                      header, footer, body > div > div.border-t { display: none !important; }
-                      body > div { min-height: 0 !important; }
+                      header, footer, body > div > div.fixed, body > div > div.border-t { display: none !important; }
+                      body > div { min-height: 0 !important; height: auto !important; }
+                      main > section:first-child { padding-top: 1rem !important; }
                     `;
                     document.head.appendChild(style);
                   }}

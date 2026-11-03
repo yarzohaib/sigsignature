@@ -16,7 +16,7 @@ export default function SignatureCopiedAlert({
   isOpen,
   onClose,
   title = "Signature copied!",
-  subtitle = "Paste it into your email client settings.",
+  subtitle = "Press Cmd+V (Mac) or Ctrl+V (Windows) to paste into your email settings.",
   autoCloseMs = 4500,
 }: SignatureCopiedAlertProps) {
   useEffect(() => {

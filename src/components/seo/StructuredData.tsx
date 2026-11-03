@@ -104,9 +104,9 @@ export function WebApplicationJsonLd() {
       "offerCount": "2"
     },
     "featureList": [
-      "Table-based HTML with 100% email client deliverability",
-      "Pre-tested across 40+ email clients including Gmail, Outlook, Apple Mail",
-      "Payload optimized under 10KB to prevent clipping",
+      "Table-based HTML engineered for high email client deliverability",
+      "Pre-tested across major email clients including Gmail, Outlook, Apple Mail",
+      "Lightweight payload optimized to prevent message clipping",
       "Retina-ready CDN hosted icons and imagery",
       "Instant 1-click HTML copy and PNG export"
     ]

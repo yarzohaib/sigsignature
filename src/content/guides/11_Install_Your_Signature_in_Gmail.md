@@ -53,16 +53,18 @@ Following this verified procedure ensures your table structure and images remain
 
 ## Installing on Gmail Mobile App (iPhone & Android)
 
-The Gmail mobile app does not sync rich-text HTML signatures from the web version by default. To send HTML signatures from mobile:
+The native Gmail mobile app uses a lightweight plain-text editor for mobile signatures. Depending on your account type, use one of the two verified methods below:
 
-### Method A: Web-Synced Signatures (Recommended)
+### Method A: Google Workspace Accounts (Server-Side Web Sync)
 1. In the Gmail mobile app, tap the **Menu (≡)** -> **Settings**.
-2. Tap your email account.
-3. Locate **Mobile Signature**. Ensure this field is **turned OFF / Empty**.
-4. When Mobile Signature is disabled, Google Workspace automatically pulls your server-side rich HTML signature when sending!
+2. Tap your Google Workspace email account.
+3. Locate **Mobile Signature**. Ensure this setting is **turned OFF or left empty**.
+4. When the mobile signature is empty, Google Workspace servers automatically append your full web HTML signature upon sending. *(Note: The signature does not render in the mobile compose draft window, but arrives fully styled on the delivered message).*
 
-### Method B: Standalone Mobile Signature
-If your organization requires a local mobile signature, use a concise 2-line plain text format (e.g., `Sardar Nadir | thenevon.com`) to avoid mobile rendering glitches.
+### Method B: Personal @gmail.com Accounts (Concise Mobile Format)
+1. Personal `@gmail.com` accounts do not automatically append web HTML signatures when sent from mobile apps.
+2. In the Gmail app Settings -> **Mobile Signature**, enter a clean 2-line professional closing (e.g., `Sardar Nadir | thenevon.com`).
+3. Alternatively, connect your Gmail account through the native iOS Apple Mail or Outlook Mobile app, both of which support rich-text visual HTML clipboard pasting.
 
 ---
 
@@ -80,4 +82,4 @@ If your organization requires a local mobile signature, use a concise 2-line pla
 ## Key Takeaways
 * Always copy the *Visual Signature* (not raw HTML) when installing into Gmail Web.
 * Check the box to insert your signature before quoted text to keep it visible in email threads.
-* Disable mobile text signatures in the Gmail app to enable server-side HTML sync.
+* For Google Workspace accounts, leave mobile text signatures empty to enable automatic server-side HTML sync.

@@ -22,7 +22,7 @@ const premiumFeatures = [
   "Manage your entire team in one place",
   "Priority support & faster assistance",
   "Advanced customization tools",
-  "Remove Sig Signature branding",
+  "Multi-signature profile switching",
 ];
 
 // Premium card: Featured hero card enters first in the stagger
