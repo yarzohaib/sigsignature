@@ -38,7 +38,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
   const pathname = usePathname();
   const router = useRouter();
   const optionalUser = useOptionalUser();
-  const { isCollapsed, toggleSidebar } = useSidebar();
+  const { isCollapsed, toggleSidebar, setCollapsed } = useSidebar();
   // Keep the server render and the browser's first hydration render identical.
   // Browser storage is read after mount in the effect below.
   const [signatureCount, setSignatureCount] = useState<number>(0);
@@ -201,20 +201,27 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
       {/* Sidebar Container: responsive width (256px expanded, 72px collapsed on desktop) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-full max-h-screen shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden border-r border-[#E2E8F0] bg-white transition-all duration-200 ease-in-out sidebar-scrollbar lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-full max-h-screen shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden border-r border-[#E2E8F0] bg-white transition-[width,padding,transform] duration-300 ease-in-out sidebar-scrollbar lg:static lg:translate-x-0 ${
           isCollapsed ? "lg:w-[72px] lg:px-2.5 py-4 w-[256px] px-5" : "w-[256px] px-5 py-4"
         } ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}
       >
         <div className="flex flex-col shrink-0">
           {/* Logo Section & Collapse Toggle */}
-          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:flex-col lg:gap-2 justify-between" : "justify-between"}`}>
+          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:justify-center" : "justify-between"}`}>
             <Link
               href="/dashboard"
               className={`flex items-center gap-2.5 transition hover:opacity-90 ${
                 isCollapsed ? "lg:justify-center" : ""
               }`}
-              onClick={(event) => handleLinkClick(event, "/dashboard")}
-              title="Sig Signature Dashboard"
+              onClick={(event) => {
+                if (isCollapsed && window.matchMedia("(min-width: 1024px)").matches) {
+                  event.preventDefault();
+                  setCollapsed(false);
+                  return;
+                }
+                handleLinkClick(event, "/dashboard");
+              }}
+              title={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
             >
               <Image
                 src="/logo.svg"
@@ -225,8 +232,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                 priority
               />
               <span
-                className={`font-semibold text-[#022977] text-[16px] whitespace-nowrap transition-opacity duration-200 ${
-                  isCollapsed ? "lg:hidden" : "block"
+                className={`block overflow-hidden whitespace-nowrap font-semibold text-[#022977] text-[16px] transition-[max-width,opacity] duration-300 ease-in-out ${
+                  isCollapsed ? "lg:max-w-0 lg:opacity-0" : "max-w-40 opacity-100"
                 }`}
                 style={{
                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
@@ -239,7 +246,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
             </Link>
 
             {/* Collapse/Expand Toggle Button (Desktop) */}
-            {isCollapsed ? (
+            {!isCollapsed && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -247,32 +254,13 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                   e.stopPropagation();
                   toggleSidebar();
                 }}
-                className="hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer mx-auto mt-1"
-                aria-label="Expand sidebar (Cmd + B)"
-                title="Expand sidebar (Cmd + B / Ctrl + B)"
-              >
-                <svg className="h-4 w-4 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <line x1="9" y1="3" x2="9" y2="21" />
-                  <polyline points="13 15 16 12 13 9" />
-                </svg>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleSidebar();
-                }}
-                className="hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+                className="hidden lg:flex items-center justify-center h-8 w-8 rounded-lg text-[#022977] hover:bg-slate-100 hover:text-[#022977] transition cursor-pointer"
                 aria-label="Collapse sidebar (Cmd + B)"
                 title="Collapse sidebar (Cmd + B / Ctrl + B)"
               >
                 <svg className="h-4 w-4 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <line x1="9" y1="3" x2="9" y2="21" />
-                  <polyline points="15 9 12 12 15 15" />
+                  <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                  <path d="M9 4v16" />
                 </svg>
               </button>
             )}
@@ -328,7 +316,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                     <span className={isActive ? "text-[#245FD4]" : "text-[#64748B]"}>
                       {item.icon}
                     </span>
-                    <span className={isCollapsed ? "lg:hidden" : "block"}>
+                    <span className={`block overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-300 ease-in-out ${isCollapsed ? "lg:max-w-0 lg:opacity-0" : "max-w-48 opacity-100"}`}>
                       {item.name}
                     </span>
                   </Link>

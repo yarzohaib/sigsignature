@@ -2205,7 +2205,7 @@ function DesignStudioContent() {
                     {[
                       { id: "rounded", label: "Rounded", rx: "rounded-lg", iconClass: "h-7 w-7" },
                       { id: "square", label: "Square", rx: "rounded-none", iconClass: "h-7 w-7" },
-                      { id: "pill", label: "Pill", rx: "rounded-full", iconClass: "h-4 w-7.5" },
+                      { id: "pill", label: "Pill", rx: "rounded-full", iconClass: "h-6 w-12" },
                     ].map((shape) => {
                       const activeShape = selectedElement?.shape || state.design?.shape || "rounded";
                       const isSelected = activeShape === shape.id;

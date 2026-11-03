@@ -99,8 +99,14 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                 anticipatePin: isDesktop ? 1 : 0,
                 invalidateOnRefresh: true,
                 onUpdate: (self) => {
-                  const p = self.progress;
-                  const active = Math.round(p * (steps.length - 1));
+                  const active = isDesktop
+                    ? Math.round(self.progress * (steps.length - 1))
+                    : stepRefs.current.reduce((current, element, index) => {
+                        if (element && element.getBoundingClientRect().top < window.innerHeight * 0.6) {
+                          return index;
+                        }
+                        return current;
+                      }, 0);
                   if (active !== lastActive) {
                     lastActive = active;
                     setActive(active);
@@ -137,14 +143,14 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
     <section
       id="how-it-works"
       ref={sectionRef}
-      className="relative flex min-h-0 scroll-mt-24 flex-col justify-start overflow-x-clip bg-[#FCFCFC] py-8 sm:py-10 md:min-h-[100svh] md:justify-center md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
+      className="relative flex min-h-0 scroll-mt-24 flex-col justify-start overflow-x-clip bg-[#FCFCFC] pt-8 pb-24 sm:py-10 md:min-h-[100svh] md:justify-center md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
     >
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Section Header */}
         {children}
 
         {/* Steps */}
-        <div ref={viewportRef} className="relative mt-6 w-full overflow-hidden sm:mt-10 md:mt-16">
+        <div ref={viewportRef} className="relative mt-6 w-full overflow-x-clip overflow-y-visible sm:mt-10 md:mt-16 lg:overflow-hidden">
           {/* Desktop horizontal line */}
           <div
             aria-hidden="true"
@@ -168,15 +174,15 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                   stepRefs.current[index] = el;
                 }}
                 data-active="false"
-                className="relative flex w-full flex-col items-start gap-3 opacity-55 transition-[opacity,transform] duration-500 ease-out data-[active=true]:translate-x-0 data-[active=true]:opacity-100 data-[active=false]:translate-x-1 lg:w-[min(480px,38vw)] lg:shrink-0 lg:gap-0 lg:opacity-100 lg:transition-none lg:transform-none"
+                className="relative flex w-full flex-col items-start gap-3 opacity-100 transition-[opacity,transform] duration-500 ease-out data-[active=true]:translate-x-0 data-[active=false]:translate-x-1 lg:w-[min(480px,38vw)] lg:shrink-0 lg:gap-0 lg:transition-none lg:transform-none"
               >
-                <div className="relative z-10 flex h-[40px] w-[40px] shrink-0 items-center justify-center lg:h-[56px] lg:w-[56px]">
+                <div className="relative z-10 flex h-[48px] w-[48px] shrink-0 items-center justify-center lg:h-[56px] lg:w-[56px]">
                   <div
                     ref={(el) => {
                       circleRefs.current[index] = el;
                     }}
                     data-active="false"
-                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] bg-gradient-to-b from-[#245FD4] to-[#022977] text-white shadow-xs transition-[background,color,box-shadow,transform] duration-300 ease-out data-[active=true]:scale-110 data-[active=true]:border-transparent data-[active=true]:shadow-[0_0_0_5px_rgba(36,95,212,0.14),0_0_14px_rgba(36,95,212,0.22)] lg:h-[56px] lg:w-[56px] lg:data-[active=true]:scale-110 lg:data-[active=true]:shadow-[0_0_0_6px_rgba(36,95,212,0.2),0_0_18px_rgba(36,95,212,0.28)]"
+                    className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-[#C1C1C1] bg-gradient-to-b from-[#245FD4] to-[#022977] text-white shadow-xs transition-[background,color,box-shadow,transform] duration-300 ease-out data-[active=true]:scale-105 data-[active=true]:border-transparent data-[active=true]:shadow-[0_0_0_5px_rgba(36,95,212,0.16),0_0_14px_rgba(36,95,212,0.22)] lg:h-[56px] lg:w-[56px] lg:data-[active=true]:scale-110 lg:data-[active=true]:shadow-[0_0_0_6px_rgba(36,95,212,0.2),0_0_18px_rgba(36,95,212,0.28)]"
                   >
                     <span className="font-heading text-[13px] font-bold text-white lg:text-[21px]">
                       {item.step}
@@ -184,7 +190,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                   </div>
                 </div>
 
-                <div className="flex-1 lg:flex-none lg:text-left">
+                <div className="flex-1 pr-12 lg:pr-0 lg:flex-none lg:text-left">
                   <h3 className="font-heading mt-0 text-base font-semibold text-slate-900 sm:text-lg lg:mt-8 lg:text-base xl:text-lg 2xl:text-lg 3xl:text-xl leading-snug">
                     {item.title}
                   </h3>
