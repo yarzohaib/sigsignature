@@ -376,6 +376,20 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
           </div>
         )}
 
+        {/* Contextual Homepage Link */}
+        <div className="mt-8 rounded-xl border border-slate-200/90 bg-[#F8FAFC] p-4 sm:p-5 text-sm text-slate-700 font-body">
+          <p className="leading-relaxed">
+            Ready to design a clean, responsive sign-off? You can{" "}
+            <Link
+              href="https://www.sigsignature.com/"
+              className="font-semibold text-brand underline underline-offset-2 hover:text-brand-dark transition"
+            >
+              create your signature with our free email signature generator
+            </Link>
+            .
+          </p>
+        </div>
+
         {/* Bottom Actions: Back to all guides & Open Design Studio */}
         <div className="mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 font-body">
           <Link

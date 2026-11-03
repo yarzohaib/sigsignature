@@ -7,7 +7,7 @@ import { updateConsentMode, pushDataLayerEvent } from "../src/lib/analytics/even
 describe("Google Analytics 4 & Google Tag Integration", () => {
   const rootDir = path.resolve(__dirname, "..");
 
-  it("verifies .env.local contains active Google Tag and Measurement IDs", () => {
+  it("verifies .env.local contains the active Google Analytics ID", () => {
     const envLocalPath = path.join(rootDir, ".env.local");
     const content = fs.readFileSync(envLocalPath, "utf-8");
 
@@ -15,13 +15,9 @@ describe("Google Analytics 4 & Google Tag Integration", () => {
       content.includes("NEXT_PUBLIC_GA_ID=G-MZM2JLRVWY"),
       ".env.local should define NEXT_PUBLIC_GA_ID=G-MZM2JLRVWY"
     );
-    assert.ok(
-      content.includes("NEXT_PUBLIC_GA_MEASUREMENT_ID=G-5515MKG8NL"),
-      ".env.local should define NEXT_PUBLIC_GA_MEASUREMENT_ID=G-5515MKG8NL"
-    );
   });
 
-  it("verifies GoogleAnalytics component defaults to G-MZM2JLRVWY and G-5515MKG8NL fallbacks", () => {
+  it("verifies GoogleAnalytics configures the active stream ID", () => {
     const gaComponentPath = path.join(rootDir, "src/components/analytics/GoogleAnalytics.tsx");
     const content = fs.readFileSync(gaComponentPath, "utf-8");
 
@@ -30,17 +26,10 @@ describe("Google Analytics 4 & Google Tag Integration", () => {
       "GoogleAnalytics should have default fallback for Google Tag ID G-MZM2JLRVWY"
     );
     assert.ok(
-      content.includes('measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-5515MKG8NL"'),
-      "GoogleAnalytics should have default fallback for Measurement Stream G-5515MKG8NL"
-    );
-    assert.ok(
       content.includes("gtag('config', '${gaId}')"),
       "GoogleAnalytics should configure gaId in gtag config"
     );
-    assert.ok(
-      content.includes("gtag('config', '${measurementId}')"),
-      "GoogleAnalytics should configure measurementId in gtag config"
-    );
+    assert.ok(!content.includes("G-5515MKG8NL"), "GoogleAnalytics should not configure the obsolete stream ID");
   });
 
   it("verifies Google Consent Mode v2 default declaration is present", () => {

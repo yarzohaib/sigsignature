@@ -175,9 +175,9 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
           </span>
           <div className="mt-3 flex items-center gap-2 font-body text-xs font-semibold">
             <span className="text-white">Name</span>
-            <span className="text-blue-400">·</span>
+            <span className="text-blue-400" aria-hidden="true">&bull;</span>
             <span className="text-[#60A5FA]">Role</span>
-            <span className="text-blue-400">·</span>
+            <span className="text-blue-400" aria-hidden="true">&bull;</span>
             <span className="text-slate-400">Details</span>
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
     default:
       return (
         <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-[#245FD4] to-[#022977] p-5 flex items-center justify-center text-white">
-          <span className="font-heading text-lg font-bold">SigSignature</span>
+          <span className="font-heading text-lg font-bold">Sig Signature</span>
         </div>
       );
   }

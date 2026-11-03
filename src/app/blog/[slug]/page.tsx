@@ -129,11 +129,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <span className="rounded-full bg-[#EBF3FE] px-3 py-1 font-body text-xs font-semibold text-[#245FD4]">
                 {post.category}
               </span>
-              <span className="text-slate-300">·</span>
+              <span className="text-slate-300" aria-hidden="true">&bull;</span>
               <span className="font-body text-xs font-medium text-slate-500">
                 {post.readingTime}
               </span>
-              <span className="text-slate-300">·</span>
+              <span className="text-slate-300" aria-hidden="true">&bull;</span>
               <span className="font-body text-xs font-medium text-slate-500">
                 {post.publishedAt}
               </span>
@@ -163,7 +163,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   {post.author.name}
                 </p>
                 <p className="font-body text-xs text-slate-500 leading-snug">
-                  {post.author.role} · The Nevon Technical Publications
+                  {post.author.role} <span aria-hidden="true">&bull;</span> The Nevon Technical Publications
                 </p>
               </div>
             </div>
@@ -220,14 +220,28 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <MarkdownRenderer content={post.contentMarkdown} />
             </div>
 
+            {/* Contextual Homepage Link */}
+            <div className="mt-12 rounded-2xl border border-slate-200/90 bg-[#F8FAFC] p-5 sm:p-6 text-sm text-slate-700 font-body">
+              <p className="leading-relaxed">
+                Looking to build a professional, deliverable sign-off for yourself or your team? You can{" "}
+                <Link
+                  href="https://www.sigsignature.com/"
+                  className="font-semibold text-[#245FD4] underline underline-offset-2 hover:text-[#1746A2] transition"
+                >
+                  create your signature with our free email signature generator
+                </Link>
+                .
+              </p>
+            </div>
+
             {/* In-Article Callout Box */}
-            <div className="mt-14 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div>
                 <h3 className="font-heading text-lg sm:text-xl font-bold text-[#101B30]">
                   Ready to test your email signature?
                 </h3>
                 <p className="mt-1 font-body text-xs sm:text-sm text-[#64748B] max-w-md">
-                  SigSignature automatically compiles defensive table structures and MSO conditionals so your signature never deforms in Outlook.
+                  Sig Signature automatically compiles defensive table structures and MSO conditionals so your signature never deforms in Outlook.
                 </p>
               </div>
               <Link
