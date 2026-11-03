@@ -377,12 +377,19 @@ export default function UseCasesPage() {
             </h2>
 
             <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-              {workflowSteps.map((step) => (
-                <div key={step.number} className="border-t border-[#B8D4F7] pt-8 sm:pt-10 text-left">
-                  <p className="font-heading text-xs sm:text-sm font-bold text-[#245FD4]">
+              {workflowSteps.map((step, idx) => (
+                <div
+                  key={step.number}
+                  className={`relative pt-8 sm:pt-10 text-left ${
+                    idx === 0
+                      ? "border-t-2 border-[#245FD4]"
+                      : "border-t border-slate-200"
+                  }`}
+                >
+                  <p className="font-heading text-xs sm:text-sm font-bold text-[#245FD4] tracking-wide">
                     {step.number}
                   </p>
-                  <h3 className="mt-3 font-heading text-lg sm:text-xl font-medium text-[#101B30]">
+                  <h3 className="mt-3 font-heading text-lg sm:text-xl font-semibold text-[#101B30] tracking-tight">
                     {step.title}
                   </h3>
                   <p className="mt-2.5 font-body text-xs sm:text-sm text-[#687386] leading-relaxed">

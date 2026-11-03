@@ -33,6 +33,7 @@ function PricingContent() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
+  const [pricingAudience, setPricingAudience] = useState<"team" | "individual">("team");
 
   useEffect(() => {
     function checkAuth() {
@@ -89,20 +90,56 @@ function PricingContent() {
       )}
 
       <main className="flex w-full flex-1 flex-col justify-start gap-6 py-1 sm:gap-8">
-            {/* Top Heading Section */}
-            <div className="w-full text-left shrink-0 max-w-[1080px] xl:max-w-none">
-              <h1 className="page-heading text-[#1E293B]">
-                Simple Pricing.
-                <span className="block text-[#245FD4]">Powerful Signatures.</span>
+            {/* Top Heading Section matching Figma reference */}
+            <div className="w-full text-center shrink-0 max-w-2xl mx-auto pt-2 pb-2">
+              <h1
+                className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#101828] tracking-tight"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                Choose Your Package.
               </h1>
               <p
-                className="mt-1 text-[14px] sm:text-[15px] text-[#64748B] max-w-2xl leading-relaxed"
+                className="mt-2.5 text-[14px] sm:text-[15px] text-[#64748B] max-w-xl mx-auto leading-relaxed"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 }}
               >
-                Start with the essentials or unlock a more powerful signature workflow. Straightforward plans, with room to grow when you&apos;re ready.
+                Choose a plan that fits your workflow—solo or team. Simple, flexible pricing with no hidden fees.
               </p>
+
+              {/* Segmented audience switcher: Businesses & Team | Individuals */}
+              <div className="mt-5 inline-flex items-center rounded-full bg-[#F1F5F9] p-1 border border-slate-200/80 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setPricingAudience("team")}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer ${
+                    pricingAudience === "team"
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  <svg className="h-3.5 w-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+                  </svg>
+                  <span>Businesses & Team</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPricingAudience("individual")}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs sm:text-[13px] font-semibold transition-all cursor-pointer ${
+                    pricingAudience === "individual"
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  <svg className="h-3.5 w-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span>Individuals</span>
+                </button>
+              </div>
             </div>
 
             {/* Plans Container: Balanced 495px cards with harmonious width and spacing */}
@@ -212,13 +249,13 @@ function PricingContent() {
                     "conic-gradient(from 225deg at 50% 50%, #245FD4 0%, #A8CDFC 12%, #2457F0 25%, #89ADFF 37%, #6B8BFF 50%, #2A74FF 62%, #6898F2 75%, #3F72D0 87%, #5389FF 95%, #245FD4 100%)",
                 }}
               >
-                {/* Coming Soon Badge */}
-                <div className="absolute -top-[14px] left-1/2 -translate-x-1/2 z-10 inline-flex items-center rounded-full bg-[#1A4FD8] px-5 py-1.5 shadow-xs whitespace-nowrap">
+                {/* Best Value Price Badge matching Figma */}
+                <div className="absolute -top-[14px] left-1/2 -translate-x-1/2 z-10 inline-flex items-center rounded-full bg-[#133E9A] px-5 py-1.5 shadow-md whitespace-nowrap">
                   <span
                     className="text-[12px] font-semibold text-white tracking-wide"
                     style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
-                    Coming Soon
+                    Best Value Price
                   </span>
                 </div>
 
@@ -302,6 +339,29 @@ function PricingContent() {
                     </ul>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Trust & Guarantee Icons below the pricing cards matching Figma design */}
+            <div className="mx-auto mt-4 mb-4 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-slate-600 font-body text-xs sm:text-sm">
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4 text-[#245FD4]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+                </svg>
+                <span className="font-medium text-slate-700">Money back guarantee</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4 text-[#245FD4]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-.874-.993l.635-1.636A7.838 7.838 0 013 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                </svg>
+                <span className="font-medium text-slate-700">24/7 Live support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4 text-[#245FD4]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                </svg>
+                <span className="font-medium text-slate-700">10k+ users globally</span>
               </div>
             </div>
 

@@ -16,10 +16,11 @@ export default function CtaBanner() {
 
   return (
     <section
-      className="relative mx-4 my-6 sm:my-8 md:my-0 rounded-[20px] md:mx-0 md:rounded-none overflow-hidden px-4 py-10 sm:py-14 lg:py-16 text-center text-white"
+      className="relative mx-4 my-6 sm:my-8 md:my-0 rounded-[20px] md:mx-0 md:rounded-none overflow-hidden px-4 py-14 sm:py-18 lg:py-20 text-center text-white"
       style={{
-        background: "linear-gradient(90deg, #245FD4 0%, #00359F 50%, #00143C 100%)",
-        boxShadow: "inset 13px 12px 35.1px 0 rgba(0, 0, 0, 0.24)",
+        background:
+          "radial-gradient(120% 120% at 50% 20%, #245FD4 0%, #09379B 55%, #00143C 100%)",
+        boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.15)",
       }}
     >
       <motion.div
@@ -30,9 +31,9 @@ export default function CtaBanner() {
           duration: 0.6,
           ease: EASE_OUT_CUBIC,
         }}
-        className="mx-auto flex flex-col items-center text-center max-w-5xl 2xl:max-w-[1300px] 3xl:max-w-[1500px] px-4 sm:px-6 lg:px-8"
+        className="mx-auto flex flex-col items-center text-center max-w-4xl 2xl:max-w-[1100px] px-4 sm:px-6 lg:px-8"
       >
-        <h2 className="font-heading text-center mx-auto text-[clamp(1.75rem,1.1rem+2vw,2.5rem)] lg:text-[34px] xl:text-[40px] 2xl:text-[48px] 3xl:text-[54px] font-semibold tracking-tight leading-tight sm:leading-[1.25] [text-wrap:balance]">
+        <h2 className="font-heading text-center mx-auto text-[clamp(1.75rem,1.1rem+2vw,2.5rem)] lg:text-[34px] xl:text-[40px] 2xl:text-[48px] font-semibold tracking-tight leading-tight sm:leading-[1.2] [text-wrap:balance]">
           <span className="block lg:whitespace-nowrap">
             Your Email Signature Is the Last Thing People See,
           </span>
@@ -47,22 +48,22 @@ export default function CtaBanner() {
           viewport={MOTION_VIEWPORT}
           transition={{
             duration: 0.45,
-            delay: shouldReduceMotion ? 0 : 0.45,
+            delay: shouldReduceMotion ? 0 : 0.25,
             ease: EASE_OUT_CUBIC,
           }}
-          className="font-body mt-4 max-w-2xl 2xl:max-w-3xl mx-auto text-center text-sm text-blue-100 sm:text-base 3xl:text-[18px]"
+          className="font-body mt-4 max-w-xl mx-auto text-center text-sm text-blue-100/90 sm:text-base leading-relaxed"
         >
-          Bring your name, contact details, and brand into one clear design. Start with a template or create your own layout, preview your changes, and export your signature.
+          Join professionals who&apos;ve stopped overpaying for email signatures. Create yours free in minutes.
         </motion.p>
 
-        {/* Sleek, 275px x 46px pill button matching Figma Frame properties */}
+        {/* Primary CTA button with Figma gradient sheen, shadow depth and hover elevation */}
         <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={MOTION_VIEWPORT}
           transition={{
             duration: 0.5,
-            delay: shouldReduceMotion ? 0 : 0.65,
+            delay: shouldReduceMotion ? 0 : 0.4,
             ease: EASE_OUT_CUBIC,
           }}
           className="mt-8 flex w-full justify-center"
@@ -71,9 +72,9 @@ export default function CtaBanner() {
             href={isAuthenticated ? "/dashboard" : "/signup"}
             style={{
               background:
-                "linear-gradient(180deg, #FFFFFF 0%, #D9F4FD 50%, #FDFEFF 100%)",
+                "linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 100%)",
             }}
-            className="group relative inline-flex h-[46px] w-full max-w-[360px] items-center justify-center overflow-hidden rounded-full px-3 font-body text-[13px] font-semibold text-[#00359F] animate-cta-idle-glow transition-[box-shadow] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00359F] [@media(hover:hover)]:hover:shadow-[0_8px_24px_rgba(255,255,255,0.4)] active:scale-[0.98] sm:w-[275px] sm:max-w-none sm:px-4 sm:text-[15px]"
+            className="group relative inline-flex h-[48px] w-full max-w-[320px] sm:w-[280px] sm:max-w-none items-center justify-center overflow-hidden rounded-full px-6 font-body text-sm sm:text-[15px] font-semibold text-[#0B2568] shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-200 ease-out hover:shadow-[0_12px_28px_rgba(0,0,0,0.3)] hover:scale-[1.02] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#00359F]"
           >
             {/* Soft diagonal shine sweep across the button on hover */}
             <span
@@ -90,12 +91,12 @@ export default function CtaBanner() {
           viewport={MOTION_VIEWPORT}
           transition={{
             duration: 0.45,
-            delay: shouldReduceMotion ? 0 : 0.75,
+            delay: shouldReduceMotion ? 0 : 0.55,
             ease: EASE_OUT_CUBIC,
           }}
-          className="mt-3.5 text-center mx-auto font-body text-xs text-blue-200/90 sm:text-sm 3xl:text-base"
+          className="mt-4 text-center mx-auto font-body text-xs text-blue-200/80 sm:text-[13px]"
         >
-          Up to 3 signatures free. No coding required.
+          No credit card. No designer. No developer. Just you.
         </motion.p>
       </motion.div>
     </section>

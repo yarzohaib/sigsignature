@@ -52,6 +52,7 @@ export default function Select({
   const listboxId = `${generatedId}-listbox`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const scrollFrameRef = useRef<number | null>(null);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [position, setPosition] = useState<MenuPosition | null>(null);
@@ -73,6 +74,10 @@ export default function Select({
   const updatePosition = () => {
     const rect = triggerRef.current?.getBoundingClientRect();
     if (!rect) return;
+    if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+      setOpen(false);
+      return;
+    }
     const margin = 12;
     const width = Math.min(Math.max(rect.width, 180), window.innerWidth - margin * 2);
     const left = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
@@ -87,12 +92,25 @@ export default function Select({
   useLayoutEffect(() => {
     if (!open) return;
     updatePosition();
-    const handleLayoutChange = () => updatePosition();
-    window.addEventListener("resize", handleLayoutChange);
-    window.addEventListener("scroll", handleLayoutChange, true);
+    const handleResize = () => updatePosition();
+    const handleScroll = () => {
+      if (scrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollFrameRef.current);
+      }
+      scrollFrameRef.current = window.requestAnimationFrame(() => {
+        scrollFrameRef.current = null;
+        updatePosition();
+      });
+    };
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("scroll", handleScroll, true);
     return () => {
-      window.removeEventListener("resize", handleLayoutChange);
-      window.removeEventListener("scroll", handleLayoutChange, true);
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("scroll", handleScroll, true);
+      if (scrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollFrameRef.current);
+        scrollFrameRef.current = null;
+      }
     };
   }, [open]);
 

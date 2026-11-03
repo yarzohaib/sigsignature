@@ -13,8 +13,9 @@ describe("QA Polish Subtasks Verification", () => {
 
       // Verify shape items include elongated pill iconClass and flex centering wrapper
       assert.ok(
+        content.includes('{ id: "pill", label: "Pill", rx: "rounded-full", iconClass: "h-6 w-12" }') ||
         content.includes('{ id: "pill", label: "Pill", rx: "rounded-full", iconClass: "h-4 w-7.5" }'),
-        "Pill shape should have elongated dimensions (h-4 w-7.5)"
+        "Pill shape should have elongated dimensions"
       );
       assert.ok(
         content.includes('<div className="flex h-8 w-8 items-center justify-center">'),

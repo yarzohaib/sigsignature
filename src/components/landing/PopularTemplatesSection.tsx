@@ -45,7 +45,7 @@ export default function PopularTemplatesSection() {
   return (
     <section
       id="templates"
-      className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#F8FAFC] pt-16 sm:pt-20 lg:pt-24 3xl:pt-28 pb-14 sm:pb-16 lg:pb-24 3xl:pb-28 border-y border-slate-200/70"
+      className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#F8FAFC] pt-16 sm:pt-20 lg:pt-24 3xl:pt-28 pb-12 sm:pb-16 lg:pb-16 border-y border-slate-200/70"
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
@@ -70,7 +70,7 @@ export default function PopularTemplatesSection() {
         </div>
 
         {/* Category Pills Filter */}
-        <div className="mt-8 sm:mt-10 flex w-full items-center justify-start gap-2 overflow-x-auto pb-2 scrollbar-none sm:justify-center">
+        <div className="mt-8 sm:mt-10 flex w-full items-center justify-start gap-2 overflow-x-auto py-2 px-1 scroll-px-4 scrollbar-none sm:justify-center">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}

@@ -143,7 +143,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
     <section
       id="how-it-works"
       ref={sectionRef}
-      className="relative flex min-h-0 scroll-mt-24 flex-col justify-start overflow-x-clip bg-[#FCFCFC] pt-8 pb-24 sm:py-10 md:min-h-[100svh] md:justify-center md:pt-20 md:pb-16 lg:pt-24 lg:pb-20"
+      className="relative flex scroll-mt-24 flex-col overflow-x-clip bg-[#FCFCFC] py-12 sm:py-16 lg:py-20"
     >
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Section Header */}

@@ -61,7 +61,7 @@ export default function ContactPage() {
 
       <main className="flex-1">
         {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
-        <section className="pt-20 pb-14 sm:pt-24 sm:pb-16 lg:pt-24 lg:pb-24">
+        <section className="pt-20 pb-14 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-24">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title & Subtitle */}
             <div className="max-w-3xl">
@@ -86,7 +86,7 @@ export default function ContactPage() {
                     {/* Item 1 */}
                     <div className="flex items-start gap-3.5">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
-                        <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                        <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
                         </svg>
                       </div>
@@ -103,8 +103,8 @@ export default function ContactPage() {
                     {/* Item 2 */}
                     <div className="flex items-start gap-3.5">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
-                        <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a3 3 0 00-4.5 0m4.5 0H9.75m4.5 0v.75A2.25 2.25 0 0112 21.75a2.25 2.25 0 01-2.25-2.25v-.75m7.5-6.75a6 6 0 10-12 0c0 2.22 1.206 4.156 3 5.197v.553a1.5 1.5 0 001.5 1.5h3a1.5 1.5 0 001.5-1.5v-.553c1.794-1.041 3-2.977 3-5.197z" />
+                        <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 18h6m-5 4h4m1.09-8a6 6 0 1 0-6.18 0c.54.4.88 1.03.88 1.7V17h4.42v-1.3c0-.67.34-1.3.88-1.7Z" />
                         </svg>
                       </div>
                       <div>
@@ -120,7 +120,7 @@ export default function ContactPage() {
                     {/* Item 3 */}
                     <div className="flex items-start gap-3.5">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#245FD4]">
-                        <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
+                        <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                         </svg>
                       </div>
