@@ -239,17 +239,16 @@ const isAuthenticated =
             </h4>
             <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
               <Link
-                href="/#features"
-                onClick={(e) => handleNavAnchorClick(e, "features", "start")}
+                href="/gmail-signature-generator"
                 className={linkHoverClasses}
               >
-                Email Signature
+                Gmail Signature
               </Link>
               <Link href="/template" className={linkHoverClasses}>
                 Templates
               </Link>
-              <Link href="/signup" className={linkHoverClasses}>
-                Free Signature
+              <Link href="/outlook-signature-generator" className={linkHoverClasses}>
+                Outlook Signature
               </Link>
             </div>
           </motion.div>
