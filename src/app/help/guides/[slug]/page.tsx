@@ -27,9 +27,13 @@ export async function generateMetadata({
   return {
     title: `${guide.title} | Sig Signature Help`,
     description: guide.subtitle,
+    alternates: {
+      canonical: `https://www.sigsignature.com/help/guides/${slug}`,
+    },
     openGraph: {
       title: `${guide.title} | Sig Signature Help`,
       description: guide.subtitle,
+      url: `https://www.sigsignature.com/help/guides/${slug}`,
       type: "article",
     },
   };

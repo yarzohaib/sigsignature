@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Help & Support | Sig Signature",
   description:
     "Find practical answers, step-by-step guides, and quick solutions for designing, exporting, and managing your email signatures.",
+  alternates: {
+    canonical: "https://www.sigsignature.com/help",
+  },
 };
 
 export default function HelpPage() {

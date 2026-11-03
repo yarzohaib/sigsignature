@@ -451,10 +451,10 @@ export default function PrivacyPolicyContent({ isDrawer = false }: PrivacyPolicy
           >
             For questions or concerns regarding this Privacy Policy or our data protection practices, contact The Nevon at{" "}
             <a
-              href="mailto:privacy@sigsignature.com"
-              className="text-[#245FD4] font-semibold hover:underline"
+              href="mailto:thenevon@sigsignature.com"
+              className="text-[#245FD4] font-semibold underline underline-offset-2 decoration-[#245FD4] hover:text-[#022977] hover:decoration-[#022977] transition-colors"
             >
-              privacy@sigsignature.com
+              thenevon@sigsignature.com
             </a>
             .
           </p>

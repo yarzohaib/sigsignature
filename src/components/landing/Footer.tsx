@@ -244,8 +244,8 @@ const isAuthenticated =
               >
                 Gmail Signature
               </Link>
-              <Link href="/template" className={linkHoverClasses}>
-                Templates
+              <Link href="/help" className={linkHoverClasses}>
+                Help
               </Link>
               <Link href="/outlook-signature-generator" className={linkHoverClasses}>
                 Outlook Signature

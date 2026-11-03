@@ -194,7 +194,7 @@ export default function TeamPage() {
       <main className="flex-1">
         {/* HERO & TEAM SECTION */}
         {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
-        <section className="pt-20 pb-12 sm:pt-24 sm:pb-16 lg:pt-24 lg:pb-20">
+        <section className="pt-20 pb-12 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-20">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title & Subtitle */}
             <div className="max-w-3xl">

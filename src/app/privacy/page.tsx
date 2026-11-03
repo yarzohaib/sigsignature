@@ -57,7 +57,7 @@ export default function PrivacyPage() {
         ]}
       />
 
-      <main className="flex-1 pt-24 sm:pt-28 pb-16 sm:pb-24">
+      <main className="flex-1 pt-24 sm:pt-8 pb-16 sm:pb-24">
         <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
           <div className="rounded-[28px] sm:rounded-[36px] border border-slate-200/80 bg-white p-6 sm:p-10 lg:p-14 shadow-xs">
             <PrivacyPolicyContent />

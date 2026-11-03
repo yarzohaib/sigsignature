@@ -55,7 +55,7 @@ export default function ComparisonSection() {
               <span className="block text-[#1243A3]">Without Hiring a Developer</span>
             </h2>
           </Reveal>
-          <p className="mx-auto mt-3 max-w-[330px] font-body text-[13px] leading-relaxed text-slate-600 sm:max-w-none sm:text-base lg:mt-4">
+          <p className="mx-auto mt-3 max-w-[330px] font-body text-[13px] leading-relaxed text-slate-600 sm:max-w-4xl sm:text-base lg:mt-4">
             Compare custom HTML email signature development with Sig Signature’s online email signature generator. Choose the approach that best fits your design needs, budget, and workflow.
           </p>
         </div>

@@ -146,6 +146,18 @@ export default function Navbar() {
       clearAuthSession();
       setUserDropdownOpen(false);
       setIsLoggingOut(false);
+      try {
+        sessionStorage.setItem("sig_flash_toast", "You have been logged out successfully.");
+      } catch {
+        // Ignore
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("sig_flash_toast", {
+            detail: "You have been logged out successfully.",
+          })
+        );
+      }
       router.refresh();
     }
   }

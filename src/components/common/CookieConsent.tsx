@@ -57,13 +57,15 @@ export default function CookieConsent() {
             <button
               type="button"
               onClick={handleEssentialOnly}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 cursor-pointer"
+              aria-label="Reject non-essential cookies"
+              className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 cursor-pointer"
             >
-              Essential
+              Reject All
             </button>
             <button
               type="button"
               onClick={handleAcceptAll}
+              aria-label="Accept all cookies"
               className="rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer"
             >
               Accept All

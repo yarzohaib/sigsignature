@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AdaptiveHelpShell from "@/components/help/AdaptiveHelpShell";
 
 export const metadata: Metadata = {
   title: "Help & Documentation | Sig Signature",
@@ -38,5 +39,5 @@ export default function HelpLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <AdaptiveHelpShell>{children}</AdaptiveHelpShell>;
 }

@@ -61,7 +61,7 @@ export default function BlogPage() {
 
       <main className="flex-1">
         {/* 1. HERO SECTION matching Figma Screenshot 1 */}
-        <section className="pt-20 pb-12 sm:pt-24 sm:pb-16 lg:pt-28 lg:pb-18 text-center">
+        <section className="pt-20 pb-12 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-18 text-center">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-4xl text-center">
               {/* Heading: Good Emails. Great Endings. */}

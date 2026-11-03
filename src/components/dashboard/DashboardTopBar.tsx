@@ -316,7 +316,8 @@ export default function DashboardTopBar({
 
               {/* User Name matching typography from Figma */}
               <span
-                className="hidden sm:inline-block text-[#1E293B] font-bold text-[14px] transition group-hover:text-[#245FD4]"
+                className="hidden sm:inline-block text-[#1E293B] font-bold text-[14px] transition group-hover:text-[#245FD4] truncate max-w-[140px] md:max-w-[180px]"
+                title={resolvedUserName || undefined}
                 style={{
                   fontFamily: "var(--font-montserrat), Montserrat, sans-serif",
                   letterSpacing: "0%",

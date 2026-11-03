@@ -2162,9 +2162,9 @@ function DesignStudioContent() {
                 <div className="mt-3.5">
                   <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Shape Selection">
                     {[
-                      { id: "rounded", label: "Rounded", rx: "rounded-lg" },
-                      { id: "square", label: "Square", rx: "rounded-none" },
-                      { id: "pill", label: "Pill", rx: "rounded-full" },
+                      { id: "rounded", label: "Rounded", rx: "rounded-lg", iconClass: "h-7 w-7" },
+                      { id: "square", label: "Square", rx: "rounded-none", iconClass: "h-7 w-7" },
+                      { id: "pill", label: "Pill", rx: "rounded-full", iconClass: "h-4 w-7.5" },
                     ].map((shape) => {
                       const activeShape = selectedElement?.shape || state.design?.shape || "rounded";
                       const isSelected = activeShape === shape.id;
@@ -2187,7 +2187,9 @@ function DesignStudioContent() {
                               : "border-[#E2E8F0] bg-white hover:border-slate-300"
                           }`}
                         >
-                          <div className={`h-8 w-8 border border-slate-300 bg-slate-100 ${shape.rx}`} />
+                          <div className="flex h-8 w-8 items-center justify-center">
+                            <div className={`border border-slate-300 bg-slate-100 ${shape.rx} ${shape.iconClass}`} />
+                          </div>
                           <span className="mt-2 text-[11px] font-medium text-[#1E293B]">
                             {shape.label}
                           </span>

@@ -153,14 +153,17 @@ export default function ImageCropModal({
             onZoomChange={setZoom}
             onCropComplete={onCropCompleteCallback}
           />
-          {/* Subtle guide hint badge */}
-          <div className="absolute top-3 left-3 pointer-events-none rounded-full bg-black/60 backdrop-blur-xs px-2.5 py-1 text-[11px] font-medium text-white/90">
-            Drag to pan · Pinch or scroll to zoom
-          </div>
         </div>
 
         {/* Controls & Zoom Slider */}
         <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex flex-col gap-3">
+          {/* Subtle guide hint outside canvas */}
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 py-0.5 select-none">
+            <span>↔ Drag to pan</span>
+            <span>•</span>
+            <span>🔍 Pinch or scroll to zoom</span>
+          </div>
+
           {errorMessage && (
             <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
               {errorMessage}
@@ -172,7 +175,7 @@ export default function ImageCropModal({
               Zoom &amp; Scale
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-slate-500 font-mono text-[11px]">
+              <span className="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 font-mono text-[11px] font-semibold shadow-2xs">
                 {Math.round(zoom * 100)}%
               </span>
               <button
@@ -192,11 +195,13 @@ export default function ImageCropModal({
               type="button"
               onClick={handleZoomOut}
               disabled={zoom <= 1 || isApplying}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100 active:scale-95 disabled:opacity-40 cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100 active:scale-95 disabled:opacity-40 cursor-pointer shadow-2xs"
               aria-label="Zoom out"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="5" y1="12" x2="19" y2="12" />
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="8" y1="11" x2="14" y2="11" />
               </svg>
             </button>
 
@@ -211,7 +216,7 @@ export default function ImageCropModal({
                 aria-label="Zoom profile photo"
                 onChange={(e) => setZoom(Number(e.target.value))}
                 disabled={isApplying}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#245FD4] focus:outline-none focus:ring-2 focus:ring-brand/30"
+                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#245FD4] focus:outline-none focus:ring-2 focus:ring-brand/30"
               />
             </div>
 
@@ -220,12 +225,14 @@ export default function ImageCropModal({
               type="button"
               onClick={handleZoomIn}
               disabled={zoom >= 3 || isApplying}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100 active:scale-95 disabled:opacity-40 cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100 active:scale-95 disabled:opacity-40 cursor-pointer shadow-2xs"
               aria-label="Zoom in"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
               </svg>
             </button>
           </div>

@@ -82,7 +82,7 @@ export default function UseCasesPage() {
 
       <main className="flex-1">
         {/* 1. HERO SECTION */}
-        <section className="pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20">
+        <section className="pt-28 pb-14 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-20">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column: Heading, Subtitle, CTA */}

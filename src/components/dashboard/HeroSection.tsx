@@ -66,7 +66,7 @@ export default function HeroSection() {
 
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8 px-6 sm:px-10 lg:px-12 xl:px-14 py-7 sm:py-8 lg:py-8 xl:py-9">
         {/* Left: Welcome heading & subtitle */}
-        <div className="text-left shrink-0 max-w-xl">
+        <div className="text-left min-w-0 flex-1 max-w-xl">
           <h1
             className="text-white font-bold text-[26px] sm:text-[30px] lg:text-[34px] xl:text-[36px] leading-[1.12] tracking-tight"
             style={{
@@ -74,7 +74,9 @@ export default function HeroSection() {
             }}
           >
             <span className="block">Welcome back,</span>
-            <span className="block">{displayFirstName}.</span>
+            <span className="block truncate max-w-full sm:max-w-md lg:max-w-lg" title={`${displayFirstName}.`}>
+              {displayFirstName}.
+            </span>
           </h1>
 
           <p
