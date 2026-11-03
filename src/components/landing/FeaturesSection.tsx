@@ -236,8 +236,8 @@ export default function FeaturesSection() {
             </FeatureCardVisual>
           </FeatureCard>
 
-          {/* Compact signature list card */}
-          <FeatureCard colSpan="lg:col-span-3" direction="right" aria-label="Save and Update Your Signatures">
+          {/* Card 6 (EQUAL 50% - 6 cols in Figma) */}
+          <FeatureCard colSpan="lg:col-span-6" direction="right" aria-label="Save and Update Your Signatures">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>
@@ -256,7 +256,7 @@ export default function FeaturesSection() {
             </div>
 
             {/* Signature list preview items */}
-            <FeatureCardVisual className="mt-8 space-y-2">
+            <FeatureCardVisual className="mt-8 w-[78%] space-y-2">
               <div className="flex items-center justify-between rounded-xl border border-[#D8D8D8] bg-gradient-to-r from-[#F1F0ED] to-white px-4 py-2.5 text-xs font-medium text-slate-700">
                 <span>Personal Signature</span>
                 <svg className="h-3.5 w-3.5 text-slate-500" viewBox="0 0 20 20" fill="none" aria-hidden="true">
