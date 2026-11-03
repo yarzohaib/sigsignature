@@ -3,11 +3,13 @@ import Script from "next/script";
 interface GoogleTrackingProps {
   gtmId?: string;
   gaId?: string;
+  measurementId?: string;
 }
 
 export function GoogleTracking({
   gtmId = process.env.NEXT_PUBLIC_GTM_ID,
-  gaId = process.env.NEXT_PUBLIC_GA_ID || "G-Z3JCEBRBQ7",
+  gaId = process.env.NEXT_PUBLIC_GA_ID || "G-MZM2JLRVWY",
+  measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-5515MKG8NL",
 }: GoogleTrackingProps) {
   // If neither GTM nor GA ID is configured in the environment, render nothing
   if (!gtmId && !gaId) {
@@ -35,7 +37,7 @@ export function GoogleTracking({
         }}
       />
 
-      {/* 2. Google tag (gtag.js) for GA4: G-Z3JCEBRBQ7 */}
+      {/* 2. Google tag (gtag.js) for GA4: Primary Tag (G-MZM2JLRVWY) & Stream Measurement (G-5515MKG8NL) */}
       {gaId && (
         <>
           <Script
@@ -51,6 +53,7 @@ export function GoogleTracking({
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${gaId}');
+                ${measurementId && measurementId !== gaId ? `gtag('config', '${measurementId}');` : ""}
               `,
             }}
           />
