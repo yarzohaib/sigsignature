@@ -184,7 +184,7 @@ export default function TeamMemberCard({
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 bottom-full mb-1 w-40 rounded-xl border border-[#E2E8F0] bg-white p-1.5 shadow-lg z-30">
+            <div className="absolute right-0 top-full mt-1 w-40 rounded-xl border border-[#E2E8F0] bg-white p-1.5 shadow-lg z-30">
               {member.status === "sent" && (
                 <button
                   type="button"

@@ -63,6 +63,7 @@ export default function EditDetailsModal({
       twitter: "x",
       facebook: "facebook",
       instagram: "instagram",
+      github: "github",
     };
     Object.entries(mapping).forEach(([key, plat]) => {
       const val = state.socials?.[key as keyof typeof state.socials];
@@ -245,6 +246,12 @@ export default function EditDetailsModal({
                     platform: "instagram" as const,
                     label: "Instagram Profile",
                     placeholder: SOCIAL_PLATFORM_EXAMPLES.instagram,
+                  },
+                  {
+                    key: "github" as const,
+                    platform: "github" as const,
+                    label: "GitHub Profile",
+                    placeholder: SOCIAL_PLATFORM_EXAMPLES.github,
                   },
                 ].map(({ key, label, placeholder }) => {
                   const error = socialErrors[key];

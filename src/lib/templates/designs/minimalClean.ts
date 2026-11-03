@@ -83,6 +83,8 @@ export function render(data: TemplateSignatureData): string {
     { key: "linkedin", label: "LinkedIn", network: "linkedin" },
     { key: "twitter", label: "Twitter", network: "twitter" },
     { key: "facebook", label: "Facebook", network: "facebook" },
+    { key: "instagram", label: "Instagram", network: "instagram" },
+    { key: "github", label: "GitHub", network: "github" },
   ];
 
   const socialLinks = networks

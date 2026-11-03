@@ -7,6 +7,7 @@ export const TEAM_SOCIAL_PLATFORMS = [
   "x",
   "facebook",
   "instagram",
+  "github",
 ] as const;
 
 export type TeamMemberSocialPlatform = (typeof TEAM_SOCIAL_PLATFORMS)[number];
@@ -21,6 +22,7 @@ export const SOCIAL_PLATFORM_LABELS: Record<TeamMemberSocialPlatform, string> = 
   x: "Twitter / X",
   facebook: "Facebook",
   instagram: "Instagram",
+  github: "GitHub",
 };
 
 export const SOCIAL_PLATFORM_EXAMPLES: Record<TeamMemberSocialPlatform, string> = {
@@ -28,6 +30,7 @@ export const SOCIAL_PLATFORM_EXAMPLES: Record<TeamMemberSocialPlatform, string> 
   x: "https://x.com/username or https://twitter.com/username",
   facebook: "https://facebook.com/username",
   instagram: "https://instagram.com/username",
+  github: "https://github.com/username",
 };
 
 /**
@@ -76,6 +79,11 @@ export function validateSocialUrl(
           return "Must be a valid Instagram URL (e.g. https://instagram.com/username)";
         }
         break;
+      case "github":
+        if (hostname !== "github.com" && !hostname.endsWith(".github.com")) {
+          return "Must be a valid GitHub URL (e.g. https://github.com/username)";
+        }
+        break;
     }
   } catch {
     return "Please enter a valid URL (e.g. https://...)";
@@ -100,7 +108,8 @@ export function teamHasSocialElement(team: Team): boolean {
       socials?.linkedin?.trim() ||
       socials?.twitter?.trim() ||
       socials?.facebook?.trim() ||
-      socials?.instagram?.trim()
+      socials?.instagram?.trim() ||
+      socials?.github?.trim()
     );
   }
 
@@ -110,6 +119,7 @@ export function teamHasSocialElement(team: Team): boolean {
     socials?.linkedin?.trim() ||
     socials?.twitter?.trim() ||
     socials?.facebook?.trim() ||
-    socials?.instagram?.trim()
+    socials?.instagram?.trim() ||
+    socials?.github?.trim()
   );
 }

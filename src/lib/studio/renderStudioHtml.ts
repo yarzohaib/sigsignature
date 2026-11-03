@@ -79,7 +79,7 @@ function renderSocialLinks(
   const activeNetworks = networks.filter((n) =>
     Boolean((data.socials as Record<string, string | undefined>)?.[n.key]?.trim())
   );
-  const targetNetworks = activeNetworks.length > 0 ? activeNetworks : networks.slice(0, 4);
+  const targetNetworks = activeNetworks.length > 0 ? activeNetworks : networks.slice(0, 5);
 
   const cells: string[] = [];
 

@@ -49,9 +49,16 @@ export function isValidWebUrl(value: string): boolean {
   }
 }
 
+/** Standard field min character lengths */
+export const MIN_LENGTH = {
+  FIRST_NAME: 2,
+} as const;
+
 /** Standard field max character lengths */
 export const MAX_LENGTH = {
   NAME: 80,
+  FIRST_NAME: 50,
+  LAST_NAME: 50,
   JOB_TITLE: 80,
   COMPANY: 80,
   EMAIL: 100,
@@ -66,3 +73,14 @@ export const MAX_LENGTH = {
   SEARCH: 100,
   MESSAGE: 2000,
 } as const;
+
+/**
+ * Validates a person's first or last name:
+ * - Checks for invalid characters (HTML tags, angle brackets, ASCII/Unicode control characters)
+ */
+export function isValidPersonName(name: string): boolean {
+  if (typeof name !== "string") return false;
+  // Strictly reject HTML tags, angle brackets, or control characters
+  if (/[<>]/.test(name) || /[\x00-\x1F\x7F-\x9F]/.test(name)) return false;
+  return true;
+}

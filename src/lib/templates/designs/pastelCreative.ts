@@ -97,6 +97,7 @@ export function render(data: TemplateSignatureData): string {
     { key: "twitter", label: "Twitter", network: "twitter" },
     { key: "facebook", label: "Facebook", network: "facebook" },
     { key: "instagram", label: "Instagram", network: "instagram" },
+    { key: "github", label: "GitHub", network: "github" },
   ];
 
   const iconStyle = data.socialIconsStyle || "circle";

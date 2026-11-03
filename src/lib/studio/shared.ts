@@ -89,6 +89,7 @@ export function renderSocialLinksHtml(
     twitter: "x",
     facebook: "facebook",
     instagram: "instagram",
+    github: "github",
   };
 
   // Check which networks have URLs configured that are valid
@@ -108,14 +109,14 @@ export function renderSocialLinksHtml(
   );
 
   // If user placed a social element on canvas but hasn't entered custom URLs yet,
-  // show the 4 standard platforms (matching what FreeElementView displays on canvas).
+  // show the 5 standard platforms (matching what FreeElementView displays on canvas).
   // But if the user entered custom URLs and they are all invalid, show nothing.
   const targetNetworks =
     activeNetworks.length > 0
       ? activeNetworks
       : hasAnySocialEntered
       ? []
-      : networks.slice(0, 4);
+      : networks.slice(0, 5);
 
   const cells: string[] = [];
 

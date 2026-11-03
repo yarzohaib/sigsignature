@@ -200,8 +200,16 @@ export default function ProfileCard({
             value={firstName}
             maxLength={50}
             minLength={2}
-            onChange={(e) => onFirstNameChange(e.target.value)}
+            onChange={(e) => {
+              const sanitized = e.target.value.replace(/^\s+/, "").slice(0, 50);
+              onFirstNameChange(sanitized);
+            }}
+            onBlur={() => {
+              onFirstNameChange(firstName.trim());
+            }}
             placeholder="John"
+            aria-invalid={Boolean(errors.firstName)}
+            aria-describedby={errors.firstName ? "profile-first-name-error" : undefined}
             className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#1E293B] placeholder-slate-400 transition focus:outline-none focus:ring-2 ${
               errors.firstName
                 ? "border-red-300 focus:border-red-500 focus:ring-red-100"
@@ -210,7 +218,7 @@ export default function ProfileCard({
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           />
           {errors.firstName && (
-            <p className="mt-1 text-xs text-red-600">{errors.firstName}</p>
+            <p id="profile-first-name-error" className="mt-1 text-xs text-red-600">{errors.firstName}</p>
           )}
         </div>
 
@@ -228,8 +236,16 @@ export default function ProfileCard({
             type="text"
             value={lastName}
             maxLength={50}
-            onChange={(e) => onLastNameChange(e.target.value)}
+            onChange={(e) => {
+              const sanitized = e.target.value.replace(/^\s+/, "").slice(0, 50);
+              onLastNameChange(sanitized);
+            }}
+            onBlur={() => {
+              onLastNameChange(lastName.trim());
+            }}
             placeholder="Doe"
+            aria-invalid={Boolean(errors.lastName)}
+            aria-describedby={errors.lastName ? "profile-last-name-error" : undefined}
             className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#1E293B] placeholder-slate-400 transition focus:outline-none focus:ring-2 ${
               errors.lastName
                 ? "border-red-300 focus:border-red-500 focus:ring-red-100"
@@ -238,7 +254,7 @@ export default function ProfileCard({
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           />
           {errors.lastName && (
-            <p className="mt-1 text-xs text-red-600">{errors.lastName}</p>
+            <p id="profile-last-name-error" className="mt-1 text-xs text-red-600">{errors.lastName}</p>
           )}
         </div>
 

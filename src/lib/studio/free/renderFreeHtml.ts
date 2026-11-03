@@ -561,6 +561,7 @@ export function generateFreePlainText(data: StudioSignatureData): string {
       if (s?.twitter?.trim()) lines.push(`Twitter: ${s.twitter.trim()}`);
       if (s?.facebook?.trim()) lines.push(`Facebook: ${s.facebook.trim()}`);
       if (s?.instagram?.trim()) lines.push(`Instagram: ${s.instagram.trim()}`);
+      if (s?.github?.trim()) lines.push(`GitHub: ${s.github.trim()}`);
     }
   }
 

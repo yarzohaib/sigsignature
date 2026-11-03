@@ -193,7 +193,7 @@ export default function MemberModal({
   }
 
   function handleAddSocialLink() {
-    if (socials.length >= 4) return;
+    if (socials.length >= TEAM_SOCIAL_PLATFORMS.length) return;
     const used = new Set(socials.map((s) => s.platform));
     const available = TEAM_SOCIAL_PLATFORMS.find((p) => !used.has(p));
     if (!available) return;
@@ -570,7 +570,7 @@ export default function MemberModal({
                 <label className="block text-xs font-semibold text-[#0B1A3D]">
                   Social links <span className="font-normal text-[#64748B]">(optional)</span>
                 </label>
-                {socials.length < 4 && (
+                {socials.length < TEAM_SOCIAL_PLATFORMS.length && (
                   <button
                     type="button"
                     onClick={handleAddSocialLink}

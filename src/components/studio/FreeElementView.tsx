@@ -469,6 +469,7 @@ export default function FreeElementView({
           { key: "twitter", label: "Twitter", network: "twitter", platform: "x" },
           { key: "facebook", label: "Facebook", network: "facebook", platform: "facebook" },
           { key: "instagram", label: "Instagram", network: "instagram", platform: "instagram" },
+          { key: "github", label: "GitHub", network: "github", platform: "github" },
         ];
 
         const hasAnySocial = networks.some((n) => Boolean(data.socials?.[n.key]?.trim()));

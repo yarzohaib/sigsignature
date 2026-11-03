@@ -229,10 +229,15 @@ function SettingsContent() {
       errs.firstName = "First name must be at least 2 characters.";
     } else if (trimmedFirst.length > 50) {
       errs.firstName = "First name cannot exceed 50 characters.";
+    } else if (/[<>]/.test(trimmedFirst) || /[\x00-\x1F\x7F-\x9F]/.test(trimmedFirst)) {
+      errs.firstName = "First name contains invalid characters.";
     }
 
-    if (formState.lastName && formState.lastName.trim().length > 50) {
+    const trimmedLast = (formState.lastName || "").trim();
+    if (trimmedLast.length > 50) {
       errs.lastName = "Last name cannot exceed 50 characters.";
+    } else if (trimmedLast && (/[<>]/.test(trimmedLast) || /[\x00-\x1F\x7F-\x9F]/.test(trimmedLast))) {
+      errs.lastName = "Last name contains invalid characters.";
     }
 
     if (formState.companyName && formState.companyName.length > 100) {
@@ -293,16 +298,20 @@ function SettingsContent() {
       const profilePayload: UpdateProfilePayload = {};
       let hasProfileChange = false;
 
-      if (formState.firstName.trim() !== initialFormState.firstName.trim()) {
-        profilePayload.firstName = formState.firstName.trim();
+      const cleanFirst = formState.firstName.trim();
+      const cleanLast = (formState.lastName || "").trim();
+      const cleanCompany = (formState.companyName || "").trim();
+
+      if (cleanFirst !== initialFormState.firstName.trim()) {
+        profilePayload.firstName = cleanFirst;
         hasProfileChange = true;
       }
-      if ((formState.lastName || "").trim() !== (initialFormState.lastName || "").trim()) {
-        profilePayload.lastName = formState.lastName.trim() || null;
+      if (cleanLast !== (initialFormState.lastName || "").trim()) {
+        profilePayload.lastName = cleanLast || null;
         hasProfileChange = true;
       }
-      if ((formState.companyName || "").trim() !== (initialFormState.companyName || "").trim()) {
-        profilePayload.companyName = formState.companyName.trim() || null;
+      if (cleanCompany !== (initialFormState.companyName || "").trim()) {
+        profilePayload.companyName = cleanCompany || null;
         hasProfileChange = true;
       }
       if ((formState.avatarUrl || null) !== (initialFormState.avatarUrl || null)) {
@@ -360,6 +369,9 @@ function SettingsContent() {
       // Update local state to reflect fresh saved values
       const newSavedState: FormState = {
         ...formState,
+        firstName: cleanFirst,
+        lastName: cleanLast,
+        companyName: cleanCompany,
         brandColor: formState.brandColor.toUpperCase(),
       };
       setInitialFormState(newSavedState);

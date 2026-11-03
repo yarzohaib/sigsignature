@@ -1,6 +1,6 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { isValidEmail, sanitizePhone, isValidPhone, MAX_LENGTH } from "../src/lib/validation";
+import { isValidEmail, sanitizePhone, isValidPhone, isValidPersonName, MAX_LENGTH, MIN_LENGTH } from "../src/lib/validation";
 import { generateTemplateHtml } from "../src/lib/templates/renderTemplateHtml";
 import { generateFreeHtml } from "../src/lib/studio/free/renderFreeHtml";
 import { INITIAL_STUDIO_DATA } from "../src/lib/studio/types";
@@ -108,6 +108,9 @@ describe("Field Validation & Sanitization System", () => {
 
   test("MAX_LENGTH constants are configured for all field types", () => {
     assert.equal(MAX_LENGTH.NAME, 80);
+    assert.equal(MAX_LENGTH.FIRST_NAME, 50);
+    assert.equal(MAX_LENGTH.LAST_NAME, 50);
+    assert.equal(MIN_LENGTH.FIRST_NAME, 2);
     assert.equal(MAX_LENGTH.JOB_TITLE, 80);
     assert.equal(MAX_LENGTH.COMPANY, 80);
     assert.equal(MAX_LENGTH.EMAIL, 100);
@@ -120,6 +123,20 @@ describe("Field Validation & Sanitization System", () => {
     assert.equal(MAX_LENGTH.URL, 300);
     assert.equal(MAX_LENGTH.PASSWORD, 128);
     assert.equal(MAX_LENGTH.MESSAGE, 2000);
+  });
+
+  test("isValidPersonName: validates names and rejects HTML/markup/control chars", () => {
+    // Valid standard and international names
+    assert.equal(isValidPersonName("John"), true);
+    assert.equal(isValidPersonName("Mary Jane"), true);
+    assert.equal(isValidPersonName("O'Connor"), true);
+    assert.equal(isValidPersonName("Jean-Luc"), true);
+    assert.equal(isValidPersonName("Dr. Smith"), true);
+
+    // Invalid names containing markup or control characters
+    assert.equal(isValidPersonName("<script>alert(1)</script>"), false);
+    assert.equal(isValidPersonName("Hello<world>"), false);
+    assert.equal(isValidPersonName("Bad\x00Name"), false);
   });
 
   test("Design Studio: does not export invalid email on bound element", () => {

@@ -70,13 +70,13 @@ export default function PopularTemplatesSection() {
         </div>
 
         {/* Category Pills Filter */}
-        <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="mt-8 sm:mt-10 flex w-full items-center justify-start gap-2 overflow-x-auto pb-2 scrollbar-none sm:justify-center">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(cat)}
-              className={`rounded-full px-5 py-2 text-xs sm:text-sm font-semibold transition cursor-pointer ${
+              className={`shrink-0 rounded-full px-5 py-2 text-xs sm:text-sm font-semibold transition cursor-pointer ${
                 selectedCategory === cat
                   ? "bg-[#245FD4] text-white shadow-xs"
                   : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"

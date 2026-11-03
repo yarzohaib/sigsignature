@@ -41,7 +41,7 @@ import {
 } from "@/lib/validation";
 
 const SOCIAL_CONFIG: Array<{
-  key: "linkedin" | "twitter" | "facebook" | "instagram";
+  key: "linkedin" | "twitter" | "facebook" | "instagram" | "github";
   platform: TeamMemberSocialPlatform;
   label: string;
   placeholder: string;
@@ -69,6 +69,12 @@ const SOCIAL_CONFIG: Array<{
     platform: "instagram",
     label: "Instagram Profile",
     placeholder: SOCIAL_PLATFORM_EXAMPLES.instagram,
+  },
+  {
+    key: "github",
+    platform: "github",
+    label: "GitHub Profile",
+    placeholder: SOCIAL_PLATFORM_EXAMPLES.github,
   },
 ];
 
@@ -222,6 +228,7 @@ export default function TemplateEditor({
       twitter: "x",
       facebook: "facebook",
       instagram: "instagram",
+      github: "github",
     };
     Object.entries(mapping).forEach(([key, plat]) => {
       const val = formData.socials?.[key as keyof typeof formData.socials];
@@ -448,6 +455,7 @@ export default function TemplateEditor({
         twitter: formData.socials.twitter?.trim() || "",
         facebook: formData.socials.facebook?.trim() || "",
         instagram: formData.socials.instagram?.trim() || "",
+        github: formData.socials.github?.trim() || "",
       },
     };
   }
@@ -575,6 +583,7 @@ export default function TemplateEditor({
       twitter: "x",
       facebook: "facebook",
       instagram: "instagram",
+      github: "github",
     };
     Object.entries(mapping).forEach(([key, plat]) => {
       const val = validSocials[key as keyof typeof validSocials];

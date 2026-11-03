@@ -236,8 +236,8 @@ export default function FeaturesSection() {
             </FeatureCardVisual>
           </FeatureCard>
 
-          {/* Card 6 (EQUAL 50% - 6 cols in Figma) */}
-          <FeatureCard colSpan="lg:col-span-6" direction="right" aria-label="Save and Update Your Signatures">
+          {/* Compact signature list card */}
+          <FeatureCard colSpan="lg:col-span-3" direction="right" aria-label="Save and Update Your Signatures">
             <div>
               <div className="flex items-center gap-2">
                 <FeatureIconTile>

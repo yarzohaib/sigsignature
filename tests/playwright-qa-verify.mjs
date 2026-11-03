@@ -265,6 +265,56 @@ async function run() {
     console.log("  ✔ Saved screenshot to sterling_preview_scaled.png");
     console.log("  ✔ Sterling & Co. template preview scaling verified!");
 
+    // ----------------------------------------------------
+    // Test 8: Template Editor GitHub Social Link & Validation
+    // ----------------------------------------------------
+    console.log("Testing GitHub Social Link field, validation & live preview in Template Editor...");
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(`${baseUrl}/templates?template=bold-gradient`);
+    await page.waitForLoadState("domcontentloaded");
+
+    // Open Social Links accordion if not already open
+    const socialAccordionBtn = page.locator('button:has-text("Social Links")');
+    await socialAccordionBtn.waitFor({ state: "visible", timeout: 5000 });
+    const githubLabel = page.locator('label:has-text("GitHub Profile")');
+    if (!await githubLabel.isVisible()) {
+      await socialAccordionBtn.click();
+    }
+    await githubLabel.waitFor({ state: "visible", timeout: 3000 });
+    assert.ok(await githubLabel.isVisible(), "GitHub Profile label must be rendered in Social Links form");
+
+    // Find GitHub input field
+    const githubInput = page.locator('input[placeholder="https://github.com/username"]');
+    await githubInput.waitFor({ state: "visible", timeout: 3000 });
+
+    // Test invalid URL validation
+    await githubInput.fill("invalid-github-link");
+    const ghError = page.locator('p.text-rose-500:has-text("URL must start with https://")');
+    await ghError.waitFor({ state: "visible", timeout: 3000 });
+    assert.ok(await ghError.isVisible(), "Validation error must show for non-https GitHub link");
+
+    // Test non-github domain validation
+    await githubInput.fill("https://gitlab.com/username");
+    const ghDomainError = page.locator('p.text-rose-500:has-text("Must be a valid GitHub URL")');
+    await ghDomainError.waitFor({ state: "visible", timeout: 3000 });
+    assert.ok(await ghDomainError.isVisible(), "Validation error must show for non-github domain");
+
+    // Test valid GitHub URL
+    await githubInput.fill("https://github.com/antigravity-dev");
+    await page.waitForTimeout(500);
+    assert.strictEqual(await ghDomainError.isVisible(), false, "Validation error must disappear for valid GitHub URL");
+
+    // Verify preview iframe contains GitHub link
+    const boldGradientFrame = page.frameLocator('iframe[title="Email Signature Preview"]');
+    const githubLinkInPreview = boldGradientFrame.locator('a[href*="github.com/antigravity-dev"]');
+    await githubLinkInPreview.waitFor({ state: "visible", timeout: 4000 });
+    assert.ok(await githubLinkInPreview.isVisible(), "Preview iframe must render GitHub icon link");
+
+    // Take screenshot showing the GitHub field and preview
+    await page.screenshot({ path: "/Users/zohaib/.gemini/antigravity/brain/43efaccf-ce6f-41ad-ba5a-5201f13ceea4/github_social_verified.png" });
+    console.log("  ✔ Saved screenshot to github_social_verified.png");
+    console.log("  ✔ GitHub social link and validation fully verified in Template Editor!");
+
     console.log("\n🎉 ALL PLAYWRIGHT E2E TESTS PASSED SUCCESSFULLY!");
   } finally {
     await browser.close();
