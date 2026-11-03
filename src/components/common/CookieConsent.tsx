@@ -27,6 +27,9 @@ export default function CookieConsent() {
   const handleAcceptAll = () => {
     localStorage.setItem(CONSENT_STORAGE_KEY, "all");
     updateConsentMode(true);
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", "page_view");
+    }
     setVisible(false);
   };
 
