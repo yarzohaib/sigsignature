@@ -16,6 +16,7 @@ import {
   getStoredAvatarUrl,
   clearAuthSession,
   getStoredRefreshToken,
+  getStoredToken,
 } from "@/app/lib/auth";
 
 interface UserContextValue {
@@ -101,6 +102,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refreshUser = useCallback(async (): Promise<UserProfile | null> => {
+    const token = getStoredToken();
+    if (!token) {
+      setIsLoadingUser(false);
+      return null;
+    }
+
     try {
       const freshUser = await getCurrentUser();
       memoryCachedUser = freshUser;
@@ -137,6 +144,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     let isCancelled = false;
 
     async function init() {
+      const token = getStoredToken();
+      if (!token) {
+        if (!isCancelled) {
+          setIsLoadingUser(false);
+        }
+        return;
+      }
+
       try {
         const freshUser = await getCurrentUser();
         if (!isCancelled) {

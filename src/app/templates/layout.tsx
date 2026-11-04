@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import AdaptiveTemplatesShell from "@/components/templates/AdaptiveTemplatesShell";
 
 export const metadata: Metadata = {
   title: "Email Signature Templates | Sig Signature",
   description:
-    "Explore professionally designed email signature templates. Choose from Minimal, Corporate, Creative, and Bold aesthetics with 1-click HTML copy.",
+    "Explore modern, responsive, and professionally designed email signature templates. Compatible with Gmail, Outlook, Apple Mail, and all major email clients.",
   alternates: {
     canonical: "https://www.sigsignature.com/templates",
   },
   openGraph: {
     title: "Email Signature Templates | Sig Signature",
     description:
-      "Explore professionally designed email signature templates. Choose from Minimal, Corporate, Creative, and Bold aesthetics.",
+      "Explore modern, responsive, and professionally designed email signature templates. Compatible with Gmail, Outlook, Apple Mail, and all major email clients.",
     url: "https://www.sigsignature.com/templates",
     siteName: "Sig Signature",
     type: "website",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Email Signature Templates | Sig Signature",
     description:
-      "Explore professionally designed email signature templates. Choose from Minimal, Corporate, Creative, and Bold aesthetics.",
+      "Explore modern, responsive, and professionally designed email signature templates. Compatible with Gmail, Outlook, Apple Mail, and all major email clients.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -41,5 +42,5 @@ export default function TemplatesLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <AdaptiveTemplatesShell>{children}</AdaptiveTemplatesShell>;
 }

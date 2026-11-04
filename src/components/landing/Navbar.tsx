@@ -58,8 +58,8 @@ export default function Navbar() {
 
   const isNavActive = (href: string) => {
     if (href === "/blog") return pathname === href || pathname.startsWith(`${href}/`);
-    if (href === "/template") {
-      return pathname === href || pathname.startsWith(`${href}/`) || pathname === "/templates" || pathname.startsWith("/templates/");
+    if (href === "/templates" || href === "/template") {
+      return pathname === "/templates" || pathname.startsWith("/templates/") || pathname === "/template" || pathname.startsWith("/template/");
     }
     return pathname === href || pathname.startsWith(`${href}/`);
   };
@@ -466,9 +466,9 @@ export default function Navbar() {
                   Pricing
                 </Link>
                 <Link
-                  href="/template"
+                  href="/templates"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={mobileNavClass("/template")}
+                  className={mobileNavClass("/templates")}
                 >
                   Templates
                 </Link>
@@ -663,8 +663,8 @@ export default function Navbar() {
               Pricing
             </Link>
             <Link
-              href="/template"
-              className={desktopNavClass("/template")}
+              href="/templates"
+              className={desktopNavClass("/templates")}
             >
               Templates
             </Link>

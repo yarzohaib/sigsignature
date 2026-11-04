@@ -245,7 +245,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </p>
               </div>
               <Link
-                href="/template"
+                href="/templates"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 py-3 font-body text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:opacity-95 shrink-0"
               >
                 <span>Browse Templates</span>

@@ -248,7 +248,7 @@ export default function OutlookSignatureGeneratorPage() {
 
                 <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#0078D4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
                     <span>Generate Outlook Signature</span>
@@ -257,7 +257,7 @@ export default function OutlookSignatureGeneratorPage() {
                     </svg>
                   </Link>
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 font-body text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
                   >
                     <span>Browse Corporate Templates</span>
@@ -399,7 +399,7 @@ export default function OutlookSignatureGeneratorPage() {
                 </p>
               </div>
               <Link
-                href="/template"
+                href="/templates"
                 className="mt-4 sm:mt-0 inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-[#0078D4] hover:text-[#022977] transition"
               >
                 <span>View all corporate templates</span>
@@ -494,7 +494,7 @@ export default function OutlookSignatureGeneratorPage() {
 
                 <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 font-body text-sm font-bold text-[#00359F] shadow-md transition hover:bg-slate-100"
                   >
                     <span>Create Your Free Signature</span>

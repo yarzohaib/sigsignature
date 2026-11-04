@@ -9,7 +9,7 @@ import {
   ApiError,
   BackendSavedSignature,
 } from "@/app/lib/api";
-import { getStoredUser } from "@/app/lib/auth";
+import { getStoredUser, getStoredToken } from "@/app/lib/auth";
 import { SavedSignature, SaveSignatureInput } from "@/types/signature";
 import { TemplateSignatureData } from "@/types/template";
 import { StudioSignatureData } from "@/types/studio";
@@ -108,6 +108,11 @@ export class ApiSignatureRepository implements SignatureRepository {
 
   async list(): Promise<SavedSignature[]> {
     const user = getStoredUser();
+    const token = getStoredToken();
+    if (!user && !token) {
+      return [];
+    }
+
     if (user?.id) {
       await this.importLegacyLocalSignatures(user.id);
     }
@@ -119,8 +124,15 @@ export class ApiSignatureRepository implements SignatureRepository {
   }
 
   async get(id: string): Promise<SavedSignature | null> {
+    const user = getStoredUser();
+    const token = getStoredToken();
+    if (!user && !token) {
+      return null;
+    }
+
     try {
       const item = await fetchSignatureById(id);
+      if (!item) return null;
       return toSavedSignature(item);
     } catch (err: unknown) {
       if (err instanceof ApiError && err.statusCode === 404) {

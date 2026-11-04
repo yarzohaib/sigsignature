@@ -12,6 +12,7 @@ import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
 import {
   getStoredSettings,
   getStoredUser,
+  getStoredToken,
   getStoredAvatarUrl,
   setStoredAvatarUrl,
 } from "@/app/lib/auth";
@@ -26,6 +27,7 @@ import {
 } from "@/lib/templates/designs/shared";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
+import TemplateAuthPromptModal from "./TemplateAuthPromptModal";
 import ImageCropModal from "@/components/common/ImageCropModal";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
 import {
@@ -187,6 +189,7 @@ export default function TemplateEditor({
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
+  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
   // Limit modal state
   const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
   // Photo uploading state
@@ -305,6 +308,25 @@ export default function TemplateEditor({
     });
   }, [initialData, editingSignatureId, supportsProfilePhoto]);
 
+  // Restore saved template progress from guest session if available
+  useEffect(() => {
+    if (initialData || editingSignatureId) return;
+    try {
+      const pendingRaw = localStorage.getItem("sig_pending_template_save");
+      if (pendingRaw) {
+        const pending = JSON.parse(pendingRaw);
+        if (pending && pending.templateId === template.id && pending.data) {
+          setFormData((prev) => ({
+            ...prev,
+            ...pending.data,
+          }));
+        }
+      }
+    } catch {
+      // Ignore parse error
+    }
+  }, [template.id, initialData, editingSignatureId]);
+
   function showToast(title: string, subtitle: string, isError = false) {
     setToastMessage({ title, subtitle, isError });
     setTimeout(() => {
@@ -397,6 +419,24 @@ export default function TemplateEditor({
     }));
     setIsUploadingPhoto(true);
 
+    const user = getStoredUser();
+    const token = getStoredToken();
+    if (!user || !token) {
+      // Guest preview: convert to data URL so it displays in preview without 401 auth upload errors
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        setFormData((prev) => ({
+          ...prev,
+          avatarUrl: dataUrl,
+        }));
+        showToast("Photo added!", "Sign in or save to upload your photo permanently.");
+        setIsUploadingPhoto(false);
+      };
+      reader.readAsDataURL(croppedFile);
+      return;
+    }
+
     try {
       // Compress to blob (max 400px, quality 0.85, kind: "avatar")
       const compressedBlob = await compressImageToBlob(croppedFile, 400, 0.85, "avatar");
@@ -480,6 +520,27 @@ export default function TemplateEditor({
       return;
     }
 
+    // Require authentication to save signature to account
+    const user = getStoredUser();
+    const token = getStoredToken();
+    if (!user || !token) {
+      try {
+        const dataToSave = prepareDataForSave();
+        localStorage.setItem(
+          "sig_pending_template_save",
+          JSON.stringify({
+            templateId: template.id,
+            name: formData.fullName || template.name || "My Signature",
+            data: dataToSave,
+          })
+        );
+      } catch {
+        // Continue even if localStorage quota exceeded
+      }
+      setIsAuthPromptOpen(true);
+      return;
+    }
+
     if (!currentSignatureId && isSignatureLimitReached()) {
       setIsLimitModalOpen(true);
       return;
@@ -539,6 +600,23 @@ export default function TemplateEditor({
       companyLogoUrl: objectUrl,
     }));
     setIsUploadingLogo(true);
+
+    const user = getStoredUser();
+    const token = getStoredToken();
+    if (!user || !token) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        setFormData((prev) => ({
+          ...prev,
+          companyLogoUrl: dataUrl,
+        }));
+        showToast("Logo added!", "Sign in or save to upload your logo permanently.");
+        setIsUploadingLogo(false);
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
 
     try {
       const compressedBlob = await compressImageToBlob(file, 400, 0.85, "logo");
@@ -1339,6 +1417,13 @@ export default function TemplateEditor({
         fileName={avatarCropFileName}
         onClose={handleCloseAvatarCrop}
         onApply={handleApplyAvatarCrop}
+      />
+
+      {/* Guest Authentication Prompt Modal */}
+      <TemplateAuthPromptModal
+        isOpen={isAuthPromptOpen}
+        onClose={() => setIsAuthPromptOpen(false)}
+        templateId={template.id}
       />
     </div>
   );

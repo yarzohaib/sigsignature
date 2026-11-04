@@ -9,7 +9,7 @@ import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
 import { getSignatureRepository } from "@/lib/signatures/repository";
 import { getEditHref } from "@/lib/signatures/kind";
-import { getStoredSettings, getStoredUser } from "@/app/lib/auth";
+import { getStoredSettings, getStoredUser, getStoredToken } from "@/app/lib/auth";
 import TemplatesGallerySkeleton from "@/components/skeletons/TemplatesGallerySkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
@@ -22,14 +22,14 @@ import Select from "@/components/ui/Select";
 const CATEGORIES = ["All", "Minimal", "Corporate", "Creative", "Bold"] as const;
 type CategoryTab = (typeof CATEGORIES)[number];
 
-const SORT_OPTIONS = [
+const SORT_OPTIONS: { value: string; label: string }[] = [
   { value: "popular", label: "Most Popular" },
   { value: "newest", label: "Newest First" },
   { value: "alphabetical", label: "Alphabetical (A-Z)" },
   { value: "rated", label: "Highest Rated" },
-] as const;
+];
 
-type SortValue = (typeof SORT_OPTIONS)[number]["value"];
+type SortValue = "popular" | "newest" | "alphabetical" | "rated";
 
 function TemplatesContent() {
   const router = useRouter();
@@ -65,7 +65,8 @@ function TemplatesContent() {
         setTemplateNotFound(false);
         setIsLoadingEdit(Boolean(isNew));
         if (isNew && !isCancelled) {
-          if (!isTeamMode && isSignatureLimitReached()) {
+          const user = getStoredUser();
+          if (user && !isTeamMode && isSignatureLimitReached()) {
             setIsLimitModalOpen(true);
             setIsLoadingEdit(false);
             return;
@@ -73,7 +74,7 @@ function TemplatesContent() {
           const settings = getStoredSettings();
           const targetId = settings?.defaultTemplateId || "photo-pop";
           let savedDefault: SavedSignature | null = null;
-          if (!AVAILABLE_TEMPLATES.some((template) => template.id === targetId)) {
+          if (user && !AVAILABLE_TEMPLATES.some((template) => template.id === targetId)) {
             try {
               savedDefault = await getSignatureRepository().get(targetId);
             } catch {
@@ -117,12 +118,6 @@ function TemplatesContent() {
         if (targetTemplateParam && !isCancelled) {
           const matched = AVAILABLE_TEMPLATES.find((t) => t.id === targetTemplateParam);
           if (matched) {
-            const user = getStoredUser();
-            if (!user) {
-              router.push(`/login?redirect=${encodeURIComponent(`/templates?template=${matched.id}`)}`);
-              setIsLoadingEdit(false);
-              return;
-            }
             try {
               localStorage.removeItem("sig_selected_template");
             } catch {}
@@ -134,10 +129,20 @@ function TemplatesContent() {
           }
         }
 
-        const user = getStoredUser();
-        if (!user && !isCancelled) {
-          router.replace("/template");
-          return;
+        // Clean unauthenticated gallery view
+        if (!isCancelled) {
+          setEditingTemplate(null);
+          setIsLoadingEdit(false);
+        }
+        return;
+      }
+
+      const user = getStoredUser();
+      const token = getStoredToken();
+      if (!user && !token) {
+        if (!isCancelled) {
+          router.replace(`/login?redirect=${encodeURIComponent(`/templates?edit=${editId}`)}`);
+          setIsLoadingEdit(false);
         }
         return;
       }
@@ -179,7 +184,7 @@ function TemplatesContent() {
     return () => {
       isCancelled = true;
     };
-  }, [editId, isNew, templateParam, router]);
+  }, [editId, isNew, templateParam, router, isTeamMode]);
 
   // Filter templates by category and name, then sort
   const filteredTemplates = useMemo(() => {
@@ -206,30 +211,26 @@ function TemplatesContent() {
 
   const handleSelectTemplate = (template: TemplateItem) => {
     const user = getStoredUser();
-    if (!user) {
-      try {
-        localStorage.setItem("sig_selected_template", template.id);
-      } catch {}
-      router.push(`/login?redirect=${encodeURIComponent(`/templates?template=${template.id}`)}`);
-      return;
-    }
-    if (!isTeamMode && isSignatureLimitReached()) {
+    if (user && !isTeamMode && isSignatureLimitReached()) {
       setIsLimitModalOpen(true);
       return;
     }
+    setEditingSignatureId(undefined);
+    setEditingSignatureData(undefined);
+    setEditingTemplate(template);
     router.push(`/templates?template=${encodeURIComponent(template.id)}`);
   };
 
   if (isLoadingEdit) {
     return (
-      <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+      <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full max-w-[1440px] mx-auto">
         <TemplatesGallerySkeleton />
       </div>
     );
   }
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+    <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full max-w-[1440px] mx-auto">
       <TemplatesPageJsonLd templates={AVAILABLE_TEMPLATES} />
       <BreadcrumbJsonLd
         items={[
@@ -262,11 +263,15 @@ function TemplatesContent() {
             </p>
             <button
               type="button"
-              onClick={() => router.push("/signatures")}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#022977] to-[#245FD4] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:opacity-95 transition"
+              onClick={() => {
+                setTemplateNotFound(false);
+                setEditingTemplate(null);
+                router.replace("/templates");
+              }}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#022977] to-[#245FD4] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:opacity-95 transition cursor-pointer"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
-              Back to My Signatures
+              Back to Templates
             </button>
           </div>
         ) : editingTemplate ? (
@@ -287,9 +292,7 @@ function TemplatesContent() {
             {/* Gallery Header Row matching Figma: vertically center 'Build From Scratch' relative to Title & Subtitle block */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
               <div>
-                <h1
-                  className="page-heading text-[#1E293B]"
-                >
+                <h1 className="page-heading text-[#1E293B]">
                   Choose a Template.
                 </h1>
                 <p
@@ -360,62 +363,68 @@ function TemplatesContent() {
                     <button
                       type="button"
                       onClick={() => setSearchQuery("")}
-                      aria-label="Clear template search"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 transition hover:text-slate-700"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      aria-label="Clear search query"
                     >
-                      Clear
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
                     </button>
                   )}
                 </div>
 
-                {/* Sort Dropdown */}
                 <Select
                   value={currentSort}
-                  onValueChange={(value) => setCurrentSort(value as SortValue)}
-                  options={SORT_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
-                  aria-label="Sort templates"
-                  className="shrink-0 text-xs font-semibold sm:text-sm"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  options={SORT_OPTIONS}
+                  onValueChange={(val: string) => setCurrentSort(val as SortValue)}
+                  className="w-40 sm:w-48 shrink-0"
                 />
               </div>
             </div>
 
-            {/* Template Cards Grid: 3 columns up to 80% zoom (1850px), 4 columns below 80% */}
-            {filteredTemplates.length > 0 ? (
-              <div className="grid w-full grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 col4:grid-cols-4">
+            {/* Template Cards Grid */}
+            {filteredTemplates.length === 0 ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 py-16 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </div>
+                <h3
+                  className="text-base font-semibold text-slate-800"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  No templates found
+                </h3>
+                <p
+                  className="mt-1 text-xs text-slate-500"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Try adjusting your search query or switching categories.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory("All");
+                    setSearchQuery("");
+                  }}
+                  className="mt-4 text-xs font-semibold text-[#245FD4] hover:underline cursor-pointer"
+                >
+                  Reset filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {filteredTemplates.map((template) => (
                   <TemplateGalleryCard
                     key={template.id}
                     template={template}
                     onUseTemplate={handleSelectTemplate}
-                    onPreview={setPreviewingTemplate}
+                    onPreview={(tpl) => setPreviewingTemplate(tpl)}
                   />
                 ))}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center shadow-2xs">
-                <h2
-                  className="text-lg font-semibold text-[#1E293B]"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  No templates found
-                </h2>
-                <p
-                  className="mt-1 text-sm text-[#64748B]"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  Try another name or clear your filters.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedCategory("All");
-                  }}
-                  className="mt-4 text-sm font-semibold text-[#245FD4] transition hover:text-[#1243A3] hover:underline"
-                >
-                  Clear filters
-                </button>
               </div>
             )}
 
@@ -481,7 +490,7 @@ export default function TemplatesPage() {
   return (
     <Suspense
       fallback={
-        <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full">
+        <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full max-w-[1440px] mx-auto">
           <TemplatesGallerySkeleton />
         </div>
       }

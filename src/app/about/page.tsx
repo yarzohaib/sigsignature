@@ -332,7 +332,7 @@ export default function AboutPage() {
 
                 <div className="mt-8">
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="inline-flex items-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 py-3 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
                     <span>See What You Can Create</span>

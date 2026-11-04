@@ -34,6 +34,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/template",
+        destination: "/templates",
+        permanent: true,
+      },
+      {
         source: "/forgot-password",
         destination: "/forgot",
         permanent: true,

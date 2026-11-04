@@ -242,7 +242,7 @@ export default function GmailSignatureGeneratorPage() {
 
                 <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
                   >
                     <span>Generate Gmail Signature</span>
@@ -251,7 +251,7 @@ export default function GmailSignatureGeneratorPage() {
                     </svg>
                   </Link>
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 font-body text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
                   >
                     <span>Browse Gmail Templates</span>
@@ -393,7 +393,7 @@ export default function GmailSignatureGeneratorPage() {
                 </p>
               </div>
               <Link
-                href="/template"
+                href="/templates"
                 className="mt-4 sm:mt-0 inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-[#245FD4] hover:text-[#00359F] transition"
               >
                 <span>View all 20+ templates</span>
@@ -488,7 +488,7 @@ export default function GmailSignatureGeneratorPage() {
 
                 <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link
-                    href="/template"
+                    href="/templates"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 font-body text-sm font-bold text-[#00359F] shadow-md transition hover:bg-slate-100"
                   >
                     <span>Create Your Free Signature</span>

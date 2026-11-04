@@ -31,14 +31,6 @@ export default function PopularTemplatesSection() {
   }, [selectedCategory]);
 
   const handleUseTemplate = (template: TemplateItem) => {
-    const user = getStoredUser();
-    if (!user) {
-      try {
-        localStorage.setItem("sig_selected_template", template.id);
-      } catch {}
-      router.push(`/login?redirect=${encodeURIComponent(`/templates?template=${template.id}`)}`);
-      return;
-    }
     router.push(`/templates?template=${encodeURIComponent(template.id)}`);
   };
 
@@ -103,7 +95,7 @@ export default function PopularTemplatesSection() {
         {/* Bottom CTA Action Bar */}
         <div className="mt-12 sm:mt-14 flex flex-col items-center justify-center text-center">
           <Link
-            href="/template"
+            href="/templates"
             className="group inline-flex items-center gap-2.5 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 text-sm sm:text-base font-semibold text-white shadow-md transition hover:opacity-95 hover:shadow-lg active:scale-98"
             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
           >

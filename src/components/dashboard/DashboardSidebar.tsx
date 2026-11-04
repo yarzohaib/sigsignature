@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { getSignatureRepository } from "@/lib/signatures/repository";
-import { getStoredRefreshToken, clearAuthSession } from "@/app/lib/auth";
+import { getStoredRefreshToken, clearAuthSession, getStoredUser, getStoredToken } from "@/app/lib/auth";
 import { logoutUser } from "@/app/lib/api";
 import { useOptionalUser } from "@/contexts/UserContext";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -68,6 +68,13 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
     }
 
     async function loadCount() {
+      const user = optionalUser?.user || getStoredUser();
+      const token = getStoredToken();
+      if (!user && !token) {
+        if (isMounted) setSignatureCount(0);
+        return;
+      }
+
       try {
         const repo = getSignatureRepository();
         const list = await repo.list();
@@ -201,6 +208,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
       {/* Sidebar Container: responsive width (256px expanded, 72px collapsed on desktop) */}
       <aside
+        data-dashboard-sidebar="true"
         className={`fixed inset-y-0 left-0 z-50 flex h-full max-h-screen shrink-0 flex-col justify-between overflow-y-auto overflow-x-hidden border-r border-[#E2E8F0] bg-white transition-[width,padding,transform] duration-300 ease-in-out sidebar-scrollbar lg:static lg:translate-x-0 ${
           isCollapsed ? "lg:w-[72px] lg:px-2.5 py-4 w-[256px] px-5" : "w-[256px] px-5 py-4"
         } ${mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}
@@ -560,7 +568,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 // import Image from "next/image";
 // import { usePathname, useRouter } from "next/navigation";
 // import { getSignatureRepository } from "@/lib/signatures/repository";
-// import { getStoredRefreshToken, clearAuthSession } from "@/app/lib/auth";
+// import { getStoredRefreshToken, clearAuthSession, getStoredUser, getStoredToken } from "@/app/lib/auth";
 // import { logoutUser } from "@/app/lib/api";
 // import { useOptionalUser } from "@/contexts/UserContext";
 

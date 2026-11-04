@@ -380,6 +380,12 @@ let refreshPromise: Promise<string | null> | null = null;
 export async function refreshAuthTokens(): Promise<string | null> {
   if (typeof window === "undefined") return null;
 
+  const storedRefreshToken = getStoredRefreshToken();
+  const storedAccessToken = getStoredToken();
+  if (!storedRefreshToken && !storedAccessToken) {
+    return null;
+  }
+
   if (refreshPromise) {
     return refreshPromise;
   }
@@ -462,8 +468,12 @@ export async function apiFetch(url: string, options: RequestInit = {}): Promise<
  * Automatically refreshes the session if the token has expired.
  */
 export async function getCurrentUser(accessToken?: string): Promise<UserProfile> {
-  const url = `${API_BASE_URL}/api/v1/auth/me`;
   const token = accessToken || getStoredToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  const url = `${API_BASE_URL}/api/v1/auth/me`;
 
   const headers: Record<string, string> = {
     Accept: "application/json",
@@ -853,6 +863,11 @@ async function handleSignatureApiResponse<T>(
  * Fetch all saved signatures for the authenticated user.
  */
 export async function fetchSignatures(): Promise<BackendSavedSignature[]> {
+  const token = getStoredToken();
+  if (!token) {
+    return [];
+  }
+
   const url = `${API_BASE_URL}/api/v1/signatures`;
 
   try {
@@ -893,7 +908,12 @@ export async function fetchSignatures(): Promise<BackendSavedSignature[]> {
 /**
  * Fetch a single saved signature by ID.
  */
-export async function fetchSignatureById(id: string): Promise<BackendSavedSignature> {
+export async function fetchSignatureById(id: string): Promise<BackendSavedSignature | null> {
+  const token = getStoredToken();
+  if (!token) {
+    return null;
+  }
+
   const url = `${API_BASE_URL}/api/v1/signatures/${encodeURIComponent(id)}`;
 
   try {

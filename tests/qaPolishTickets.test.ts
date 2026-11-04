@@ -26,7 +26,7 @@ describe("QA Polish Subtasks Verification", () => {
 
   describe("z8tvbhx58u: Templates Page 'Build From Scratch' vertical alignment", () => {
     it("enforces leading-none and flex centering on Build From Scratch in /templates", () => {
-      const templatesPath = path.join(rootDir, "src/app/(app)/templates/page.tsx");
+      const templatesPath = path.join(rootDir, "src/app/templates/page.tsx");
       const content = fs.readFileSync(templatesPath, "utf-8");
 
       assert.ok(
@@ -39,13 +39,13 @@ describe("QA Polish Subtasks Verification", () => {
       );
     });
 
-    it("enforces leading-none and flex centering on Build From Scratch in /template", () => {
+    it("verifies /template redirects to /templates", () => {
       const templatePath = path.join(rootDir, "src/app/template/page.tsx");
       const content = fs.readFileSync(templatePath, "utf-8");
 
       assert.ok(
-        content.includes('<span className="leading-none inline-block">Build From Scratch</span>'),
-        "/template page should normalize line-height for Build From Scratch label"
+        content.includes('redirect("/templates")'),
+        "/template page should redirect to /templates"
       );
     });
   });
