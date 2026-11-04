@@ -21,11 +21,12 @@ export function render(data: TemplateSignatureData): string {
   const fontStack = resolveSafeFontStack(data.fontFamily || "Montserrat");
 
   const hasAvatar = hasSafeImage(data.avatarUrl);
-  const avatarSrc = hasAvatar ? data.avatarUrl : "/julian-montgomery.png";
 
-  const photoCell = `<td style="vertical-align:middle;padding-right:16px;width:56px;">
-    <img src="${escapeHtml(avatarSrc)}" alt="${escapeHtml(data.fullName || "Photo")}" width="52" height="52" style="display:block;border:0;outline:none;text-decoration:none;border-radius:10px;width:52px;height:52px;object-fit:cover;" />
-  </td>`;
+  const photoCell = hasAvatar
+    ? `<td style="vertical-align:middle;padding-right:16px;width:56px;">
+        <img src="${escapeHtml(data.avatarUrl!)}" alt="${escapeHtml(data.fullName || "Photo")}" width="52" height="52" style="display:block;border:0;outline:none;text-decoration:none;border-radius:10px;width:52px;height:52px;object-fit:cover;" />
+      </td>`
+    : "";
 
   const contactRows: string[] = [];
 

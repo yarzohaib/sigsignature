@@ -2,6 +2,7 @@ import { TemplateSignatureData } from "@/types/template";
 import {
   escapeHtml,
   safeUrl,
+  hasSafeImage,
   normalizeWebsite,
   telHref,
   resolveSafeFontStack,
@@ -19,12 +20,7 @@ export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor || "#1F3A5F");
   const fontStack = resolveSafeFontStack(data.fontFamily || "Georgia");
 
-  const hasLogo = Boolean(
-    data.companyLogoUrl &&
-      data.companyLogoUrl.trim().length > 0 &&
-      !data.companyLogoUrl.trim().startsWith("javascript:") &&
-      !data.companyLogoUrl.trim().startsWith("data:")
-  );
+  const hasLogo = hasSafeImage(data.companyLogoUrl);
 
   const socialLinksHtml = renderSocialLinks(data, themeColor, fontStack);
 

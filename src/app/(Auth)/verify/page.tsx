@@ -82,7 +82,9 @@ function VerifyEmailForm() {
   useEffect(() => {
     if (state !== "success") return;
 
-    const destination = isLoggedIn ? "/dashboard" : "/login";
+    const emailParam = (initialEmail || email).trim();
+    const verifiedTarget = `/login?verified=true${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ""}`;
+    const destination = isLoggedIn ? "/dashboard" : verifiedTarget;
 
     const interval = setInterval(() => {
       setCountdown((prev) => {
@@ -96,7 +98,7 @@ function VerifyEmailForm() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [state, isLoggedIn, router]);
+  }, [state, isLoggedIn, router, initialEmail, email]);
 
   async function handleResend(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -182,7 +184,9 @@ function VerifyEmailForm() {
 
   // 2. Success state
   if (state === "success") {
-    const destination = isLoggedIn ? "/dashboard" : "/login";
+    const emailParam = (initialEmail || email).trim();
+    const verifiedTarget = `/login?verified=true${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ""}`;
+    const destination = isLoggedIn ? "/dashboard" : verifiedTarget;
     return (
       <div className="flex w-full max-w-[496px] flex-col items-center justify-center gap-5 rounded-2xl border border-emerald-200/80 bg-white p-8 sm:p-10 text-center shadow-xs animate-in fade-in duration-300">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">

@@ -317,7 +317,10 @@ export function generateFreeHtml(
         themeColor,
         fontStack,
         options?.preview,
-        getSocialIconSize(el.w)
+        getSocialIconSize(
+          el.w,
+          (data.socials ? Object.values(data.socials).filter((v) => typeof v === "string" && v.trim()).length : 0) || 4
+        )
       );
     }
 

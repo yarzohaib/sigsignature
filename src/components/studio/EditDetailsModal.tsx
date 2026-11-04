@@ -263,7 +263,7 @@ export default function EditDetailsModal({
                       <input
                         type="url"
                         value={state.socials?.[key] || ""}
-                        maxLength={250}
+                        maxLength={MAX_LENGTH.SOCIAL_URL}
                         onChange={(e) => {
                           const val = e.target.value;
                           dispatch({
@@ -319,9 +319,40 @@ export default function EditDetailsModal({
                     onChange={(e) => {
                       if (isLockedIdentity) return;
                       const raw = e.target.value;
+                      const isBoundJobTitle =
+                        selectedElement.type === "text" &&
+                        "bind" in selectedElement &&
+                        selectedElement.bind === "jobTitle";
+                      const isBoundCompany =
+                        selectedElement.type === "text" &&
+                        "bind" in selectedElement &&
+                        selectedElement.bind === "company";
+                      const isBoundName =
+                        selectedElement.type === "text" &&
+                        "bind" in selectedElement &&
+                        selectedElement.bind === "name";
+                      const isBoundWebsite =
+                        selectedElement.type === "text" &&
+                        (("bind" in selectedElement && selectedElement.bind === "website") ||
+                          (selectedElement as FreeTextElement).icon === "website");
+
+                      const maxLen = isBoundPhone
+                        ? MAX_LENGTH.PHONE
+                        : isBoundEmail
+                        ? MAX_LENGTH.EMAIL
+                        : isBoundJobTitle
+                        ? MAX_LENGTH.JOB_TITLE
+                        : isBoundCompany
+                        ? MAX_LENGTH.COMPANY
+                        : isBoundName
+                        ? MAX_LENGTH.NAME
+                        : isBoundWebsite
+                        ? MAX_LENGTH.WEBSITE
+                        : 500;
+
                       const text = isBoundPhone
-                        ? sanitizePhone(raw).slice(0, MAX_LENGTH.PHONE)
-                        : raw.slice(0, isBoundEmail ? MAX_LENGTH.EMAIL : 500);
+                        ? sanitizePhone(raw).slice(0, maxLen)
+                        : raw.slice(0, maxLen);
                       const textEl = selectedElement as FreeTextElement;
                       const measuredH = measureRenderedTextHeight({
                         text,
@@ -337,7 +368,23 @@ export default function EditDetailsModal({
                       });
                     }}
                     disabled={isLockedIdentity}
-                    maxLength={isBoundPhone ? MAX_LENGTH.PHONE : isBoundEmail ? MAX_LENGTH.EMAIL : 500}
+                    maxLength={
+                      isBoundPhone
+                        ? MAX_LENGTH.PHONE
+                        : isBoundEmail
+                        ? MAX_LENGTH.EMAIL
+                        : selectedElement.type === "text" && "bind" in selectedElement && selectedElement.bind === "jobTitle"
+                        ? MAX_LENGTH.JOB_TITLE
+                        : selectedElement.type === "text" && "bind" in selectedElement && selectedElement.bind === "company"
+                        ? MAX_LENGTH.COMPANY
+                        : selectedElement.type === "text" && "bind" in selectedElement && selectedElement.bind === "name"
+                        ? MAX_LENGTH.NAME
+                        : selectedElement.type === "text" &&
+                          (("bind" in selectedElement && selectedElement.bind === "website") ||
+                            (selectedElement as FreeTextElement).icon === "website")
+                        ? MAX_LENGTH.WEBSITE
+                        : 500
+                    }
                     rows={isBoundEmail || isBoundPhone ? 2 : 4}
                     className={`w-full rounded-xl border px-3.5 py-2 text-xs transition ${
                       isLockedIdentity
@@ -542,7 +589,7 @@ export default function EditDetailsModal({
                 <input
                   type="url"
                   value={(selectedElement as FreeCtaElement).url || ""}
-                  maxLength={300}
+                  maxLength={MAX_LENGTH.URL}
                   onChange={(e) => {
                     dispatch({
                       type: "UPDATE_ELEMENT",
@@ -661,7 +708,7 @@ export default function EditDetailsModal({
                       (selectedElement as FreeImageElement | FreeLogoElement | FreeBannerElement)
                         .linkUrl || ""
                     }
-                    maxLength={300}
+                    maxLength={MAX_LENGTH.URL}
                     onChange={(e) => {
                       const linkUrl = e.target.value;
                       dispatch({

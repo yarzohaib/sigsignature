@@ -16,7 +16,7 @@ import type { StudioShape } from "@/types/studio";
 import { ALLOWED_STUDIO_FONTS } from "@/lib/studio/types";
 import { STUDIO_SOLID_COLORS } from "@/lib/studio/constants";
 import { getSocialIconSvgDataUrl } from "@/lib/email-core";
-import { isValidWebUrl } from "@/lib/validation";
+import { isValidWebUrl, MAX_LENGTH } from "@/lib/validation";
 
 export type CanvasAlignment = "left" | "center" | "right" | "top" | "middle" | "bottom";
 
@@ -1135,7 +1135,7 @@ export default function FloatingToolbar({
               <input
                 type="text"
                 value={inputUrl}
-                maxLength={300}
+                maxLength={MAX_LENGTH.URL}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setInputUrl(e.target.value);
                   setLinkError("");

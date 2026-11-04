@@ -22,13 +22,24 @@ type SidebarProps = {
 };
 
 const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count";
+let memoryCachedSignatureCount: number | null = null;
 
 function getCachedSignatureCount(): number {
+  if (memoryCachedSignatureCount !== null) return memoryCachedSignatureCount;
   if (typeof window === "undefined") return 0;
 
   try {
+    const raw = localStorage.getItem(CACHED_SIGNATURE_COUNT_KEY);
+    if (raw !== null) {
+      const parsed = parseInt(raw, 10);
+      if (!isNaN(parsed)) {
+        memoryCachedSignatureCount = Math.min(3, Math.max(0, parsed));
+        return memoryCachedSignatureCount;
+      }
+    }
     const lifetime = getLifetimeSignatureCount();
-    return Math.min(3, lifetime);
+    memoryCachedSignatureCount = Math.min(3, Math.max(0, lifetime));
+    return memoryCachedSignatureCount;
   } catch {
     return 0;
   }
@@ -39,9 +50,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
   const router = useRouter();
   const optionalUser = useOptionalUser();
   const { isCollapsed, toggleSidebar, setCollapsed } = useSidebar();
-  // Keep the server render and the browser's first hydration render identical.
-  // Browser storage is read after mount in the effect below.
-  const [signatureCount, setSignatureCount] = useState<number>(0);
+  const [signatureCount, setSignatureCount] = useState<number>(() => getCachedSignatureCount());
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   function handleLinkClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
@@ -81,6 +90,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
         if (isMounted) {
           const lifetime = syncLifetimeSignatureCount(list.length, optionalUser?.user?.id);
           const count = Math.min(3, Math.max(list.length, lifetime));
+          memoryCachedSignatureCount = count;
           setSignatureCount(count);
           try {
             localStorage.setItem(CACHED_SIGNATURE_COUNT_KEY, String(count));

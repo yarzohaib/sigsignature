@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useDeferredValue } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Team, TeamMember } from "@/types/team";
@@ -98,19 +98,25 @@ export default function MemberModal({
   }, [isOpen, isSubmitting, isUploadingPhoto, onClose]);
 
   // Live preview mockup
+  const deferredName = useDeferredValue(name);
+  const deferredEmail = useDeferredValue(email);
+  const deferredJobTitle = useDeferredValue(jobTitle);
+  const deferredPhone = useDeferredValue(phone);
+  const deferredPhotoUrl = useDeferredValue(photoUrl);
+  const deferredSocials = useDeferredValue(socials);
   const previewHtml = useMemo(() => {
-    const validEmailForPreview = EMAIL_REGEX.test(email.trim()) ? email.trim() : "";
-    const validPhoneForPreview = isValidPhone(phone.trim()) ? phone.trim() : "";
+    const validEmailForPreview = EMAIL_REGEX.test(deferredEmail.trim()) ? deferredEmail.trim() : "";
+    const validPhoneForPreview = isValidPhone(deferredPhone.trim()) ? deferredPhone.trim() : "";
 
     const mockMember: TeamMember = {
       id: member?.id || "temp-preview",
       teamId: team.id,
-      name: name.trim() || "Full Name",
+      name: deferredName.trim() || "Full Name",
       email: validEmailForPreview || "email@company.com",
-      jobTitle: jobTitle.trim(),
+      jobTitle: deferredJobTitle.trim(),
       phone: validPhoneForPreview,
-      photoUrl: photoUrl.trim(),
-      socials: socials.filter((s) => s.url.trim().length > 0),
+      photoUrl: deferredPhotoUrl.trim(),
+      socials: deferredSocials.filter((s) => s.url.trim().length > 0),
       status: member?.status || "draft",
       sentAt: member?.sentAt || null,
       acceptedAt: member?.acceptedAt || null,
@@ -126,7 +132,7 @@ export default function MemberModal({
       console.error("Preview render failed:", e);
       return `<div style="padding:16px;color:#94a3b8;font-size:12px;">Preview generating...</div>`;
     }
-  }, [team, member, name, email, jobTitle, phone, photoUrl, socials]);
+  }, [team, member, deferredName, deferredEmail, deferredJobTitle, deferredPhone, deferredPhotoUrl, deferredSocials]);
 
   if (!isOpen) return null;
 
@@ -476,7 +482,7 @@ export default function MemberModal({
                 }}
                 disabled={isEditing}
                 placeholder="e.g. Sara Ahmed"
-                maxLength={100}
+                maxLength={MAX_LENGTH.NAME}
                 className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition focus:outline-none focus:ring-2 ${
                   isEditing
                     ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
@@ -508,7 +514,7 @@ export default function MemberModal({
                   if (emailError) setEmailError(null);
                 }}
                 placeholder="e.g. sara@company.com"
-                maxLength={254}
+                maxLength={MAX_LENGTH.EMAIL}
                 className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#0B1A3D] placeholder-[#94A3B8] transition focus:outline-none focus:ring-2 ${
                   emailError
                     ? "border-rose-300 focus:border-rose-400 focus:ring-rose-200"
@@ -532,7 +538,7 @@ export default function MemberModal({
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
                   placeholder="e.g. Head of Operations"
-                  maxLength={100}
+                  maxLength={MAX_LENGTH.JOB_TITLE}
                   className="w-full rounded-xl border border-[#E2E8F0] px-3.5 py-2.5 text-sm text-[#0B1A3D] placeholder-[#94A3B8] transition focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/20"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 />
@@ -626,7 +632,7 @@ export default function MemberModal({
                             value={item.url}
                             onChange={(e) => handleUrlChange(index, e.target.value)}
                             placeholder={SOCIAL_PLATFORM_EXAMPLES[item.platform] || "https://"}
-                            maxLength={300}
+                            maxLength={MAX_LENGTH.SOCIAL_URL}
                             className={`flex-1 min-w-0 rounded-xl border px-3 py-2 text-xs text-[#0B1A3D] placeholder-[#94A3B8] transition focus:outline-none focus:ring-2 ${
                               error
                                 ? "border-rose-300 focus:border-rose-500 focus:ring-rose-200"

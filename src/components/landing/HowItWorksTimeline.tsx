@@ -84,6 +84,17 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
 
           let lastActive = 0;
 
+          const getDistance = () => {
+            const lastStep = stepRefs.current[steps.length - 1];
+            if (!lastStep) {
+              return Math.max(track.scrollWidth - viewport.clientWidth, 0);
+            }
+            const rightPadding = Math.max(32, Math.round(viewport.clientWidth * 0.08));
+            const stepContentWidth = Math.min(lastStep.offsetWidth, 420);
+            const targetX = lastStep.offsetLeft + stepContentWidth - (viewport.clientWidth - rightPadding);
+            return Math.max(targetX, track.scrollWidth - viewport.clientWidth, 0);
+          };
+
           gsap
             .timeline({
               scrollTrigger: {
@@ -91,16 +102,16 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
                 start: isDesktop ? "top top" : "top 70%",
                 end: () => {
                   if (!isDesktop) return "bottom 65%";
-                  const distance = Math.max(track.scrollWidth - viewport.clientWidth, 0);
-                  return `+=${Math.max(Math.round(distance * 1.2), window.innerHeight * 0.8)}`;
+                  const distance = getDistance();
+                  return `+=${Math.max(Math.round(distance * 1.3), Math.round(window.innerHeight * 1.1))}`;
                 },
-                scrub: 0.8,
+                scrub: 1.2,
                 pin: isDesktop,
                 anticipatePin: isDesktop ? 1 : 0,
                 invalidateOnRefresh: true,
                 onUpdate: (self) => {
                   const active = isDesktop
-                    ? Math.round(self.progress * (steps.length - 1))
+                    ? Math.min(steps.length - 1, Math.round(self.progress * (steps.length - 1)))
                     : stepRefs.current.reduce((current, element, index) => {
                         if (element && element.getBoundingClientRect().top < window.innerHeight * 0.6) {
                           return index;
@@ -115,7 +126,7 @@ export default function HowItWorksTimeline({ steps, children }: HowItWorksTimeli
               },
             })
             .to(isDesktop ? track : {}, isDesktop ? {
-              x: () => -Math.max(track.scrollWidth - viewport.clientWidth, 0),
+              x: () => -getDistance(),
               ease: "none",
             } : { duration: 1 })
             .to(

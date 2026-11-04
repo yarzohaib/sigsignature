@@ -40,8 +40,12 @@ export const THEME_PRESETS = {
 export type ThemePresetName = keyof typeof THEME_PRESETS;
 
 // A social group starts at 20px icons in the default 140px-wide element and
-// scales with its width when resized on the free canvas.
-export function getSocialIconSize(elementWidth: number): number {
+// scales with its width when resized on the free canvas, taking active icon count into account.
+export function getSocialIconSize(elementWidth: number, iconCount?: number): number {
+  if (typeof iconCount === "number" && iconCount > 0) {
+    const divisor = iconCount + (iconCount - 1) * 0.3;
+    return Math.max(12, Math.min(48, Math.round(elementWidth / Math.max(1, divisor))));
+  }
   return Math.max(8, Math.min(48, Math.round(elementWidth / 7)));
 }
 

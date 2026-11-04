@@ -336,11 +336,11 @@ const isAuthenticated =
             </Link>
           </p>
           <div className="flex items-center justify-center gap-6 sm:justify-end">
-            <Link href="/terms" className={legalLinkHoverClasses}>
-              Terms of Service
-            </Link>
             <Link href="/privacy" className={legalLinkHoverClasses}>
               Privacy Policy
+            </Link>
+            <Link href="/terms" className={legalLinkHoverClasses}>
+              Terms of Service
             </Link>
           </div>
         </div>

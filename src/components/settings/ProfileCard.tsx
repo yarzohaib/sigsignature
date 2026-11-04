@@ -4,6 +4,7 @@ import { useRef, ChangeEvent, useState } from "react";
 import Image from "next/image";
 import ImageCropModal from "@/components/common/ImageCropModal";
 import { isAllowedJpgOrPng } from "@/lib/imageUtils";
+import { MAX_LENGTH } from "@/lib/validation";
 
 interface ProfileCardProps {
   firstName: string;
@@ -307,7 +308,7 @@ export default function ProfileCard({
             id="profile-company-name"
             type="text"
             value={companyName}
-            maxLength={100}
+            maxLength={MAX_LENGTH.COMPANY}
             onChange={(e) => onCompanyNameChange(e.target.value)}
             placeholder="Acme Corp"
             className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-[#1E293B] placeholder-slate-400 transition focus:outline-none focus:ring-2 ${

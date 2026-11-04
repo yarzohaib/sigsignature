@@ -7,6 +7,7 @@ import {
   resolveSafeFontStack,
   validateThemeColor,
   renderSocialLinks,
+  hasSafeImage,
 } from "./shared";
 
 /**
@@ -18,19 +19,9 @@ export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor);
   const fontStack = resolveSafeFontStack(data.fontFamily || "Inter");
 
-  const hasAvatar = Boolean(
-    data.avatarUrl &&
-      data.avatarUrl.trim().length > 0 &&
-      !data.avatarUrl.trim().startsWith("javascript:") &&
-      !data.avatarUrl.trim().startsWith("data:")
-  );
+  const hasAvatar = hasSafeImage(data.avatarUrl);
 
-  const hasLogo = Boolean(
-    data.companyLogoUrl &&
-      data.companyLogoUrl.trim().length > 0 &&
-      !data.companyLogoUrl.trim().startsWith("javascript:") &&
-      !data.companyLogoUrl.trim().startsWith("data:")
-  );
+  const hasLogo = hasSafeImage(data.companyLogoUrl);
 
   // Photo 64px round (collapses if missing)
   const photoHtml = hasAvatar

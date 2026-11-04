@@ -2,6 +2,7 @@ import { TemplateSignatureData } from "@/types/template";
 import {
   escapeHtml,
   safeUrl,
+  hasSafeImage,
   normalizeWebsite,
   telHref,
   resolveSafeFontStack,
@@ -107,19 +108,9 @@ export function render(data: TemplateSignatureData): string {
     : "";
 
   // Logo (optional)
-  const hasLogo = Boolean(
-    data.companyLogoUrl &&
-      data.companyLogoUrl.trim().length > 0 &&
-      !data.companyLogoUrl.trim().startsWith("javascript:") &&
-      !data.companyLogoUrl.trim().startsWith("data:")
-  );
+  const hasLogo = hasSafeImage(data.companyLogoUrl);
 
-  const hasAvatar = Boolean(
-    data.avatarUrl &&
-      data.avatarUrl.trim().length > 0 &&
-      !data.avatarUrl.trim().startsWith("javascript:") &&
-      !data.avatarUrl.trim().startsWith("data:")
-  );
+  const hasAvatar = hasSafeImage(data.avatarUrl);
 
   function getInitials(name?: string): string {
     if (!name?.trim()) return "VT";

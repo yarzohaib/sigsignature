@@ -207,11 +207,30 @@ export default function FreeElementView({
 
   const isPhoneField = "bind" in element && element.bind === "phone";
   const isEmailField = "bind" in element && element.bind === "email";
+  const isJobTitleField = "bind" in element && element.bind === "jobTitle";
+  const isCompanyField = "bind" in element && element.bind === "company";
+  const isNameField = "bind" in element && element.bind === "name";
+  const isWebsiteField =
+    ("bind" in element && element.bind === "website") ||
+    (element.type === "text" && (element as FreeTextElement).icon === "website");
+
+  const elementMaxLength = isPhoneField
+    ? MAX_LENGTH.PHONE
+    : isEmailField
+    ? MAX_LENGTH.EMAIL
+    : isJobTitleField
+    ? MAX_LENGTH.JOB_TITLE
+    : isCompanyField
+    ? MAX_LENGTH.COMPANY
+    : isNameField
+    ? MAX_LENGTH.NAME
+    : isWebsiteField
+    ? MAX_LENGTH.WEBSITE
+    : 500;
 
   function handleTextChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const raw = isPhoneField ? sanitizePhone(e.target.value) : e.target.value;
-    const max = isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500;
-    const val = raw.slice(0, max);
+    const val = raw.slice(0, elementMaxLength);
     setLocalText(val);
 
     // Dynamic height expansion during typing
@@ -230,8 +249,7 @@ export default function FreeElementView({
     const current = localText;
     const start = e.currentTarget.selectionStart || 0;
     const end = e.currentTarget.selectionEnd || 0;
-    const max = isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500;
-    const next = (current.slice(0, start) + sanitizedPlain + current.slice(end)).slice(0, max);
+    const next = (current.slice(0, start) + sanitizedPlain + current.slice(end)).slice(0, elementMaxLength);
     setLocalText(next);
 
     setTimeout(() => {
@@ -284,7 +302,7 @@ export default function FreeElementView({
                     onBlur={handleTextBlur}
                     onKeyDown={handleTextKeyDown}
                     onPaste={handleTextPaste}
-                    maxLength={isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500}
+                    maxLength={elementMaxLength}
                     className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
                     style={{
                       fontFamily: elementFontStack,
@@ -332,7 +350,7 @@ export default function FreeElementView({
               onBlur={handleTextBlur}
               onKeyDown={handleTextKeyDown}
               onPaste={handleTextPaste}
-              maxLength={isPhoneField ? MAX_LENGTH.PHONE : isEmailField ? MAX_LENGTH.EMAIL : 500}
+              maxLength={elementMaxLength}
               className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
               style={{
                 fontFamily: elementFontStack,
@@ -487,7 +505,7 @@ export default function FreeElementView({
             ? []
             : networks;
         const style = data.socialIconsStyle || "filled";
-        const iconSize = getSocialIconSize(element.w);
+        const iconSize = getSocialIconSize(element.w, displayNetworks.length);
         const iconGap = Math.round(iconSize * 0.3);
 
         if (displayNetworks.length === 0) {

@@ -73,7 +73,7 @@ export function hasSafeImage(url?: string | null): boolean {
   if (!url) return false;
   const trimmed = url.trim();
   if (trimmed.length === 0) return false;
-  if (/^(javascript:|data:|vbscript:)/i.test(trimmed) || /[<>"']/.test(trimmed)) {
+  if (/^(javascript:|vbscript:)/i.test(trimmed) || /[<>"']/.test(trimmed)) {
     return false;
   }
   if (/^(https?:\/\/|\/|data:image\/(png|jpeg|jpg|gif|webp|svg\+xml)[;,])/i.test(trimmed)) {

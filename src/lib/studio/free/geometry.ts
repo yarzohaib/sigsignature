@@ -52,16 +52,17 @@ export function clampToCanvas(
       const dyTop = Math.abs(y - r);
       const dyBottom = Math.abs(y + h - r);
       const maxDy = Math.max(dyTop, dyBottom);
+      const safeInset = 20;
 
       if (maxDy < r) {
-        // Curve offset: dx = r - sqrt(r^2 - dy^2)
-        const dx = r - Math.sqrt(r * r - maxDy * maxDy);
+        // Curve offset: dx = r - Math.sqrt(r^2 - dy^2) + safeInset
+        const dx = r - Math.sqrt(r * r - maxDy * maxDy) + safeInset;
         minX = Math.ceil(dx);
         maxX = Math.floor(canvas.width - dx - w);
       } else {
         // At the extreme top or bottom edge of the pill
-        minX = Math.ceil(r);
-        maxX = Math.floor(canvas.width - r - w);
+        minX = Math.ceil(r + safeInset);
+        maxX = Math.floor(canvas.width - (r + safeInset) - w);
       }
 
       if (minX > maxX) {

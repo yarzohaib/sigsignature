@@ -7,6 +7,8 @@ import {
   useReducer,
   useRef,
   useCallback,
+  useDeferredValue,
+  useMemo,
   ChangeEvent,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -101,6 +103,7 @@ function DesignStudioContent() {
     future: [],
   });
   const state = historyState.present;
+  const deferredStudioState = useDeferredValue(state);
 
   // Canvas Zoom State
   const [zoom, setZoom] = useState(100);
@@ -1166,7 +1169,10 @@ function DesignStudioContent() {
     : "Member";
 
   const selectedElement = state.elements?.find((el) => el.id === selectedId);
-  const fullSignatureHtml = generateFreeHtml(state, { preview: true });
+  const fullSignatureHtml = useMemo(
+    () => generateFreeHtml(deferredStudioState, { preview: true }),
+    [deferredStudioState]
+  );
 
   function handleShapeChange(shape: StudioShape) {
     if (selectedElement && selectedId) {
@@ -2590,7 +2596,7 @@ function DesignStudioContent() {
             {/* Canvas Body: Free Interactive Canvas */}
             <div
               ref={canvasAreaRef}
-              className="flex-1 overflow-auto flex flex-col items-center p-4 sm:p-8"
+              className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] flex flex-col items-center p-4 sm:p-8 min-w-0"
             >
               <FreeCanvas
                 data={state}

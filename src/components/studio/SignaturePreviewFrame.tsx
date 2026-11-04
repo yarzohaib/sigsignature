@@ -8,6 +8,7 @@ import {
   forwardRef,
   useCallback,
   useMemo,
+  useDeferredValue,
 } from "react";
 import { SIGNATURE_FONTS_HREF } from "@/lib/signatures/previewDocument";
 
@@ -57,6 +58,7 @@ export const SignaturePreviewFrame = forwardRef<
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const deferredHtml = useDeferredValue(html);
 
   // Measured panel size
   const [panelSize, setPanelSize] = useState({ width: 0, height: 0 });
@@ -108,6 +110,19 @@ export const SignaturePreviewFrame = forwardRef<
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    #sig-root table,
+    #sig-root td,
+    #sig-root th,
+    #sig-root p,
+    #sig-root span,
+    #sig-root a,
+    #sig-root div {
+      word-break: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
     }
     /* Ensure small legal disclaimers maintain crisp typography and do not collapse into blurry micro-noise */
     #sig-root [style*="font-size:8px"],
@@ -120,12 +135,10 @@ export const SignaturePreviewFrame = forwardRef<
   </style>
 </head>
 <body>
-  <div id="sig-root">
-    ${html}
-  </div>
+  <div id="sig-root"></div>
 </body>
 </html>`;
-  }, [html]);
+  }, []);
 
   // Measure content size inside the iframe
   const measureContent = useCallback(() => {
@@ -174,10 +187,28 @@ export const SignaturePreviewFrame = forwardRef<
     }
   }, [minHeight, preferTableBounds]);
 
-  // Reset measured state when HTML changes
-  useEffect(() => {
-    setMeasured(false);
-  }, [html]);
+  // Update the document body in place. Changing iframe srcDoc on every edit
+  // navigates the iframe, reloading images/fonts and causing visible flicker.
+  const updateIframeHtml = useCallback(() => {
+    const doc = iframeRef.current?.contentDocument;
+    const root = doc?.getElementById("sig-root");
+    if (!doc || !root) return;
+
+    if (root.innerHTML !== deferredHtml) {
+      root.innerHTML = deferredHtml;
+    }
+
+    Array.from(doc.images).forEach((img) => {
+      if (!img.complete) {
+        img.addEventListener("load", measureContent, { once: true });
+        img.addEventListener("error", measureContent, { once: true });
+      }
+    });
+
+    measureContent();
+    requestAnimationFrame(measureContent);
+    doc.fonts?.ready.then(measureContent).catch(() => {});
+  }, [deferredHtml, measureContent]);
 
   // Monitor panel size changes with ResizeObserver
   useEffect(() => {
@@ -205,7 +236,7 @@ export const SignaturePreviewFrame = forwardRef<
 
   // Hook up load listeners for iframe, images, fonts and inner ResizeObserver
   const setupIframeListeners = useCallback(() => {
-    measureContent();
+    updateIframeHtml();
 
     const iframe = iframeRef.current;
     if (!iframe || !iframe.contentDocument) return;
@@ -234,24 +265,22 @@ export const SignaturePreviewFrame = forwardRef<
       });
       innerRo.observe(root);
     }
-  }, [measureContent]);
+  }, [measureContent, updateIframeHtml]);
 
-  // Periodically check right after HTML update in case of delayed font/image layout
   useEffect(() => {
-    const t1 = setTimeout(measureContent, 100);
-    const t2 = setTimeout(measureContent, 300);
-    const t3 = setTimeout(measureContent, 700);
-    const t4 = setTimeout(() => {
-      measureContent();
-      setMeasured(true);
-    }, 1200);
+    updateIframeHtml();
+  }, [updateIframeHtml]);
+
+  // Re-measure after deferred content has had a chance to lay out, without
+  // hiding the existing preview while the user types.
+  useEffect(() => {
+    const frame = requestAnimationFrame(measureContent);
+    const timeout = window.setTimeout(measureContent, 120);
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
     };
-  }, [html, measureContent]);
+  }, [deferredHtml, measureContent]);
 
   // Compute scale and centering for aspect-ratio mode
   const { scale, left, top } = useMemo(() => {

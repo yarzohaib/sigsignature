@@ -39,7 +39,10 @@ function LoginForm() {
   const errorCode = searchParams.get("error");
   const redirectTarget = searchParams.get("redirect") || "/dashboard";
 
-  const [email, setEmail] = useState("");
+  const isVerified = searchParams.get("verified") === "true";
+  const initialEmailParam = searchParams.get("email") || "";
+
+  const [email, setEmail] = useState(initialEmailParam);
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const [serverError, setServerError] = useState<string | null>(() =>
@@ -356,6 +359,24 @@ function LoginForm() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5" noValidate>
+        {/* Email verified success alert */}
+        {isVerified && !serverError && (
+          <div
+            role="status"
+            className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-sm text-emerald-900 shadow-xs"
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <p className="font-semibold text-emerald-950">Email verified successfully!</p>
+              <p className="text-xs text-emerald-800 mt-0.5">Please log in to access your account.</p>
+            </div>
+          </div>
+        )}
+
         {/* Server error alert */}
         {serverError && (
           <div

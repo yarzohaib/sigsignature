@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback } from "react";
+import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback, useDeferredValue } from "react";
 import Image from "next/image";
 import Select from "@/components/ui/Select";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
@@ -117,6 +117,7 @@ export default function TemplateEditor({
     let fullName = base.fullName;
     let companyName = base.companyName;
     let email = base.email;
+    let pendingData: Partial<TemplateSignatureData> = {};
 
     if (isNewSignature) {
       const storedSettings = getStoredSettings();
@@ -152,6 +153,18 @@ export default function TemplateEditor({
           avatarUrl = storedAvatar;
         }
       }
+
+      try {
+        const pendingRaw = localStorage.getItem("sig_pending_template_save");
+        if (pendingRaw) {
+          const pending = JSON.parse(pendingRaw);
+          if (pending && pending.templateId === template.id && pending.data) {
+            pendingData = pending.data;
+          }
+        }
+      } catch {
+        // Ignore parse error
+      }
     }
 
     return {
@@ -167,6 +180,7 @@ export default function TemplateEditor({
       socials: isNewSignature
         ? (template.defaultData.socials || { linkedin: "https://linkedin.com", twitter: "https://twitter.com" })
         : base.socials,
+      ...pendingData,
     };
   });
 
@@ -307,25 +321,6 @@ export default function TemplateEditor({
       };
     });
   }, [initialData, editingSignatureId, supportsProfilePhoto]);
-
-  // Restore saved template progress from guest session if available
-  useEffect(() => {
-    if (initialData || editingSignatureId) return;
-    try {
-      const pendingRaw = localStorage.getItem("sig_pending_template_save");
-      if (pendingRaw) {
-        const pending = JSON.parse(pendingRaw);
-        if (pending && pending.templateId === template.id && pending.data) {
-          setFormData((prev) => ({
-            ...prev,
-            ...pending.data,
-          }));
-        }
-      }
-    } catch {
-      // Ignore parse error
-    }
-  }, [template.id, initialData, editingSignatureId]);
 
   function showToast(title: string, subtitle: string, isError = false) {
     setToastMessage({ title, subtitle, isError });
@@ -653,9 +648,12 @@ export default function TemplateEditor({
     }
   }
 
-  // Pre-generate HTML and the shared srcDoc used by the iframe preview
+  // Keep form controls urgent while signature generation runs at deferred priority.
+  const deferredFormData = useDeferredValue(formData);
+
+  // Pre-generate HTML for the iframe preview from the deferred form snapshot.
   const generatedHtml = useMemo(() => {
-    const validSocials: TemplateSignatureData["socials"] = { ...formData.socials };
+    const validSocials: TemplateSignatureData["socials"] = { ...deferredFormData.socials };
     const mapping: Record<string, TeamMemberSocialPlatform> = {
       linkedin: "linkedin",
       twitter: "x",
@@ -673,13 +671,13 @@ export default function TemplateEditor({
       }
     });
     // Do not accept invalid email into signature preview
-    const previewEmail = isValidEmail(formData.email) ? formData.email.trim() : "";
+    const previewEmail = isValidEmail(deferredFormData.email) ? deferredFormData.email.trim() : "";
     // Do not accept invalid phone into signature preview
-    const previewPhone = isValidPhone(formData.phone) ? formData.phone.trim() : "";
+    const previewPhone = isValidPhone(deferredFormData.phone) ? deferredFormData.phone.trim() : "";
 
     return generateTemplateHtml(
       {
-        ...formData,
+        ...deferredFormData,
         email: previewEmail,
         phone: previewPhone,
         socials: validSocials,
@@ -687,7 +685,7 @@ export default function TemplateEditor({
       },
       { preview: true }
     );
-  }, [formData, template.id]);
+  }, [deferredFormData, template.id]);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 pb-12">
@@ -840,15 +838,28 @@ export default function TemplateEditor({
                 {supportsProfilePhoto && (
                   <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white border border-slate-200 shadow-xs">
-                      <Image
-                        src={formData.avatarUrl || "/placeholder-avatar.svg"}
-                        alt="Profile photo"
-                        width={56}
-                        height={56}
-                        className="h-full w-full object-cover"
-                        unoptimized
-                      />
+                    <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center shadow-xs">
+                      {formData.avatarUrl ? (
+                        <Image
+                          src={formData.avatarUrl}
+                          alt="Profile photo"
+                          width={64}
+                          height={64}
+                          className="h-full w-full object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <svg
+                          className="h-8 w-8 text-slate-400"
+                          viewBox="0 0 40 40"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                        >
+                          <circle cx="20" cy="15" r="6.5" fill="currentColor" />
+                          <path d="M8.5 34.5C8.5 28.5 13.5 25 20 25C26.5 25 31.5 28.5 31.5 34.5" fill="currentColor" />
+                        </svg>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-[#1E293B]">Profile Photo</p>
@@ -911,7 +922,7 @@ export default function TemplateEditor({
                 {/* Text input fields (2-column grid matching Figma) */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex h-5 items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#64748B]">
                         Full Name <span className="text-blue-600">*</span>
                       </label>
@@ -946,9 +957,11 @@ export default function TemplateEditor({
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">
-                      Job Title <span className="text-blue-600">*</span>
-                    </label>
+                    <div className="flex h-5 items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Job Title <span className="text-blue-600">*</span>
+                      </label>
+                    </div>
                     <input
                       type="text"
                       value={formData.jobTitle}
@@ -960,7 +973,7 @@ export default function TemplateEditor({
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex h-5 items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#64748B]">
                         Company Name <span className="text-blue-600">*</span>
                       </label>
@@ -995,9 +1008,11 @@ export default function TemplateEditor({
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">
-                      Email Address <span className="text-blue-600">*</span>
-                    </label>
+                    <div className="flex h-5 items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Email Address <span className="text-blue-600">*</span>
+                      </label>
+                    </div>
                     <input
                       type="email"
                       value={formData.email}
@@ -1016,9 +1031,11 @@ export default function TemplateEditor({
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">
-                      Phone Number <span className="text-blue-600">*</span>
-                    </label>
+                    <div className="flex h-5 items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Phone Number <span className="text-blue-600">*</span>
+                      </label>
+                    </div>
                     <input
                       type="text"
                       value={formData.phone}
@@ -1037,9 +1054,11 @@ export default function TemplateEditor({
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">
-                      Website URL <span className="text-blue-600">*</span>
-                    </label>
+                    <div className="flex h-5 items-center justify-between">
+                      <label className="text-[11px] font-semibold text-[#64748B]">
+                        Website URL <span className="text-blue-600">*</span>
+                      </label>
+                    </div>
                     <input
                       type="text"
                       value={formData.website}

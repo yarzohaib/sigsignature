@@ -250,10 +250,24 @@ export function studioReducer(
     }
 
     case "UPDATE_SIGNATURE_FIELD": {
-      return {
+      const nextState = {
         ...state,
         [action.field]: action.value,
       };
+      if (action.field === "socials" && typeof action.value === "object" && action.value !== null) {
+        const socials = action.value as Record<string, string | undefined>;
+        const activeCount = Object.values(socials).filter((v) => typeof v === "string" && v.trim()).length;
+        if (activeCount > 0) {
+          const targetW = Math.max(36, Math.min(280, activeCount * 36 + (activeCount - 1) * 10));
+          nextState.elements = (nextState.elements || []).map((el) => {
+            if (el.type === "social") {
+              return { ...el, w: targetW };
+            }
+            return el;
+          });
+        }
+      }
+      return nextState;
     }
 
     case "ADD_EXTRA": {
