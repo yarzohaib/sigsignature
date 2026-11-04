@@ -1,18 +1,32 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export default function robots(): MetadataRoute.Robots {
-  const isPreLaunch = process.env.NEXT_PUBLIC_PRE_LAUNCH === "true";
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  let isStaging = false;
+  try {
+    const headerList = await headers();
+    const host = (headerList.get("host") || "").toLowerCase();
+    if (host.includes("staging.sigsignature.com")) {
+      isStaging = true;
+    }
+  } catch {
+    // Fallback if called outside request scope
+  }
 
-  // Pre-launch environment guard: block all indexing if flag is active
-  if (isPreLaunch) {
+  const isPreLaunch =
+    process.env.NEXT_PUBLIC_PRE_LAUNCH === "true" ||
+    process.env.VERCEL_ENV === "preview" ||
+    process.env.APP_ENV === "staging";
+
+  // Staging & Pre-launch environment guard: block all indexing so Google never crawls staging
+  if (isStaging || isPreLaunch) {
     return {
       rules: {
         userAgent: "*",
         disallow: "/",
       },
-      sitemap: "https://www.sigsignature.com/sitemap.xml",
     };
   }
 
