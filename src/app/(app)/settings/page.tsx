@@ -227,15 +227,15 @@ function SettingsContent() {
       errs.firstName = "First name is required.";
     } else if (trimmedFirst.length < 2) {
       errs.firstName = "First name must be at least 2 characters.";
-    } else if (trimmedFirst.length > 50) {
-      errs.firstName = "First name cannot exceed 50 characters.";
+    } else if (trimmedFirst.length > 20) {
+      errs.firstName = "First name cannot exceed 20 characters.";
     } else if (/[<>]/.test(trimmedFirst) || /[\x00-\x1F\x7F-\x9F]/.test(trimmedFirst)) {
       errs.firstName = "First name contains invalid characters.";
     }
 
     const trimmedLast = (formState.lastName || "").trim();
-    if (trimmedLast.length > 50) {
-      errs.lastName = "Last name cannot exceed 50 characters.";
+    if (trimmedLast.length > 20) {
+      errs.lastName = "Last name cannot exceed 20 characters.";
     } else if (trimmedLast && (/[<>]/.test(trimmedLast) || /[\x00-\x1F\x7F-\x9F]/.test(trimmedLast))) {
       errs.lastName = "Last name contains invalid characters.";
     }

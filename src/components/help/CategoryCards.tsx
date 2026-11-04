@@ -81,29 +81,29 @@ function CategoryIcon({ type }: { type: HelpCategory["icon"] }) {
 
 export default function CategoryCards() {
   const searchParams = useSearchParams();
-  const activeCategory = searchParams.get("category");
+  const activeCategory = searchParams.get("category")?.trim().toLowerCase() ?? "";
 
   return (
     <section aria-labelledby="help-categories-heading" className="w-full">
       <h2 id="help-categories-heading" className="sr-only">
         Help Categories
       </h2>
-      <div className="grid auto-rows-fr grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 2xl:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-4 2xl:gap-6 [grid-auto-rows:1fr]">
         {HELP_CATEGORIES.map((cat) => {
-          const isActive = activeCategory === cat.slug;
+          const isActive = activeCategory === cat.slug.toLowerCase();
 
           return (
             <Link
               key={cat.slug}
               href={`/help/guides?category=${cat.slug}`}
               aria-current={isActive ? "page" : undefined}
-              className={`group flex h-full min-h-[180px] flex-col justify-between rounded-2xl border p-5 sm:p-6 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
+              className={`group flex h-full min-h-[220px] flex-col rounded-2xl border p-5 sm:p-6 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
                 isActive
-                  ? "border-[#245FD4] bg-blue-50/50 ring-2 ring-[#245FD4]/20 shadow-sm"
+                  ? "border-blue-600 bg-[#EFF6FF] ring-2 ring-blue-600/20 shadow-sm"
                   : "border-[#E2E8F0] bg-white hover:border-[#245FD4]/40 hover:shadow-sm"
               }`}
             >
-              <div className="flex items-center justify-between">
+              <div className="mb-4 flex items-center justify-between">
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-xl transition group-hover:scale-105 ${
                     isActive
@@ -122,9 +122,9 @@ export default function CategoryCards() {
                   {cat.guideCount} guides
                 </span>
               </div>
-              <div className="mt-4 flex-1 flex flex-col justify-end">
+              <div className="flex flex-1 flex-col">
                 <h3
-                  className={`text-base font-bold transition-colors ${
+                  className={`min-h-12 text-base font-bold leading-6 transition-colors ${
                     isActive ? "text-[#245FD4]" : "text-[#1E293B] group-hover:text-[#245FD4]"
                   }`}
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
@@ -132,7 +132,7 @@ export default function CategoryCards() {
                   {cat.title}
                 </h3>
                 <p
-                  className="mt-1.5 text-xs sm:text-[13px] text-[#64748B] leading-relaxed"
+                  className="mt-1.5 min-h-10 text-xs leading-5 text-[#64748B] sm:text-[13px]"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   {cat.description}

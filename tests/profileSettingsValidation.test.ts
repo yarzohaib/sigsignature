@@ -7,7 +7,7 @@ import { MAX_LENGTH, MIN_LENGTH, isValidPersonName } from "../src/lib/validation
 describe("Settings Page Profile Validation & Whitespace Handling", () => {
   const rootDir = path.resolve(process.cwd());
 
-  it("ProfileCard input has maxLength={50} and minLength={2} attributes", () => {
+  it("ProfileCard input has maxLength={20} and minLength={2} attributes", () => {
     const profileCardSource = fs.readFileSync(
       path.join(rootDir, "src/components/settings/ProfileCard.tsx"),
       "utf-8"
@@ -16,8 +16,8 @@ describe("Settings Page Profile Validation & Whitespace Handling", () => {
     // First name input attributes
     assert.match(
       profileCardSource,
-      /id="profile-first-name"[\s\S]*?maxLength=\{50\}/,
-      "First name input must have maxLength={50}"
+      /id="profile-first-name"[\s\S]*?maxLength=\{20\}/,
+      "First name input must have maxLength={20}"
     );
     assert.match(
       profileCardSource,
@@ -28,8 +28,8 @@ describe("Settings Page Profile Validation & Whitespace Handling", () => {
     // Last name input attributes
     assert.match(
       profileCardSource,
-      /id="profile-last-name"[\s\S]*?maxLength=\{50\}/,
-      "Last name input must have maxLength={50}"
+      /id="profile-last-name"[\s\S]*?maxLength=\{20\}/,
+      "Last name input must have maxLength={20}"
     );
 
     // Auto-trims leading whitespace on change and full trim on blur
@@ -66,13 +66,13 @@ describe("Settings Page Profile Validation & Whitespace Handling", () => {
     // Max length check
     assert.match(
       settingsSource,
-      /trimmedFirst\.length\s*>\s*50/,
-      "Must check for max 50 characters on first name"
+      /trimmedFirst\.length\s*>\s*20/,
+      "Must check for max 20 characters on first name"
     );
     assert.match(
       settingsSource,
-      /trimmedLast\.length\s*>\s*50/,
-      "Must check for max 50 characters on last name"
+      /trimmedLast\.length\s*>\s*20/,
+      "Must check for max 20 characters on last name"
     );
 
     // Trims whitespace before constructing payload
@@ -88,7 +88,7 @@ describe("Settings Page Profile Validation & Whitespace Handling", () => {
     );
   });
 
-  it("backend Zod updateProfileSchema enforces min 2, max 50 on firstName and max 50 on lastName", () => {
+  it("backend Zod updateProfileSchema enforces min 2, max 20 on firstName and max 20 on lastName", () => {
     const backendValidatorSource = fs.readFileSync(
       path.resolve(rootDir, "../ERP-BACKEND/src/validators/account.validator.js"),
       "utf-8"
@@ -96,17 +96,17 @@ describe("Settings Page Profile Validation & Whitespace Handling", () => {
 
     assert.match(
       backendValidatorSource,
-      /firstName:\s*plainTextString\(\{[\s\S]*?min:\s*2[\s\S]*?max:\s*50[\s\S]*?required:\s*true/
+      /firstName:\s*plainTextString\(\{[\s\S]*?min:\s*2[\s\S]*?max:\s*20[\s\S]*?required:\s*true/
     );
     assert.match(
       backendValidatorSource,
-      /lastName:\s*plainTextString\(\{[\s\S]*?max:\s*50/
+      /lastName:\s*plainTextString\(\{[\s\S]*?max:\s*20/
     );
   });
 
-  it("MIN_LENGTH and MAX_LENGTH enforce 2 min and 50 max for profile names", () => {
+  it("MIN_LENGTH and MAX_LENGTH enforce 2 min and 20 max for profile names", () => {
     assert.equal(MIN_LENGTH.FIRST_NAME, 2);
-    assert.equal(MAX_LENGTH.FIRST_NAME, 50);
-    assert.equal(MAX_LENGTH.LAST_NAME, 50);
+    assert.equal(MAX_LENGTH.FIRST_NAME, 20);
+    assert.equal(MAX_LENGTH.LAST_NAME, 20);
   });
 });

@@ -57,8 +57,8 @@ export const MIN_LENGTH = {
 /** Standard field max character lengths */
 export const MAX_LENGTH = {
   NAME: 80,
-  FIRST_NAME: 50,
-  LAST_NAME: 50,
+  FIRST_NAME: 20,
+  LAST_NAME: 20,
   JOB_TITLE: 80,
   COMPANY: 80,
   EMAIL: 100,

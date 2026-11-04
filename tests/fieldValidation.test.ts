@@ -108,8 +108,8 @@ describe("Field Validation & Sanitization System", () => {
 
   test("MAX_LENGTH constants are configured for all field types", () => {
     assert.equal(MAX_LENGTH.NAME, 80);
-    assert.equal(MAX_LENGTH.FIRST_NAME, 50);
-    assert.equal(MAX_LENGTH.LAST_NAME, 50);
+    assert.equal(MAX_LENGTH.FIRST_NAME, 20);
+    assert.equal(MAX_LENGTH.LAST_NAME, 20);
     assert.equal(MIN_LENGTH.FIRST_NAME, 2);
     assert.equal(MAX_LENGTH.JOB_TITLE, 80);
     assert.equal(MAX_LENGTH.COMPANY, 80);

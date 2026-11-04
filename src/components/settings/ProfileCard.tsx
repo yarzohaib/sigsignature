@@ -198,10 +198,10 @@ export default function ProfileCard({
             id="profile-first-name"
             type="text"
             value={firstName}
-            maxLength={50}
+            maxLength={20}
             minLength={2}
             onChange={(e) => {
-              const sanitized = e.target.value.replace(/^\s+/, "").slice(0, 50);
+              const sanitized = e.target.value.replace(/^\s+/, "").slice(0, 20);
               onFirstNameChange(sanitized);
             }}
             onBlur={() => {
@@ -235,9 +235,9 @@ export default function ProfileCard({
             id="profile-last-name"
             type="text"
             value={lastName}
-            maxLength={50}
+            maxLength={20}
             onChange={(e) => {
-              const sanitized = e.target.value.replace(/^\s+/, "").slice(0, 50);
+              const sanitized = e.target.value.replace(/^\s+/, "").slice(0, 20);
               onLastNameChange(sanitized);
             }}
             onBlur={() => {
