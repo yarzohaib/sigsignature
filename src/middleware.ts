@@ -33,11 +33,12 @@ export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // 3. Pre-launch & Temporary Website Protection:
-  // If NEXT_PUBLIC_PRE_LAUNCH="true", or if accessing via non-production host
-  // (e.g. *.vercel.app, staging, IP addresses, localhost), apply X-Robots-Tag: noindex, nofollow.
+  // If NEXT_PUBLIC_PRE_LAUNCH="true", or if accessing via non-production/staging host
+  // (e.g. staging.sigsignature.com, *.vercel.app, IP addresses, localhost), apply X-Robots-Tag: noindex, nofollow.
   // Never rely on robots.txt alone to prevent search engine indexing of temporary/staging sites.
   const isExplicitPreLaunch = process.env.NEXT_PUBLIC_PRE_LAUNCH === "true";
   const isTemporaryDomain =
+    host.includes("staging.sigsignature.com") ||
     host.includes(".vercel.app") ||
     host.startsWith("10.") ||
     host.startsWith("172.") ||
