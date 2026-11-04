@@ -109,7 +109,7 @@ export function render(data: TemplateSignatureData): string {
       </td>
       <td style="background-color:#FFFFFF;padding:14px 16px;vertical-align:middle;border-top-right-radius:12px;border-bottom-right-radius:12px;border:1px solid #EEF0F4;border-left:0;">
         <div style="font-family:${fontStack};font-size:14px;font-weight:700;color:#1E293B;line-height:1.2;">
-          ${escapeHtml(data.fullName || "Michael Brown")}
+          ${escapeHtml(data.fullName || "")}
         </div>
         <div style="font-family:${fontStack};font-size:11px;font-weight:500;color:#64748B;margin-top:2px;margin-bottom:4px;line-height:1.2;">
           ${escapeHtml(data.jobTitle || "CEO")}

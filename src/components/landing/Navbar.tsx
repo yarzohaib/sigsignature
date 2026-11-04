@@ -388,8 +388,8 @@ export default function Navbar() {
               className="h-6 w-auto"
               priority
             />
-            <span className="font-heading text-base font-semibold text-slate-900">
-              Sig <span className="text-[#022977]">Signature</span>
+            <span className="font-heading text-base font-semibold text-[#022977]">
+              Sig Signature
             </span>
           </Link>
 
@@ -625,8 +625,8 @@ export default function Navbar() {
               className="h-7 w-auto sm:h-8"
               priority
             />
-            <span className="font-heading text-lg font-semibold sm:text-xl 3xl:text-2xl text-slate-900">
-              Sig <span className="text-[#022977]">Signature</span>
+            <span className="font-heading text-lg font-semibold sm:text-xl 3xl:text-2xl text-[#022977]">
+              Sig Signature
             </span>
           </Link>
 

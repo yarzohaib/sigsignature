@@ -54,7 +54,7 @@ export default function BlogListSection() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search the journal"
               aria-label="Search the journal"
-              className="w-full rounded-full border border-slate-200/90 bg-white py-2.5 pl-11 pr-10 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-2xs outline-none transition focus:border-[#245FD4] focus:ring-2 focus:ring-[#245FD4]/15"
+              className="w-full rounded-full border border-slate-200/90 bg-white py-2.5 pl-11 pr-10 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 shadow-2xs outline-none transition focus:border-[#245FD4] focus:ring-2 focus:ring-[#245FD4]/15 [&::-webkit-search-cancel-button]:appearance-none"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             />
             {searchQuery && (
@@ -62,9 +62,19 @@ export default function BlogListSection() {
                 type="button"
                 onClick={() => setSearchQuery("")}
                 aria-label="Clear search"
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-slate-700"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
               >
-                Clear
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="m5 5 10 10M15 5 5 15" />
+                </svg>
               </button>
             )}
           </div>

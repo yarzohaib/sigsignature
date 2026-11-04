@@ -60,7 +60,7 @@ export default function SignaturePreview({ className = "", floating = false }: S
           </div>
           <div
             aria-hidden="true"
-            className={`inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] select-none ${
+            className={`inline-flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-[5px] select-none cursor-default ${
               floating ? "animate-float-slow-2" : ""
             }`}
           >

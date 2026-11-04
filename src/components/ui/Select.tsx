@@ -54,7 +54,6 @@ export default function Select({
   const listboxId = `${generatedId}-listbox`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const scrollFrameRef = useRef<number | null>(null);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [position, setPosition] = useState<MenuPosition | null>(null);
@@ -76,41 +75,28 @@ export default function Select({
   const updatePosition = () => {
     const rect = triggerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
-      setOpen(false);
-      return;
-    }
     const margin = 12;
     const width = Math.min(Math.max(rect.width, 180), window.innerWidth - margin * 2);
-    const left = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
+    const viewportLeft = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
     const belowSpace = window.innerHeight - rect.bottom - margin;
     const aboveSpace = rect.top - margin;
     const openAbove = belowSpace < 240 && aboveSpace > belowSpace;
     const maxHeight = Math.max(96, Math.min(288, openAbove ? aboveSpace : belowSpace));
-    const top = openAbove ? Math.max(margin, rect.top - maxHeight - 8) : rect.bottom + 8;
-    setPosition({ left, top, width, maxHeight });
+    // Use document coordinates so the portaled menu travels with the page
+    // instead of staying fixed to the viewport while its trigger scrolls.
+    const top = openAbove
+      ? rect.top + window.scrollY - maxHeight - 8
+      : rect.bottom + window.scrollY + 8;
+    setPosition({ left: viewportLeft + window.scrollX, top, width, maxHeight });
   };
 
   useLayoutEffect(() => {
     if (!open) return;
     updatePosition();
     const handleResize = () => updatePosition();
-    const handleScroll = (event: Event) => {
-      const target = event.target as Node | null;
-      if (target && menuRef.current && menuRef.current.contains(target)) {
-        return;
-      }
-      setOpen(false);
-    };
     window.addEventListener("resize", handleResize);
-    document.addEventListener("scroll", handleScroll, true);
     return () => {
       window.removeEventListener("resize", handleResize);
-      document.removeEventListener("scroll", handleScroll, true);
-      if (scrollFrameRef.current !== null) {
-        window.cancelAnimationFrame(scrollFrameRef.current);
-        scrollFrameRef.current = null;
-      }
     };
   }, [open]);
 
@@ -230,13 +216,13 @@ export default function Select({
             id={listboxId}
             role="listbox"
             aria-label={ariaLabel}
-          className={`z-[1000] overflow-y-auto rounded-xl border p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100 ${
+          className={`z-[45] overflow-y-auto rounded-xl border p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100 ${
             appearance === "dark"
               ? "border-slate-700 bg-[#0F172A] ring-1 ring-slate-950/30"
               : "border-slate-200 bg-white ring-1 ring-slate-950/5"
           } ${menuClassName}`}
             style={{
-              position: "fixed",
+              position: "absolute",
               left: position.left,
               top: position.top,
               width: position.width,

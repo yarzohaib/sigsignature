@@ -177,8 +177,7 @@ const isAuthenticated =
                 Features
               </Link>
               <Link
-                href="/#pricing"
-                onClick={(e) => handleNavAnchorClick(e, "pricing", "center")}
+                href="/pricing"
                 className={linkHoverClasses}
               >
                 Pricing
@@ -301,7 +300,7 @@ const isAuthenticated =
 
           {/* LinkedIn */}
           <a
-            href="https://www.linkedin.com/showcase/sig-signature"
+            href="https://www.linkedin.com/company/the-nevon-"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"

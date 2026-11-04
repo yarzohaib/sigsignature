@@ -39,8 +39,8 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/forgot-password",
-        destination: "/forgot",
+        source: "/forgot",
+        destination: "/forgot-password",
         permanent: true,
       },
       {

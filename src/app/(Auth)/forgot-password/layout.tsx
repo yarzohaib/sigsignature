@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Reset your Sig Signature account password to regain access to your saved email signatures.",
   alternates: {
-    canonical: "https://www.sigsignature.com/forgot",
+    canonical: "https://www.sigsignature.com/forgot-password",
   },
   robots: {
     index: false,

@@ -149,7 +149,7 @@ export function render(data: TemplateSignatureData): string {
       ${photoCell}
       <td style="vertical-align:middle;padding-right:10px;">
         <div style="font-family:${fontStack};font-size:14px;font-weight:700;color:#1E293B;line-height:1.2;">
-          ${escapeHtml(data.fullName || "Sophia Clark")}
+          ${escapeHtml(data.fullName || "")}
         </div>
         <div style="font-family:${fontStack};font-size:11px;font-weight:600;color:#8B5CF6;margin-top:2px;margin-bottom:3px;line-height:1.2;">
           ${escapeHtml(data.jobTitle || "HR Manager")}${data.companyName?.trim() ? ` <span style="color:#64748B;font-weight:400;">| ${escapeHtml(data.companyName.trim())}</span>` : ""}

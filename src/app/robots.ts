@@ -58,7 +58,7 @@ export default function robots(): MetadataRoute.Robots {
     "/design-studio",
     "/login",
     "/signup",
-    "/forgot",
+    "/forgot-password",
     "/_next/static/",
     "/_next/image",
     "/favicon.ico",

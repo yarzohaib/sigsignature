@@ -85,7 +85,7 @@ function ResetPasswordForm() {
     }
   }
 
-  // If no token in URL, prompt user to request one from /forgot
+  // If no token in URL, prompt user to request one from /forgot-password
   if (!token) {
     return (
       <div className="flex w-full max-w-[496px] flex-col items-center justify-center gap-5 rounded-2xl border border-slate-200/80 bg-white p-8 sm:p-10 text-center shadow-xs">
@@ -104,7 +104,7 @@ function ResetPasswordForm() {
           </p>
         </div>
         <Link
-          href="/forgot"
+          href="/forgot-password"
           className="bg-brand-gradient flex h-12 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-xs transition hover:opacity-95 sm:h-14 sm:text-lg mt-2"
         >
           Request Reset Link
@@ -163,7 +163,7 @@ function ResetPasswordForm() {
             </svg>
             <span>{serverError}</span>
           </div>
-          <Link href="/forgot" className="text-xs font-semibold text-brand underline ml-7">
+          <Link href="/forgot-password" className="text-xs font-semibold text-brand underline ml-7">
             Request a new password reset link
           </Link>
         </div>

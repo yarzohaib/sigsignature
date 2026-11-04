@@ -83,7 +83,7 @@ export function render(data: TemplateSignatureData): string {
       ${photoCell}
       <td style="vertical-align:top;padding-right:8px;">
         <div style="font-family:${fontStack};font-size:14px;font-weight:700;color:#1E293B;line-height:1.2;">
-          ${escapeHtml(data.fullName || "Daniel Wilson")}
+          ${escapeHtml(data.fullName || "")}
         </div>
         <div style="font-family:${fontStack};font-size:11px;font-weight:500;color:#64748B;margin-top:2px;margin-bottom:4px;line-height:1.2;">
           ${escapeHtml(data.jobTitle || "UX/UI Designer")}

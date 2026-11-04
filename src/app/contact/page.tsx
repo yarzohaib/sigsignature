@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="relative isolate flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
+    <div className="relative flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
       {/* Background ambient lighting matching Figma design system */}
       <div
         aria-hidden

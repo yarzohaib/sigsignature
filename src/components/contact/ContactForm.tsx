@@ -120,7 +120,7 @@ export default function ContactForm() {
         </div>
 
         <h3 className="font-heading mt-6 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-          Message Received
+          Message Sent
         </h3>
         <p className="mt-3 font-body text-sm sm:text-base leading-relaxed text-slate-600 max-w-md mx-auto">
           Thank you for reaching out, <span className="font-semibold text-slate-800">{name}</span>. We have received your message and will respond to{" "}

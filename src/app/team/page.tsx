@@ -196,7 +196,7 @@ export default function TeamPage() {
       <main className="flex-1">
         {/* HERO & TEAM SECTION */}
         {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
-        <section className="pt-16 pb-10 sm:pt-10 sm:pb-12 lg:pt-12 lg:pb-16">
+        <section className="pt-16 pb-10 sm:pt-10 sm:pb-12 lg:pt-12 lg:pb-8">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title & Subtitle */}
             <div className="max-w-3xl">
@@ -314,7 +314,7 @@ export default function TeamPage() {
                 {corePrinciples.map((item) => (
                   <div
                     key={item.number}
-                    className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 md:gap-8 items-center py-6 sm:py-7"
+                    className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 md:gap-8 items-center py-6 sm:py-7 last:pb-0"
                   >
                     {/* Number */}
                     <div className="md:col-span-2 font-heading text-2xl sm:text-3xl font-normal text-[#245FD4]">

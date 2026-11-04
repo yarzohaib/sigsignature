@@ -406,8 +406,8 @@ function LoginForm() {
                   <Link
                     href={
                       email.trim()
-                        ? `/forgot?email=${encodeURIComponent(email.trim())}`
-                        : "/forgot"
+                        ? `/forgot-password?email=${encodeURIComponent(email.trim())}`
+                        : "/forgot-password"
                     }
                     className="font-bold underline hover:text-red-950 transition-colors"
                   >
@@ -421,8 +421,8 @@ function LoginForm() {
                   <Link
                     href={
                       email.trim()
-                        ? `/forgot?email=${encodeURIComponent(email.trim())}`
-                        : "/forgot"
+                        ? `/forgot-password?email=${encodeURIComponent(email.trim())}`
+                        : "/forgot-password"
                     }
                     className="font-bold underline hover:text-red-950 transition-colors"
                   >
@@ -471,7 +471,7 @@ function LoginForm() {
           <div className="mt-2 text-left">
             <span className="text-sm text-slate-600">
               <Link
-                href="/forgot"
+                href="/forgot-password"
                 className="font-normal text-[#022977] underline transition hover:text-brand-dark"
               >
                  Forgot your password? Reset it

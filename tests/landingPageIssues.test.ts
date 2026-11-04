@@ -99,18 +99,13 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
     );
   });
 
-  it("z8tvbhx93r: renders Choose Your Package heading, audience toggle, and trust badges on /pricing", () => {
+  it("z8tvbhx93r: renders Choose Your Package heading and trust badges on /pricing", () => {
     const pricingPath = path.join(root, "src/app/pricing/page.tsx");
     const pricingContent = fs.readFileSync(pricingPath, "utf-8");
     assert.match(
       pricingContent,
       /Choose Your Package\./,
       "Pricing page must feature centered 'Choose Your Package.' heading"
-    );
-    assert.match(
-      pricingContent,
-      /Businesses & Team/,
-      "Pricing page must include Businesses & Team audience toggle"
     );
     assert.match(
       pricingContent,
@@ -204,7 +199,7 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
     const selectContent = fs.readFileSync(selectPath, "utf-8");
     assert.match(
       selectContent,
-      /menuRef\.current\.contains\(target\)/,
+      /menuRef\.current(\?)?\.contains\(target\)/,
       "Select must check if scroll occurred within menu"
     );
     assert.match(

@@ -426,26 +426,26 @@ export default function AboutPage() {
         >
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title and narrative paragraph */}
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 md:items-end gap-6 md:gap-8 lg:gap-12 pb-2">
               <h2
-                className="font-heading text-3xl font-medium tracking-tight text-white sm:text-4xl lg:text-[44px] lg:leading-[1.15]"
+                className="font-heading text-3xl font-medium tracking-tight text-white sm:text-4xl md:col-span-2 lg:text-[44px] lg:leading-[1.15]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
                 Thoughtful by design. <br />
                 Practical by nature.
               </h2>
               <p
-                className="font-body text-xs sm:text-sm text-white/80 max-w-sm leading-relaxed"
+                className="font-body text-xs sm:text-sm text-white/80 max-w-sm leading-relaxed md:col-start-3"
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
                 Everything comes back to a simple goal: help you show up professionally, on your own terms.
               </p>
             </div>
 
-            {/* 3 Pillars with continuous clean horizontal top divider */}
-            <div className="mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-white/20 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            {/* Three pillars aligned to the header columns with separate rules. */}
+            <div className="mt-8 sm:mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
               {/* Pillar 1 */}
-              <div>
+              <div className="border-t border-white/30 pt-6 sm:pt-8">
                 <div className="text-white mb-4 sm:mb-5">
                   <svg
                     className="h-6 w-6 text-white"
@@ -475,7 +475,7 @@ export default function AboutPage() {
               </div>
 
               {/* Pillar 2 */}
-              <div>
+              <div className="border-t border-white/30 pt-6 sm:pt-8">
                 <div className="text-white mb-4 sm:mb-5">
                   <svg
                     className="h-6 w-6 text-white"
@@ -507,7 +507,7 @@ export default function AboutPage() {
               </div>
 
               {/* Pillar 3 */}
-              <div>
+              <div className="border-t border-white/30 pt-6 sm:pt-8">
                 <div className="text-white mb-4 sm:mb-5">
                   <svg
                     className="h-6 w-6 text-white"

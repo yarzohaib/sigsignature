@@ -115,7 +115,7 @@ export function render(data: TemplateSignatureData): string {
             ${photoCell}
             <td style="vertical-align:middle;">
               <div style="font-family:${fontStack};font-size:14px;font-weight:700;color:#FFFFFF;line-height:1.2;">
-                ${escapeHtml(data.fullName || "James Anderson")}
+                ${escapeHtml(data.fullName || "")}
               </div>
               <div style="font-family:${fontStack};font-size:11px;font-weight:500;color:${themeColor};margin-top:2px;margin-bottom:4px;line-height:1.2;">
                 ${escapeHtml(data.jobTitle || "Sales Director")}
