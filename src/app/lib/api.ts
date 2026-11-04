@@ -150,14 +150,49 @@ export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
   const result = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message =
+    const retryAfterHeader = response.headers.get("retry-after");
+    const retryAfterSeconds =
+      (result && typeof result.retryAfterSeconds === "number"
+        ? result.retryAfterSeconds
+        : retryAfterHeader
+        ? parseInt(retryAfterHeader, 10)
+        : undefined) || undefined;
+
+    let message =
       result?.message ||
       (response.status === 401
         ? "Invalid email or password"
         : response.status === 400
         ? "Email and password are required"
+        : response.status === 429
+        ? "Too many login attempts. Please try again in 5 minutes or reset your password."
         : "Login failed. Please try again.");
-    throw new Error(message);
+
+    // Format any legacy 429 rate limit message into friendly countdown guidance
+    if (
+      response.status === 429 ||
+      message.includes("Too many requests to authentication service") ||
+      message.includes("Too many login attempts")
+    ) {
+      if (!message.includes("reset your password")) {
+        const timeText = retryAfterSeconds
+          ? retryAfterSeconds >= 60
+            ? `${Math.ceil(retryAfterSeconds / 60)} minutes`
+            : `${retryAfterSeconds} seconds`
+          : "5 minutes";
+        message = `Too many login attempts. Please try again in ${timeText} or reset your password.`;
+      }
+    }
+
+    const err = new Error(message) as Error & {
+      status?: number;
+      retryAfterSeconds?: number;
+      code?: string;
+    };
+    err.status = response.status;
+    err.retryAfterSeconds = retryAfterSeconds;
+    err.code = result?.code;
+    throw err;
   }
 
   return result as LoginResponse;

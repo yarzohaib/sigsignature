@@ -31,7 +31,7 @@ function CheckCircleIcon() {
 function PricingContent() {
   const router = useRouter();
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
   const [pricingAudience, setPricingAudience] = useState<"team" | "individual">("team");
 
@@ -104,7 +104,7 @@ function PricingContent() {
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                 }}
               >
-                Choose a plan that fits your workflow—solo or team. Simple, flexible pricing with no hidden fees.
+                Choose a plan that fits your workflow for solo users or teams. Simple, flexible pricing with no hidden fees.
               </p>
 
               {/* Segmented audience switcher: Businesses & Team | Individuals */}
@@ -387,27 +387,70 @@ function PricingContent() {
                 {[
                   {
                     number: "01",
-                    question: "Is there a free plan to get started?",
-                    answer:
-                      "Yes. You can begin with the Free plan and explore the basic signature creation experience before deciding whether you need more features.",
+                    question: "What payment methods do you accept?",
+                    answer: (
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <svg className="h-4 w-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                          <rect x="2" y="5" width="20" height="14" rx="2" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2 10h20" />
+                        </svg>
+                        <span>
+                          Credit card, bank transfer, or invoice.{" "}
+                          <Link href="/contact" className="text-[#245FD4] font-medium hover:underline">
+                            Contact us
+                          </Link>{" "}
+                          if you need custom billing support.
+                        </span>
+                      </div>
+                    ),
                   },
                   {
                     number: "02",
-                    question: "What changes when I move to Pro?",
+                    question: "How is pricing calculated?",
                     answer:
-                      "Upgrading to Pro unlocks unlimited signature creation, exclusive premium templates, team management capabilities, and priority deliverability support.",
+                      "Pricing is calculated simply and transparently based on the plan you choose, whether our free Basic tier with essential templates or our Professional tier for full template access and team signatures, billed monthly with no hidden fees.",
                   },
                   {
                     number: "03",
-                    question: "Can I change or cancel my subscription?",
+                    question: "What happens when my trial ends?",
                     answer:
-                      "Yes, you can upgrade, downgrade, or cancel your subscription at any time directly from your billing settings. You will retain full access until the end of your billing cycle.",
+                      "When your trial period ends, your signatures continue to work seamlessly in all your email clients. You can upgrade to a paid plan anytime to keep modifying templates and managing team signatures.",
                   },
                   {
                     number: "04",
-                    question: "Can my team use Sig Signature too?",
+                    question: "Who can manage account settings?",
                     answer:
-                      "Yes! With team management on our paid plan, you can standardize corporate branding, assign templates, and manage signatures for your entire organization in one place.",
+                      "The account owner and designated administrators have full access to manage account settings, team seat assignments, template distribution, and billing information.",
+                  },
+                  {
+                    number: "05",
+                    question: "Can I pay only for active team members?",
+                    answer:
+                      "Yes. You only pay for active team members who have been assigned a seat. You can add, reassign, or remove seats directly from your dashboard at any time.",
+                  },
+                  {
+                    number: "06",
+                    question: "Do you offer a Startup Program?",
+                    answer:
+                      "Yes! We offer a dedicated Startup Program with discounted pricing for early stage companies and nonprofit organizations. Reach out via our Contact page to apply.",
+                  },
+                  {
+                    number: "07",
+                    question: "Are there discounts?",
+                    answer:
+                      "Yes! We offer volume pricing discounts for organizations with large teams, as well as special rates through our Startup and Nonprofit programs. Reach out to our team to learn more.",
+                  },
+                  {
+                    number: "08",
+                    question: "Which tools does Sig Signature integrate with?",
+                    answer:
+                      "Sig Signature integrates smoothly with Gmail, Microsoft Outlook (Web & Desktop), Apple Mail (macOS & iOS), Yahoo Mail, Mozilla Thunderbird, and any email client supporting HTML.",
+                  },
+                  {
+                    number: "09",
+                    question: "How do you protect my data?",
+                    answer:
+                      "We implement enterprise grade encryption for all customer data in transit and at rest. We never sell personal data and never inject tracking scripts or telemetry into user signatures.",
                   },
                 ].map((item, index) => {
                   const isOpen = openFaq === index;
@@ -472,22 +515,16 @@ function PricingContent() {
                         {isOpen && (
                           <motion.div
                             id={answerId}
+                            role="region"
+                            aria-labelledby={answerId}
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{
-                              height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
-                              opacity: { duration: 0.22, ease: "linear" },
-                            }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
                             className="overflow-hidden"
                           >
-                            <div className="pl-8 sm:pl-10 pt-2 pb-1 pr-10">
-                              <p
-                                className="text-[13px] sm:text-[14px] leading-relaxed text-[#64748B]"
-                                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                              >
-                                {item.answer}
-                              </p>
+                            <div className="pt-3 sm:pt-3.5 pl-8 sm:pl-12 pr-4 text-xs sm:text-sm text-[#475467] leading-relaxed">
+                              {item.answer}
                             </div>
                           </motion.div>
                         )}

@@ -123,16 +123,18 @@ function TeamAvatar({
   initials,
   sizeClass,
   textSizeClass = "text-sm",
+  imageClassName = "object-cover",
 }: {
   imageUrl?: string;
   name: string;
   initials: string;
   sizeClass: string;
   textSizeClass?: string;
+  imageClassName?: string;
 }) {
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-full border border-white/25 bg-white/10 ${sizeClass}`}
+      className={`relative shrink-0 overflow-hidden rounded-full border border-white/25 bg-[#DDE8F8] ${sizeClass}`}
     >
       {imageUrl ? (
         <Image
@@ -140,7 +142,7 @@ function TeamAvatar({
           alt={`${name} profile photo`}
           width={128}
           height={128}
-          className="h-full w-full object-cover"
+          className={`h-full w-full ${imageClassName}`}
         />
       ) : (
         <div
@@ -194,7 +196,7 @@ export default function TeamPage() {
       <main className="flex-1">
         {/* HERO & TEAM SECTION */}
         {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
-        <section className="pt-20 pb-12 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-20">
+        <section className="pt-16 pb-10 sm:pt-10 sm:pb-12 lg:pt-12 lg:pb-16">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             {/* Header: Title & Subtitle */}
             <div className="max-w-3xl">
@@ -224,6 +226,7 @@ export default function TeamPage() {
                     initials={leadershipMember.initials}
                     sizeClass="h-20 w-20 sm:h-24 sm:w-24 border-2 border-white/30"
                     textSizeClass="text-xl sm:text-2xl"
+                    imageClassName="scale-115 object-cover object-center"
                   />
 
                   {/* Details */}
@@ -302,29 +305,29 @@ export default function TeamPage() {
             </div>
 
             {/* WHAT WE STAND FOR SECTION */}
-            <div className="mt-16 sm:mt-20 lg:mt-24 mb-12 sm:mb-16 lg:mb-20">
+            <div className="mt-14 sm:mt-18 lg:mt-20">
               <h2 className="font-heading text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl lg:text-[34px]">
                 What we <span className="text-[#245FD4]">stand for</span>
               </h2>
 
-              <div className="mt-8 sm:mt-10 space-y-6 sm:space-y-8">
+              <div className="mt-8 sm:mt-10 divide-y divide-slate-200 border-t border-slate-200">
                 {corePrinciples.map((item) => (
                   <div
                     key={item.number}
-                    className="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-4 md:gap-8 items-start"
+                    className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 md:gap-8 items-center py-6 sm:py-7"
                   >
                     {/* Number */}
-                    <div className="md:col-span-1 font-heading text-lg sm:text-xl font-semibold text-[#245FD4]">
+                    <div className="md:col-span-2 font-heading text-2xl sm:text-3xl font-normal text-[#245FD4]">
                       {item.number}
                     </div>
 
                     {/* Title */}
-                    <div className="md:col-span-4 font-heading text-base sm:text-lg font-semibold text-slate-900">
+                    <div className="md:col-span-4 font-heading text-base sm:text-lg font-medium text-slate-900">
                       {item.title}
                     </div>
 
                     {/* Description */}
-                    <div className="md:col-span-7 font-body text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    <div className="md:col-span-6 font-body text-xs sm:text-[13px] text-slate-500 leading-relaxed">
                       {item.description}
                     </div>
                   </div>

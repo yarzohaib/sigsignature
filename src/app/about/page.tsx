@@ -253,8 +253,8 @@ export default function AboutPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
                     {/* Left: Role & Context */}
                     <div className="lg:col-span-5 flex items-start gap-4">
-                      <div className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-900 mt-0.5 shadow-2xs">
-                        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                      <div className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full bg-[#EBF2FE] border border-[#245FD4]/20 text-[#245FD4] mt-0.5 shadow-xs">
+                        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#245FD4]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
                       </div>
@@ -290,7 +290,7 @@ export default function AboutPage() {
         </section>
 
         {/* 4. LESS FRICTION. MORE YOU. */}
-        <section className="py-16 sm:py-20 lg:py-24 bg-[#F8FAFC]">
+        <section className="py-16 sm:py-20 lg:py-24 bg-[#F0F5FD]">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column */}
@@ -345,53 +345,70 @@ export default function AboutPage() {
 
               {/* Right Column: Studio UI Mockup */}
               <div className="lg:col-span-6">
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-                  {/* Top Window Bar */}
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
+                <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm sm:rounded-[32px] sm:p-7 lg:p-8">
+                  {/* Browser chrome */}
+                  <div className="grid grid-cols-3 items-center pb-5 text-xs text-slate-500 sm:pb-7">
+                    <div className="flex items-center gap-2" aria-hidden="true">
+                      <span className="h-2.5 w-2.5 rounded-full bg-blue-200" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-blue-200" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-blue-200" />
                     </div>
-                    <div className="flex items-center gap-4 text-xs font-semibold">
-                      <span className="text-slate-400">Design</span>
-                      <span className="text-[#245FD4] border-b-2 border-[#245FD4] pb-1">Live preview</span>
-                      <span className="text-slate-400">Export</span>
-                    </div>
-                    <div className="w-8" />
+                    <span className="truncate text-center text-[10px] sm:text-xs">www.sigsignature.com</span>
+                    <span className="justify-self-end" aria-hidden="true">
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path strokeLinecap="round" d="M4 7h10M18 7h2M4 12h2m4 0h10M4 17h10m4 0h2"/><path strokeLinecap="round" d="M16 5v4M8 10v4m8 1v4"/></svg>
+                    </span>
                   </div>
 
-                  {/* Inner Signature Preview */}
-                  <div className="py-8 px-4 flex items-center justify-center">
-                    <div className="w-full max-w-sm rounded-2xl border border-slate-100 bg-[#F8FAFC] p-5 shadow-2xs">
-                      <div className="flex items-center gap-3.5">
-                        <div className="h-13 w-13 rounded-full bg-gradient-to-br from-[#0F3B8C] to-[#245FD4] shrink-0" />
-                        <div>
-                          <h4 className="font-heading font-bold text-slate-900 text-sm">The Nevon</h4>
-                          <p className="font-body text-xs text-slate-500">Leadership Platform · Ceo</p>
-                          <p className="font-body text-[11px] text-[#245FD4]">thenevon@gmail.com</p>
-                          <p className="font-body text-[11px] text-slate-400">+655 863 1279</p>
+                  {/* Editor tabs */}
+                  <div className="flex items-center gap-5 border-b border-slate-200 pb-3 text-xs font-semibold sm:gap-8 sm:pb-4 sm:text-sm">
+                    <span className="text-slate-500">Design</span>
+                    <span className="text-[#245FD4]">Live preview</span>
+                    <span className="text-slate-500">Export</span>
+                  </div>
+
+                  {/* Signature preview canvas */}
+                  <div className="mt-5 flex min-h-[220px] items-center justify-center rounded-2xl bg-[#F4F7FB] p-4 sm:mt-7 sm:min-h-[300px] sm:p-6">
+                    <div className="w-full max-w-[560px] rounded-[22px] border border-slate-200/80 bg-white p-5 sm:p-7">
+                      <div className="flex items-center gap-4 sm:gap-6">
+                        <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-[#061D59] via-[#174FAE] to-[#43A0FF] sm:h-24 sm:w-24" />
+                        <div className="min-w-0">
+                          <h4 className="font-heading text-base font-bold text-slate-900 sm:text-2xl">The Nevon</h4>
+                          <p className="font-body text-xs text-slate-500 sm:text-base">Leadership Platform · Ceo</p>
+                          <p className="font-body mt-1 break-all text-xs text-[#245FD4] sm:text-sm">thenevon@gmail.com</p>
+                          <p className="font-body mt-1 text-xs text-slate-500 sm:text-sm">+655 863 1279</p>
                         </div>
                       </div>
-                      <div className="mt-3 pt-3 border-t border-slate-200/60 flex items-center gap-2">
-                        <span className="h-6 w-6 rounded bg-[#0A2558] text-white flex items-center justify-center text-[10px]">🌐</span>
-                        <span className="h-6 w-6 rounded bg-[#0A2558] text-white flex items-center justify-center text-[10px]">✉️</span>
-                        <span className="h-6 w-6 rounded bg-[#0A2558] text-white flex items-center justify-center text-[10px]">📞</span>
+                      <div className="mt-5 border-t border-slate-300 pt-4 sm:mt-7 sm:pt-5">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0A2D78] text-white sm:h-11 sm:w-11">
+                            <svg className="h-5 w-5 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="12" cy="12" r="9"/><path strokeLinecap="round" d="M3.5 9h17M3.5 15h17M12 3c2.2 2.4 3.3 5.4 3.3 9s-1.1 6.6-3.3 9c-2.2-2.4-3.3-5.4-3.3-9S9.8 5.4 12 3Z"/></svg>
+                          </span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0A2D78] text-white sm:h-11 sm:w-11">
+                            <svg className="h-5 w-5 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path strokeLinecap="round" strokeLinejoin="round" d="m4 7 8 6 8-6"/></svg>
+                          </span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#0A2D78] text-white sm:h-11 sm:w-11">
+                            <svg className="h-5 w-5 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 2.8 9.4 2c.7-.2 1.4.2 1.6.9l1.1 3.5c.2.6 0 1.2-.5 1.6l-1.7 1.3a14.4 14.4 0 0 0 4.8 4.8l1.3-1.7c.4-.5 1-.7 1.6-.5l3.5 1.1c.7.2 1.1.9.9 1.6l-.8 2.8c-.2.7-.9 1.2-1.7 1.2C10.7 18.6 5.4 13.3 5.4 6c0-.8.5-1.5 1.2-1.7Z"/></svg>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Palette and Ready Status */}
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-3 w-3 rounded-full bg-[#1A50BE]" />
-                      <span className="h-3 w-3 rounded-full bg-[#0A2558]" />
-                      <span className="h-3 w-3 rounded-full bg-[#38BDF8]" />
-                      <span className="h-3 w-3 rounded-full bg-[#0F172A]" />
+                  {/* Brand palette and export status */}
+                  <div className="flex flex-col gap-4 pt-5 sm:flex-row sm:items-end sm:justify-between sm:pt-7">
+                    <div>
+                      <p className="mb-2 text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">Your brand color</p>
+                      <div className="flex items-center gap-2.5">
+                        <span className="h-6 w-6 rounded-full bg-[#245FD4] sm:h-8 sm:w-8" />
+                        <span className="h-6 w-6 rounded-full bg-[#0A347F] sm:h-8 sm:w-8" />
+                        <span className="h-6 w-6 rounded-full bg-[#111C32] sm:h-8 sm:w-8" />
+                        <span className="h-6 w-6 rounded-full bg-[#879DBF] sm:h-8 sm:w-8" />
+                      </div>
                     </div>
-                    <span className="font-body text-[11px] text-slate-400">
-                      Ready for your inbox · HTML / IMAGE
-                    </span>
+                    <div className="text-left sm:text-right">
+                      <p className="font-body text-xs text-[#245FD4] sm:text-sm">Ready for your inbox</p>
+                      <p className="mt-1 font-body text-[10px] text-slate-500 sm:text-xs">HTML / IMAGE</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -408,22 +425,28 @@ export default function AboutPage() {
           }}
         >
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-10 sm:pb-14">
-              <h2 className="font-heading text-3xl font-medium tracking-tight text-white sm:text-4xl lg:text-[48px] lg:leading-[1.12]">
+            {/* Header: Title and narrative paragraph */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-2">
+              <h2
+                className="font-heading text-3xl font-medium tracking-tight text-white sm:text-4xl lg:text-[44px] lg:leading-[1.15]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
                 Thoughtful by design. <br />
                 Practical by nature.
               </h2>
-              <p className="font-body text-xs sm:text-sm text-white/80 max-w-xs leading-relaxed">
+              <p
+                className="font-body text-xs sm:text-sm text-white/80 max-w-sm leading-relaxed"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
                 Everything comes back to a simple goal: help you show up professionally, on your own terms.
               </p>
             </div>
 
-            {/* 3 Pillars with separate, non-continuous horizontal top lines */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            {/* 3 Pillars with continuous clean horizontal top divider */}
+            <div className="mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-white/20 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
               {/* Pillar 1 */}
-              <div className="border-t border-white/20 pt-8 sm:pt-10">
-                <div className="text-white mb-4">
+              <div>
+                <div className="text-white mb-4 sm:mb-5">
                   <svg
                     className="h-6 w-6 text-white"
                     viewBox="0 0 24 24"
@@ -437,17 +460,23 @@ export default function AboutPage() {
                     <polygon points="3 11 22 2 13 21 11 13 3 11" />
                   </svg>
                 </div>
-                <h3 className="font-heading text-lg sm:text-xl font-semibold text-white">
+                <h3
+                  className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
                   Control, not complexity.
                 </h3>
-                <p className="mt-2.5 font-body text-xs sm:text-sm leading-relaxed text-white/75">
+                <p
+                  className="mt-2.5 font-body text-xs sm:text-sm leading-relaxed text-white/75"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
                   Choose the details that matter to you. Customize colors, fonts and icons without handing the process to someone else.
                 </p>
               </div>
 
               {/* Pillar 2 */}
-              <div className="border-t border-white/20 pt-8 sm:pt-10">
-                <div className="text-white mb-4">
+              <div>
+                <div className="text-white mb-4 sm:mb-5">
                   <svg
                     className="h-6 w-6 text-white"
                     viewBox="0 0 24 24"
@@ -463,17 +492,23 @@ export default function AboutPage() {
                     <path d="M9 21V9" />
                   </svg>
                 </div>
-                <h3 className="font-heading text-lg sm:text-xl font-semibold text-white">
+                <h3
+                  className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
                   Consistency, not sameness.
                 </h3>
-                <p className="mt-2.5 font-body text-xs sm:text-sm leading-relaxed text-white/75">
+                <p
+                  className="mt-2.5 font-body text-xs sm:text-sm leading-relaxed text-white/75"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
                   Keep a clear visual identity across multiple signatures, while leaving room for different people, roles and conversations.
                 </p>
               </div>
 
               {/* Pillar 3 */}
-              <div className="border-t border-white/20 pt-8 sm:pt-10">
-                <div className="text-white mb-4">
+              <div>
+                <div className="text-white mb-4 sm:mb-5">
                   <svg
                     className="h-6 w-6 text-white"
                     viewBox="0 0 24 24"
@@ -489,10 +524,16 @@ export default function AboutPage() {
                     <path d="m14.5 4-5 16" />
                   </svg>
                 </div>
-                <h3 className="font-heading text-lg sm:text-xl font-semibold text-white">
+                <h3
+                  className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
                   Made to leave the editor.
                 </h3>
-                <p className="mt-2.5 font-body text-xs sm:text-sm leading-relaxed text-white/75">
+                <p
+                  className="mt-2.5 font-body text-xs sm:text-sm leading-relaxed text-white/75"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
                   A signature should be useful beyond its preview. Export HTML or an image and bring your design into your everyday email.
                 </p>
               </div>

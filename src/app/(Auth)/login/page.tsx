@@ -45,8 +45,36 @@ function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(() =>
     getOAuthErrorMessage(errorCode)
   );
+  const [lockoutCountdown, setLockoutCountdown] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
+
+  // Active countdown timer for rate limit lockout
+  useEffect(() => {
+    if (lockoutCountdown === null || lockoutCountdown <= 0) return;
+
+    const timer = setInterval(() => {
+      setLockoutCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timer);
+          setServerError("Lockout window has ended. You may try logging in again.");
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [lockoutCountdown]);
+
+  function formatCountdown(totalSec: number) {
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    if (mins > 0) {
+      return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+    return `${secs}s`;
+  }
 
   // If error query param changes, adjust state directly during render (React pattern)
   const [prevErrorCode, setPrevErrorCode] = useState(errorCode);
@@ -145,13 +173,13 @@ function LoginForm() {
   function handleEmailChange(val: string) {
     setEmail(val);
     if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-    if (serverError) setServerError(null);
+    if (serverError && !lockoutCountdown) setServerError(null);
   }
 
   function handlePasswordChange(val: string) {
     setPassword(val);
     if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-    if (serverError) setServerError(null);
+    if (serverError && !lockoutCountdown) setServerError(null);
   }
 
   function validate(): boolean {
@@ -176,7 +204,9 @@ function LoginForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setServerError(null);
+    if (!lockoutCountdown) {
+      setServerError(null);
+    }
 
     if (!validate()) {
       return;
@@ -208,11 +238,32 @@ function LoginForm() {
         throw new Error("Invalid response received from server.");
       }
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
+      const errorObj = err as Error & { status?: number; retryAfterSeconds?: number; code?: string };
+      const rawMessage =
+        errorObj instanceof Error
+          ? errorObj.message
           : "Invalid email or password. Please try again.";
-      setServerError(message);
+
+      const isRateLimit =
+        errorObj?.status === 429 ||
+        rawMessage.includes("Too many requests") ||
+        rawMessage.includes("Too many login attempts");
+
+      if (isRateLimit) {
+        const seconds =
+          typeof errorObj.retryAfterSeconds === "number" && errorObj.retryAfterSeconds > 0
+            ? errorObj.retryAfterSeconds
+            : 300; // default 5 minutes
+        setLockoutCountdown(seconds);
+        setServerError(
+          `Too many login attempts. Please try again in ${
+            seconds >= 60 ? `${Math.ceil(seconds / 60)} minutes` : `${seconds} seconds`
+          } or reset your password.`
+        );
+      } else {
+        setLockoutCountdown(null);
+        setServerError(rawMessage);
+      }
       setIsLoading(false);
     }
   }
@@ -323,8 +374,45 @@ function LoginForm() {
                 clipRule="evenodd"
               />
             </svg>
-            <div className="flex flex-col gap-1">
-              <span>{serverError}</span>
+            <div className="flex flex-col gap-1.5 flex-1">
+              {lockoutCountdown !== null && lockoutCountdown > 0 ? (
+                <span>
+                  Too many login attempts. Please try again in{" "}
+                  <strong className="font-bold tabular-nums text-red-950">
+                    {formatCountdown(lockoutCountdown)}
+                  </strong>{" "}
+                  or{" "}
+                  <Link
+                    href={
+                      email.trim()
+                        ? `/forgot?email=${encodeURIComponent(email.trim())}`
+                        : "/forgot"
+                    }
+                    className="font-bold underline hover:text-red-950 transition-colors"
+                  >
+                    reset your password
+                  </Link>
+                  .
+                </span>
+              ) : serverError.toLowerCase().includes("reset your password") ? (
+                <span>
+                  {serverError.replace(/or reset your password\.?/i, "or ")}
+                  <Link
+                    href={
+                      email.trim()
+                        ? `/forgot?email=${encodeURIComponent(email.trim())}`
+                        : "/forgot"
+                    }
+                    className="font-bold underline hover:text-red-950 transition-colors"
+                  >
+                    reset your password
+                  </Link>
+                  .
+                </span>
+              ) : (
+                <span>{serverError}</span>
+              )}
+
               {serverError.toLowerCase().includes("verify") && (
                 <Link
                   href={`/verify?email=${encodeURIComponent(email)}`}

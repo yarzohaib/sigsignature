@@ -42,11 +42,11 @@ export default function CookieConsent() {
   return (
     <aside
       aria-label="Cookie consent banner"
-      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-xl animate-fade-in-up"
+      className="fixed bottom-5 left-4 right-4 z-50 mx-auto w-auto max-w-xl md:max-w-3xl lg:max-w-4xl animate-fade-in-up"
     >
       <div className="rounded-2xl border border-slate-200/90 bg-white/95 p-4 sm:p-5 shadow-[0_16px_40px_rgba(2,41,119,0.12)] backdrop-blur-md">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs sm:text-[13px] text-slate-700 leading-relaxed">
+          <div className="max-w-xl text-xs sm:text-[13px] text-slate-700 leading-relaxed">
             <p className="font-semibold text-slate-900 mb-0.5">We respect your privacy</p>
             <p>
               We use functional and analytics cookies to optimize your email signature builder experience. See our{" "}
@@ -56,7 +56,7 @@ export default function CookieConsent() {
               .
             </p>
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-2 pt-1 sm:pt-0">
+          <div className="flex shrink-0 flex-wrap items-center gap-2.5 pt-1 sm:pt-0">
             <button
               type="button"
               onClick={handleEssentialOnly}

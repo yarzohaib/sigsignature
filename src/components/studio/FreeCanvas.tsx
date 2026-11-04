@@ -587,7 +587,7 @@ export default function FreeCanvas({
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center p-6 sm:p-12"
+      className="relative flex flex-col items-center justify-center p-6 sm:p-12 my-auto"
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
@@ -596,7 +596,7 @@ export default function FreeCanvas({
       <div
         style={{
           transform: `scale(${scale})`,
-          transformOrigin: "top center",
+          transformOrigin: "center center",
           transition: "transform 150ms ease",
         }}
         className="relative"

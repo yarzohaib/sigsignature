@@ -344,4 +344,221 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
       "BlogCardVisual must mark mock signature containers aria-hidden"
     );
   });
+
+  it("z8tvbhx8pn: removes excessive blank whitespace below '01-04 Core Principles' and balances padding", () => {
+    const teamPagePath = path.join(root, "src/app/team/page.tsx");
+    const teamPageContent = fs.readFileSync(teamPagePath, "utf-8");
+    assert.doesNotMatch(
+      teamPageContent,
+      /mb-12 sm:mb-16 lg:mb-20/,
+      "Principles wrapper must not have double-stacked excessive margin bottom"
+    );
+    assert.match(
+      teamPageContent,
+      /pb-10.+sm:pb-12.+lg:pb-16/,
+      "Team page section must balance bottom padding"
+    );
+  });
+
+  it("z8tvbhx91z: founder profile photo scales to 115% with neutral light background to prevent unfilled gaps", () => {
+    const teamPagePath = path.join(root, "src/app/team/page.tsx");
+    const teamPageContent = fs.readFileSync(teamPagePath, "utf-8");
+    assert.match(
+      teamPageContent,
+      /imageClassName="scale-115 object-cover object-center"/,
+      "Founder avatar must scale to 115% to completely fill circular frame without gaps"
+    );
+    assert.match(
+      teamPageContent,
+      /bg-\[#DDE8F8\]/,
+      "Avatar container must use matching neutral light background"
+    );
+  });
+
+  it("z8tvbhx91x: 'What we stand for' section renders horizontal dividers and large elegant numbering", () => {
+    const teamPagePath = path.join(root, "src/app/team/page.tsx");
+    const teamPageContent = fs.readFileSync(teamPagePath, "utf-8");
+    assert.match(
+      teamPageContent,
+      /divide-y divide-slate-200 border-t border-slate-200/,
+      "Principles list must render horizontal dividers above and between items"
+    );
+    assert.match(
+      teamPageContent,
+      /text-2xl sm:text-3xl font-normal text-\[#245FD4\]/,
+      "Principle numbers must use large elegant font weight and brand blue color"
+    );
+  });
+
+  it("z8tvbhx91p: sender persona cards on /about render Figma brand blue checkmark badges", () => {
+    const aboutPagePath = path.join(root, "src/app/about/page.tsx");
+    const aboutPageContent = fs.readFileSync(aboutPagePath, "utf-8");
+    assert.match(
+      aboutPageContent,
+      /bg-\[#EBF2FE\]\s+border border-\[#245FD4\]\/20\s+text-\[#245FD4\]/,
+      "Persona card tick icons must use brand blue container badge"
+    );
+    assert.doesNotMatch(
+      aboutPageContent,
+      /text-black/,
+      "Persona card tick icons must not use generic text-black"
+    );
+  });
+
+  it("z8tvbhx921: 'Thoughtful by design. Practical by nature.' banner renders clean continuous divider and typography", () => {
+    const aboutPagePath = path.join(root, "src/app/about/page.tsx");
+    const aboutPageContent = fs.readFileSync(aboutPagePath, "utf-8");
+    assert.match(
+      aboutPageContent,
+      /border-t border-white\/20 grid grid-cols-1 md:grid-cols-3/,
+      "Banner must feature clean continuous horizontal divider across columns"
+    );
+    assert.doesNotMatch(
+      aboutPageContent,
+      /div className="border-t border-white\/20 pt-8 sm:pt-10">\s*<div className="text-white mb-4">/,
+      "Individual pillars must not fragment dividers inconsistently"
+    );
+    assert.match(
+      aboutPageContent,
+      /Thoughtful by design\.\s*<br \/>\s*Practical by nature\./,
+      "Banner title must match exact heading text"
+    );
+  });
+
+  it("z8tvbhx946: renders 'Questions, answered.' heading with subtitle, 01-09 numbered rows, and all 9 comprehensive questions", () => {
+    const pricingPagePath = path.join(root, "src/app/pricing/page.tsx");
+    const pricingPageContent = fs.readFileSync(pricingPagePath, "utf-8");
+    assert.match(
+      pricingPageContent,
+      /Questions, answered\./,
+      "FAQ section must have 'Questions, answered.' heading"
+    );
+    assert.match(
+      pricingPageContent,
+      /Helpful details to make choosing your plan feel easy\./,
+      "FAQ section must have subtitle"
+    );
+    assert.doesNotMatch(
+      pricingPageContent,
+      /annual billing/i,
+      "FAQ section must not mention annual billing as Sig Signature only bills monthly"
+    );
+    assert.match(
+      pricingPageContent,
+      /What payment methods do you accept\?/,
+      "FAQ question 1 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /How is pricing calculated\?/,
+      "FAQ question 2 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /What happens when my trial ends\?/,
+      "FAQ question 3 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /Who can manage account settings\?/,
+      "FAQ question 4 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /Can I pay only for active team members\?/,
+      "FAQ question 5 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /Do you offer a Startup Program\?/,
+      "FAQ question 6 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /Are there discounts\?/,
+      "FAQ question 7 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /Which tools does Sig Signature integrate with\?/,
+      "FAQ question 8 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /How do you protect my data\?/,
+      "FAQ question 9 must be present"
+    );
+    assert.match(
+      pricingPageContent,
+      /border-t border-\[#E2E8F0\] divide-y divide-\[#E2E8F0\]/,
+      "FAQ items must be styled as divided rows with horizontal borders"
+    );
+    assert.match(
+      pricingPageContent,
+      /number: "01"/,
+      "FAQ items must have number prefixes"
+    );
+  });
+
+  it("login rate limit: provides user-friendly error with countdown and password reset link", () => {
+    const loginPagePath = path.join(root, "src/app/(Auth)/login/page.tsx");
+    const loginPageContent = fs.readFileSync(loginPagePath, "utf-8");
+    const apiPath = path.join(root, "src/app/lib/api.ts");
+    const apiContent = fs.readFileSync(apiPath, "utf-8");
+
+    // Verify api.ts handles 429 and converts blunt rate limit messages
+    assert.match(
+      apiContent,
+      /Too many login attempts\. Please try again in 5 minutes or reset your password\./,
+      "api.ts must format 429 rate limit errors with friendly time guidance and reset password"
+    );
+    assert.match(
+      apiContent,
+      /retryAfterSeconds/,
+      "api.ts must extract and attach retryAfterSeconds to Error"
+    );
+
+    // Verify login/page.tsx implements countdown timer and reset password link
+    assert.match(
+      loginPageContent,
+      /lockoutCountdown/,
+      "login/page.tsx must maintain lockoutCountdown state"
+    );
+    assert.match(
+      loginPageContent,
+      /formatCountdown/,
+      "login/page.tsx must provide formatCountdown helper"
+    );
+    assert.match(
+      loginPageContent,
+      /reset your password/,
+      "login/page.tsx must provide active clickable link to reset password"
+    );
+    assert.match(
+      loginPageContent,
+      /\/forgot/,
+      "login/page.tsx must link to /forgot"
+    );
+  });
+
+  it("design studio: centers signature canvas vertically and horizontally with my-auto without clipping", () => {
+    const studioPagePath = path.join(root, "src/app/design-studio/page.tsx");
+    const studioPageContent = fs.readFileSync(studioPagePath, "utf-8");
+    const freeCanvasPath = path.join(root, "src/components/studio/FreeCanvas.tsx");
+    const freeCanvasContent = fs.readFileSync(freeCanvasPath, "utf-8");
+
+    // Verify outer stage does not pin canvas to top with justify-start
+    assert.doesNotMatch(
+      studioPageContent,
+      /className="flex-1 overflow-auto flex flex-col items-center justify-start/,
+      "Design studio stage viewport must not have justify-start pinning artboard to top"
+    );
+
+    // Verify FreeCanvas inner wrapper has my-auto for vertical centering
+    assert.match(
+      freeCanvasContent,
+      /className="relative flex flex-col items-center justify-center p-6 sm:p-12 my-auto"/,
+      "FreeCanvas inner wrapper must use my-auto to vertically center the artboard in the viewport"
+    );
+  });
 });

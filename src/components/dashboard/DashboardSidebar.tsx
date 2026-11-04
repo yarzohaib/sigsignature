@@ -210,7 +210,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
           <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:justify-center" : "justify-between"}`}>
             <Link
               href="/dashboard"
-              className={`flex items-center gap-2.5 transition hover:opacity-90 ${
+              className={`group relative flex items-center gap-2.5 transition hover:opacity-90 ${
                 isCollapsed ? "lg:justify-center" : ""
               }`}
               onClick={(event) => {
@@ -222,15 +222,31 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                 handleLinkClick(event, "/dashboard");
               }}
               title={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
+              aria-label={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
             >
               <Image
                 src="/logo.svg"
                 alt="Sig Signature"
                 width={36}
                 height={20}
-                className="h-6 w-auto shrink-0"
+                className={`h-6 w-auto shrink-0 transition-opacity duration-200 ${isCollapsed ? "lg:group-hover:opacity-0" : ""}`}
                 priority
               />
+              {isCollapsed && (
+                <svg
+                  className="pointer-events-none absolute left-1/2 top-1/2 hidden h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-[#022977] opacity-0 transition-opacity duration-200 lg:block lg:group-hover:opacity-100"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                  <path d="M9 4v16m5-11 3 3-3 3" />
+                </svg>
+              )}
               <span
                 className={`block overflow-hidden whitespace-nowrap font-semibold text-[#022977] text-[16px] transition-[max-width,opacity] duration-300 ease-in-out ${
                   isCollapsed ? "lg:max-w-0 lg:opacity-0" : "max-w-40 opacity-100"
@@ -300,7 +316,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                     prefetch={true}
                     onClick={(event) => handleLinkClick(event, item.href)}
                     className={`flex items-center gap-3 rounded-xl px-2.5 py-2 transition-colors font-medium text-[15px] ${
-                      isCollapsed ? "lg:justify-center lg:px-0 lg:h-10 lg:w-10 lg:mx-auto" : ""
+                      isCollapsed ? "lg:justify-center lg:gap-0 lg:px-0 lg:py-0 lg:h-10 lg:w-10 lg:mx-auto" : ""
                     } ${
                       isActive
                         ? "bg-[#EFF6FF] text-[#245FD4]"
@@ -316,7 +332,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                     <span className={isActive ? "text-[#245FD4]" : "text-[#64748B]"}>
                       {item.icon}
                     </span>
-                    <span className={`block overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-300 ease-in-out ${isCollapsed ? "lg:max-w-0 lg:opacity-0" : "max-w-48 opacity-100"}`}>
+                    <span className={`block overflow-hidden whitespace-nowrap transition-[max-width,opacity] duration-300 ease-in-out ${isCollapsed ? "lg:min-w-0 lg:max-w-0 lg:opacity-0" : "max-w-48 opacity-100"}`}>
                       {item.name}
                     </span>
                   </Link>

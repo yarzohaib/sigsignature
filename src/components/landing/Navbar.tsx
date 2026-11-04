@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useSyncExternalStore, useMemo, type MouseEvent as ReactMouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { UserProfile, getCurrentUser, logoutUser } from "@/app/lib/api";
 import {
@@ -44,6 +44,7 @@ function getAuthServerSnapshot(): string {
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidePill, setHidePill] = useState(false);
@@ -54,6 +55,28 @@ export default function Navbar() {
   const prevOpenRef = useRef(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  const isNavActive = (href: string) => {
+    if (href === "/blog") return pathname === href || pathname.startsWith(`${href}/`);
+    if (href === "/template") {
+      return pathname === href || pathname.startsWith(`${href}/`) || pathname === "/templates" || pathname.startsWith("/templates/");
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const desktopNavClass = (href: string) =>
+    `font-body text-[15px] 3xl:text-[17px] transition min-h-[44px] flex items-center rounded-full border ${
+      isNavActive(href)
+        ? "border-[#245FD4]/20 bg-[#EBF2FE] px-4 py-1.5 font-semibold text-[#245FD4] shadow-xs"
+        : "border-transparent px-3 py-1.5 font-medium text-slate-600 hover:text-slate-900"
+    }`;
+
+  const mobileNavClass = (href: string) =>
+    `flex min-h-[48px] items-center rounded-full border px-4 font-body text-base transition-colors ${
+      isNavActive(href)
+        ? "border-[#245FD4]/20 bg-[#EBF2FE] font-semibold text-[#245FD4]"
+        : "border-transparent font-medium text-slate-800 hover:bg-slate-100/80 hover:text-brand"
+    }`;
 
   // Synchronize auth state with localStorage and custom window events
   const authRaw = useSyncExternalStore(
@@ -410,41 +433,42 @@ export default function Navbar() {
                 <Link
                   href="/about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                  className={mobileNavClass("/about")}
                 >
                   About Us
                 </Link>
                 <Link
                   href="/team"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                  className={mobileNavClass("/team")}
                 >
                   Our Team
                 </Link>
                 <Link
                   href="/blog"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                  className={mobileNavClass("/blog")}
                 >
                   Blog
                 </Link>
                 <Link
                   href="/use-cases"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                  className={mobileNavClass("/use-cases")}
                 >
                   Use Cases
                 </Link>
                 <Link
                   href="/pricing"
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={mobileNavClass("/pricing")}
                 >
                   Pricing
                 </Link>
                 <Link
                   href="/template"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex min-h-[48px] items-center rounded-xl px-3 font-body text-base font-medium text-slate-800 transition-colors hover:bg-slate-100/80 hover:text-brand"
+                  className={mobileNavClass("/template")}
                 >
                   Templates
                 </Link>
@@ -610,37 +634,37 @@ export default function Navbar() {
           <nav className="flex items-center gap-7 lg:gap-8 xl:gap-9">
             <Link
               href="/about"
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+              className={desktopNavClass("/about")}
             >
               About Us
             </Link>
             <Link
               href="/team"
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+              className={desktopNavClass("/team")}
             >
               Our Team
             </Link>
             <Link
               href="/blog"
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+              className={desktopNavClass("/blog")}
             >
               Blog
             </Link>
             <Link
               href="/use-cases"
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+              className={desktopNavClass("/use-cases")}
             >
               Use Cases
             </Link>
             <Link
               href="/pricing"
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+              className={desktopNavClass("/pricing")}
             >
               Pricing
             </Link>
             <Link
               href="/template"
-              className="font-body text-[15px] 3xl:text-[17px] font-normal text-[#2D2D2D] hover:text-brand transition min-h-[44px] flex items-center"
+              className={desktopNavClass("/template")}
             >
               Templates
             </Link>
