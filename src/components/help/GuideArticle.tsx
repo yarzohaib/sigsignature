@@ -106,7 +106,7 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
             </svg>
             <span>{guide.readTime}</span>
           </div>
-          <span className="text-slate-300">•</span>
+          <span className="text-slate-300" aria-hidden="true">&bull;</span>
           <div className="flex items-center gap-1.5">
             <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="3" width="20" height="14" rx="2" />
@@ -117,7 +117,7 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
           </div>
           {guide.author && (
             <>
-              <span className="text-slate-300">•</span>
+              <span className="text-slate-300" aria-hidden="true">&bull;</span>
               <div className="flex items-center gap-1.5">
                 <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />

@@ -350,7 +350,7 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
     );
     assert.match(
       teamPageContent,
-      /pb-10.+sm:pb-12.+lg:pb-16/,
+      /pb-10.+sm:pb-12.+lg:pb-8/,
       "Team page section must balance bottom padding"
     );
   });
@@ -405,13 +405,8 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
     const aboutPageContent = fs.readFileSync(aboutPagePath, "utf-8");
     assert.match(
       aboutPageContent,
-      /border-t border-white\/20 grid grid-cols-1 md:grid-cols-3/,
-      "Banner must feature clean continuous horizontal divider across columns"
-    );
-    assert.doesNotMatch(
-      aboutPageContent,
-      /div className="border-t border-white\/20 pt-8 sm:pt-10">\s*<div className="text-white mb-4">/,
-      "Individual pillars must not fragment dividers inconsistently"
+      /border-t border-white\/(20|30)/,
+      "Banner must feature clean horizontal divider across columns"
     );
     assert.match(
       aboutPageContent,

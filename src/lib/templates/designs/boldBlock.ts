@@ -131,17 +131,17 @@ export function render(data: TemplateSignatureData): string {
 
   // Tagline and Disclaimer at the bottom
   const taglineHtml = data.optional?.tagline?.trim()
-    ? `<div style="font-family:${fontStack};font-size:10px;color:#9CA3AF;font-style:italic;margin-top:12px;padding-top:10px;border-top:1px solid #1F2937;line-height:1.4;">${escapeHtml(data.optional.tagline.trim())}</div>`
+    ? `<div style="font-family:${fontStack};font-size:10px;color:#9CA3AF;font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid #1F2937;line-height:1.4;">${escapeHtml(data.optional.tagline.trim())}</div>`
     : "";
 
   const disclaimerHtml = data.optional?.disclaimer?.trim()
     ? `<div style="font-family:${fontStack};font-size:9px;color:#6B7280;margin-top:6px;line-height:1.3;">${escapeHtml(data.optional.disclaimer.trim())}</div>`
     : "";
 
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#111827" style="max-width:600px;background-color:#111827;border-collapse:collapse;border-radius:12px;overflow:hidden;color:#FFFFFF;mso-table-lspace:0pt;mso-table-rspace:0pt;font-family:${fontStack};">
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="400" bgcolor="#111827" style="width:400px;min-width:400px;max-width:400px;background-color:#111827;border-collapse:collapse;border-radius:12px;overflow:hidden;color:#FFFFFF;mso-table-lspace:0pt;mso-table-rspace:0pt;font-family:${fontStack};">
   <tr>
-    <td bgcolor="#111827" style="background-color:#111827;padding:20px 10px;vertical-align:top;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+    <td bgcolor="#111827" style="background-color:#111827;padding:16px 20px;vertical-align:top;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;width:100%;">
         <tr>
           <td valign="top" style="vertical-align:top;padding:0;">
             ${nameHtml}

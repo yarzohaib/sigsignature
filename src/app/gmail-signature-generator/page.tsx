@@ -306,8 +306,14 @@ export default function GmailSignatureGeneratorPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Card 1: 102KB Clipping */}
               <div className="rounded-2xl border border-slate-200/90 bg-[#FAFBFD] p-6 shadow-2xs hover:border-[#245FD4]/40 transition duration-200">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#245FD4] flex items-center justify-center font-bold mb-4">
-                  102k
+                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#245FD4] flex items-center justify-center mb-4">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <line x1="10" y1="9" x2="8" y2="9" />
+                  </svg>
                 </div>
                 <h3 className="font-heading text-base font-bold text-slate-900 mb-2">
                   No 102KB Truncation
@@ -394,10 +400,22 @@ export default function GmailSignatureGeneratorPage() {
               </div>
               <Link
                 href="/templates"
-                className="mt-4 sm:mt-0 inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-[#245FD4] hover:text-[#00359F] transition"
+                className="mt-4 sm:mt-0 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#245FD4]/30 hover:bg-[#EFF6FF] hover:text-[#245FD4] transition duration-200"
               >
                 <span>View all 20+ templates</span>
-                <span>→</span>
+                <svg
+                  className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
               </Link>
             </div>
 
@@ -417,40 +435,166 @@ export default function GmailSignatureGeneratorPage() {
               </p>
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs">
-              <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-[#F8FAFC] border-b border-slate-200 text-slate-700 font-heading">
-                  <tr>
-                    <th className="py-3.5 px-4 sm:px-6 font-bold">Feature / Capability</th>
-                    <th className="py-3.5 px-4 sm:px-6 font-bold text-slate-400">Generic Generators</th>
-                    <th className="py-3.5 px-4 sm:px-6 font-bold text-[#245FD4]">SigSignature</th>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-md">
+              <table className="w-full min-w-[620px] text-left text-xs sm:text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-[#F8FAFC]">
+                    <th className="py-4 px-5 sm:px-6 font-heading text-xs sm:text-sm font-bold text-slate-700 w-[30%]">
+                      Feature / Capability
+                    </th>
+                    <th className="py-4 px-5 sm:px-6 font-heading text-xs sm:text-sm font-bold text-slate-500 w-[35%]">
+                      Generic Generators
+                    </th>
+                    <th className="relative py-4 px-5 sm:px-6 font-heading text-xs sm:text-sm font-bold text-[#245FD4] w-[35%] bg-[#EFF6FF]/60 border-l border-blue-100">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-extrabold text-[#245FD4]">SigSignature</span>
+                        <span className="inline-flex items-center rounded-full bg-[#245FD4] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-2xs">
+                          Recommended
+                        </span>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-body text-slate-600">
-                  <tr>
-                    <td className="py-3 px-4 sm:px-6 font-medium text-slate-900">Installation Method</td>
-                    <td className="py-3 px-4 sm:px-6 text-slate-500">Requires Chrome Extension or raw code</td>
-                    <td className="py-3 px-4 sm:px-6 text-emerald-600 font-semibold">1-Click Direct Clipboard Paste (text/html)</td>
+                  {/* Row 1 */}
+                  <tr className="hover:bg-slate-50/70 transition duration-150">
+                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
+                      Installation Method
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </div>
+                        <span className="text-slate-500">Requires Chrome Extension or raw code</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        <span className="text-emerald-700 font-semibold">1-Click Direct Clipboard Paste (text/html)</span>
+                      </div>
+                    </td>
                   </tr>
-                  <tr>
-                    <td className="py-3 px-4 sm:px-6 font-medium text-slate-900">Gmail 102KB Truncation Safety</td>
-                    <td className="py-3 px-4 sm:px-6 text-rose-500 font-medium">Fails (80KB+ base64 image strings)</td>
-                    <td className="py-3 px-4 sm:px-6 text-emerald-600 font-semibold">Safe (&lt; 6KB HTML with CDN assets)</td>
+
+                  {/* Row 2 */}
+                  <tr className="hover:bg-slate-50/70 transition duration-150">
+                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
+                      Gmail 102KB Truncation Safety
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </div>
+                        <span className="text-rose-600 font-medium">Fails (80KB+ base64 image strings)</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        <span className="text-emerald-700 font-semibold">Safe (&lt; 6KB HTML with CDN assets)</span>
+                      </div>
+                    </td>
                   </tr>
-                  <tr>
-                    <td className="py-3 px-4 sm:px-6 font-medium text-slate-900">Phone & Address Link Protection</td>
-                    <td className="py-3 px-4 sm:px-6 text-slate-500">Ugly blue underlines injected by Gmail</td>
-                    <td className="py-3 px-4 sm:px-6 text-emerald-600 font-semibold">Defensive inline anchor override</td>
+
+                  {/* Row 3 */}
+                  <tr className="hover:bg-slate-50/70 transition duration-150">
+                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
+                      Phone & Address Link Protection
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                          </svg>
+                        </div>
+                        <span className="text-slate-500">Ugly blue underlines injected by Gmail</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        <span className="text-emerald-700 font-semibold">Defensive inline anchor override</span>
+                      </div>
+                    </td>
                   </tr>
-                  <tr>
-                    <td className="py-3 px-4 sm:px-6 font-medium text-slate-900">Dark Mode Compatibility</td>
-                    <td className="py-3 px-4 sm:px-6 text-slate-500">Logos turn invisible in Dark Mode</td>
-                    <td className="py-3 px-4 sm:px-6 text-emerald-600 font-semibold">Contrast-safe padding & boundaries</td>
+
+                  {/* Row 4 */}
+                  <tr className="hover:bg-slate-50/70 transition duration-150">
+                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
+                      Dark Mode Compatibility
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </div>
+                        <span className="text-slate-500">Logos turn invisible in Dark Mode</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        <span className="text-emerald-700 font-semibold">Contrast-safe padding & boundaries</span>
+                      </div>
+                    </td>
                   </tr>
-                  <tr>
-                    <td className="py-3 px-4 sm:px-6 font-medium text-slate-900">Pricing & Restrictions</td>
-                    <td className="py-3 px-4 sm:px-6 text-slate-500">Watermarks on free tier or $15/mo</td>
-                    <td className="py-3 px-4 sm:px-6 text-emerald-600 font-semibold">100% Free Forever, No Watermark</td>
+
+                  {/* Row 5 */}
+                  <tr className="hover:bg-slate-50/70 transition duration-150">
+                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
+                      Pricing & Restrictions
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </div>
+                        <span className="text-slate-500">Watermarks on free tier or $15/mo</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        <span className="text-emerald-700 font-semibold">100% Free Forever, No Watermark</span>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>

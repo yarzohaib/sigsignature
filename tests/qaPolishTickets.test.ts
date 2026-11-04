@@ -232,4 +232,103 @@ describe("QA Polish Subtasks Verification", () => {
       );
     });
   });
+
+  describe("GmailComposerMockup Static Controls", () => {
+    it("ensures window title bar controls and bottom action bar are static without hover or pointer cursor", () => {
+      const mockupPath = path.join(rootDir, "src/components/seo-landing/GmailComposerMockup.tsx");
+      const content = fs.readFileSync(mockupPath, "utf-8");
+
+      const titleBarSection = content.match(
+        /\{\/\* Gmail Window Title Bar \*\/\}[\s\S]*?\{\/\* Email Header Fields \*\/\}/
+      );
+      assert.ok(titleBarSection, "Must find title bar section");
+      const titleBarText = titleBarSection[0];
+
+      assert.ok(!titleBarText.includes("cursor-pointer"), "Window action icons must not have cursor-pointer");
+      assert.ok(!titleBarText.includes("hover:text-slate-700"), "Window action icons must not have hover:text-slate-700");
+      assert.ok(titleBarText.includes("pointer-events-none"), "Window action container must have pointer-events-none");
+      assert.ok(titleBarText.includes("cursor-default"), "Window action container must have cursor-default");
+
+      const bottomBarSection = content.match(
+        /\{\/\* Gmail Bottom Action Bar \*\/\}[\s\S]*?100% Gmail Validated/
+      );
+      assert.ok(bottomBarSection, "Must find bottom action bar section");
+      const bottomBarText = bottomBarSection[0];
+
+      assert.ok(!bottomBarText.includes("cursor-pointer"), "Bottom formatting icons must not have cursor-pointer");
+      assert.ok(!bottomBarText.includes("hover:bg-[#0842A0]"), "Send button must not have hover:bg-[#0842A0]");
+      assert.ok(!bottomBarText.includes("hover:text-slate-600"), "Formatting icons must not have hover:text-slate-600");
+      assert.ok(bottomBarText.includes("pointer-events-none"), "Bottom action controls must include pointer-events-none");
+      assert.ok(bottomBarText.includes("cursor-default"), "Bottom action controls must include cursor-default");
+    });
+  });
+
+  describe("GmailSignatureGenerator 102KB Truncation Card Icon", () => {
+    it("ensures 'No 102KB Truncation' card renders an SVG vector icon and no raw text badge", () => {
+      const pagePath = path.join(rootDir, "src/app/gmail-signature-generator/page.tsx");
+      const content = fs.readFileSync(pagePath, "utf-8");
+
+      const card1Section = content.match(
+        /\{\/\* Card 1: 102KB Clipping \*\/\}[\s\S]*?\{\/\* Card 2: Rogue Blue Underlines \*\/\}/
+      );
+      assert.ok(card1Section, "Must find Card 1 section");
+      const card1Text = card1Section[0];
+
+      assert.ok(!card1Text.includes("102k\n"), "Must not contain raw 102k text badge");
+      assert.ok(!card1Text.includes("font-bold mb-4"), "Container must not have font-bold text styling");
+      assert.ok(card1Text.includes("<svg className=\"h-5 w-5\""), "Must contain standard h-5 w-5 SVG icon");
+      assert.ok(card1Text.includes("viewBox=\"0 0 24 24\""), "Must contain SVG viewBox 0 0 24 24");
+    });
+  });
+
+  describe("GmailSignatureGenerator 'View all 20+ templates' Button Redesign", () => {
+    it("ensures link is redesigned into a secondary outlined button with icon", () => {
+      const pagePath = path.join(rootDir, "src/app/gmail-signature-generator/page.tsx");
+      const content = fs.readFileSync(pagePath, "utf-8");
+
+      const showcaseSection = content.match(
+        /\{\/\* 4\. CURATED GMAIL TEMPLATES SHOWCASE \*\/\}[\s\S]*?<CuratedTemplatesGrid/
+      );
+      assert.ok(showcaseSection, "Must find Curated Templates Showcase section");
+      const showcaseText = showcaseSection[0];
+
+      assert.ok(
+        !showcaseText.includes("text-sm font-semibold text-[#245FD4] hover:text-[#00359F] transition\n"),
+        "Must not use weak inline text link"
+      );
+      assert.ok(
+        showcaseText.includes("rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700"),
+        "Must use polished pill button component styling"
+      );
+      assert.ok(
+        showcaseText.includes("hover:border-[#245FD4]/30 hover:bg-[#EFF6FF] hover:text-[#245FD4]"),
+        "Must use hover interaction styles"
+      );
+      assert.ok(
+        showcaseText.includes("<svg") && showcaseText.includes("h-3.5 w-3.5"),
+        "Must include arrow SVG vector icon"
+      );
+    });
+  });
+
+  describe("GmailSignatureGenerator Technical Comparison Table Overhaul", () => {
+    it("ensures comparison table includes elevated SigSignature column, RECOMMENDED badge, and vector status icons", () => {
+      const pagePath = path.join(rootDir, "src/app/gmail-signature-generator/page.tsx");
+      const content = fs.readFileSync(pagePath, "utf-8");
+
+      const compSection = content.match(
+        /\{\/\* 5\. TECHNICAL COMPARISON TABLE \*\/\}[\s\S]*?\{\/\* 6\. FAQ SECTION \*\/\}/
+      );
+      assert.ok(compSection, "Must find technical comparison section");
+      const compText = compSection[0];
+
+      assert.ok(compText.includes("Recommended"), "Must have Recommended badge on SigSignature column");
+      assert.ok(compText.includes("bg-[#EFF6FF]/60"), "Must elevate SigSignature column with tinted background");
+      assert.ok(compText.includes("border-l border-blue-100"), "Must separate SigSignature column with border accent");
+      assert.ok(compText.includes("overflow-x-auto"), "Must support horizontal scroll for responsiveness");
+      assert.ok(compText.includes("shadow-md"), "Must use elevated shadow on comparison card container");
+      assert.ok(compText.includes("polyline points=\"20 6 9 17 4 12\""), "Must use vector checkmark icons for SigSignature");
+      assert.ok(compText.includes("line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\""), "Must use vector cross icons for competitors");
+    });
+  });
 });

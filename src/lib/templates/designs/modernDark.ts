@@ -109,10 +109,10 @@ export function render(data: TemplateSignatureData): string {
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:6px;"><tr><td style="padding:0;vertical-align:middle;">${socialLinks.join("")}</td></tr></table>`
     : "";
 
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#FFFFFF;background-color:#0B132B;border-radius:14px;width:100%;max-width:350px;">
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="294" style="border-collapse:collapse;font-family:${fontStack};color:#FFFFFF;background-color:#0B132B;border-radius:14px;width:294px;min-width:294px;max-width:294px;">
     <tr>
-      <td style="padding:18px 20px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;">
+      <td style="padding:15px 18px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
           <tr>
             ${photoCell}
             <td style="vertical-align:middle;">

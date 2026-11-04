@@ -22,6 +22,8 @@ export default function TemplateSignatureThumbnail({
     "corporate-elegant",
     "executive-corporate",
     "bold-block",
+    "modern-dark",
+    "bold-gradient",
   ].includes(template.id);
 
   const previewHtml = useMemo(

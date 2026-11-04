@@ -100,6 +100,8 @@ export default function TemplateEditor({
     "corporate-elegant",
     "executive-corporate",
     "bold-block",
+    "modern-dark",
+    "bold-gradient",
   ].includes(template.id);
 
   // Current signature ID being edited (persisted after first save)
