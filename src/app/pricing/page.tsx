@@ -63,7 +63,7 @@ function PricingContent() {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC] px-4 pt-3 pb-8 sm:px-6 sm:pt-4 sm:pb-10 lg:px-8 lg:pt-4 lg:pb-12 xl:px-10 2xl:px-12">
+    <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC]">
       {/* Toast Notification */}
       {premiumToast && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-lg animate-in slide-in-from-top duration-200">
@@ -88,28 +88,27 @@ function PricingContent() {
         </div>
       )}
 
-      <main className="flex w-full flex-1 flex-col justify-start gap-6 py-1 sm:gap-8">
-            {/* Top Heading Section matching Figma reference */}
-            <div className="w-full text-center shrink-0 max-w-2xl mx-auto pt-2 pb-2">
-              <h1
-                className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#101828] tracking-tight"
-                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-              >
-                Choose Your Package.
-              </h1>
-              <p
-                className="mt-2.5 text-[14px] sm:text-[15px] text-[#64748B] max-w-xl mx-auto leading-relaxed"
-                style={{
-                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-                }}
-              >
-                Choose a plan that fits your workflow for solo users or teams. Simple, flexible pricing with no hidden fees.
-              </p>
+      <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-start gap-6 px-4 py-6 sm:px-6 sm:py-7 sm:gap-8 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+        {/* Top Heading Section */}
+        <div className="w-full text-left shrink-0 mb-2 sm:mb-4">
+          <h1
+            className="text-2xl sm:text-3xl lg:text-[32px] font-semibold text-[#101828] tracking-tight"
+            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+          >
+            Choose Your Package.
+          </h1>
+          <p
+            className="mt-1.5 text-[14px] sm:text-[15px] text-[#64748B] max-w-xl leading-relaxed"
+            style={{
+              fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+            }}
+          >
+            Choose a plan that fits your workflow for solo users or teams. Simple, flexible pricing with no hidden fees.
+          </p>
+        </div>
 
-            </div>
-
-            {/* Plans Container: Balanced 495px cards with harmonious width and spacing */}
-            <div className="grid w-full grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-[clamp(3rem,6vw,8rem)] max-w-[1080px] xl:mx-auto pt-1 items-stretch">
+        {/* Plans Container: Balanced 495px cards with harmonious width and spacing */}
+        <div className="grid w-full grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-[clamp(3rem,6vw,8rem)] max-w-[1080px] xl:mx-auto pt-1 items-stretch">
               {/* Basic Plan Card */}
               <div
                 className="flex w-full max-w-[495px] flex-col justify-start rounded-[24px] border border-[#E2E8F0] bg-white mx-auto lg:mx-0 xl:mx-auto"
@@ -336,13 +335,13 @@ function PricingContent() {
               <div className="mb-6">
                 <h2
                   id="pricing-faq-heading"
-                  className="text-[26px] sm:text-[30px] lg:text-[34px] font-bold leading-tight tracking-tight text-[#101828]"
+                  className="text-2xl sm:text-3xl lg:text-[32px] font-semibold text-[#101828] tracking-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Questions, answered.
                 </h2>
                 <p
-                  className="mt-1.5 text-sm sm:text-base text-[#64748B]"
+                  className="mt-1.5 text-[14px] sm:text-[15px] text-[#64748B] max-w-xl leading-relaxed"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   Helpful details to make choosing your plan feel easy.
@@ -509,8 +508,10 @@ export default function PricingPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC] px-4 pt-3 pb-8 sm:px-6 sm:pt-4 sm:pb-10 lg:px-8 lg:pt-4 lg:pb-12 xl:px-10 2xl:px-12">
-          <PricingSkeleton />
+        <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC]">
+          <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+            <PricingSkeleton />
+          </div>
         </div>
       }
     >

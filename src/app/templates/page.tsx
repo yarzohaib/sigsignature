@@ -223,14 +223,14 @@ function TemplatesContent() {
 
   if (isLoadingEdit) {
     return (
-      <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full max-w-[1440px] mx-auto">
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         <TemplatesGallerySkeleton />
       </div>
     );
   }
 
   return (
-    <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full max-w-[1440px] mx-auto">
+    <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
       <TemplatesPageJsonLd templates={AVAILABLE_TEMPLATES} />
       <BreadcrumbJsonLd
         items={[
@@ -490,7 +490,7 @@ export default function TemplatesPage() {
   return (
     <Suspense
       fallback={
-        <div className="px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full max-w-[1440px] mx-auto">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
           <TemplatesGallerySkeleton />
         </div>
       }
