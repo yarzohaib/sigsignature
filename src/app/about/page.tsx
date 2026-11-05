@@ -461,7 +461,7 @@ export default function AboutPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight"
+                  className="font-heading min-h-12 text-lg sm:text-xl font-semibold leading-[1.2] text-white tracking-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Control, not complexity.
@@ -493,7 +493,7 @@ export default function AboutPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight"
+                  className="font-heading min-h-12 text-lg sm:text-xl font-semibold leading-[1.2] text-white tracking-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Consistency, not sameness.
@@ -525,7 +525,7 @@ export default function AboutPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight"
+                  className="font-heading min-h-12 text-lg sm:text-xl font-semibold leading-[1.2] text-white tracking-tight"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Made to leave the editor.
