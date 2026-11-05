@@ -34,7 +34,13 @@ describe("Template Editor Website Validation & Blank Company Name", () => {
         phone: "+1 555-0100",
         website: "https://www.mycompany.com",
         companyName: "Acme",
-        socials: {},
+        avatarUrl: "",
+        themeColor: "#245FD4",
+        fontFamily: "Arial",
+        layout: "two-column",
+        socialIconsStyle: "filled",
+        socials: { linkedin: "", twitter: "", facebook: "" },
+        optional: {},
       },
       { preview: true }
     );
@@ -56,7 +62,13 @@ describe("Template Editor Website Validation & Blank Company Name", () => {
         phone: "+1 555-0100",
         website: "https://www.mycompany.com",
         companyName: "",
-        socials: {},
+        avatarUrl: "",
+        themeColor: "#245FD4",
+        fontFamily: "Arial",
+        layout: "two-column",
+        socialIconsStyle: "filled",
+        socials: { linkedin: "", twitter: "", facebook: "" },
+        optional: {},
       },
       { preview: true }
     );
@@ -75,7 +87,13 @@ describe("Template Editor Website Validation & Blank Company Name", () => {
         phone: "+1 555-0100",
         website: "https://www.mycompany.com",
         companyName: "",
-        socials: {},
+        avatarUrl: "",
+        themeColor: "#245FD4",
+        fontFamily: "Arial",
+        layout: "two-column",
+        socialIconsStyle: "filled",
+        socials: { linkedin: "", twitter: "", facebook: "" },
+        optional: {},
       },
       { preview: true }
     );
