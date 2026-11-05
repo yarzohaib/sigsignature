@@ -8,18 +8,19 @@ describe("Blog & Guides SEO Polish & Content Enhancement", () => {
   const rootDir = path.resolve(__dirname, "..");
 
   describe("1. Sitemap Verification (public/sitemap.xml)", () => {
-    it("public/sitemap.xml contains all 7 live blog post URLs", () => {
+    it("public/sitemap.xml contains all 8 live blog post URLs", () => {
       const sitemapPath = path.join(rootDir, "public/sitemap.xml");
       const content = fs.readFileSync(sitemapPath, "utf-8");
 
       const expectedSlugs = [
-        "what-belongs-in-an-email-signature",
         "why-outlook-uses-microsoft-word-to-render-html",
-        "html-or-image-find-the-right-export-for-your-inbox",
-        "one-brand-many-people-signature-system",
-        "a-calmer-way-to-roll-out-your-next-email-signature",
-        "your-next-campaign-already-has-a-place-to-show-up",
-        "good-hierarchy-makes-a-small-signature-feel-effortless",
+        "why-gmail-clips-email-signatures-102kb-fix",
+        "how-to-prevent-outlook-image-blowouts-dpi-scaling",
+        "the-base64-image-trap-why-embedded-signatures-trigger-spam",
+        "the-dark-mode-email-inversion-blueprint-protecting-logos",
+        "the-times-new-roman-trap-defensive-email-font-stacks",
+        "do-email-signature-links-hurt-domain-deliverability",
+        "why-div-tags-fail-in-email-signatures-nested-table-architecture",
       ];
 
       for (const slug of expectedSlugs) {
@@ -31,7 +32,7 @@ describe("Blog & Guides SEO Polish & Content Enhancement", () => {
       }
     });
 
-    it("public/sitemap.xml includes all 7 blog posts and core guides", () => {
+    it("public/sitemap.xml includes all 8 blog posts and core guides", () => {
       const sitemapPath = path.join(rootDir, "public/sitemap.xml");
       const content = fs.readFileSync(sitemapPath, "utf-8");
 
@@ -161,16 +162,22 @@ describe("Blog & Guides SEO Polish & Content Enhancement", () => {
 
   describe("5. SEO-Friendly Blog Titles & Metadata", () => {
     const titleMap: Record<string, string> = {
-      "your-next-campaign-already-has-a-place-to-show-up":
-        "Email Signature Banners: How to Run Marketing Campaigns in Your Sign-Off",
-      "good-hierarchy-makes-a-small-signature-feel-effortless":
-        "Email Signature Typography & Hierarchy: Best Fonts, Sizes & Spacing",
-      "a-calmer-way-to-roll-out-your-next-email-signature":
-        "How to Roll Out Company-Wide Email Signatures for Your Team (Step-by-Step)",
-      "what-belongs-in-an-email-signature":
-        "What to Include in an Email Signature? (Best Practices & Examples)",
-      "html-or-image-find-the-right-export-for-your-inbox":
-        "HTML vs Image Email Signature: Which is Better for Deliverability?",
+      "why-outlook-uses-microsoft-word-to-render-html":
+        "Why Outlook Uses Microsoft Word to Render HTML (And How to Fix It)",
+      "why-gmail-clips-email-signatures-102kb-fix":
+        "Why Gmail Clips Email Signatures at 102KB (And How to Stay Under 10KB)",
+      "how-to-prevent-outlook-image-blowouts-dpi-scaling":
+        "How to Prevent Outlook Image Blowouts: The 96 DPI vs 120 DPI Display Scaling Bug",
+      "the-base64-image-trap-why-embedded-signatures-trigger-spam":
+        "The Base64 Image Trap: Why Embedded Signatures Trigger Spam Filters",
+      "the-dark-mode-email-inversion-blueprint-protecting-logos":
+        "The Dark Mode Email Inversion Blueprint: Protecting Transparent Logos from Disappearing",
+      "the-times-new-roman-trap-defensive-email-font-stacks":
+        "The Times New Roman Trap: Building Defensive Font Stacks for Corporate Email",
+      "do-email-signature-links-hurt-domain-deliverability":
+        "Do Email Signature Links Hurt Domain Deliverability? The 1-CTA Discipline",
+      "why-div-tags-fail-in-email-signatures-nested-table-architecture":
+        "Why Div Tags Fail in Email Signatures: The Master Nested Table Architecture",
     };
 
     for (const [slug, expectedTitle] of Object.entries(titleMap)) {

@@ -37,12 +37,12 @@ describe("Sitemap & Canonical URL Deduplication Audit", () => {
     );
   });
 
-  it("sitemap contains exactly 41 unique URLs with 0 duplicate guides", () => {
+  it("sitemap contains exactly 42 unique URLs with 0 duplicate guides", () => {
     const urls = parsePublicSitemapUrls();
 
-    assert.equal(urls.length, 41, `Expected exactly 41 URLs in sitemap, got ${urls.length}`);
+    assert.equal(urls.length, 42, `Expected exactly 42 URLs in sitemap, got ${urls.length}`);
     const uniqueUrls = new Set(urls);
-    assert.equal(uniqueUrls.size, 41, "All URLs in sitemap must be unique");
+    assert.equal(uniqueUrls.size, 42, "All URLs in sitemap must be unique");
   });
 
   it("homepage in sitemap matches canonical (no trailing slash)", () => {

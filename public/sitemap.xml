@@ -195,44 +195,50 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.sigsignature.com/blog/what-belongs-in-an-email-signature</loc>
-    <lastmod>2026-11-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.sigsignature.com/blog/why-outlook-uses-microsoft-word-to-render-html</loc>
-    <lastmod>2026-11-03</lastmod>
+    <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.sigsignature.com/blog/html-or-image-find-the-right-export-for-your-inbox</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://www.sigsignature.com/blog/why-gmail-clips-email-signatures-102kb-fix</loc>
+    <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.sigsignature.com/blog/one-brand-many-people-signature-system</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://www.sigsignature.com/blog/how-to-prevent-outlook-image-blowouts-dpi-scaling</loc>
+    <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.sigsignature.com/blog/a-calmer-way-to-roll-out-your-next-email-signature</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://www.sigsignature.com/blog/the-base64-image-trap-why-embedded-signatures-trigger-spam</loc>
+    <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.sigsignature.com/blog/your-next-campaign-already-has-a-place-to-show-up</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://www.sigsignature.com/blog/the-dark-mode-email-inversion-blueprint-protecting-logos</loc>
+    <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.sigsignature.com/blog/good-hierarchy-makes-a-small-signature-feel-effortless</loc>
-    <lastmod>2026-11-03</lastmod>
+    <loc>https://www.sigsignature.com/blog/the-times-new-roman-trap-defensive-email-font-stacks</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.sigsignature.com/blog/do-email-signature-links-hurt-domain-deliverability</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.sigsignature.com/blog/why-div-tags-fail-in-email-signatures-nested-table-architecture</loc>
+    <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

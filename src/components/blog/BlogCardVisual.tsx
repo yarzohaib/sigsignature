@@ -16,6 +16,7 @@ export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisu
           alt={title}
           fill
           quality={95}
+          loading="lazy"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 group-hover:scale-102"
         />
