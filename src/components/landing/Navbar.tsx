@@ -65,17 +65,17 @@ export default function Navbar() {
   };
 
   const desktopNavClass = (href: string) =>
-    `font-body text-[15px] 3xl:text-[17px] transition min-h-[44px] flex items-center rounded-full border ${
+    `font-body text-[15px] 3xl:text-[17px] transition min-h-[44px] flex items-center rounded-full border border-transparent px-4 py-1.5 ${
       isNavActive(href)
-        ? "border-[#245FD4]/20 bg-[#EBF2FE] px-4 py-1.5 font-semibold text-[#245FD4] shadow-xs"
-        : "border-transparent px-3 py-1.5 font-medium text-slate-600 hover:text-slate-900"
+        ? "bg-transparent font-semibold text-[#245FD4]"
+        : "font-medium text-slate-600 hover:border-[#245FD4]/20 hover:bg-[#EBF2FE] hover:font-semibold hover:text-[#245FD4] hover:shadow-xs"
     }`;
 
   const mobileNavClass = (href: string) =>
-    `flex min-h-[48px] items-center rounded-full border px-4 font-body text-base transition-colors ${
+    `flex min-h-[48px] items-center rounded-full border border-transparent px-4 font-body text-base transition-colors ${
       isNavActive(href)
-        ? "border-[#245FD4]/20 bg-[#EBF2FE] font-semibold text-[#245FD4]"
-        : "border-transparent font-medium text-slate-800 hover:bg-slate-100/80 hover:text-brand"
+        ? "bg-transparent font-semibold text-[#245FD4]"
+        : "font-medium text-slate-800 hover:border-[#245FD4]/20 hover:bg-[#EBF2FE] hover:font-semibold hover:text-[#245FD4]"
     }`;
 
   // Synchronize auth state with localStorage and custom window events
