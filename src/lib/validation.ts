@@ -49,6 +49,51 @@ export function isValidWebUrl(value: string): boolean {
   }
 }
 
+/**
+ * Validates website URLs for the template customizer:
+ * Enforces secure HTTPS (or scheme-less input auto-resolved to https),
+ * a valid host with an extension (.com, .io, etc.), and rejects insecure HTTP,
+ * unsupported protocols, or invalid domain names.
+ */
+export function validateWebsiteUrl(value: string | null | undefined): string | null {
+  const trimmed = (value || "").trim();
+  if (!trimmed) {
+    return "Website URL is required.";
+  }
+  if (/\s/.test(trimmed)) {
+    return "Website URL cannot contain spaces.";
+  }
+  if (/^(javascript:|data:|vbscript:|file:|ftp:)/i.test(trimmed)) {
+    return "Please enter a valid website URL.";
+  }
+  if (/^http:\/\//i.test(trimmed)) {
+    return "Please enter a secure https:// website URL.";
+  }
+  const candidate = /^https:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  try {
+    const parsed = new URL(candidate);
+    if (parsed.protocol !== "https:") {
+      return "Please enter a valid https:// website URL.";
+    }
+    const host = parsed.hostname;
+    if (!host.includes(".") || host.startsWith(".") || host.endsWith(".")) {
+      return "Please enter a valid domain (e.g. www.company.com).";
+    }
+    const parts = host.split(".");
+    const tld = parts[parts.length - 1];
+    if (!tld || tld.length < 2 || !/^[a-zA-Z]{2,}$/.test(tld)) {
+      return "Please enter a valid domain with an extension (e.g. .com, .io).";
+    }
+    return null;
+  } catch {
+    return "Please enter a valid website URL.";
+  }
+}
+
+export function isValidWebsiteUrl(value: string | null | undefined): boolean {
+  return validateWebsiteUrl(value) === null;
+}
+
 /** Standard field min character lengths */
 export const MIN_LENGTH = {
   FIRST_NAME: 2,

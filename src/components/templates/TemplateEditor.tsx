@@ -39,6 +39,8 @@ import {
   isValidEmail,
   sanitizePhone,
   isValidPhone,
+  validateWebsiteUrl,
+  isValidWebsiteUrl,
   MAX_LENGTH,
 } from "@/lib/validation";
 
@@ -95,7 +97,19 @@ export default function TemplateEditor({
 }: TemplateEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
-  const supportsProfilePhoto = template.id !== "executive-corporate";
+
+  // Dynamic template optional capabilities (probes if template supports company name, logo, photo, address, disclaimer, tagline)
+  const optionalCapabilities = useMemo(() => {
+    return getTemplateOptionalCapabilities(
+      template.id,
+      initialData?.layout || template.defaultData.layout
+    );
+  }, [template.id, initialData?.layout, template.defaultData.layout]);
+
+  const supportsProfilePhoto = optionalCapabilities.supportsProfilePhoto;
+  const supportsCompanyLogo = optionalCapabilities.supportsCompanyLogo;
+  const supportsCompanyName = optionalCapabilities.supportsCompanyName;
+  const hasBrandingSection = supportsCompanyLogo || optionalCapabilities.supportsTagline;
   const preferTableBounds = [
     "corporate-elegant",
     "executive-corporate",
@@ -194,14 +208,6 @@ export default function TemplateEditor({
     optional: false,
   });
 
-  // Dynamic template optional capabilities (probes if template supports address, disclaimer, tagline)
-  const optionalCapabilities = useMemo(() => {
-    return getTemplateOptionalCapabilities(
-      formData.templateId || template.id,
-      formData.layout
-    );
-  }, [formData.templateId, template.id, formData.layout]);
-
   // Saving state
   const [isSaving, setIsSaving] = useState(false);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
@@ -238,6 +244,11 @@ export default function TemplateEditor({
     }
     return null;
   }, [formData.phone]);
+
+  // Validate website URL format
+  const websiteError = useMemo(() => {
+    return validateWebsiteUrl(formData.website);
+  }, [formData.website]);
 
   // Validate social profile links matching platform rules
   const socialErrors = useMemo(() => {
@@ -511,6 +522,12 @@ export default function TemplateEditor({
       return;
     }
 
+    if (websiteError) {
+      setOpenSections((prev) => ({ ...prev, personal: true }));
+      showToast("Invalid website URL", websiteError, true);
+      return;
+    }
+
     if (Object.keys(socialErrors).length > 0) {
       setOpenSections((prev) => ({ ...prev, social: true }));
       showToast("Invalid social link", "Please fix the invalid social profile URLs before saving.", true);
@@ -676,12 +693,15 @@ export default function TemplateEditor({
     const previewEmail = isValidEmail(deferredFormData.email) ? deferredFormData.email.trim() : "";
     // Do not accept invalid phone into signature preview
     const previewPhone = isValidPhone(deferredFormData.phone) ? deferredFormData.phone.trim() : "";
+    // Do not accept invalid website into signature preview
+    const previewWebsite = isValidWebsiteUrl(deferredFormData.website) ? deferredFormData.website.trim() : "";
 
     return generateTemplateHtml(
       {
         ...deferredFormData,
         email: previewEmail,
         phone: previewPhone,
+        website: previewWebsite,
         socials: validSocials,
         templateId: template.id,
       },
@@ -974,40 +994,42 @@ export default function TemplateEditor({
                     />
                   </div>
 
-                  <div>
-                    <div className="flex h-5 items-center justify-between">
-                      <label className="text-[11px] font-semibold text-[#64748B]">
-                        Company Name <span className="text-blue-600">*</span>
-                      </label>
+                  {supportsCompanyName && (
+                    <div>
+                      <div className="flex h-5 items-center justify-between">
+                        <label className="text-[11px] font-semibold text-[#64748B]">
+                          Company Name <span className="text-blue-600">*</span>
+                        </label>
+                        {isEditing && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                            <svg className="w-2.5 h-2.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            Locked
+                          </span>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        value={formData.companyName}
+                        maxLength={MAX_LENGTH.COMPANY}
+                        onChange={(e) => handleInputChange("companyName", e.target.value)}
+                        disabled={isEditing}
+                        placeholder="e.g. Acme Corp"
+                        className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium shadow-2xs transition ${
+                          isEditing
+                            ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
+                            : "border-slate-200 text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
+                        }`}
+                      />
                       {isEditing && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-                          <svg className="w-2.5 h-2.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                          </svg>
-                          Locked
-                        </span>
+                        <p className="mt-1 text-[10px] text-slate-400">
+                          Locked to preserve signature identity on the Free plan.
+                        </p>
                       )}
                     </div>
-                    <input
-                      type="text"
-                      value={formData.companyName}
-                      maxLength={MAX_LENGTH.COMPANY}
-                      onChange={(e) => handleInputChange("companyName", e.target.value)}
-                      disabled={isEditing}
-                      placeholder="e.g. Acme Corp"
-                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium shadow-2xs transition ${
-                        isEditing
-                          ? "border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed select-none"
-                          : "border-slate-200 text-[#1E293B] focus:border-[#245FD4] focus:outline-none"
-                      }`}
-                    />
-                    {isEditing && (
-                      <p className="mt-1 text-[10px] text-slate-400">
-                        Locked to preserve signature identity on the Free plan.
-                      </p>
-                    )}
-                  </div>
+                  )}
 
                   <div>
                     <div className="flex h-5 items-center justify-between">
@@ -1067,120 +1089,131 @@ export default function TemplateEditor({
                       maxLength={MAX_LENGTH.WEBSITE}
                       onChange={(e) => handleInputChange("website", e.target.value)}
                       placeholder="e.g. www.company.com"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:border-[#245FD4] focus:outline-none"
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs transition focus:outline-none ${
+                        websiteError
+                          ? "border-rose-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-200"
+                          : "border-slate-200 focus:border-[#245FD4]"
+                      }`}
                     />
+                    {websiteError && (
+                      <p className="mt-1 text-[11px] text-rose-500">{websiteError}</p>
+                    )}
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Section 2: Branding */}
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all">
-            <button
-              type="button"
-              onClick={() => toggleSection("branding")}
-              className="flex w-full items-center justify-between text-left"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
-                  </svg>
-                </span>
-                <h3
-                  className="text-[15px] font-bold text-[#1E293B]"
-                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                >
-                  Branding
-                </h3>
-              </div>
-              <svg
-                className={`h-4 w-4 text-slate-400 transition-transform ${openSections.branding ? "rotate-180" : ""}`}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+          {/* Section 2: Branding (rendered only if template supports logo or tagline) */}
+          {hasBrandingSection && (
+            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all">
+              <button
+                type="button"
+                onClick={() => toggleSection("branding")}
+                className="flex w-full items-center justify-between text-left"
               >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  </span>
+                  <h3
+                    className="text-[15px] font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Branding
+                  </h3>
+                </div>
+                <svg
+                  className={`h-4 w-4 text-slate-400 transition-transform ${openSections.branding ? "rotate-180" : ""}`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
 
-            {openSections.branding && (
-              <div className="mt-4 pt-3 border-t border-slate-100 space-y-4">
-                {/* Company Logo Upload Row */}
-                <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center">
-                      {formData.companyLogoUrl ? (
-                        <Image
-                          src={formData.companyLogoUrl}
-                          alt="Company logo"
-                          width={56}
-                          height={56}
-                          className="h-full w-full object-contain p-1"
-                          unoptimized
-                        />
-                      ) : (
-                        <svg className="h-6 w-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <polyline points="21 15 16 10 5 21" />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-[#1E293B]">Company Logo</p>
-                      <p className="text-[11px] text-[#64748B] mt-0.5">Upload a square or wide logo (PNG, JPG, max 10MB). Logo displays alongside your contact details in your signature.</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <button
-                          type="button"
-                          disabled={isUploadingLogo}
-                          onClick={() => logoInputRef.current?.click()}
-                          className="rounded-lg bg-[#245FD4] px-3 py-1 text-[11px] font-medium text-white shadow-2xs transition hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                          {isUploadingLogo ? "Uploading..." : formData.companyLogoUrl ? "Change Logo" : "Upload Logo"}
-                        </button>
-                        {Boolean(formData.companyLogoUrl) && (
-                          <button
-                            type="button"
-                            disabled={isUploadingLogo}
-                            onClick={handleRemoveLogo}
-                            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 hover:border-red-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            Remove
-                          </button>
-                        )}
-                        <input
-                          ref={logoInputRef}
-                          type="file"
-                          accept=".jpg, .png"
-                          onChange={handleLogoUpload}
-                          className="hidden"
-                        />
+              {openSections.branding && (
+                <div className="mt-4 pt-3 border-t border-slate-100 space-y-4">
+                  {/* Company Logo Upload Row (rendered only if template supports company logo) */}
+                  {supportsCompanyLogo && (
+                    <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
+                      <div className="flex items-center gap-3.5">
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center">
+                          {formData.companyLogoUrl ? (
+                            <Image
+                              src={formData.companyLogoUrl}
+                              alt="Company logo"
+                              width={56}
+                              height={56}
+                              className="h-full w-full object-contain p-1"
+                              unoptimized
+                            />
+                          ) : (
+                            <svg className="h-6 w-6 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-[#1E293B]">Company Logo</p>
+                          <p className="text-[11px] text-[#64748B] mt-0.5">Upload a square or wide logo (PNG, JPG, max 10MB). Logo displays alongside your contact details in your signature.</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <button
+                              type="button"
+                              disabled={isUploadingLogo}
+                              onClick={() => logoInputRef.current?.click()}
+                              className="rounded-lg bg-[#245FD4] px-3 py-1 text-[11px] font-medium text-white shadow-2xs transition hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              {isUploadingLogo ? "Uploading..." : formData.companyLogoUrl ? "Change Logo" : "Upload Logo"}
+                            </button>
+                            {Boolean(formData.companyLogoUrl) && (
+                              <button
+                                type="button"
+                                disabled={isUploadingLogo}
+                                onClick={handleRemoveLogo}
+                                className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 hover:border-red-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                              >
+                                Remove
+                              </button>
+                            )}
+                            <input
+                              ref={logoInputRef}
+                              type="file"
+                              accept=".jpg, .png"
+                              onChange={handleLogoUpload}
+                              className="hidden"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  )}
 
-                {optionalCapabilities.supportsTagline && (
-                  <div>
-                    <label className="text-[11px] font-semibold text-[#64748B]">Tagline</label>
-                    <input
-                      type="text"
-                      value={formData.optional.tagline || ""}
-                      maxLength={MAX_LENGTH.TAGLINE}
-                      onChange={(e) => handleOptionalChange("tagline", e.target.value)}
-                      placeholder="e.g. Elevate your presence"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                  {optionalCapabilities.supportsTagline && (
+                    <div>
+                      <label className="text-[11px] font-semibold text-[#64748B]">Tagline</label>
+                      <input
+                        type="text"
+                        value={formData.optional.tagline || ""}
+                        maxLength={MAX_LENGTH.TAGLINE}
+                        onChange={(e) => handleOptionalChange("tagline", e.target.value)}
+                        placeholder="e.g. Elevate your presence"
+                        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-[#1E293B] shadow-2xs focus:border-[#245FD4] focus:outline-none"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Section 3: Social Links */}
           <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all">

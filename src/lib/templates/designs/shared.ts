@@ -180,8 +180,9 @@ export function renderContactRows(
 
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
+    const label = escapeHtml(data.website.trim().replace(/^https?:\/\//i, ""));
     rows.push(
-      `<tr><td style="padding:1px 6px 1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;font-weight:bold;color:${themeColor};">W</td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;">${escapeHtml(data.website.trim())}</a></td></tr>`
+      `<tr><td style="padding:1px 6px 1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;font-weight:bold;color:${themeColor};">W</td><td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:11px;"><a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;">${label}</a></td></tr>`
     );
   }
 
@@ -222,8 +223,9 @@ export function renderCompactContactItems(
 
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
+    const label = escapeHtml(data.website.trim().replace(/^https?:\/\//i, ""));
     items.push(
-      `<span style="margin-right:12px;display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;">W</strong>&nbsp;<a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;font-family:${fontStack};font-size:10px;">${escapeHtml(data.website.trim())}</a></span>`
+      `<span style="margin-right:12px;display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;">W</strong>&nbsp;<a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;font-family:${fontStack};font-size:10px;">${label}</a></span>`
     );
   }
 

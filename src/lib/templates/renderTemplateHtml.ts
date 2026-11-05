@@ -8,6 +8,9 @@ export interface TemplateOptionalCapabilities {
   supportsAddress: boolean;
   supportsDisclaimer: boolean;
   supportsTagline: boolean;
+  supportsCompanyName: boolean;
+  supportsCompanyLogo: boolean;
+  supportsProfilePhoto: boolean;
   hasAnyOptional: boolean;
 }
 
@@ -15,7 +18,8 @@ const capabilitiesCache = new Map<string, TemplateOptionalCapabilities>();
 
 /**
  * Dynamically probes whether a given template (or layout fallback) supports
- * optional fields (address, disclaimer, tagline) by inspecting rendered HTML output.
+ * optional fields (company name, company logo, profile photo, address, disclaimer, tagline)
+ * by inspecting rendered HTML output.
  * Caches results per templateId/layout to run instantly with zero overhead.
  */
 export function getTemplateOptionalCapabilities(
@@ -31,11 +35,12 @@ export function getTemplateOptionalCapabilities(
     layout: (layout as any) || "two-column",
     fullName: "Test Name",
     jobTitle: "Test Title",
-    companyName: "Test Company",
+    companyName: "__COMP_PROBE__",
+    companyLogoUrl: "https://example.com/logo_probe.png",
+    avatarUrl: "https://example.com/avatar_probe.png",
     email: "test@example.com",
     phone: "123456",
     website: "https://example.com",
-    avatarUrl: "",
     themeColor: "#245FD4",
     fontFamily: "Arial",
     socialIconsStyle: "filled",
@@ -51,11 +56,17 @@ export function getTemplateOptionalCapabilities(
   const supportsAddress = html.includes("__ADDR_PROBE__");
   const supportsDisclaimer = html.includes("__DISC_PROBE__");
   const supportsTagline = html.includes("__TAG_PROBE__");
+  const supportsCompanyName = html.includes("__COMP_PROBE__");
+  const supportsCompanyLogo = html.includes("logo_probe.png");
+  const supportsProfilePhoto = html.includes("avatar_probe.png");
 
   const result: TemplateOptionalCapabilities = {
     supportsAddress,
     supportsDisclaimer,
     supportsTagline,
+    supportsCompanyName,
+    supportsCompanyLogo,
+    supportsProfilePhoto,
     hasAnyOptional: supportsAddress || supportsDisclaimer,
   };
 

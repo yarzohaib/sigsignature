@@ -58,8 +58,9 @@ export function render(data: TemplateSignatureData): string {
 
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
+    const label = escapeHtml(data.website.trim().replace(/^https?:\/\//i, ""));
     contactParts.push(
-      `<span style="display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;text-transform:uppercase;">WEB</strong>&nbsp;<a href="${href}" target="_blank" style="color:#475569;text-decoration:none;font-family:${fontStack};font-size:10px;font-weight:bold;">${escapeHtml(data.website.trim())}</a></span>`
+      `<span style="display:inline-block;"><strong style="color:${themeColor};font-family:${fontStack};font-size:10px;text-transform:uppercase;">WEB</strong>&nbsp;<a href="${href}" target="_blank" style="color:#475569;text-decoration:none;font-family:${fontStack};font-size:10px;font-weight:bold;">${label}</a></span>`
     );
   }
 

@@ -62,6 +62,7 @@ export function render(data: TemplateSignatureData): string {
 
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
+    const label = escapeHtml(data.website.trim().replace(/^https?:\/\//i, ""));
     const iconUrl = emailIconUrl("minimal", themeColor, "website");
     contactRows.push(
       `<tr>
@@ -69,7 +70,7 @@ export function render(data: TemplateSignatureData): string {
           <img src="${escapeHtml(iconUrl)}" alt="Website" width="14" height="14" style="display:block;border:0;outline:none;text-decoration:none;" />
         </td>
         <td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:10px;line-height:1.3;">
-          <a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;">${escapeHtml(data.website.trim())}</a>
+          <a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;">${label}</a>
         </td>
       </tr>`
     );
@@ -106,17 +107,28 @@ export function render(data: TemplateSignatureData): string {
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:6px;"><tr><td style="padding:0;vertical-align:middle;">${socialLinks.join("")}</td></tr></table>`
     : "";
 
-  const companyName = data.companyName?.trim() || "COMPANY";
-  const tagline = data.optional?.tagline?.trim() || "Tagline goes here";
+  const companyName = data.companyName?.trim() || "";
+  const tagline = data.optional?.tagline?.trim() || "";
+  const hasCompanySide = Boolean(companyName || tagline);
 
-  const companyCell = `<td style="vertical-align:middle;padding-left:14px;border-left:1px solid #E2E8F0;text-align:center;width:90px;">
-    <div style="font-family:${fontStack};font-size:11px;font-weight:800;color:#1E293B;letter-spacing:0.8px;text-transform:uppercase;line-height:1.2;">
-      ${escapeHtml(companyName)}
-    </div>
-    <div style="font-family:${fontStack};font-size:8px;color:#94A3B8;margin-top:3px;line-height:1.2;">
-      ${escapeHtml(tagline)}
-    </div>
-  </td>`;
+  const companyCell = hasCompanySide
+    ? `<td style="vertical-align:middle;padding-left:14px;border-left:1px solid #E2E8F0;text-align:center;width:90px;">
+        ${
+          companyName
+            ? `<div style="font-family:${fontStack};font-size:11px;font-weight:800;color:#1E293B;letter-spacing:0.8px;text-transform:uppercase;line-height:1.2;">
+                ${escapeHtml(companyName)}
+              </div>`
+            : ""
+        }
+        ${
+          tagline
+            ? `<div style="font-family:${fontStack};font-size:8px;color:#94A3B8;margin-top:3px;line-height:1.2;">
+                ${escapeHtml(tagline)}
+              </div>`
+            : ""
+        }
+      </td>`
+    : "";
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#1E293B;width:100%;max-width:350px;">
     <tr>

@@ -19,7 +19,7 @@ export function render(data: TemplateSignatureData): string {
   const themeColor = validateThemeColor(data.themeColor || "#163BA4");
   const fontStack = resolveSafeFontStack(data.fontFamily || "Inter");
 
-  const companyName = data.companyName?.trim() || "ACME CORPORATION";
+  const companyName = data.companyName?.trim() || "";
 
   const contactRows: string[] = [];
 
@@ -56,13 +56,14 @@ export function render(data: TemplateSignatureData): string {
   if (data.website?.trim()) {
     const href = safeUrl(normalizeWebsite(data.website));
     const iconUrl = emailIconUrl("minimal", themeColor, "website");
+    const label = escapeHtml(data.website.trim().replace(/^https?:\/\//i, ""));
     contactRows.push(
       `<tr>
         <td width="20" style="width:20px;padding:1px 6px 1px 0;vertical-align:middle;">
           <img src="${escapeHtml(iconUrl)}" alt="Website" width="14" height="14" style="display:block;border:0;outline:none;text-decoration:none;" />
         </td>
         <td style="padding:1px 0;vertical-align:middle;font-family:${fontStack};font-size:10px;line-height:1.3;">
-          <a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;">${escapeHtml(data.website.trim())}</a>
+          <a href="${href}" target="_blank" style="color:#64748B;text-decoration:none;">${label}</a>
         </td>
       </tr>`
     );
