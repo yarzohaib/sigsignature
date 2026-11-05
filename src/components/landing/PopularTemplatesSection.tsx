@@ -37,7 +37,7 @@ export default function PopularTemplatesSection() {
   return (
     <section
       id="templates"
-      className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#F8FAFC] pt-16 sm:pt-20 lg:pt-24 3xl:pt-28 pb-12 sm:pb-16 lg:pb-16 border-y border-slate-200/70"
+      className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28"
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
@@ -96,12 +96,11 @@ export default function PopularTemplatesSection() {
         <div className="mt-12 sm:mt-14 flex flex-col items-center justify-center text-center">
           <Link
             href="/templates"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 text-sm sm:text-base font-semibold text-white shadow-md transition hover:opacity-95 hover:shadow-lg active:scale-98"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            className="group inline-flex min-h-[44px] items-center justify-center gap-2.5 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm sm:text-base font-semibold text-white shadow-sm transition-[opacity] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 [@media(hover:hover)]:hover:opacity-95 active:scale-95"
           >
             <span>View All Templates</span>
             <svg
-              className="h-4 w-4 transition-transform group-hover:translate-x-1"
+              className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="2.5"

@@ -96,7 +96,7 @@ export default function PricingSection() {
   }
 
   return (
-    <section id="pricing" className="scroll-mt-18 sm:scroll-mt-20 bg-[#FCFCFC] pt-8 sm:pt-10 lg:pt-12 pb-14 sm:pb-16 lg:pb-20 3xl:pb-24">
+    <section id="pricing" className="scroll-mt-18 sm:scroll-mt-20 bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
       {premiumToast && (
         <div
           role="status"

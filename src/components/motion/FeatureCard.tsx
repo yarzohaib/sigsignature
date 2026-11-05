@@ -35,13 +35,8 @@ export function FeatureCard({
   const shouldReduceMotion = useReducedMotion();
   const { isDesktop } = useFeatureGridContext();
 
-  const hoverTranslate =
-    direction === "left"
-      ? "[@media(hover:hover)]:hover:translate-x-1.5 focus-visible:translate-x-1.5"
-      : "[@media(hover:hover)]:hover:-translate-x-1.5 focus-visible:-translate-x-1.5";
-
   const cardClasses =
-    `group flex h-full flex-col justify-between rounded-[20px] border border-[#C1C1C1] bg-white p-6 sm:p-8 shadow-none transition-[transform,box-shadow,border-color] duration-200 ease-out ${hoverTranslate} [@media(hover:hover)]:hover:border-[#245FD4]/60 [@media(hover:hover)]:hover:shadow-[0_16px_32px_-8px_rgba(2,41,119,0.12),0_0_16px_rgba(36,95,212,0.10)] focus-visible:border-[#245FD4]/60 focus-visible:shadow-[0_16px_32px_-8px_rgba(2,41,119,0.12),0_0_16px_rgba(36,95,212,0.10)] focus-visible:ring-2 focus-visible:ring-[#245FD4] focus-visible:ring-offset-2 focus-visible:outline-none cursor-default ` +
+    `group flex h-full flex-col justify-between rounded-[20px] border border-[#C1C1C1] bg-white p-6 sm:p-8 shadow-none transform-gpu [backface-visibility:hidden] transition-colors duration-200 ease-out [@media(hover:hover)]:hover:border-[#245FD4]/60 focus-visible:border-[#245FD4]/60 focus-visible:ring-2 focus-visible:ring-[#245FD4] focus-visible:ring-offset-2 focus-visible:outline-none cursor-default ` +
     className;
 
   const cardVariants: Variants = useMemo(() => {

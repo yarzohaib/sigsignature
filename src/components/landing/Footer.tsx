@@ -111,9 +111,9 @@ const isAuthenticated =
 
   return (
     <footer
-      className="bg-[#FCFCFC] pt-14 sm:pt-16 lg:pt-20 font-body text-slate-600"
+      className="bg-[#FCFCFC] pt-10 sm:pt-12 font-body text-slate-600"
       style={{
-        paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))",
+        paddingBottom: "max(0.75rem, env(safe-area-inset-bottom, 0.75rem))",
       }}
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
@@ -319,27 +319,35 @@ const isAuthenticated =
       {/* FULL WIDTH Horizontal Divider Line */}
       <div className="mt-10 sm:mt-12 w-full border-t border-[#D7D7D7]" />
 
-      {/* Bottom Legal & Copyright Bar: stacked on phones, split on tablets & desktop */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 py-6 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
-        <div className="grid grid-cols-1 items-center gap-3 text-center text-xs text-[#878787] sm:grid-cols-3 sm:text-sm">
-          <p className="sm:text-left">© 2026 Sig Signature. All rights reserved.</p>
-          <p className="text-[#353A3E]">
-            Powered by{" "}
-            <Link
-              href="https://www.thenevon.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-[#022977] hover:text-[#245FD4]"
-            >
-              @THE NEVON
-            </Link>
+      {/* Bottom Legal & Copyright Bar */}
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-3 pb-2 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-xs sm:text-[13px] text-[#878787]">
+          <p className="flex flex-wrap items-center justify-center sm:justify-start gap-1">
+            <span>© 2026 Sig Signature. All rights reserved.</span>
+            <span className="hidden sm:inline text-slate-300">|</span>
+            <span>
+              Powered by{" "}
+              <Link
+                href="https://www.thenevon.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#1243A3] hover:text-[#022977] transition"
+              >
+                @The Nevon
+              </Link>
+            </span>
           </p>
-          <div className="flex items-center justify-center gap-6 sm:justify-end">
-            <Link href="/privacy" className={legalLinkHoverClasses}>
-              Privacy Policy
+          <div className="flex items-center justify-center gap-1.5 text-[#878787]">
+            <Link href="/terms" className="hover:text-brand transition px-1">
+              Terms
             </Link>
-            <Link href="/terms" className={legalLinkHoverClasses}>
-              Terms of Service
+            <span className="text-slate-400" aria-hidden="true">&bull;</span>
+            <Link href="/privacy" className="hover:text-brand transition px-1">
+              Privacy
+            </Link>
+            <span className="text-slate-400" aria-hidden="true">&bull;</span>
+            <Link href="/blog" className="hover:text-brand transition px-1">
+              Blog
             </Link>
           </div>
         </div>

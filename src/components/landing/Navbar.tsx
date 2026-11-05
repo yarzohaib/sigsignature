@@ -631,7 +631,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="flex items-center gap-7 lg:gap-8 xl:gap-9">
+          <nav className="flex items-center gap-3.5 lg:gap-4.5 xl:gap-5.5">
             <Link
               href="/about"
               className={desktopNavClass("/about")}
