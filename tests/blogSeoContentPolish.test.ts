@@ -3,12 +3,11 @@ import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
 import { BLOG_POSTS } from "../src/lib/blogData";
-import sitemap from "../src/app/sitemap";
 
 describe("Blog & Guides SEO Polish & Content Enhancement", () => {
   const rootDir = path.resolve(__dirname, "..");
 
-  describe("1. Sitemap Verification (public/sitemap.xml & app/sitemap.ts)", () => {
+  describe("1. Sitemap Verification (public/sitemap.xml)", () => {
     it("public/sitemap.xml contains all 7 live blog post URLs", () => {
       const sitemapPath = path.join(rootDir, "public/sitemap.xml");
       const content = fs.readFileSync(sitemapPath, "utf-8");
@@ -32,16 +31,16 @@ describe("Blog & Guides SEO Polish & Content Enhancement", () => {
       }
     });
 
-    it("src/app/sitemap.ts dynamically includes all 7 blog posts and core guides", () => {
-      const entries = sitemap();
-      const urls = entries.map((e) => e.url);
+    it("public/sitemap.xml includes all 7 blog posts and core guides", () => {
+      const sitemapPath = path.join(rootDir, "public/sitemap.xml");
+      const content = fs.readFileSync(sitemapPath, "utf-8");
 
-      assert.ok(urls.includes("https://www.sigsignature.com/blog"), "sitemap should contain /blog");
+      assert.ok(content.includes("<loc>https://www.sigsignature.com/blog</loc>"), "sitemap should contain /blog");
 
       for (const post of BLOG_POSTS) {
         assert.ok(
-          urls.includes(`https://www.sigsignature.com/blog/${post.slug}`),
-          `sitemap.ts should contain /blog/${post.slug}`
+          content.includes(`<loc>https://www.sigsignature.com/blog/${post.slug}</loc>`),
+          `public/sitemap.xml should contain /blog/${post.slug}`
         );
       }
     });

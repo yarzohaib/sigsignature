@@ -2,15 +2,43 @@ import test, { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import sitemap from "../src/app/sitemap";
 import { DETAILED_GUIDES, LEGACY_GUIDE_SLUG_REDIRECTS } from "../src/lib/guidesData";
 
 describe("Sitemap & Canonical URL Deduplication Audit", () => {
   const rootDir = path.resolve(__dirname, "..");
 
+  function parsePublicSitemapUrls(): string[] {
+    const publicSitemap = fs.readFileSync(path.join(rootDir, "public/sitemap.xml"), "utf-8");
+    const matches = [...publicSitemap.matchAll(/<loc>(.*?)<\/loc>/g)];
+    return matches.map((m) => m[1]);
+  }
+
+  it("public/sitemap.xml contains schema attributes and section comments", () => {
+    const publicSitemap = fs.readFileSync(path.join(rootDir, "public/sitemap.xml"), "utf-8");
+    assert.ok(
+      publicSitemap.includes('xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'),
+      "sitemap.xml must have xmlns:xsi"
+    );
+    assert.ok(
+      publicSitemap.includes('xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'),
+      "sitemap.xml must have xsi:schemaLocation"
+    );
+    assert.ok(
+      publicSitemap.includes("<!-- Homepage - Highest Priority -->"),
+      "sitemap.xml must contain section comments"
+    );
+    assert.ok(
+      publicSitemap.includes("<!-- Core Product & Conversion Pages -->"),
+      "sitemap.xml must contain section comments"
+    );
+    assert.ok(
+      publicSitemap.includes("<!-- Help Center & Documentation -->"),
+      "sitemap.xml must contain section comments"
+    );
+  });
+
   it("sitemap contains exactly 41 unique URLs with 0 duplicate guides", () => {
-    const entries = sitemap();
-    const urls = entries.map((e) => e.url);
+    const urls = parsePublicSitemapUrls();
 
     assert.equal(urls.length, 41, `Expected exactly 41 URLs in sitemap, got ${urls.length}`);
     const uniqueUrls = new Set(urls);
@@ -18,8 +46,7 @@ describe("Sitemap & Canonical URL Deduplication Audit", () => {
   });
 
   it("homepage in sitemap matches canonical (no trailing slash)", () => {
-    const entries = sitemap();
-    const urls = entries.map((e) => e.url);
+    const urls = parsePublicSitemapUrls();
 
     assert.ok(
       urls.includes("https://www.sigsignature.com"),
@@ -42,8 +69,7 @@ describe("Sitemap & Canonical URL Deduplication Audit", () => {
   });
 
   it("all 17 removed duplicate guide slugs are excluded from sitemap and registered in redirects", () => {
-    const entries = sitemap();
-    const urls = entries.map((e) => e.url);
+    const urls = parsePublicSitemapUrls();
 
     const duplicateSlugsToRemove = [
       "install-signature-gmail",
@@ -78,8 +104,7 @@ describe("Sitemap & Canonical URL Deduplication Audit", () => {
   });
 
   it("all 19 canonical guide slugs exist in sitemap", () => {
-    const entries = sitemap();
-    const urls = entries.map((e) => e.url);
+    const urls = parsePublicSitemapUrls();
 
     const canonicalSlugs = [
       "create-first-signature",
