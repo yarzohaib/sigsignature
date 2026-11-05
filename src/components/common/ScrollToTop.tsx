@@ -24,12 +24,15 @@ export default function ScrollToTop() {
     // Preserve intentional directory category links.
     if (window.location.hash) return;
 
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const behavior: ScrollBehavior = prefersReducedMotion ? "auto" : "smooth";
+
     const resetScroll = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      window.scrollTo({ top: 0, left: 0, behavior });
 
       const appContainer = getAppContainer();
       if (appContainer) {
-        appContainer.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        appContainer.scrollTo({ top: 0, left: 0, behavior });
       }
     };
 

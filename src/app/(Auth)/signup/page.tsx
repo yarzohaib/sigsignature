@@ -304,7 +304,9 @@ function SignupForm() {
 
       <div className="text-center">
         <h1 className="text-brand-gradient font-heading text-[26px] font-semibold leading-tight sm:text-[32px]">
-          Create Your Free Sig Signature Account
+          Create Your Free
+          <br />
+          <span className="whitespace-nowrap">Sig Signature</span> Account
         </h1>
         <p className="mt-2 text-sm text-slate-600">
           Create professional email signatures in minutes.
