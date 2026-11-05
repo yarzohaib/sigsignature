@@ -31,10 +31,10 @@ export default function CtaBanner() {
           duration: 0.6,
           ease: EASE_OUT_CUBIC,
         }}
-        className="mx-auto flex flex-col items-center text-center max-w-4xl 2xl:max-w-[1100px] px-4 sm:px-6 lg:px-8"
+        className="mx-auto flex flex-col items-center text-center max-w-4xl 2xl:max-w-[2200px] px-4 sm:px-6 lg:px-8"
       >
         <h2 className="font-heading text-center mx-auto text-[clamp(1.75rem,1.1rem+2vw,2.5rem)] lg:text-[34px] xl:text-[40px] 2xl:text-[48px] font-semibold tracking-tight leading-tight sm:leading-[1.2] [text-wrap:balance]">
-          <span className="block lg:whitespace-nowrap">
+          <span className="block mx-auto max-w-full text-center [text-wrap:balance]">
             Your Email Signature Is the Last Thing People See,
           </span>
           <span className="block mt-1 sm:mt-1.5">
@@ -81,7 +81,9 @@ export default function CtaBanner() {
               aria-hidden="true"
               className="pointer-events-none absolute -inset-y-2 -inset-x-12 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 ease-out [@media(hover:hover)]:group-hover:translate-x-[360px]"
             />
-            <span className="relative z-10">{isAuthenticated ? "Go to Dashboard" : "Create Your Free Signature"}</span>
+            <span className="relative z-10 block w-full text-center leading-none">
+              {isAuthenticated ? "Go to Dashboard" : "Create Your Free Signature"}
+            </span>
           </Link>
         </motion.div>
 
