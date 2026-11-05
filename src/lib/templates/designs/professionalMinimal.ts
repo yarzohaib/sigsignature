@@ -8,6 +8,7 @@ import {
   validateThemeColor,
   hasSafeImage,
   emailIconUrl,
+  renderSocialLinks,
 } from "./shared";
 
 /**
@@ -78,6 +79,7 @@ export function render(data: TemplateSignatureData): string {
   const contactsTable = contactRows.length > 0
     ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">${contactRows.join("")}</table>`
     : "";
+  const socialLinks = renderSocialLinks(data, themeColor, fontStack);
 
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontStack};color:#1E293B;width:100%;max-width:350px;">
     <tr>
@@ -90,6 +92,7 @@ export function render(data: TemplateSignatureData): string {
           ${escapeHtml(data.jobTitle || "UX/UI Designer")}
         </div>
         ${contactsTable}
+        ${socialLinks ? `<div style="margin-top:6px;">${socialLinks}</div>` : ""}
       </td>
     </tr>
   </table>`;

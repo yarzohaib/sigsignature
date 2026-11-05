@@ -24,7 +24,7 @@ export function render(data: TemplateSignatureData): string {
 
   const photoCell = hasAvatar
     ? `<td style="vertical-align:middle;padding-right:16px;width:56px;">
-        <div style="width:52px;height:52px;border-radius:50%;border:2px solid ${themeColor};box-shadow:0 0 10px rgba(139,92,246,0.6);display:inline-block;overflow:hidden;background-color:#1E293B;">
+        <div style="box-sizing:content-box;width:52px;height:52px;border-radius:50%;border:2px solid ${themeColor};box-shadow:0 0 10px rgba(139,92,246,0.6);display:inline-block;overflow:hidden;background-color:#1E293B;">
           <img src="${escapeHtml(data.avatarUrl!)}" alt="${escapeHtml(data.fullName || "Photo")}" width="52" height="52" style="display:block;border:0;outline:none;text-decoration:none;border-radius:50%;width:52px;height:52px;object-fit:cover;" />
         </div>
       </td>`

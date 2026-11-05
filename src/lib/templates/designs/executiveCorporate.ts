@@ -121,16 +121,32 @@ export function render(data: TemplateSignatureData): string {
     const parsedInstagram = parseInstagramField(data.socials?.instagram);
 
     const socialLinks: string[] = [];
+    const socialPlatforms = [
+      ["linkedin", "LinkedIn"],
+      ["twitter", "X / Twitter"],
+      ["facebook", "Facebook"],
+      ["github", "GitHub"],
+      ["youtube", "YouTube"],
+      ["website", "Website"],
+    ] as const;
+
     if (parsedInstagram) {
       socialLinks.push(
-        `<strong style="color:#FFFFFF;font-family:${fontStack};font-size:11px;font-weight:400;text-decoration:none;"><a href="${safeUrl(parsedInstagram.url)}" target="_blank" style="color:#E1E3E4;text-decoration:none;font-weight:400;">${escapeHtml(parsedInstagram.handle)}</a></strong>`
+        `<a href="${safeUrl(parsedInstagram.url)}" target="_blank" style="color:#E1E3E4;text-decoration:none;font-weight:400;">${escapeHtml(parsedInstagram.handle)}</a>`
       );
     }
-    if (data.socials?.linkedin?.trim() && !parsedInstagram) {
+
+    socialPlatforms.forEach(([key, label]) => {
+      const value = data.socials?.[key]?.trim();
+      if (!value) return;
+
+      const url = safeUrl(normalizeWebsite(value));
+      if (!url) return;
+
       socialLinks.push(
-        `<strong style="color:#FFFFFF;font-family:${fontStack};font-size:11px;font-weight:400;text-decoration:none;"><a href="${safeUrl(normalizeWebsite(data.socials.linkedin))}" target="_blank" style="color:#E1E3E4;text-decoration:none;font-weight:400;">LinkedIn</a></strong>`
+        `<a href="${url}" target="_blank" style="color:#E1E3E4;text-decoration:none;font-weight:400;">${label}</a>`
       );
-    }
+    });
 
     const socialsCombined = socialLinks.join(" &nbsp;&bull;&nbsp; ");
     let footerContent = "";

@@ -66,6 +66,7 @@ import { getSocialElementHeight } from "@/lib/studio/shared";
 import PremiumLockedModal from "@/components/studio/PremiumLockedModal";
 import DesignStudioSkeleton from "@/components/skeletons/DesignStudioSkeleton";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
+import ImageCropModal from "@/components/common/ImageCropModal";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
 import FloatingToolbar, { CanvasAlignment, TeamFieldBind } from "@/components/studio/FloatingToolbar";
@@ -136,6 +137,8 @@ function DesignStudioContent() {
   const logoUploadInputRef = useRef<HTMLInputElement>(null);
   const imageUploadInputRef = useRef<HTMLInputElement>(null);
   const bannerUploadInputRef = useRef<HTMLInputElement>(null);
+  const [bannerCropSrc, setBannerCropSrc] = useState<string | null>(null);
+  const [bannerCropFileName, setBannerCropFileName] = useState("banner.png");
 
   // Canvas container ref
   const canvasAreaRef = useRef<HTMLDivElement>(null);
@@ -890,9 +893,20 @@ function DesignStudioContent() {
       return;
     }
 
+    setBannerCropSrc(URL.createObjectURL(file));
+    setBannerCropFileName(file.name);
+    if (bannerUploadInputRef.current) bannerUploadInputRef.current.value = "";
+  }
+
+  function handleCloseBannerCrop() {
+    if (bannerCropSrc) URL.revokeObjectURL(bannerCropSrc);
+    setBannerCropSrc(null);
+  }
+
+  async function handleApplyBannerCrop(croppedFile: File) {
     showToast("Uploading banner...");
     try {
-      const compressedBlob = await compressImageToBlob(file, 600, 0.85, "logo");
+      const compressedBlob = await compressImageToBlob(croppedFile, 600, 0.85, "logo");
       const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
 
       const canvasWidth = state.canvas?.width || 600;
@@ -929,7 +943,6 @@ function DesignStudioContent() {
       const message = err instanceof Error ? err.message : "Failed to upload banner.";
       showToast(message);
     } finally {
-      if (bannerUploadInputRef.current) bannerUploadInputRef.current.value = "";
     }
   }
 
@@ -2959,6 +2972,18 @@ function DesignStudioContent() {
         onClose={() => setPreviewModalOpen(false)}
         html={fullSignatureHtml}
         data={state}
+      />
+
+      <ImageCropModal
+        isOpen={Boolean(bannerCropSrc)}
+        imageSrc={bannerCropSrc}
+        fileName={bannerCropFileName}
+        title="Crop Banner Image"
+        description="Drag to position your banner and use the slider to adjust its scale."
+        aspect={(state.canvas?.width || 600) / (state.canvas?.height || 200)}
+        cropShape="rect"
+        onClose={handleCloseBannerCrop}
+        onApply={handleApplyBannerCrop}
       />
 
       <EditDetailsModal

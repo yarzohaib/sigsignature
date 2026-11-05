@@ -12,6 +12,8 @@ export interface ImageCropModalProps {
   onApply: (croppedFile: File) => void | Promise<void>;
   title?: string;
   description?: string;
+  aspect?: number;
+  cropShape?: "rect" | "round";
 }
 
 export default function ImageCropModal({
@@ -22,6 +24,8 @@ export default function ImageCropModal({
   onApply,
   title = "Crop Profile Photo",
   description = "Drag to reposition your photo and use the slider to scale your face into the circle.",
+  aspect = 1,
+  cropShape = "round",
 }: ImageCropModalProps) {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -146,8 +150,8 @@ export default function ImageCropModal({
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={1}
-            cropShape="round"
+            aspect={aspect}
+            cropShape={cropShape}
             showGrid={false}
             onCropChange={setCrop}
             onZoomChange={setZoom}

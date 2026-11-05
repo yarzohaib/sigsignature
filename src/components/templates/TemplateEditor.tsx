@@ -220,6 +220,8 @@ export default function TemplateEditor({
   const [avatarCropFileName, setAvatarCropFileName] = useState<string>("avatar.png");
   // Logo uploading state
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [logoCropSrc, setLogoCropSrc] = useState<string | null>(null);
+  const [logoCropFileName, setLogoCropFileName] = useState("logo.png");
 
   // Validate email address matching standard email rules
   const emailError = useMemo(() => {
@@ -607,8 +609,19 @@ export default function TemplateEditor({
       return;
     }
 
+    setLogoCropSrc(URL.createObjectURL(file));
+    setLogoCropFileName(file.name);
+    if (logoInputRef.current) logoInputRef.current.value = "";
+  }
+
+  const handleCloseLogoCrop = () => {
+    if (logoCropSrc) URL.revokeObjectURL(logoCropSrc);
+    setLogoCropSrc(null);
+  };
+
+  const handleApplyLogoCrop = async (croppedFile: File) => {
     const previousLogo = formData.companyLogoUrl;
-    const objectUrl = URL.createObjectURL(file);
+    const objectUrl = URL.createObjectURL(croppedFile);
     setFormData((prev) => ({
       ...prev,
       companyLogoUrl: objectUrl,
@@ -628,12 +641,12 @@ export default function TemplateEditor({
         showToast("Logo added!", "Sign in or save to upload your logo permanently.");
         setIsUploadingLogo(false);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(croppedFile);
       return;
     }
 
     try {
-      const compressedBlob = await compressImageToBlob(file, 400, 0.85, "logo");
+      const compressedBlob = await compressImageToBlob(croppedFile, 400, 0.85, "logo");
       const publicUrl = await uploadSignatureImage(compressedBlob, "logo");
       setFormData((prev) => ({
         ...prev,
@@ -651,9 +664,6 @@ export default function TemplateEditor({
     } finally {
       URL.revokeObjectURL(objectUrl);
       setIsUploadingLogo(false);
-      if (logoInputRef.current) {
-        logoInputRef.current.value = "";
-      }
     }
   }
 
@@ -1471,6 +1481,17 @@ export default function TemplateEditor({
         fileName={avatarCropFileName}
         onClose={handleCloseAvatarCrop}
         onApply={handleApplyAvatarCrop}
+      />
+
+      <ImageCropModal
+        isOpen={Boolean(logoCropSrc)}
+        imageSrc={logoCropSrc}
+        fileName={logoCropFileName}
+        title="Crop Company Logo"
+        description="Drag to reposition your logo and use the slider to adjust its scale."
+        cropShape="rect"
+        onClose={handleCloseLogoCrop}
+        onApply={handleApplyLogoCrop}
       />
 
       {/* Guest Authentication Prompt Modal */}
