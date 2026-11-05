@@ -9,6 +9,48 @@ interface UseCasePreviewProps {
   containerVariant?: "light" | "dark";
 }
 
+function SocialLinks({ isDark }: { isDark: boolean }) {
+  const linkClass = `inline-flex cursor-pointer items-center justify-center text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 ${
+    isDark ? "text-white/90 hover:text-white" : "text-slate-700 hover:text-slate-900"
+  }`;
+
+  return (
+    <div className="flex items-center gap-3">
+      <a
+        href="https://www.linkedin.com/company/sig-signature/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Sig Signature on LinkedIn"
+        className={linkClass}
+      >
+        in
+      </a>
+      <a
+        href="https://www.instagram.com/sigsignature_com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Sig Signature on Instagram"
+        className={linkClass}
+      >
+        <svg className="block h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      </a>
+      <a
+        href="https://x.com/SigSignature_"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Sig Signature on X"
+        className={linkClass}
+      >
+        𝕏
+      </a>
+    </div>
+  );
+}
+
 export default function UseCasePreview({
   initialStyle,
   containerVariant = "light",
@@ -108,24 +150,7 @@ export default function UseCasePreview({
                 <path d="M5 3l14 9-14 9V3z" />
               </svg>
             </span>
-            <span
-              className={`text-xs font-bold cursor-pointer ${
-                isDark
-                  ? "text-white/90 hover:text-white"
-                  : "text-slate-700 hover:text-slate-900"
-              }`}
-            >
-              in
-            </span>
-            <span
-              className={`text-xs font-bold cursor-pointer ${
-                isDark
-                  ? "text-white/90 hover:text-white"
-                  : "text-slate-700 hover:text-slate-900"
-              }`}
-            >
-              𝕏
-            </span>
+            <SocialLinks isDark={isDark} />
           </div>
         </div>
       )}
@@ -171,12 +196,7 @@ export default function UseCasePreview({
                 <path d="M5 3l14 9-14 9V3z" />
               </svg>
             </span>
-            <span className="text-xs font-bold text-white/90 hover:text-white cursor-pointer">
-              in
-            </span>
-            <span className="text-xs font-bold text-white/90 hover:text-white cursor-pointer">
-              𝕏
-            </span>
+            <SocialLinks isDark />
           </div>
         </div>
       )}
@@ -257,24 +277,7 @@ export default function UseCasePreview({
                     <path d="M5 3l14 9-14 9V3z" />
                   </svg>
                 </span>
-                <span
-                  className={`text-xs font-bold cursor-pointer ${
-                    isDark
-                      ? "text-white/90 hover:text-white"
-                      : "text-slate-700 hover:text-slate-900"
-                  }`}
-                >
-                  in
-                </span>
-                <span
-                  className={`text-xs font-bold cursor-pointer ${
-                    isDark
-                      ? "text-white/90 hover:text-white"
-                      : "text-slate-700 hover:text-slate-900"
-                  }`}
-                >
-                  𝕏
-                </span>
+                <SocialLinks isDark={isDark} />
               </div>
             </div>
           </div>
