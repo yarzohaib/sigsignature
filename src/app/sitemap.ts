@@ -7,8 +7,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date("2026-11-03");
 
   const coreRoutes: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
-    { url: `${baseUrl}/template`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${baseUrl}`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { url: `${baseUrl}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/gmail-signature-generator`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/outlook-signature-generator`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/pricing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },

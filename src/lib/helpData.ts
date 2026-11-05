@@ -75,11 +75,11 @@ export const POPULAR_GUIDES: PopularGuide[] = [
     href: "/help/guides/install-gmail",
   },
   {
-    id: "add-outlook",
+    id: "install-outlook",
     title: "Add a signature to Outlook",
     category: "Installation",
     readTime: "4 min read",
-    href: "/help/guides/add-outlook",
+    href: "/help/guides/install-outlook",
   },
   {
     id: "export-html",
