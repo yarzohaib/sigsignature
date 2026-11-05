@@ -52,7 +52,7 @@ export default function PreviewSignatureModal({
       onClick={onClose}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-[850px] flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 transition-all transform scale-100 animate-in zoom-in-95 duration-150 overflow-hidden"
+        className="flex h-[min(520px,90vh)] max-h-[90vh] w-full max-w-[850px] flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 transition-all transform scale-100 animate-in zoom-in-95 duration-150 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with Title, Tabs, Device Switcher, and Close */}
@@ -157,10 +157,10 @@ export default function PreviewSignatureModal({
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F8FAFC] flex justify-center items-start">
+        <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 bg-[#F8FAFC] flex justify-center items-start">
           {activeTab === "email" ? (
             <div
-              className="w-full bg-white rounded-xl border border-[#E2E8F0] shadow-xs transition-all duration-200 overflow-hidden"
+              className="my-auto flex h-[420px] w-full flex-col overflow-hidden rounded-xl border border-[#E2E8F0] bg-white shadow-xs transition-all duration-200"
               style={{
                 maxWidth: device === "desktop" ? "600px" : "360px",
               }}
@@ -178,7 +178,7 @@ export default function PreviewSignatureModal({
               </div>
 
               {/* Email Sample Text */}
-              <div className="px-5 py-5 text-xs leading-relaxed text-[#475569]">
+              <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 text-xs leading-relaxed text-[#475569]">
                 <p>Hi there,</p>
                 <p className="mt-2">
                   Thank you for your time earlier today. Please find the attached details regarding our project timeline.
