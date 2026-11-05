@@ -197,13 +197,19 @@ export default function TeamPage() {
         {/* HERO & TEAM SECTION */}
         {/* Keep the hero clear of the floating mobile navbar without excessive top whitespace. */}
         <section className="pt-16 pb-10 sm:pt-10 sm:pb-12 lg:pt-12 lg:pb-8">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             {/* Header: Title & Subtitle */}
-            <div className="max-w-3xl">
-              <h1 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[42px] lg:leading-[1.17]">
+            <div className="w-full text-left shrink-0 mb-8 sm:mb-10">
+              <h1
+                className="text-2xl sm:text-3xl lg:text-[32px] font-semibold text-[#101828] tracking-tight"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
                 The Team Behind <span className="text-[#245FD4]">Sig Signature.</span>
               </h1>
-              <p className="mt-3 font-body text-sm text-[#5A5A5A] sm:text-base leading-relaxed">
+              <p
+                className="mt-1.5 text-[14px] sm:text-[15px] text-[#64748B] max-w-xl leading-relaxed"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
                 A focused team of designers, engineers and strategists building the simplest way to create professional email signatures.
               </p>
             </div>
@@ -218,7 +224,7 @@ export default function TeamPage() {
             >
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 justify-between">
                 {/* Left: Avatar + Info */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-7 flex-1">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10 lg:gap-12 xl:gap-14 flex-1">
                   {/* Photo Avatar */}
                   <TeamAvatar
                     imageUrl={leadershipMember.imageUrl}
@@ -230,14 +236,17 @@ export default function TeamPage() {
                   />
 
                   {/* Details */}
-                  <div className="flex-1">
+                  <div className="flex-1 max-w-4xl">
                     <span className="inline-flex items-center rounded-full border border-white/25 bg-white/15 px-3 py-1 font-heading text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-white">
                       {leadershipMember.role}
                     </span>
-                    <h2 className="mt-2.5 font-heading text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-[32px] leading-tight">
+                    <h2
+                      className="mt-2.5 text-3xl sm:text-4xl lg:text-[56px] font-medium tracking-[-1.1px] text-white leading-none align-middle"
+                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                    >
                       {leadershipMember.name}
                     </h2>
-                    <p className="mt-3 font-body text-xs sm:text-sm lg:text-[14px] leading-relaxed text-white/85 max-w-3xl">
+                    <p className="mt-3 font-body text-xs sm:text-sm lg:text-[14px] leading-relaxed text-white/85">
                       {leadershipMember.bio}
                     </p>
                   </div>
@@ -262,30 +271,34 @@ export default function TeamPage() {
                 {teamMembers.map((member) => (
                   <div
                     key={member.name}
-                    className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-8 py-6 sm:py-7 first:pt-0 last:pb-0"
+                    className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-14 xl:gap-16 py-6 sm:py-7 first:pt-0 last:pb-0"
                   >
                     {/* Member Identity: Photo Avatar + Name & Role */}
-                    <div className="flex items-center justify-between lg:justify-start gap-4 lg:w-[280px] shrink-0">
-                      <div className="flex items-center gap-3.5 sm:gap-4">
-                        <TeamAvatar
-                          imageUrl={member.imageUrl}
-                          name={member.name}
-                          initials={member.initials}
-                          sizeClass="h-11 w-11 sm:h-12 sm:w-12 border border-white/25"
-                          textSizeClass="text-sm"
-                        />
-                        <div>
-                          <h3 className="font-heading text-lg sm:text-xl font-semibold text-white tracking-tight">
-                            {member.name}
-                          </h3>
-                          <p className="font-body text-xs text-white/70 tracking-wide mt-0.5">
-                            {member.role}
-                          </p>
-                        </div>
+                    <div className="flex items-center justify-between lg:justify-start gap-4 lg:gap-6 lg:w-[320px] shrink-0">
+                      <TeamAvatar
+                        imageUrl={member.imageUrl}
+                        name={member.name}
+                        initials={member.initials}
+                        sizeClass="h-11 w-11 sm:h-12 sm:w-12 border border-white/25 shrink-0"
+                        textSizeClass="text-sm"
+                      />
+                      <div className="flex flex-col justify-center">
+                        <h3
+                          className="text-3xl sm:text-4xl lg:text-[44px] font-normal text-white leading-none tracking-tight"
+                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                        >
+                          {member.name}
+                        </h3>
+                        <p
+                          className="text-xs sm:text-[13px] text-white/70 tracking-wide mt-2"
+                          style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                        >
+                          {member.role}
+                        </p>
                       </div>
 
                       {/* Mobile LinkedIn Icon (aligned to top right on mobile) */}
-                      <div className="lg:hidden">
+                      <div className="lg:hidden ml-auto">
                         <LinkedInIcon url={member.linkedinUrl} name={member.name} />
                       </div>
                     </div>
