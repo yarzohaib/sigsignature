@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { DETAILED_GUIDES } from "@/lib/guidesData";
+import { notFound, redirect } from "next/navigation";
+import { DETAILED_GUIDES, LEGACY_GUIDE_SLUG_REDIRECTS } from "@/lib/guidesData";
 import GuideArticle from "@/components/help/GuideArticle";
 
 interface GuidePageProps {
@@ -15,7 +15,10 @@ export async function generateMetadata({
   params,
 }: GuidePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const guide = DETAILED_GUIDES[slug];
+
+  // If slug is a legacy alias, canonical should point to the canonical slug
+  const canonicalSlug = LEGACY_GUIDE_SLUG_REDIRECTS[slug] || slug;
+  const guide = DETAILED_GUIDES[canonicalSlug];
 
   if (!guide) {
     return {
@@ -28,12 +31,12 @@ export async function generateMetadata({
     title: `${guide.title} | Sig Signature Help`,
     description: guide.subtitle,
     alternates: {
-      canonical: `https://www.sigsignature.com/help/guides/${slug}`,
+      canonical: `https://www.sigsignature.com/help/guides/${canonicalSlug}`,
     },
     openGraph: {
       title: `${guide.title} | Sig Signature Help`,
       description: guide.subtitle,
-      url: `https://www.sigsignature.com/help/guides/${slug}`,
+      url: `https://www.sigsignature.com/help/guides/${canonicalSlug}`,
       type: "article",
     },
   };
@@ -41,6 +44,12 @@ export async function generateMetadata({
 
 export default async function GuidePage({ params }: GuidePageProps) {
   const { slug } = await params;
+
+  // 301 Permanent redirect for legacy duplicate slugs
+  if (LEGACY_GUIDE_SLUG_REDIRECTS[slug]) {
+    redirect(`/help/guides/${LEGACY_GUIDE_SLUG_REDIRECTS[slug]}`);
+  }
+
   const guide = DETAILED_GUIDES[slug];
 
   if (!guide) {

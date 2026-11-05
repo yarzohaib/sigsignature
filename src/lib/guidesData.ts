@@ -54,8 +54,8 @@ export interface DetailedGuide {
 
 export const ALL_19_GUIDES: DetailedGuide[] = [
   {
-    "id": "create-first-email-signature",
-    "slug": "create-first-email-signature",
+    "id": "create-first-signature",
+    "slug": "create-first-signature",
     "guideNumber": 1,
     "category": "Getting started",
     "categorySlug": "getting-started",
@@ -297,8 +297,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "format-contact-details",
-    "slug": "format-contact-details",
+    "id": "add-contact-details",
+    "slug": "add-contact-details",
     "guideNumber": 3,
     "category": "Getting started",
     "categorySlug": "getting-started",
@@ -424,8 +424,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "preview-desktop-mobile-signature",
-    "slug": "preview-desktop-mobile-signature",
+    "id": "preview-desktop-mobile",
+    "slug": "preview-desktop-mobile",
     "guideNumber": 4,
     "category": "Getting started",
     "categorySlug": "getting-started",
@@ -525,8 +525,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "fix-image-sizing-spacing",
-    "slug": "fix-image-sizing-spacing",
+    "id": "fix-image-sizing",
+    "slug": "fix-image-sizing",
     "guideNumber": 5,
     "category": "Design & templates",
     "categorySlug": "design-templates",
@@ -633,8 +633,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "customize-brand-colors",
-    "slug": "customize-brand-colors",
+    "id": "customize-colors-themes",
+    "slug": "customize-colors-themes",
     "guideNumber": 6,
     "category": "Design & templates",
     "categorySlug": "design-templates",
@@ -775,8 +775,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "upload-logo-headshot-retina",
-    "slug": "upload-logo-headshot-retina",
+    "id": "upload-logos-headshots",
+    "slug": "upload-logos-headshots",
     "guideNumber": 7,
     "category": "Design & templates",
     "categorySlug": "design-templates",
@@ -913,8 +913,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "email-safe-fonts-fallbacks",
-    "slug": "email-safe-fonts-fallbacks",
+    "id": "email-safe-fonts",
+    "slug": "email-safe-fonts",
     "guideNumber": 8,
     "category": "Design & templates",
     "categorySlug": "design-templates",
@@ -1009,8 +1009,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "dark-mode-email-signature",
-    "slug": "dark-mode-email-signature",
+    "id": "dark-mode-optimization",
+    "slug": "dark-mode-optimization",
     "guideNumber": 9,
     "category": "Design & templates",
     "categorySlug": "design-templates",
@@ -1134,8 +1134,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "social-icons-badges-cta",
-    "slug": "social-icons-badges-cta",
+    "id": "add-social-icons-ctas",
+    "slug": "add-social-icons-ctas",
     "guideNumber": 10,
     "category": "Design & templates",
     "categorySlug": "design-templates",
@@ -1230,8 +1230,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "install-signature-gmail",
-    "slug": "install-signature-gmail",
+    "id": "install-gmail",
+    "slug": "install-gmail",
     "guideNumber": 11,
     "category": "Export & installation",
     "categorySlug": "export-installation",
@@ -1366,8 +1366,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "add-signature-outlook",
-    "slug": "add-signature-outlook",
+    "id": "install-outlook",
+    "slug": "install-outlook",
     "guideNumber": 12,
     "category": "Export & installation",
     "categorySlug": "export-installation",
@@ -1567,8 +1567,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "export-html-embed-code",
-    "slug": "export-html-embed-code",
+    "id": "export-html",
+    "slug": "export-html",
     "guideNumber": 13,
     "category": "Export & installation",
     "categorySlug": "export-installation",
@@ -1691,8 +1691,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "install-signature-apple-mail",
-    "slug": "install-signature-apple-mail",
+    "id": "install-apple-mail",
+    "slug": "install-apple-mail",
     "guideNumber": 14,
     "category": "Export & installation",
     "categorySlug": "export-installation",
@@ -1832,8 +1832,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "install-signature-yahoo-thunderbird",
-    "slug": "install-signature-yahoo-thunderbird",
+    "id": "install-webmail",
+    "slug": "install-webmail",
     "guideNumber": 15,
     "category": "Export & installation",
     "categorySlug": "export-installation",
@@ -2041,8 +2041,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "manage-account-profile-password",
-    "slug": "manage-account-profile-password",
+    "id": "manage-account",
+    "slug": "manage-account",
     "guideNumber": 16,
     "category": "Account & billing",
     "categorySlug": "account-billing",
@@ -2134,8 +2134,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "upgrade-pro-team-plan",
-    "slug": "upgrade-pro-team-plan",
+    "id": "upgrade-pro-plan",
+    "slug": "upgrade-pro-plan",
     "guideNumber": 17,
     "category": "Account & billing",
     "categorySlug": "account-billing",
@@ -2263,8 +2263,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "billing-stripe-invoices-payment-methods",
-    "slug": "billing-stripe-invoices-payment-methods",
+    "id": "manage-billing",
+    "slug": "manage-billing",
     "guideNumber": 18,
     "category": "Account & billing",
     "categorySlug": "account-billing",
@@ -2392,8 +2392,8 @@ export const ALL_19_GUIDES: DetailedGuide[] = [
     ]
   },
   {
-    "id": "team-workspace-members-roles",
-    "slug": "team-workspace-members-roles",
+    "id": "team-workspace-management",
+    "slug": "team-workspace-management",
     "guideNumber": 19,
     "category": "Account & billing",
     "categorySlug": "account-billing",
@@ -2545,26 +2545,32 @@ for (const guide of ALL_19_GUIDES) {
   DETAILED_GUIDES[guide.slug] = guide;
 }
 
-// Backward compatibility alias redirects
-DETAILED_GUIDES["create-first-signature"] = DETAILED_GUIDES["create-first-email-signature"];
-DETAILED_GUIDES["add-contact-details"] = DETAILED_GUIDES["format-contact-details"];
-DETAILED_GUIDES["preview-desktop-mobile"] = DETAILED_GUIDES["preview-desktop-mobile-signature"];
-DETAILED_GUIDES["fix-image-sizing"] = DETAILED_GUIDES["fix-image-sizing-spacing"];
-DETAILED_GUIDES["customize-colors-themes"] = DETAILED_GUIDES["customize-brand-colors"];
-DETAILED_GUIDES["upload-logos-headshots"] = DETAILED_GUIDES["upload-logo-headshot-retina"];
-DETAILED_GUIDES["email-safe-fonts"] = DETAILED_GUIDES["email-safe-fonts-fallbacks"];
-DETAILED_GUIDES["dark-mode-optimization"] = DETAILED_GUIDES["dark-mode-email-signature"];
-DETAILED_GUIDES["add-social-icons-ctas"] = DETAILED_GUIDES["social-icons-badges-cta"];
-DETAILED_GUIDES["install-gmail"] = DETAILED_GUIDES["install-signature-gmail"];
-DETAILED_GUIDES["install-outlook"] = DETAILED_GUIDES["add-signature-outlook"];
-DETAILED_GUIDES["add-outlook"] = DETAILED_GUIDES["add-signature-outlook"];
-DETAILED_GUIDES["export-html"] = DETAILED_GUIDES["export-html-embed-code"];
-DETAILED_GUIDES["install-apple-mail"] = DETAILED_GUIDES["install-signature-apple-mail"];
-DETAILED_GUIDES["install-webmail"] = DETAILED_GUIDES["install-signature-yahoo-thunderbird"];
-DETAILED_GUIDES["manage-account"] = DETAILED_GUIDES["manage-account-profile-password"];
-DETAILED_GUIDES["upgrade-pro-plan"] = DETAILED_GUIDES["upgrade-pro-team-plan"];
-DETAILED_GUIDES["manage-billing"] = DETAILED_GUIDES["billing-stripe-invoices-payment-methods"];
-DETAILED_GUIDES["team-workspace-management"] = DETAILED_GUIDES["team-workspace-members-roles"];
+/**
+ * 301 Redirect map for legacy/duplicate guide slugs.
+ * Used in next.config.ts and guide page route handling to ensure only the canonical
+ * slug exists in the sitemap and in search engine indexation.
+ */
+export const LEGACY_GUIDE_SLUG_REDIRECTS: Record<string, string> = {
+  "create-first-email-signature": "create-first-signature",
+  "format-contact-details": "add-contact-details",
+  "preview-desktop-mobile-signature": "preview-desktop-mobile",
+  "fix-image-sizing-spacing": "fix-image-sizing",
+  "customize-brand-colors": "customize-colors-themes",
+  "upload-logo-headshot-retina": "upload-logos-headshots",
+  "email-safe-fonts-fallbacks": "email-safe-fonts",
+  "dark-mode-email-signature": "dark-mode-optimization",
+  "social-icons-badges-cta": "add-social-icons-ctas",
+  "install-signature-gmail": "install-gmail",
+  "add-signature-outlook": "install-outlook",
+  "add-outlook": "install-outlook",
+  "export-html-embed-code": "export-html",
+  "install-signature-apple-mail": "install-apple-mail",
+  "install-signature-yahoo-thunderbird": "install-webmail",
+  "manage-account-profile-password": "manage-account",
+  "upgrade-pro-team-plan": "upgrade-pro-plan",
+  "billing-stripe-invoices-payment-methods": "manage-billing",
+  "team-workspace-members-roles": "team-workspace-management",
+};
 
 export const GUIDES_BY_CATEGORY: Record<string, DetailedGuide[]> = {
   "getting-started": ALL_19_GUIDES.filter((g) => g.categorySlug === "getting-started"),

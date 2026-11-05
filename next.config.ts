@@ -38,6 +38,102 @@ const nextConfig: NextConfig = {
         destination: "/templates",
         permanent: true,
       },
+      // 301 Redirects for Legacy / Duplicate Guide Slugs
+      {
+        source: "/help/guides/install-signature-gmail",
+        destination: "/help/guides/install-gmail",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/add-signature-outlook",
+        destination: "/help/guides/install-outlook",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/add-outlook",
+        destination: "/help/guides/install-outlook",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/install-signature-apple-mail",
+        destination: "/help/guides/install-apple-mail",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/dark-mode-email-signature",
+        destination: "/help/guides/dark-mode-optimization",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/email-safe-fonts-fallbacks",
+        destination: "/help/guides/email-safe-fonts",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/customize-brand-colors",
+        destination: "/help/guides/customize-colors-themes",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/fix-image-sizing-spacing",
+        destination: "/help/guides/fix-image-sizing",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/upload-logo-headshot-retina",
+        destination: "/help/guides/upload-logos-headshots",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/social-icons-badges-cta",
+        destination: "/help/guides/add-social-icons-ctas",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/manage-account-profile-password",
+        destination: "/help/guides/manage-account",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/upgrade-pro-team-plan",
+        destination: "/help/guides/upgrade-pro-plan",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/billing-stripe-invoices-payment-methods",
+        destination: "/help/guides/manage-billing",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/team-workspace-members-roles",
+        destination: "/help/guides/team-workspace-management",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/create-first-email-signature",
+        destination: "/help/guides/create-first-signature",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/format-contact-details",
+        destination: "/help/guides/add-contact-details",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/preview-desktop-mobile-signature",
+        destination: "/help/guides/preview-desktop-mobile",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/export-html-embed-code",
+        destination: "/help/guides/export-html",
+        permanent: true,
+      },
+      {
+        source: "/help/guides/install-signature-yahoo-thunderbird",
+        destination: "/help/guides/install-webmail",
+        permanent: true,
+      },
       {
         source: "/forgot",
         destination: "/forgot-password",
