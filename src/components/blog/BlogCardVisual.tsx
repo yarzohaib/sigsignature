@@ -10,11 +10,12 @@ interface BlogCardVisualProps {
 export default function BlogCardVisual({ type, coverImage, title }: BlogCardVisualProps) {
   if (coverImage) {
     return (
-      <div aria-hidden="true" className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-900">
+      <div aria-hidden="true" className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-900">
         <Image
           src={coverImage}
           alt={title}
           fill
+          quality={95}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 group-hover:scale-102"
         />
