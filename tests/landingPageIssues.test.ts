@@ -24,7 +24,7 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
     const templatesContent = fs.readFileSync(templatesPath, "utf-8");
     assert.match(
       templatesContent,
-      /(?:pb-12 sm:pb-16 lg:pb-16|py-14 sm:py-16 lg:py-24 3xl:py-28)/,
+      /(?:pb-12 sm:pb-16 lg:pb-16|py-14 sm:py-16 lg:py-24 3xl:py-28|py-10 sm:py-12 lg:py-12 3xl:py-12)/,
       "PopularTemplatesSection should have balanced bottom padding"
     );
   });

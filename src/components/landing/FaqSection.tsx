@@ -104,8 +104,8 @@ export default function FaqSection() {
                     {faq.question}
                   </span>
                   <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
-                      isOpen ? "bg-[#245FD4] text-white rotate-180 shadow-xs" : "bg-slate-100 text-slate-600 rotate-0"
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-transparent transition-all duration-300 ${
+                      isOpen ? "text-[#245FD4] rotate-180" : "text-slate-500 rotate-0"
                     }`}
                   >
                     <svg
