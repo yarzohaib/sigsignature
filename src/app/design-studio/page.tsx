@@ -2685,6 +2685,19 @@ function DesignStudioContent() {
                       showToast("Split text into separate elements");
                     }
                   }}
+                  canUngroupSocial={
+                    selectedElement.type === "social" &&
+                    !("platform" in selectedElement && Boolean((selectedElement as { platform?: string }).platform))
+                  }
+                  onUngroupSocial={() => {
+                    if (selectedElement.type === "social") {
+                      dispatch({
+                        type: "UNGROUP_SOCIAL_ELEMENT",
+                        payload: { id: selectedId! },
+                      });
+                      showToast("Ungrouped social icons into individual movable elements");
+                    }
+                  }}
                   icon={selectedElement.type === "text" ? selectedElement.icon : undefined}
                   onIconChange={(icon) =>
                     selectedElement.type === "text" &&
@@ -2712,22 +2725,29 @@ function DesignStudioContent() {
                     }
                   }}
                   width={selectedElement.w}
-                  onWidthChange={(w) =>
+                  onWidthChange={(w) => {
+                    const isIndividualSocial =
+                      selectedElement.type === "social" &&
+                      Boolean((selectedElement as { platform?: string }).platform);
                     dispatch({
                       type: "RESIZE_ELEMENT",
                       payload: {
                         id: selectedId!,
                         x: selectedElement.x,
-                        y: selectedElement.type === "social"
+                        y: isIndividualSocial
+                          ? selectedElement.y
+                          : selectedElement.type === "social"
                           ? selectedElement.y + (selectedElement.h - getSocialElementHeight(w)) / 2
                           : selectedElement.y,
                         w,
-                        h: selectedElement.type === "social"
+                        h: isIndividualSocial
+                          ? w
+                          : selectedElement.type === "social"
                           ? getSocialElementHeight(w)
                           : selectedElement.h,
                       },
-                    })
-                  }
+                    });
+                  }}
                   orientation={
                     selectedElement.type === "divider"
                       ? selectedElement.orientation

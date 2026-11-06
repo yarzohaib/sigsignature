@@ -50,9 +50,9 @@ const GMAIL_FAQS = [
       "Sig Signature is an online email signature generator that helps individuals, freelancers, professionals, and teams create personalized signatures without writing code. You choose a template or blank layout, enter your contact information, customize fonts and colors, and copy the generated HTML signature directly into Gmail.",
   },
   {
-    question: "Is Sig Signature's email signature generator free?",
+    question: "Is the email signature generator from Sig Signature free?",
     answer:
-      "Yes. Registered users can create and save up to three email signatures with Sig Signature's free plan. It includes templates, a blank-canvas option, design customization, live previews, and HTML and PNG/image exports. Free signatures do not automatically include a Sig Signature watermark or branding.",
+      "Yes. Registered users can create and save up to three email signatures with the free plan from Sig Signature. It includes templates, a blank-canvas option, design customization, live previews, and HTML and PNG/image exports. Free signatures do not automatically include a Sig Signature watermark or branding.",
   },
   {
     question: "Can I design a signature from scratch without using a template?",
@@ -62,12 +62,12 @@ const GMAIL_FAQS = [
   {
     question: "Does this signature work with Google Workspace and custom domain emails?",
     answer:
-      "Yes. Sig Signature's exported HTML signatures have been thoroughly tested with personal @gmail.com accounts and custom domain Google Workspace accounts across all standard plans.",
+      "Yes. HTML signatures exported with Sig Signature have been thoroughly tested with personal @gmail.com accounts and custom domain Google Workspace accounts across all standard plans.",
   },
   {
     question: "What is included in Sig Signature Premium, and how much does it cost?",
     answer:
-      "Sig Signature's Premium plan is available for $10 per month. It is designed for users and teams who need additional active signatures, team signature management, automated cloud sync, and priority technical support.",
+      "The Sig Signature Premium plan is available for $10 per month. It is designed for users and teams who need additional active signatures, team signature management, automated cloud sync, and priority technical support.",
   },
 ];
 

@@ -482,14 +482,49 @@ export default function FreeElementView({
       }
 
       case "social": {
-        const networks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork; platform: TeamMemberSocialPlatform }[] = [
+        const socialEl = element as FreeSocialElement;
+
+        const allNetworks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork; platform: TeamMemberSocialPlatform }[] = [
           { key: "linkedin", label: "LinkedIn", network: "linkedin", platform: "linkedin" },
           { key: "twitter", label: "Twitter", network: "twitter", platform: "x" },
           { key: "facebook", label: "Facebook", network: "facebook", platform: "facebook" },
           { key: "instagram", label: "Instagram", network: "instagram", platform: "instagram" },
           { key: "github", label: "GitHub", network: "github", platform: "github" },
+          { key: "youtube", label: "YouTube", network: "youtube", platform: "youtube" },
+          { key: "website", label: "Website", network: "website", platform: "website" },
         ];
 
+        // If this is an ungrouped individual social icon
+        if (socialEl.platform) {
+          const match = allNetworks.find((n) => n.key === socialEl.platform) || {
+            key: socialEl.platform,
+            label: socialEl.platform,
+            network: socialEl.platform as SocialNetwork,
+            platform: socialEl.platform as TeamMemberSocialPlatform,
+          };
+          const style = data.socialIconsStyle || "filled";
+          const iconSize = Math.max(12, Math.min(element.w, element.h));
+          const iconUrl =
+            getSocialIconSvgDataUrl(style, themeColor, match.network) ||
+            emailIconUrl(style, themeColor, match.network);
+
+          return (
+            <div className="w-full h-full flex items-center justify-center select-none overflow-hidden">
+              <Image
+                src={iconUrl}
+                alt={match.label}
+                width={iconSize}
+                height={iconSize}
+                className="shrink-0 block"
+                style={{ width: `${iconSize}px`, height: `${iconSize}px` }}
+                unoptimized
+                draggable={false}
+              />
+            </div>
+          );
+        }
+
+        const networks = allNetworks.slice(0, 5);
         const hasAnySocial = networks.some((n) => Boolean(data.socials?.[n.key]?.trim()));
         const activeNetworks = networks.filter((n) => {
           const val = data.socials?.[n.key]?.trim();

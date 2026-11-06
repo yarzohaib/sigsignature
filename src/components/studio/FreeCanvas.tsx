@@ -365,9 +365,11 @@ export default function FreeCanvas({
 
         // Social icon groups keep their box height in step with width so the
         // scaled icons remain fully visible when users resize a side handle.
+        // For individual social icons, keep a square 1:1 aspect ratio.
         if (el.type === "social" && (h === "e" || h === "w")) {
-          nextH = getSocialElementHeight(nextW);
-          nextY = resizeState.origY + (resizeState.origH - nextH) / 2;
+          const isIndividual = Boolean((el as { platform?: string }).platform);
+          nextH = isIndividual ? nextW : getSocialElementHeight(nextW);
+          nextY = isIndividual ? resizeState.origY : resizeState.origY + (resizeState.origH - nextH) / 2;
         }
 
         if (!e.altKey) {

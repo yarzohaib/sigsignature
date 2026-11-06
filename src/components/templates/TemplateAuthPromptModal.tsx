@@ -110,15 +110,6 @@ export default function TemplateAuthPromptModal({
             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
           >
             <span>Create Free Account</span>
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
           </Link>
 
           <Link

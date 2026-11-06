@@ -11,9 +11,9 @@ export const FAQ_DATA = [
       "Sig Signature is an advanced free email signature creator and generator that helps individuals, freelancers, professionals, and teams create personalized signatures without writing HTML code. After signing up or logging in, choose a ready-made template or start with a blank canvas. Add your contact details, company information, website, and social media links, then customize the fonts, colors, layouts, logos, and profile photos in Design Studio. Preview and save your design, then export it as HTML or an image. Email applications may display the final signature differently, so testing is recommended.",
   },
   {
-    question: "Is Sig Signature's email signature generator free?",
+    question: "Is the email signature generator from Sig Signature free?",
     answer:
-      "Yes. Registered users can create and save up to three email signatures with Sig Signature's free plan. It includes templates, a blank-canvas option, design customization, live previews, and HTML and PNG/image exports. Free signatures do not automatically include a Sig Signature watermark or branding. Even after creating three signatures, you can still edit, preview, and download the existing designs; creating additional signatures requires a plan with a higher limit.",
+      "Yes. Registered users can create and save up to three email signatures with the free plan from Sig Signature. It includes templates, a blank-canvas option, design customization, live previews, and HTML and PNG/image exports. Free signatures do not automatically include a Sig Signature watermark or branding. Even after creating three signatures, you can still edit, preview, and download the existing designs; creating additional signatures requires a plan with a higher limit.",
   },
   {
     question: "How do I create a professional email signature using Sig Signature?",
@@ -28,7 +28,7 @@ export const FAQ_DATA = [
   {
     question: "Can I use a Sig Signature email signature in Gmail, Outlook, and Apple Mail?",
     answer:
-      "Sig Signature's exported HTML signatures have been tested with Gmail, Microsoft Outlook, and Apple Mail. You can use the HTML export or available copy option with the signature settings in a supported email application. Installation steps differ between apps and versions, and HTML rendering can vary by device, email client, and recipient settings. Testing does not guarantee pixel-identical results in every version, so check a sample email for layout, images, and working links before regular use.",
+      "HTML signatures exported with Sig Signature have been tested with Gmail, Microsoft Outlook, and Apple Mail. You can use the HTML export or available copy option with the signature settings in a supported email application. Installation steps differ between apps and versions, and HTML rendering can vary by device, email client, and recipient settings. Testing does not guarantee pixel-identical results in every version, so check a sample email for layout, images, and working links before regular use.",
   },
   {
     question: "Can I add a company logo, profile photo, and clickable social media links?",
@@ -48,12 +48,12 @@ export const FAQ_DATA = [
   {
     question: "What is included in Sig Signature Premium, and how much does it cost?",
     answer:
-      "Sig Signature's Premium plan is available for $10 per month. It includes unlimited signature creation and the Premium features advertised on the website, including additional templates, advanced customization, team signature management, and priority support. The free plan is suitable for users who need up to three signatures, while Premium supports those who need more designs or business-oriented management features. Review the current Pricing page before subscribing for the latest billing terms and plan details.",
+      "The Sig Signature Premium plan is available for $10 per month. It includes unlimited signature creation and the Premium features advertised on the website, including additional templates, advanced customization, team signature management, and priority support. The free plan is suitable for users who need up to three signatures, while Premium supports those who need more designs or business-oriented management features. Review the current Pricing page before subscribing for the latest billing terms and plan details.",
   },
   {
     question: "Can businesses manage email signatures for multiple team members?",
     answer:
-      "Yes. Team signature management is a working feature of Sig Signature's Premium plan. It lets businesses manage signatures for multiple team members and maintain a more consistent presentation of names, roles, contact information, and company branding. The specific administrative options and permissions should be checked within the current Premium product experience rather than assumed from general descriptions.",
+      "Yes. Team signature management is a working feature of the Sig Signature Premium plan. It lets businesses manage signatures for multiple team members and maintain a more consistent presentation of names, roles, contact information, and company branding. The specific administrative options and permissions should be checked within the current Premium product experience rather than assumed from general descriptions.",
   },
 ];
 
