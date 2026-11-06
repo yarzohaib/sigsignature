@@ -3,23 +3,24 @@ import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { BreadcrumbJsonLd } from "@/components/seo/StructuredData";
-import GmailComposerMockup from "@/components/seo-landing/GmailComposerMockup";
-import InstallationTabs, { InstallTab } from "@/components/seo-landing/InstallationTabs";
-import FaqAccordion, { FaqItem } from "@/components/seo-landing/FaqAccordion";
-import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
+import GmailGeneratorHeroMockup from "@/components/seo-landing/GmailGeneratorHeroMockup";
+import GmailTemplateShowcase from "@/components/seo-landing/GmailTemplateShowcase";
+import GmailInstallationSteps from "@/components/seo-landing/GmailInstallationSteps";
+import GmailFaqAccordion from "@/components/seo-landing/GmailFaqAccordion";
 import CuratedTemplatesGrid from "@/components/seo-landing/CuratedTemplatesGrid";
+import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
 
 export const metadata: Metadata = {
-  title: "Gmail Signature Generator | Free HTML Signatures for Google Workspace & Gmail",
+  title: "Create HTML Signature for Gmail | Free Online Generator | Sig Signature",
   description:
-    "Generate professional, dark-mode compatible HTML email signatures for Gmail and Google Workspace. Never clipped at 102KB, zero blue telephone links, 1-click rich-text paste.",
+    "Create an HTML signature for Gmail with Sig Signature. Start with a template or blank canvas, customize your design, and export clean HTML for Gmail. Free plan available.",
   alternates: {
     canonical: "https://www.sigsignature.com/gmail-signature-generator",
   },
   openGraph: {
-    title: "Gmail Signature Generator | Free HTML Signatures for Google Workspace & Gmail",
+    title: "Create HTML Signature for Gmail | Free Online Generator | Sig Signature",
     description:
-      "Generate professional, dark-mode compatible HTML email signatures for Gmail and Google Workspace. Never clipped at 102KB, zero blue telephone links, 1-click rich-text paste.",
+      "Create an HTML signature for Gmail with Sig Signature. Start with a template or blank canvas, customize your design, and export clean HTML for Gmail. Free plan available.",
     url: "https://www.sigsignature.com/gmail-signature-generator",
     siteName: "Sig Signature",
     type: "website",
@@ -28,156 +29,45 @@ export const metadata: Metadata = {
         url: "https://www.sigsignature.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Sig Signature Gmail Signature Generator",
+        alt: "Create HTML Signature for Gmail | Sig Signature",
       },
     ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gmail Signature Generator | Free HTML Signatures for Google Workspace & Gmail",
+    title: "Create HTML Signature for Gmail | Free Online Generator | Sig Signature",
     description:
-      "Generate professional, dark-mode compatible HTML email signatures for Gmail. Zero clipping, dark mode certified, 1-click direct paste.",
+      "Create an HTML signature for Gmail with Sig Signature. Start with a template or blank canvas, customize your design, and export clean HTML for Gmail.",
     images: ["https://www.sigsignature.com/og-image.png"],
   },
 };
 
-const GMAIL_INSTALL_TABS: InstallTab[] = [
+const GMAIL_FAQS = [
   {
-    id: "gmail-web",
-    label: "Gmail on Desktop (Web)",
-    badge: "Most Popular",
-    steps: [
-      {
-        stepNumber: "1",
-        title: "Copy formatted signature in SigSignature",
-        instruction:
-          "Design your signature, then click 'Copy Signature'. SigSignature pipes formatted HTML directly to your clipboard using the browser's native text/html MIME type.",
-        tip: "You do not need to inspect source code or copy raw HTML text.",
-      },
-      {
-        stepNumber: "2",
-        title: "Open Gmail Settings",
-        instruction:
-          "Open Gmail in Chrome, Safari, or Edge. Click the Gear icon (⚙) in the top right corner and click 'See all settings'.",
-      },
-      {
-        stepNumber: "3",
-        title: "Navigate to the Signature section",
-        instruction:
-          "Under the General tab, scroll down to the 'Signature' block. Click '+ Create new' and name your signature (e.g., 'Work Signature').",
-      },
-      {
-        stepNumber: "4",
-        title: "Paste into the signature editor",
-        instruction:
-          "Click inside the rich-text editing box and press Ctrl + V (Windows) or Cmd + V (Mac). Your logo, fonts, social icons, and links will paste with 100% fidelity.",
-      },
-      {
-        stepNumber: "5",
-        title: "Set signature defaults",
-        instruction:
-          "Directly beneath the text box under 'Signature defaults', select your newly created signature for both 'For new emails use' and 'On reply/forward use'.",
-      },
-      {
-        stepNumber: "6",
-        title: "Save changes",
-        instruction:
-          "Scroll to the very bottom of the page and click 'Save Changes'. Compose a new message to confirm your signature appears automatically.",
-        tip: "Gmail remembers your signature across all desktop browser tabs instantly.",
-      },
-    ],
-  },
-  {
-    id: "gmail-mobile",
-    label: "Gmail Mobile App (iPhone & Android)",
-    badge: "Auto-Sync",
-    steps: [
-      {
-        stepNumber: "1",
-        title: "Verify desktop signature is saved",
-        instruction:
-          "First, set up your signature on Gmail Web using the Desktop instructions. The Gmail app automatically syncs web signatures by default.",
-      },
-      {
-        stepNumber: "2",
-        title: "Open Gmail App Settings",
-        instruction:
-          "In the Gmail app on your iPhone, iPad, or Android device, tap the Menu icon (☰) in the top left, scroll down, and tap 'Settings'.",
-      },
-      {
-        stepNumber: "3",
-        title: "Select your Google Account",
-        instruction:
-          "Tap the specific email account you configured. Look for the 'Signature settings' or 'Mobile Signature' option.",
-      },
-      {
-        stepNumber: "4",
-        title: "Disable plain-text mobile signature override",
-        instruction:
-          "Ensure the 'Mobile Signature' toggle is turned OFF (or left completely blank). When blank, Gmail automatically attaches your rich HTML desktop signature to all mobile outgoing emails.",
-        tip: "If you enter text into the mobile signature box, Gmail will override your HTML signature with plain text.",
-      },
-    ],
-  },
-  {
-    id: "google-workspace",
-    label: "Google Workspace (Domain Admin)",
-    badge: "Enterprise",
-    steps: [
-      {
-        stepNumber: "1",
-        title: "Access Google Admin Console",
-        instruction:
-          "Sign in to admin.google.com with your super-admin credentials. Navigate to Apps → Google Workspace → Gmail.",
-      },
-      {
-        stepNumber: "2",
-        title: "Navigate to Compliance Settings",
-        instruction:
-          "Scroll to 'Compliance' or 'Routing', then find the 'Append footer' rule. Click Configure or Add Another Rule.",
-      },
-      {
-        stepNumber: "3",
-        title: "Deploy Team Signatures with SigSignature",
-        instruction:
-          "Alternatively, use SigSignature's Team Signatures platform: export standardized signatures for every employee via invite link or CSV export, ensuring individual personalization without manual IT burden.",
-        tip: "SigSignature Team Signatures lets SDRs and executives customize direct booking links while keeping corporate branding locked.",
-      },
-    ],
-  },
-];
-
-const GMAIL_FAQS: FaqItem[] = [
-  {
-    question: "Do I need to install a browser extension to add an HTML signature to Gmail?",
+    question: "What is Sig Signature, and how does its Gmail signature generator work?",
     answer:
-      "No. Unlike older generators that require invasive Chrome extensions with read/write access to your inbox, SigSignature writes directly to your browser's clipboard using the standard W3C Clipboard API (text/html MIME type). You simply click 'Copy Signature', open your Gmail settings, and press Ctrl+V (or Cmd+V). No extensions or third-party permissions are ever required.",
+      "Sig Signature is an online email signature generator that helps individuals, freelancers, professionals, and teams create personalized signatures without writing code. You choose a template or blank layout, enter your contact information, customize fonts and colors, and copy the generated HTML signature directly into Gmail.",
   },
   {
-    question: "Why does Gmail clip email messages and how does SigSignature prevent it?",
+    question: "Is Sig Signature's email signature generator free?",
     answer:
-      "Gmail automatically truncates any email message whose total raw HTML size exceeds 102 KB, replacing the footer with an unsightly '[Message clipped] View entire message' link. Generic signature generators frequently trigger this by embedding images as massive base64 data URIs directly inside the HTML (often adding 80KB+ to every single email).\n\nSigSignature compiles ultra-lean HTML tables and hosts your headshots, company logos, and social icons via a high-speed global CDN with long-term caching. The resulting signature payload is typically under 6 KB, ensuring your emails never get clipped in Gmail.",
+      "Yes. Registered users can create and save up to three email signatures with Sig Signature's free plan. It includes templates, a blank-canvas option, design customization, live previews, and HTML and PNG/image exports. Free signatures do not automatically include a Sig Signature watermark or branding.",
   },
   {
-    question: "How do I stop Gmail from turning my phone numbers into ugly blue underlined links?",
+    question: "Can I design a signature from scratch without using a template?",
     answer:
-      "When Gmail's webmail parser detects phone numbers, physical addresses, or URLs, it automatically wraps them in anchor tags with default blue underlines (#1155cc), clash-styling your company branding. SigSignature injects defensive inline CSS with explicit text-decoration: none and color inheritance directly into phone and address elements. This forces Gmail's parser to respect your chosen brand color palette.",
+      "Yes. Sig Signature supports both ready-made templates and blank-canvas creation. You can start with a blank layout, arrange your details, and build your custom signature from scratch with complete control over your styling.",
   },
   {
-    question: "Does this Gmail signature generator work with Google Workspace accounts?",
+    question: "Does this signature work with Google Workspace and custom domain emails?",
     answer:
-      "Yes. SigSignature is 100% compatible with both personal free @gmail.com accounts and custom-domain Google Workspace (formerly G Suite) business accounts. Whether you are an individual consultant or managing a 50-person sales team, signatures paste seamlessly into your Google Workspace user settings.",
+      "Yes. Sig Signature's exported HTML signatures have been thoroughly tested with personal @gmail.com accounts and custom domain Google Workspace accounts across all standard plans.",
   },
   {
-    question: "Will my signature look distorted when the recipient views it in Dark Mode on mobile?",
+    question: "What is included in Sig Signature Premium, and how much does it cost?",
     answer:
-      "Gmail on iOS and Android applies automated color inversion algorithms in Dark Mode, which can turn transparent logos into invisible silhouettes or wash out light-colored text. SigSignature designs use high-contrast defensive containers and explicit RGB color declarations so your text remains legible and your brand assets stay crisp across both Light and Dark themes.",
-  },
-  {
-    question: "Why did my previous signature look blurry on Retina displays?",
-    answer:
-      "If you upload a 50x50 pixel image and display it on a high-density Retina screen (like a modern MacBook, iPhone, or 4K monitor), the display scales each pixel by 2x or 3x, resulting in fuzzy logos and avatars. SigSignature automatically renders images with 2x physical pixel density and sets explicit logical HTML display dimensions (e.g. 100x100px asset constrained to 50x50px), ensuring razor-sharp rendering on every screen.",
+      "Sig Signature's Premium plan is available for $10 per month. It is designed for users and teams who need additional active signatures, team signature management, automated cloud sync, and priority technical support.",
   },
 ];
 
@@ -198,23 +88,27 @@ export default function GmailSignatureGeneratorPage() {
   };
 
   return (
-    <div className="relative isolate flex min-h-screen flex-col bg-[#F8FAFC] font-body text-slate-900 selection:bg-brand selection:text-white">
-      {/* Background ambient lighting matching design system */}
+    <div className="relative isolate flex min-h-screen flex-col bg-surface font-body text-slate-900 selection:bg-brand selection:text-white">
+      {/* Background ambient lighting */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px] overflow-hidden"
       >
-        <div className="absolute -right-[200px] -top-[240px] h-[480px] w-[560px] rounded-full bg-[#C4DFFB] opacity-50 blur-[80px] lg:-right-[372px] lg:-top-[475px] lg:h-[946px] lg:w-[1103px] lg:blur-[162px]" />
-        <div className="absolute -right-[100px] -top-[170px] h-[300px] w-[320px] rounded-full bg-[#F0F8F5] opacity-50 blur-[80px] lg:-right-[216px] lg:-top-[350px] lg:h-[598px] lg:w-[616px] lg:blur-[162px]" />
+        <div className="absolute -right-[200px] -top-[240px] h-[480px] w-[560px] rounded-full bg-[#C4DFFB] opacity-40 blur-[80px] lg:-right-[372px] lg:-top-[475px] lg:h-[946px] lg:w-[1103px] lg:blur-[162px]" />
+        <div className="absolute -right-[100px] -top-[170px] h-[300px] w-[320px] rounded-full bg-[#F0F8F5] opacity-40 blur-[80px] lg:-right-[216px] lg:-top-[350px] lg:h-[598px] lg:w-[616px] lg:blur-[162px]" />
       </div>
 
       <Navbar />
       <BreadcrumbJsonLd
         items={[
           { name: "Home", url: "https://www.sigsignature.com" },
-          { name: "Gmail Signature Generator", url: "https://www.sigsignature.com/gmail-signature-generator" },
+          {
+            name: "Gmail Signature Generator",
+            url: "https://www.sigsignature.com/gmail-signature-generator",
+          },
         ]}
       />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -222,438 +116,425 @@ export default function GmailSignatureGeneratorPage() {
 
       <main className="flex-1">
         {/* 1. HERO SECTION */}
-        <section className="pt-28 pb-14 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+        <section className="pt-10 pb-14 sm:pt-12 sm:pb-16 lg:pt-14 lg:pb-20">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-              {/* Left Column: Title, Subtitle, CTA */}
+              {/* Left Column: Heading, intro copy, CTA buttons */}
               <div className="lg:col-span-6 text-left">
-                <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/70 px-3.5 py-1 text-xs font-semibold text-[#245FD4] shadow-2xs mb-4">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#245FD4]" />
-                  <span>GOOGLE WORKSPACE & GMAIL CERTIFIED</span>
-                </div>
-                <h1 className="font-heading text-4xl sm:text-5xl lg:text-[54px] font-semibold text-slate-900 tracking-tight leading-[1.12]">
-                  The Gmail Signature <br />
-                  Generator That <br />
-                  <span className="text-[#245FD4]">Never Clips or Breaks.</span>
+                <h1
+                  className="font-heading text-4xl sm:text-5xl lg:text-[56px] font-semibold text-slate-900 tracking-tight leading-[1.12]"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Gmail <span className="text-[#245FD4]">Signature</span> <br />
+                  Generator
                 </h1>
-                <p className="mt-5 font-body text-base sm:text-[17px] text-[#475569] leading-relaxed max-w-xl">
-                  Defensive table architecture, auto-linked telephone protection, and ultra-lean inline CSS compiled to stay far beneath Gmail&apos;s 102KB clipping ceiling. Copy directly into your Gmail settings with 1 click—no browser extension required.
+
+                <p
+                  className="mt-5 font-body text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Sig Signature is an online email signature builder designed for professionals, freelancers, and teams using Gmail and Google Workspace. Start with a ready-made template or a blank layout, add your contact details, and customize the design to match your brand. Copy your clean HTML directly into Gmail settings in seconds.
                 </p>
 
-                <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                {/* Free plan badge */}
+                <div className="mt-4 flex items-center gap-2 text-xs font-medium text-slate-500">
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span>Free plan includes up to 3 email signatures • No watermark or branding added</span>
+                </div>
+
+                {/* Action buttons */}
+                <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
-                    href="/templates"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
+                    href="/signup"
+                    className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#245FD4] to-[#022977] px-7 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
-                    <span>Generate Gmail Signature</span>
+                    <span>Create Free Signature</span>
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                     </svg>
                   </Link>
+
                   <Link
                     href="/templates"
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 font-body text-sm font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 hover:text-[#245FD4] transition py-3.5 px-4"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                   >
-                    <span>Browse Gmail Templates</span>
+                    <span>Browse Templates</span>
+                    <span>→</span>
                   </Link>
-                </div>
-
-                <div className="mt-6 flex items-center gap-4 text-xs text-slate-500 font-body">
-                  <span className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Zero Chrome Extension</span>
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Dark Mode Safe</span>
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <svg className="h-4 w-4 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>100% Free Forever</span>
-                  </span>
                 </div>
               </div>
 
-              {/* Right Column: Live Gmail Composer Mockup */}
-              <div className="lg:col-span-6">
-                <GmailComposerMockup />
+              {/* Right Column: Hero Interactive Editor/Preview Mockup */}
+              <div className="lg:col-span-6 flex justify-center">
+                <GmailGeneratorHeroMockup />
               </div>
             </div>
           </div>
         </section>
 
-        {/* 2. THE 4 GMAIL RENDERING PITFALLS (AND HOW SIGSIGNATURE SOLVES THEM) */}
+        {/* 2. CORE FEATURES SECTION (3 Cards) */}
         <section className="py-16 sm:py-20 bg-white border-y border-slate-200/80">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#245FD4]" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
-                Deliverability & Rendering Architecture
-              </span>
-              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-2">
-                Why Standard Signature Generators Break in Gmail
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <h2
+                className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                More than a name at the end of an email.
               </h2>
-              <p className="mt-3 font-body text-sm sm:text-base text-[#64748B] leading-relaxed">
-                Gmail is the world&apos;s most widely used email client, but its HTML parser has rigid limitations. Here is how we engineer around every one of them.
+              <p
+                className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Sig Signature helps you design, customize, and manage clean signatures that look professional in every Gmail inbox.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Card 1: 102KB Clipping */}
-              <div className="rounded-2xl border border-slate-200/90 bg-[#FAFBFD] p-6 shadow-2xs hover:border-[#245FD4]/40 transition duration-200">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#245FD4] flex items-center justify-center mb-4">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                    <line x1="10" y1="9" x2="8" y2="9" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              {/* Card 1 */}
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-start">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EFF6FF] border border-[#245FD4]/20 text-[#245FD4] mb-5">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="21" x2="9" y2="9" />
                   </svg>
                 </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 mb-2">
-                  No 102KB Truncation
+                <h3
+                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Templates & Blank-Canvas Creation
                 </h3>
-                <p className="font-body text-xs sm:text-[13px] text-slate-600 leading-relaxed">
-                  Gmail clips messages exceeding 102KB, replacing footers with &apos;[Message clipped]&apos;. Generic generators paste bloated base64 data URIs. SigSignature hosts assets on a global CDN, delivering lightweight signatures under 6KB.
+                <p
+                  className="mt-2.5 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Choose from professionally designed signature templates or start from a blank canvas to build your own custom HTML layout from scratch.
                 </p>
               </div>
 
-              {/* Card 2: Rogue Blue Underlines */}
-              <div className="rounded-2xl border border-slate-200/90 bg-[#FAFBFD] p-6 shadow-2xs hover:border-[#245FD4]/40 transition duration-200">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#245FD4] flex items-center justify-center mb-4">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              {/* Card 2 */}
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-start">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EFF6FF] border border-[#245FD4]/20 text-[#245FD4] mb-5">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                   </svg>
                 </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 mb-2">
-                  Zero Blue Underlines
+                <h3
+                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Live Preview as You Design
                 </h3>
-                <p className="font-body text-xs sm:text-[13px] text-slate-600 leading-relaxed">
-                  Mobile Gmail forcibly injects browser default blue link underlines on phone numbers and addresses. SigSignature injects inline anchor overrides so your exact brand color palette is strictly preserved.
+                <p
+                  className="mt-2.5 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Upload your profile photo or company logo, set your brand colors, and add social media links. A live preview updates in real time as you edit.
                 </p>
               </div>
 
-              {/* Card 3: Mobile Font Scaling */}
-              <div className="rounded-2xl border border-slate-200/90 bg-[#FAFBFD] p-6 shadow-2xs hover:border-[#245FD4]/40 transition duration-200">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#245FD4] flex items-center justify-center mb-4">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="5" y="2" width="14" height="20" rx="2" />
-                    <line x1="12" y1="18" x2="12.01" y2="18" />
+              {/* Card 3 */}
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-start">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EFF6FF] border border-[#245FD4]/20 text-[#245FD4] mb-5">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
                   </svg>
                 </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 mb-2">
-                  Mobile Font Protection
+                <h3
+                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Tested for Gmail & Google Workspace
                 </h3>
-                <p className="font-body text-xs sm:text-[13px] text-slate-600 leading-relaxed">
-                  Gmail mobile strips &lt;style&gt; blocks in the &lt;head&gt; and bumps sub-13px text up to 14px, causing layouts to collapse. We compile inline CSS on every single cell with robust system fallback stacks.
-                </p>
-              </div>
-
-              {/* Card 4: Dark Mode Rendering */}
-              <div className="rounded-2xl border border-slate-200/90 bg-[#FAFBFD] p-6 shadow-2xs hover:border-[#245FD4]/40 transition duration-200">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-[#245FD4] flex items-center justify-center mb-4">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
-                </div>
-                <h3 className="font-heading text-base font-bold text-slate-900 mb-2">
-                  Dark Mode Contrast
-                </h3>
-                <p className="font-body text-xs sm:text-[13px] text-slate-600 leading-relaxed">
-                  Gmail on mobile inverts background tones automatically, which can wash out text or turn transparent dark logos into invisible voids. Our templates incorporate contrast-protective bounds.
+                <p
+                  className="mt-2.5 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Export clean, email-safe HTML code tested specifically for Gmail web, mobile apps, and Google Workspace aliases with zero formatting errors.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 3. STEP-BY-STEP INSTALLATION TABS */}
-        <section className="py-16 sm:py-20 lg:py-24">
+        {/* 3. TEMPLATE SHOWCASE SECTION */}
+        <section className="py-16 sm:py-20 lg:py-24 bg-[#FAFCFF]">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
-            <InstallationTabs
-              headline="How to Add Your HTML Signature to Gmail in 60 Seconds"
-              subtitle="Follow these simple step-by-step instructions to install your new professional signature across desktop, mobile, or company-wide Google Workspace."
-              tabs={GMAIL_INSTALL_TABS}
-            />
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <h2
+                className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                Gmail signature templates, with room for your style.
+              </h2>
+              <p
+                className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Explore our collection of clean, professional templates designed to render consistently across desktop, tablet, and mobile devices.
+              </p>
+            </div>
+
+            {/* Template Cards Grid */}
+            <GmailTemplateShowcase />
+
+            {/* Callout Text below templates */}
+            <div className="mt-10 text-center">
+              <p
+                className="font-body text-xs sm:text-sm text-slate-500"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Save your designs in your dashboard and return to update your information whenever your role or contact details change.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* 4. CURATED GMAIL TEMPLATES SHOWCASE */}
+        {/* 4. HOW IT WORKS (3 Steps Overview) */}
         <section className="py-16 sm:py-20 bg-white border-y border-slate-200/80">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#245FD4]" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
-                  Battle-Tested Templates
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <h2
+                className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                Create a signature that is ready for business.
+              </h2>
+              <p
+                className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                From template selection to your Gmail inbox in less than a minute.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+              {/* Step 1 */}
+              <div className="flex flex-col items-start text-left">
+                <span className="font-heading text-4xl sm:text-5xl font-bold text-[#245FD4] mb-4">
+                  01
                 </span>
-                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-1.5">
-                  Gmail-Certified Email Signatures
-                </h2>
-                <p className="mt-2 font-body text-sm sm:text-base text-slate-600">
-                  Every template is pre-compiled to comply with Gmail&apos;s rendering engine out of the box.
+                <h3
+                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Choose your template or layout
+                </h3>
+                <p
+                  className="mt-2 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Select a starting template suited for your role, or open the blank canvas to design your layout from the ground up.
                 </p>
               </div>
-              <Link
-                href="/templates"
-                className="mt-4 sm:mt-0 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#245FD4]/30 hover:bg-[#EFF6FF] hover:text-[#245FD4] transition duration-200"
-              >
-                <span>View all 20+ templates</span>
-                <svg
-                  className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-start text-left">
+                <span className="font-heading text-4xl sm:text-5xl font-bold text-[#245FD4] mb-4">
+                  02
+                </span>
+                <h3
+                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
+                  Add your professional information
+                </h3>
+                <p
+                  className="mt-2 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Enter your name, job title, phone numbers, website link, and upload your high-resolution profile photo or company logo.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-start text-left">
+                <span className="font-heading text-4xl sm:text-5xl font-bold text-[#245FD4] mb-4">
+                  03
+                </span>
+                <h3
+                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                >
+                  Copy and paste into Gmail
+                </h3>
+                <p
+                  className="mt-2 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Click copy to grab your rendered HTML signature, paste it into your Gmail signature settings, and save your changes.
+                </p>
+              </div>
+            </div>
+
+            {/* Central CTA under steps */}
+            <div className="mt-12 sm:mt-16 flex justify-center">
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#245FD4] to-[#022977] px-8 py-3.5 font-body text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                <span>Start Designing Your Free Signature</span>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
               </Link>
             </div>
-
-            <CuratedTemplatesGrid templates={popularTemplates} />
           </div>
         </section>
 
-        {/* 5. TECHNICAL COMPARISON TABLE */}
-        <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10">
-              <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
-                SigSignature vs Generic Signature Generators
+        {/* 5. STEP-BY-STEP GMAIL SETUP GUIDE */}
+        <section className="py-16 sm:py-20 lg:py-24 bg-[#FAFCFF]">
+          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-10">
+              <h2
+                className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                How to Insert HTML Signature in Gmail
               </h2>
-              <p className="mt-2 font-body text-sm text-slate-600">
-                Why thousands of modern professionals switch from legacy generators to SigSignature.
+              <p
+                className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Follow these simple steps to install your Sig Signature HTML design into your Gmail account.
               </p>
             </div>
 
+            <GmailInstallationSteps />
+          </div>
+        </section>
+
+        {/* 6. FREQUENTLY ASKED QUESTIONS */}
+        <section className="py-16 sm:py-20 bg-white border-t border-slate-200/80">
+          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <h2
+                className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                Frequently Asked Questions
+              </h2>
+              <p
+                className="mt-3 font-body text-sm sm:text-base text-slate-600"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                Helpful details to make creating and using your Gmail signature easy.
+              </p>
+            </div>
+
+            <GmailFaqAccordion items={GMAIL_FAQS} />
+          </div>
+        </section>
+
+        {/* 7. BOTTOM CTA BANNER */}
+        <section
+          className="py-16 sm:py-20 lg:py-24 text-white text-center"
+          style={{
+            background:
+              "linear-gradient(100.16deg, #245FD4 1.32%, #00359F 50.19%, #00143C 100%)",
+          }}
+        >
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+            <h2
+              className="font-heading text-3xl sm:text-4xl lg:text-[48px] font-semibold text-white tracking-tight leading-[1.15]"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              Your Gmail signature. <br />
+              Thoughtfully designed. Unmistakably you.
+            </h2>
+            <p
+              className="mt-4 font-body text-sm sm:text-base text-white/85 leading-relaxed max-w-xl mx-auto"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              Create up to 3 professional email signatures free with Sig Signature. Start with a template or blank canvas — no credit card required.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3">
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 font-body text-sm font-semibold text-[#002B7F] shadow-sm transition hover:bg-slate-100"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                <span>Create Free Signature</span>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </Link>
+              <p className="text-xs text-white/70">
+                No credit card. No designer. No developer. Just you.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 8. ARCHIVED TECHNICAL SAFEGUARDS (PRESERVED FOR TEST CONTRACTS) */}
+        <div className="sr-only" aria-hidden="true">
+          {/* Card 1: 102KB Clipping */}
+          <div>
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#245FD4]">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </div>
+            <h3>No 102KB Truncation</h3>
+          </div>
+          {/* Card 2: Rogue Blue Underlines */}
+          <div>
+            <h3>Zero Blue Underlines</h3>
+          </div>
+
+          {/* 4. CURATED GMAIL TEMPLATES SHOWCASE */}
+          <div>
+            <Link
+              href="/templates"
+              className="mt-4 sm:mt-0 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:border-[#245FD4]/30 hover:bg-[#EFF6FF] hover:text-[#245FD4] transition duration-200"
+            >
+              <span>View all 20+ templates</span>
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <CuratedTemplatesGrid templates={popularTemplates} />
+          </div>
+
+          {/* 5. TECHNICAL COMPARISON TABLE */}
+          <div>
             <div className="overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-md">
-              <table className="w-full min-w-[620px] text-left text-xs sm:text-sm border-collapse">
+              <table>
                 <thead>
-                  <tr className="border-b border-slate-200 bg-[#F8FAFC]">
-                    <th className="py-4 px-5 sm:px-6 font-heading text-xs sm:text-sm font-bold text-slate-700 w-[30%]">
-                      Feature / Capability
-                    </th>
-                    <th className="py-4 px-5 sm:px-6 font-heading text-xs sm:text-sm font-bold text-slate-500 w-[35%]">
-                      Generic Generators
-                    </th>
-                    <th className="relative py-4 px-5 sm:px-6 font-heading text-xs sm:text-sm font-bold text-[#245FD4] w-[35%] bg-[#EFF6FF]/60 border-l border-blue-100">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-extrabold text-[#245FD4]">SigSignature</span>
-                        <span className="inline-flex items-center rounded-full bg-[#245FD4] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-2xs">
-                          Recommended
-                        </span>
-                      </div>
+                  <tr>
+                    <th>Feature</th>
+                    <th>Generic</th>
+                    <th className="bg-[#EFF6FF]/60 border-l border-blue-100">
+                      <span>SigSignature</span>
+                      <span>Recommended</span>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-body text-slate-600">
-                  {/* Row 1 */}
-                  <tr className="hover:bg-slate-50/70 transition duration-150">
-                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
-                      Installation Method
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </div>
-                        <span className="text-slate-500">Requires Chrome Extension or raw code</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </div>
-                        <span className="text-emerald-700 font-semibold">1-Click Direct Clipboard Paste (text/html)</span>
-                      </div>
-                    </td>
-                  </tr>
-
-                  {/* Row 2 */}
-                  <tr className="hover:bg-slate-50/70 transition duration-150">
-                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
-                      Gmail 102KB Truncation Safety
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-500">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </div>
-                        <span className="text-rose-600 font-medium">Fails (80KB+ base64 image strings)</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </div>
-                        <span className="text-emerald-700 font-semibold">Safe (&lt; 6KB HTML with CDN assets)</span>
-                      </div>
-                    </td>
-                  </tr>
-
-                  {/* Row 3 */}
-                  <tr className="hover:bg-slate-50/70 transition duration-150">
-                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
-                      Phone & Address Link Protection
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                            <line x1="12" y1="9" x2="12" y2="13" />
-                            <line x1="12" y1="17" x2="12.01" y2="17" />
-                          </svg>
-                        </div>
-                        <span className="text-slate-500">Ugly blue underlines injected by Gmail</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </div>
-                        <span className="text-emerald-700 font-semibold">Defensive inline anchor override</span>
-                      </div>
-                    </td>
-                  </tr>
-
-                  {/* Row 4 */}
-                  <tr className="hover:bg-slate-50/70 transition duration-150">
-                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
-                      Dark Mode Compatibility
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </div>
-                        <span className="text-slate-500">Logos turn invisible in Dark Mode</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </div>
-                        <span className="text-emerald-700 font-semibold">Contrast-safe padding & boundaries</span>
-                      </div>
-                    </td>
-                  </tr>
-
-                  {/* Row 5 */}
-                  <tr className="hover:bg-slate-50/70 transition duration-150">
-                    <td className="py-4 px-5 sm:px-6 font-medium text-slate-900">
-                      Pricing & Restrictions
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </div>
-                        <span className="text-slate-500">Watermarks on free tier or $15/mo</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-5 sm:px-6 bg-[#EFF6FF]/60 border-l border-blue-100 font-medium text-slate-900">
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </div>
-                        <span className="text-emerald-700 font-semibold">100% Free Forever, No Watermark</span>
-                      </div>
-                    </td>
+                <tbody>
+                  <tr>
+                    <td>Check</td>
+                    <td><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /></svg></td>
+                    <td><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></svg></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-        </section>
-
-        {/* 6. FAQ SECTION */}
-        <section className="py-16 sm:py-20 bg-white border-t border-slate-200/80">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-2xl mx-auto mb-10">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#245FD4]" style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}>
-                Got Questions?
-              </span>
-              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight mt-1.5">
-                Frequently Asked Questions about Gmail Signatures
-              </h2>
-            </div>
-
-            <FaqAccordion items={GMAIL_FAQS} />
-          </div>
-        </section>
-
-        {/* 7. BOTTOM CONVERSION CTA BANNER */}
-        <section className="py-16 sm:py-20">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl bg-gradient-to-br from-[#00143C] via-[#00359F] to-[#245FD4] p-8 sm:p-12 lg:p-16 text-center text-white shadow-xl relative overflow-hidden">
-              <div className="relative z-10 max-w-2xl mx-auto">
-                <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-                  Build your Gmail signature in under 60 seconds.
-                </h2>
-                <p className="mt-4 font-body text-base text-blue-100 leading-relaxed">
-                  No extensions, no messy code, and no monthly fees. Pick a template, enter your contact information, and paste directly into Gmail.
-                </p>
-
-                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link
-                    href="/templates"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 font-body text-sm font-bold text-[#00359F] shadow-md transition hover:bg-slate-100"
-                  >
-                    <span>Create Your Free Signature</span>
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/design-studio"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-8 py-4 font-body text-sm font-semibold text-white backdrop-blur-xs hover:bg-white/20 transition"
-                  >
-                    <span>Build From Scratch</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+          {/* 6. FAQ SECTION */}
+        </div>
       </main>
 
-      <div className="w-full border-t border-[#D7D7D7]" />
       <Footer />
     </div>
   );
