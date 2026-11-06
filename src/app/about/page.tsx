@@ -235,7 +235,7 @@ export default function AboutPage() {
         <section className="py-16 sm:py-20 lg:py-24">
           <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[42px] lg:leading-[1.17]">
+              <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[48px] lg:leading-[1.12]">
                 One Signature Tool, Every Kind Of <span className="text-[#245FD4]">Sender</span>
               </h2>
               <p className="mx-auto mt-3.5 max-w-2xl font-body text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -295,7 +295,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column */}
               <div className="lg:col-span-6">
-                <h2 className="font-heading text-3xl font-medium tracking-tight text-slate-900 sm:text-4xl lg:text-[48px] lg:leading-[1.12]">
+                <h2 className="font-heading text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[48px] lg:leading-[1.12]">
                   Less friction. <br />
                   More <span className="text-[#245FD4]">you.</span>
                 </h2>
@@ -428,7 +428,7 @@ export default function AboutPage() {
             {/* Header: Title and narrative paragraph */}
             <div className="grid grid-cols-1 md:grid-cols-3 md:items-end gap-6 md:gap-8 lg:gap-12 pb-2">
               <h2
-                className="font-heading text-3xl font-medium tracking-tight text-white sm:text-4xl md:col-span-2 lg:text-[44px] lg:leading-[1.15]"
+                className="font-heading text-3xl font-semibold tracking-tight text-white sm:text-4xl md:col-span-2 lg:text-[48px] lg:leading-[1.12]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
                 Thoughtful by design. <br />

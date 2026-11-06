@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import SignaturePreviewFrame from "./SignaturePreviewFrame";
 import { StudioSignatureData } from "@/types/studio";
 import { THEME_PRESETS, getShapeBorderRadius } from "@/lib/studio/shared";
@@ -34,8 +35,6 @@ export default function PreviewSignatureModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
-
   const canvasWidth = data?.canvas?.width || 600;
   const canvasHeight = data?.canvas?.height || 200;
   const themeKey = data?.design?.theme || "corporate";
@@ -44,17 +43,29 @@ export default function PreviewSignatureModal({
   const cardRadius = getShapeBorderRadius(shape, "card");
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-150"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="preview-modal-title"
-      onClick={onClose}
-    >
-      <div
-        className="flex h-[min(520px,90vh)] max-h-[90vh] w-full max-w-[850px] flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 transition-all transform scale-100 animate-in zoom-in-95 duration-150 overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          key="preview-signature-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="preview-modal-title"
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <motion.div
+            key="preview-signature-dialog"
+            className="flex h-[min(520px,90vh)] max-h-[90vh] w-full max-w-[850px] flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
         {/* Header with Title, Tabs, Device Switcher, and Close */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] px-4 sm:px-6 py-3 sm:py-4 bg-slate-50/70 relative">
           <div className="flex min-w-0 items-center gap-2 pr-10 sm:pr-0">
@@ -237,7 +248,9 @@ export default function PreviewSignatureModal({
             </div>
           )}
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -4,9 +4,46 @@ import { useState } from "react";
 
 export type SignatureStyle = "minimal" | "executive" | "compact";
 
+interface PersonaDetails {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  website: string;
+  ctaText: string;
+}
+
+const DEFAULT_PERSONAS: Record<SignatureStyle, PersonaDetails> = {
+  minimal: {
+    name: "Sarah Jenkins",
+    role: "Account Executive · SaaS Solutions",
+    email: "s.jenkins@stratusflow.io",
+    phone: "+1 (415) 892-4410",
+    website: "www.stratusflow.io",
+    ctaText: "Book a demo",
+  },
+  executive: {
+    name: "Marcus Vance",
+    role: "Founder & Managing Partner · Apex Advisory",
+    email: "m.vance@apexadvisory.com",
+    phone: "+1 (212) 640-8830",
+    website: "www.apexadvisory.com",
+    ctaText: "Book a call",
+  },
+  compact: {
+    name: "Elena Rostova",
+    role: "Talent Acquisition Lead · People Operations",
+    email: "elena@talentbridge.co",
+    phone: "+1 (312) 775-3921",
+    website: "www.talentbridge.co",
+    ctaText: "View open roles",
+  },
+};
+
 interface UseCasePreviewProps {
   initialStyle: SignatureStyle;
   containerVariant?: "light" | "dark";
+  persona?: Partial<PersonaDetails>;
 }
 
 function SocialLinks({ isDark }: { isDark: boolean }) {
@@ -54,10 +91,15 @@ function SocialLinks({ isDark }: { isDark: boolean }) {
 export default function UseCasePreview({
   initialStyle,
   containerVariant = "light",
+  persona: personaProp,
 }: UseCasePreviewProps) {
   const [activeStyle, setActiveStyle] = useState<SignatureStyle>(initialStyle);
 
   const isDark = containerVariant === "dark";
+  const currentPersona = {
+    ...DEFAULT_PERSONAS[activeStyle],
+    ...personaProp,
+  };
 
   return (
     <div
@@ -93,14 +135,14 @@ export default function UseCasePreview({
                     isDark ? "text-white" : "text-slate-900"
                   }`}
                 >
-                  The Nevon
+                  {currentPersona.name}
                 </h3>
                 <p
                   className={`font-body text-xs font-medium ${
                     isDark ? "text-blue-200/80" : "text-slate-500"
                   }`}
                 >
-                  Leadership Development Platform · Ceo
+                  {currentPersona.role}
                 </p>
               </div>
             </div>
@@ -126,17 +168,17 @@ export default function UseCasePreview({
                 isDark ? "text-white/90" : "text-slate-800"
               }`}
             >
-              thenevon@gmail.com
+              {currentPersona.email}
             </span>
             <span className={isDark ? "text-blue-400/60" : "text-slate-300"}>|</span>
-            <span>+655 863 1279</span>
+            <span>{currentPersona.phone}</span>
           </div>
           <p
             className={`mt-1 font-body text-xs ${
               isDark ? "text-blue-200/70" : "text-slate-500"
             }`}
           >
-            www.thenevon.com
+            {currentPersona.website}
           </p>
 
           <div className="mt-4 flex items-center gap-3">
@@ -145,7 +187,7 @@ export default function UseCasePreview({
                 isDark ? "border border-white/20" : ""
               }`}
             >
-              <span>Book a call</span>
+              <span>{currentPersona.ctaText}</span>
               <svg className="h-2.5 w-2.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 3l14 9-14 9V3z" />
               </svg>
@@ -169,10 +211,10 @@ export default function UseCasePreview({
               />
               <div>
                 <h3 className="font-heading text-base font-bold text-white">
-                  The Nevon
+                  {currentPersona.name}
                 </h3>
                 <p className="font-body text-xs font-medium text-blue-200/80">
-                  Leadership Development Platform · Ceo
+                  {currentPersona.role}
                 </p>
               </div>
             </div>
@@ -183,15 +225,15 @@ export default function UseCasePreview({
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 pt-3 font-body text-xs text-blue-100/90">
-            <span className="font-medium text-white/90">thenevon@gmail.com</span>
+            <span className="font-medium text-white/90">{currentPersona.email}</span>
             <span className="text-blue-400/60">|</span>
-            <span>+655 863 1279</span>
+            <span>{currentPersona.phone}</span>
           </div>
-          <p className="mt-1 font-body text-xs text-blue-200/70">www.thenevon.com</p>
+          <p className="mt-1 font-body text-xs text-blue-200/70">{currentPersona.website}</p>
 
           <div className="mt-4 flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#002B7F] border border-white/20 px-3.5 py-1 text-xs font-semibold text-white shadow-2xs">
-              <span>Book a call</span>
+              <span>{currentPersona.ctaText}</span>
               <svg className="h-2.5 w-2.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 3l14 9-14 9V3z" />
               </svg>
@@ -227,7 +269,7 @@ export default function UseCasePreview({
                     isDark ? "text-white" : "text-slate-900"
                   }`}
                 >
-                  The Nevon
+                  {currentPersona.name}
                 </h3>
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-medium ${
@@ -245,7 +287,7 @@ export default function UseCasePreview({
                   isDark ? "text-blue-200/80" : "text-slate-500"
                 }`}
               >
-                Leadership Development Platform · Ceo
+                {currentPersona.role}
               </p>
 
               <div
@@ -258,12 +300,12 @@ export default function UseCasePreview({
                     isDark ? "text-white/90" : "text-slate-800"
                   }`}
                 >
-                  thenevon@gmail.com
+                  {currentPersona.email}
                 </span>
                 <span className={isDark ? "text-blue-400/60" : "text-slate-300"}>|</span>
-                <span>+655 863 1279</span>
+                <span>{currentPersona.phone}</span>
                 <span className={isDark ? "text-blue-400/60" : "text-slate-300"}>|</span>
-                <span>thenevon.com</span>
+                <span>{currentPersona.website}</span>
               </div>
 
               <div className="mt-3 flex items-center gap-3">
@@ -272,7 +314,7 @@ export default function UseCasePreview({
                     isDark ? "border border-white/20" : ""
                   }`}
                 >
-                  <span>Book a call</span>
+                  <span>{currentPersona.ctaText}</span>
                   <svg className="h-2 w-2 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 3l14 9-14 9V3z" />
                   </svg>

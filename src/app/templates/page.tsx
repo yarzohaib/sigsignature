@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
 import TemplateGalleryCard from "@/components/templates/TemplateGalleryCard";
 import TemplateEditor from "@/components/templates/TemplateEditor";
 import { AVAILABLE_TEMPLATES } from "@/lib/templatesData";
@@ -275,18 +276,26 @@ function TemplatesContent() {
             </button>
           </div>
         ) : editingTemplate ? (
-          <TemplateEditor
+          <motion.div
             key={editingSignatureId || editingTemplate.id}
-            template={editingTemplate}
-            initialData={editingSignatureData}
-            editingSignatureId={editingSignatureId}
-            onBack={() => {
-              setEditingTemplate(null);
-              setEditingSignatureData(undefined);
-              setEditingSignatureId(undefined);
-              router.replace("/templates");
-            }}
-          />
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <TemplateEditor
+              key={editingSignatureId || editingTemplate.id}
+              template={editingTemplate}
+              initialData={editingSignatureData}
+              editingSignatureId={editingSignatureId}
+              onBack={() => {
+                setEditingTemplate(null);
+                setEditingSignatureData(undefined);
+                setEditingSignatureId(undefined);
+                router.replace("/templates");
+              }}
+            />
+          </motion.div>
         ) : (
           <div>
             {/* Gallery Header Row matching Figma: vertically center 'Build From Scratch' relative to Title & Subtitle block */}
