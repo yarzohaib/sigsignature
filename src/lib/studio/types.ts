@@ -14,8 +14,6 @@ import { PREMIUM_ENABLED } from "@/lib/premium";
 import { clampToCanvas, rectsOverlap, findFreeSpot, snap } from "./free/geometry";
 import { arrangeElements } from "./free/arrange";
 import { migrateFlowToFree } from "./free/migrate";
-import { getSocialIconSize } from "./shared";
-import { validateSocialUrl, TeamMemberSocialPlatform } from "@/lib/team/socials";
 
 export type {
   StudioShape,
@@ -139,7 +137,6 @@ export type StudioAction =
       };
     }
   | { type: "SPLIT_TEXT_ELEMENT"; payload: { id: string; text?: string } }
-  | { type: "UNGROUP_SOCIAL_ELEMENT"; payload: { id: string } }
   | { type: "COMMIT_TEXT_EDIT"; payload: { id: string; text: string; height: number } }
   | { type: "MIGRATE_FLOW_TO_FREE" };
 
@@ -659,78 +656,6 @@ export function studioReducer(
         };
         newElements.push(subEl);
         currY += subH + 4;
-      }
-
-      const resultElements: FreeElement[] = [];
-      for (const el of currentElements) {
-        if (el.id === action.payload.id) {
-          resultElements.push(...newElements);
-        } else {
-          resultElements.push(el);
-        }
-      }
-
-      return {
-        ...state,
-        elements: resultElements,
-      };
-    }
-
-    case "UNGROUP_SOCIAL_ELEMENT": {
-      const currentElements = state.elements || [];
-      const target = currentElements.find((el) => el.id === action.payload.id);
-      if (!target || target.type !== "social") return state;
-      const socialEl = target as FreeSocialElement;
-      // If already a single icon element, do nothing
-      if (socialEl.platform) return state;
-
-      const allNetworks: Array<{
-        key: "linkedin" | "twitter" | "facebook" | "instagram" | "github";
-        platform: TeamMemberSocialPlatform;
-      }> = [
-        { key: "linkedin", platform: "linkedin" },
-        { key: "twitter", platform: "x" },
-        { key: "facebook", platform: "facebook" },
-        { key: "instagram", platform: "instagram" },
-        { key: "github", platform: "github" },
-      ];
-
-      const hasAnySocial = allNetworks.some((n) => Boolean(state.socials?.[n.key]?.trim()));
-      const activeNetworks = allNetworks.filter((n) => {
-        const val = state.socials?.[n.key]?.trim();
-        if (!val) return false;
-        return !validateSocialUrl(n.platform, val);
-      });
-
-      const displayNetworks =
-        activeNetworks.length > 0
-          ? activeNetworks
-          : hasAnySocial
-          ? []
-          : allNetworks;
-
-      if (displayNetworks.length <= 1) return state;
-
-      const iconSize = getSocialIconSize(target.w, displayNetworks.length);
-      const iconGap = Math.round(iconSize * 0.3);
-
-      const newElements: FreeSocialElement[] = [];
-      let currX = target.x;
-
-      for (let i = 0; i < displayNetworks.length; i++) {
-        const net = displayNetworks[i];
-        const newEl: FreeSocialElement = {
-          id: i === 0 ? target.id : `social_${net.key}_${Date.now()}_${i}`,
-          type: "social",
-          platform: net.key,
-          x: currX,
-          y: target.y,
-          w: iconSize,
-          h: iconSize,
-          locked: false,
-        };
-        newElements.push(newEl);
-        currX += iconSize + iconGap;
       }
 
       const resultElements: FreeElement[] = [];

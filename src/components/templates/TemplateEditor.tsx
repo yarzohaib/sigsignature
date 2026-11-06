@@ -721,7 +721,7 @@ export default function TemplateEditor({
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6 pb-12">
-      {/* Top Header Row matching Figma: Back Button & Template Name & Primary Top-Right Save Action */}
+      {/* Top Header Row matching Figma: Back Button & Template Name */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-6 sm:gap-7">
           <button
@@ -775,27 +775,6 @@ export default function TemplateEditor({
               {template.name}
             </span>
           </div>
-        </div>
-
-        {/* Top-Right Save Signature Button */}
-        <div className="flex items-center">
-          <button
-            type="button"
-            disabled={isSaving || isUploadingPhoto || isUploadingLogo}
-            onClick={handleSaveSignature}
-            className="inline-flex h-[36px] items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-          >
-            {isSaving && (
-              <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            )}
-            <span>{isSaving ? "Saving..." : "Save Signature"}</span>
-            {!isSaving && (
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            )}
-          </button>
         </div>
       </div>
 

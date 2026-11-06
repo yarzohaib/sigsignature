@@ -119,7 +119,6 @@ export type FreeCtaElement = FreeBase & {
 
 export type FreeSocialElement = FreeBase & {
   type: "social";
-  platform?: "linkedin" | "twitter" | "facebook" | "instagram" | "github" | "youtube" | "website";
 };
 
 export type FreeElement =

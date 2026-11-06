@@ -23,7 +23,6 @@ import {
   getShapeBorderRadius,
   getSocialIconSize,
   renderSocialLinksHtml,
-  renderSingleSocialLinkHtml,
 } from "../shared";
 
 export interface FreeRenderOptions {
@@ -313,18 +312,6 @@ export function generateFreeHtml(
     }
 
     if (el.type === "social") {
-      const socialEl = el as { platform?: string };
-      if (socialEl.platform) {
-        const iconSize = Math.max(12, Math.min(el.w, el.h));
-        return renderSingleSocialLinkHtml(
-          socialEl.platform,
-          data,
-          themeColor,
-          fontStack,
-          options?.preview,
-          iconSize
-        );
-      }
       return renderSocialLinksHtml(
         data,
         themeColor,
@@ -572,19 +559,12 @@ export function generateFreePlainText(data: StudioSignatureData): string {
         lines.push(`(${media.linkUrl.trim()})`);
       }
     } else if (el.type === "social") {
-      const socialEl = el as { platform?: string };
       const s = data.socials;
-      if (socialEl.platform) {
-        const plat = socialEl.platform;
-        const url = (s as Record<string, string | undefined>)?.[plat]?.trim() || `https://${plat}.com`;
-        lines.push(`${plat.charAt(0).toUpperCase() + plat.slice(1)}: ${url}`);
-      } else {
-        if (s?.linkedin?.trim()) lines.push(`LinkedIn: ${s.linkedin.trim()}`);
-        if (s?.twitter?.trim()) lines.push(`Twitter: ${s.twitter.trim()}`);
-        if (s?.facebook?.trim()) lines.push(`Facebook: ${s.facebook.trim()}`);
-        if (s?.instagram?.trim()) lines.push(`Instagram: ${s.instagram.trim()}`);
-        if (s?.github?.trim()) lines.push(`GitHub: ${s.github.trim()}`);
-      }
+      if (s?.linkedin?.trim()) lines.push(`LinkedIn: ${s.linkedin.trim()}`);
+      if (s?.twitter?.trim()) lines.push(`Twitter: ${s.twitter.trim()}`);
+      if (s?.facebook?.trim()) lines.push(`Facebook: ${s.facebook.trim()}`);
+      if (s?.instagram?.trim()) lines.push(`Instagram: ${s.instagram.trim()}`);
+      if (s?.github?.trim()) lines.push(`GitHub: ${s.github.trim()}`);
     }
   }
 
