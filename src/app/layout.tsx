@@ -7,6 +7,7 @@ import { GoogleTracking, GtmNoScript } from "@/components/analytics/GoogleAnalyt
 import CookieConsent from "@/components/common/CookieConsent";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import FlashToast from "@/components/common/FlashToast";
+import PageTransitionLoader from "@/components/common/PageTransitionLoader";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -47,6 +48,7 @@ export default function RootLayout({
         <GoogleTracking />
         <Analytics />
         <FlashToast />
+        <PageTransitionLoader />
       </body>
     </html>
   );

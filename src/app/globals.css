@@ -360,3 +360,32 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50%;
 }
 
+/* Infinity Loader Keyframe Animations */
+@keyframes flowStreak {
+  0% {
+    stroke-dashoffset: 225;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulseText {
+  0%, 100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+
