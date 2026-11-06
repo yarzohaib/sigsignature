@@ -32,7 +32,7 @@ const columnVariants: Variants = {
 
 // Underline link styling with 44px tap row below 1024 and expanding left-to-right underline
 const linkHoverClasses =
-  "group relative inline-flex min-h-[44px] min-w-[44px] items-center font-body text-[15px] sm:text-base lg:text-[18px] lg:min-h-0 lg:min-w-0 font-normal leading-[100%] tracking-normal text-[#353A3E] transition-colors hover:text-brand 3xl:text-[20px] after:absolute after:bottom-1.5 lg:after:bottom-[-2px] after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand";
+  "group relative inline-flex min-h-[44px] min-w-[44px] items-center whitespace-nowrap font-body text-[15px] sm:text-base 2xl:text-[18px] 2xl:min-h-0 2xl:min-w-0 font-normal leading-[100%] tracking-normal text-[#353A3E] transition-colors hover:text-brand 3xl:text-[20px] after:absolute after:bottom-1.5 2xl:after:bottom-[-2px] after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand";
 
 const legalLinkHoverClasses =
   "group relative inline-flex min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 items-center hover:text-brand transition-colors 3xl:text-[15px] after:absolute after:bottom-1 lg:after:bottom-[-2px] after:left-0 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-brand after:transition-transform after:duration-250 after:ease-out hover:after:scale-x-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand";
@@ -111,9 +111,9 @@ const isAuthenticated =
 
   return (
     <footer
-      className="bg-[#FCFCFC] pt-10 sm:pt-12 font-body text-slate-600"
+      className="bg-[#FCFCFC] pt-[15px] font-body text-slate-600"
       style={{
-        paddingBottom: "max(0.75rem, env(safe-area-inset-bottom, 0.75rem))",
+        paddingBottom: "max(2px, env(safe-area-inset-bottom, 2px))",
       }}
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
@@ -130,7 +130,7 @@ const isAuthenticated =
             scroll
             onClick={handleLogoClick}
             aria-label="Sig Signature, back to top"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center gap-2.5 transition hover:opacity-90"
+            className="inline-flex items-center gap-2.5 transition hover:opacity-90"
           >
             <Image
               src="/logo.svg"
@@ -158,7 +158,7 @@ const isAuthenticated =
           whileInView={shouldReduceMotion ? undefined : "visible"}
           viewport={MOTION_VIEWPORT}
           variants={shouldReduceMotion ? undefined : footerContainerVariants}
-          className="mt-10 grid grid-cols-2 gap-8 sm:mt-12 sm:grid-cols-3 sm:gap-6 lg:gap-10"
+          className="mt-10 grid grid-cols-1 gap-8 sm:mt-12 sm:grid-cols-3 sm:gap-6 lg:gap-10"
         >
           {/* Products Group */}
           <motion.div
@@ -168,7 +168,7 @@ const isAuthenticated =
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Products
             </h4>
-            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 xl:mt-5 xl:flex-row xl:flex-nowrap xl:justify-center xl:gap-x-4 2xl:gap-x-5 3xl:gap-x-7">
               <Link
                 href="/#features"
                 onClick={(e) => handleNavAnchorClick(e, "features", "start")}
@@ -212,7 +212,7 @@ const isAuthenticated =
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Company
             </h4>
-            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 xl:mt-5 xl:flex-row xl:flex-nowrap xl:justify-center xl:gap-x-4 2xl:gap-x-5 3xl:gap-x-7">
               <Link href="/about" className={linkHoverClasses}>
                 About
               </Link>
@@ -236,7 +236,7 @@ const isAuthenticated =
             <h4 className="font-body text-sm font-semibold tracking-tight text-black sm:text-base lg:text-[24px] lg:font-medium lg:leading-[100%] lg:tracking-normal 3xl:text-[27px]">
               Resources
             </h4>
-            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 lg:mt-5 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-7 lg:gap-y-1">
+            <div className="mt-2 flex flex-col items-center text-center sm:mt-3 xl:mt-5 xl:flex-row xl:flex-nowrap xl:justify-center xl:gap-x-4 2xl:gap-x-5 3xl:gap-x-7">
               <Link
                 href="/gmail-signature-generator"
                 className={linkHoverClasses}
@@ -320,7 +320,7 @@ const isAuthenticated =
       <div className="mt-10 sm:mt-12 w-full border-t border-[#D7D7D7]" />
 
       {/* Bottom Legal & Copyright Bar */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-3 pb-2 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-3 pb-[2px] 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-xs sm:text-[13px] text-[#878787]">
           <p className="flex flex-wrap items-center justify-center sm:justify-start gap-1">
             <span>© 2026 Sig Signature. All rights reserved.</span>

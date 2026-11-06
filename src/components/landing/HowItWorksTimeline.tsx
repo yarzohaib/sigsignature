@@ -370,15 +370,15 @@ export default function HowItWorksTimeline({
       ref={outerRef}
       className={`scroll-mt-24 overflow-x-clip bg-[#FCFCFC] ${
         shouldReduceMotion
-          ? "py-14 sm:py-16 lg:py-20"
-          : "relative py-14 sm:py-16 lg:h-[240svh] lg:py-0"
+          ? "py-10 sm:py-12 lg:py-12"
+          : "relative py-10 sm:py-12 lg:h-[160svh] lg:py-0"
       }`}
     >
       <div
         className={
           shouldReduceMotion
             ? ""
-            : "lg:sticky lg:top-0 lg:flex lg:h-svh lg:flex-col lg:justify-center lg:overflow-hidden lg:pt-16"
+            : "lg:sticky lg:top-16 lg:flex lg:h-[calc(100svh-4rem)] lg:flex-col lg:justify-center lg:overflow-hidden xl:top-[72px] xl:h-[calc(100svh-4.5rem)]"
         }
       >
         <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8 xl:px-12">

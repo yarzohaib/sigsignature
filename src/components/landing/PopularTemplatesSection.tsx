@@ -37,7 +37,7 @@ export default function PopularTemplatesSection() {
   return (
     <section
       id="templates"
-      className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28"
+      className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#FCFCFC] py-10 sm:py-12 lg:py-12 3xl:py-12"
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}

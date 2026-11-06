@@ -100,7 +100,7 @@ export default function UseCasePreview({
                     isDark ? "text-blue-200/80" : "text-slate-500"
                   }`}
                 >
-                  Leadership Platform · Ceo
+                  Leadership Development Platform · Ceo
                 </p>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function UseCasePreview({
                   The Nevon
                 </h3>
                 <p className="font-body text-xs font-medium text-blue-200/80">
-                  Leadership Platform · Ceo
+                  Leadership Development Platform · Ceo
                 </p>
               </div>
             </div>
@@ -245,7 +245,7 @@ export default function UseCasePreview({
                   isDark ? "text-blue-200/80" : "text-slate-500"
                 }`}
               >
-                Leadership Platform · Ceo
+                Leadership Development Platform · Ceo
               </p>
 
               <div

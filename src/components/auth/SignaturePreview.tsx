@@ -22,7 +22,7 @@ export default function SignaturePreview({ className = "", floating = false }: S
             <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#245FD4] to-[#022977]" />
             <div>
               <p className="text-[15px] font-semibold text-slate-900">The Nevon</p>
-              <p className="text-[11px] text-slate-600">Leadership Platform</p>
+              <p className="text-[11px] text-slate-600">Leadership Development Platform</p>
             </div>
           </div>
           <span
@@ -35,14 +35,14 @@ export default function SignaturePreview({ className = "", floating = false }: S
           </span>
         </div>
 
-        <div className="mt-8 sm:mt-10 text-[10px] text-slate-700">
+        <div className="mt-5 sm:mt-6 text-[10px] text-slate-700">
           <p className="break-all sm:break-normal">
-            sardar@thenevon.com <span className="mx-2 text-line">|</span> +655 863 1279
+            team@thenevon.com <span className="mx-2 text-line">|</span> +655 863 1279
           </p>
           <p className="mt-2">www.thenevon.com</p>
         </div>
 
-        <div className="mt-5 flex items-center gap-2.5 sm:gap-3">
+        <div className="mt-4 flex items-center gap-2.5 sm:gap-3">
           <span
             className={`rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-3 py-1.5 text-[9px] font-semibold text-white shadow-xs select-none ${
               floating ? "animate-float-slow-2" : ""

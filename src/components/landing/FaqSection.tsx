@@ -68,7 +68,7 @@ export default function FaqSection() {
     <section
       id="faq"
       aria-label="Frequently Asked Questions"
-      className="relative z-10 w-full bg-surface py-14 sm:py-16 lg:py-24 3xl:py-28"
+      className="relative z-10 w-full bg-surface py-10 sm:py-12 lg:py-12 3xl:py-12"
     >
       {/* Inject Schema.org FAQPage Structured Data */}
       <FaqJsonLd faqs={FAQ_DATA} />

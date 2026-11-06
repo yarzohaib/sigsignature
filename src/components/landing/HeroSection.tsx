@@ -81,7 +81,7 @@ export default function HeroSection() {
                     <div className="min-w-0">
                       <p className="text-base font-bold text-slate-900">Muhammad Nadir</p>
                       <p className="text-sm text-slate-600">Product Designer</p>
-                      <p className="mt-1 text-[13px] sm:text-sm text-[#878787] break-all">sardar@thenevon.com</p>
+                      <p className="mt-1 text-[13px] sm:text-sm text-[#878787] break-all">team@thenevon.com</p>
                     </div>
                   </div>
                   <div className="mx-auto mt-3.5 flex w-full max-w-[244px] justify-center gap-2.5">

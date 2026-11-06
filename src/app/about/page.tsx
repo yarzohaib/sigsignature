@@ -165,7 +165,7 @@ export default function AboutPage() {
                             The Nevon
                           </h3>
                           <p className="font-body text-xs text-slate-500 font-medium">
-                            Leadership Platform · Ceo
+                            Leadership Development Platform · Ceo
                           </p>
                           <p className="font-body text-xs text-[#245FD4] mt-0.5 truncate">
                             thenevon@gmail.com
@@ -373,7 +373,7 @@ export default function AboutPage() {
                         <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-to-br from-[#061D59] via-[#174FAE] to-[#43A0FF] sm:h-24 sm:w-24" />
                         <div className="min-w-0">
                           <h4 className="font-heading text-base font-bold text-slate-900 sm:text-2xl">The Nevon</h4>
-                          <p className="font-body text-xs text-slate-500 sm:text-base">Leadership Platform · Ceo</p>
+                          <p className="font-body text-xs text-slate-500 sm:text-base">Leadership Development Platform · Ceo</p>
                           <p className="font-body mt-1 break-all text-xs text-[#245FD4] sm:text-sm">thenevon@gmail.com</p>
                           <p className="font-body mt-1 text-xs text-slate-500 sm:text-sm">+655 863 1279</p>
                         </div>

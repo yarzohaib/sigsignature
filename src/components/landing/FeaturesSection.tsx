@@ -10,7 +10,7 @@ import {
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#FCFCFC] py-14 sm:py-16 lg:py-24 3xl:py-28">
+    <section id="features" className="scroll-mt-28 sm:scroll-mt-32 lg:scroll-mt-36 overflow-x-clip bg-[#FCFCFC] py-10 sm:py-12 lg:py-12 3xl:py-12">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         {/* Section Header */}
         <div className="text-center">
@@ -51,7 +51,7 @@ export default function FeaturesSection() {
                 Start with a Template or Blank Layout
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Choose a starting design or build your own layout. Arrange your information to suit your role and brand.
+                Choose a starting design or build your own layout. Arrange your information to suit your role and brand. Create a professional email signature with a template that fits your brand.
               </p>
             </div>
 
@@ -151,7 +151,7 @@ export default function FeaturesSection() {
                 Customize Your Brand Details
               </h3>
               <p className="font-body mt-3 text-sm leading-relaxed text-[#878787] sm:text-base">
-                Adjust colors, fonts, logos, social icons, banners, and layouts using the editor’s visual controls.
+                Adjust colors, fonts, logos, social icons, banners, and layouts using the editor’s visual controls. Create a branded email signature with details that reflect your business.
               </p>
             </div>
 

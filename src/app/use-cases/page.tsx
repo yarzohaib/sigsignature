@@ -83,7 +83,7 @@ export default function UseCasesPage() {
       <main className="flex-1">
         {/* 1. HERO SECTION */}
         <section className="pt-28 pb-14 sm:pt-8 sm:pb-16 lg:pt-8 lg:pb-20">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column: Heading, Subtitle, CTA */}
               <div className="lg:col-span-5 text-left">
@@ -190,7 +190,7 @@ export default function UseCasesPage() {
 
         {/* 2. USE CASE 1: MAKE THE NEXT STEP FEEL NATURAL */}
         <section className="py-14 sm:py-18 lg:py-20">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column: Narrative & Checklist */}
               <div className="lg:col-span-6 text-left">
@@ -252,7 +252,7 @@ export default function UseCasesPage() {
 
         {/* 3. USE CASE 2: YOUR EVERYDAY EMAIL. YOUR NEXT BRAND MOMENT */}
         <section className="py-14 sm:py-18 lg:py-20">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column on Desktop: Visual Preview (Dark Theme) */}
               <div className="order-2 lg:order-1 lg:col-span-6">
@@ -314,7 +314,7 @@ export default function UseCasesPage() {
 
         {/* 4. USE CASE 3: A WARMER INTRODUCTION. A CLEARER INVITATION */}
         <section className="py-14 sm:py-18 lg:py-20">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column: Narrative & Checklist */}
               <div className="lg:col-span-6 text-left">
@@ -376,7 +376,7 @@ export default function UseCasesPage() {
 
         {/* 5. DIFFERENT WORKFLOWS. ONE SIMPLE WAY TO CREATE */}
         <section className="py-16 sm:py-20 lg:py-24 bg-white">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-[42px] font-medium text-[#101B30] tracking-tight leading-[1.17] text-left">
               Different workflows. <br />
               One simple way to create.
@@ -415,7 +415,7 @@ export default function UseCasesPage() {
               "linear-gradient(100.16deg, #245FD4 1.32%, #00359F 50.19%, #00143C 100%)",
           }}
         >
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="font-heading text-3xl sm:text-4xl lg:text-[48px] font-semibold text-white tracking-tight leading-[1.15]">
                 Find your use case. <br />
