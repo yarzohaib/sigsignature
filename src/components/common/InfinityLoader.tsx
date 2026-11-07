@@ -4,15 +4,6 @@ import React from "react";
 
 export interface InfinityLoaderProps {
   /**
-   * Primary title displayed beneath the infinity sign.
-   * Defaults to "Loading Sig Signature..."
-   */
-  title?: string;
-  /**
-   * Optional supporting subtext (e.g. "Preparing your workspace", "Loading templates...")
-   */
-  subtitle?: string;
-  /**
    * If true, renders fixed across the full viewport on a pure white background.
    * If false, renders as a standalone centered block.
    */
@@ -26,27 +17,25 @@ export interface InfinityLoaderProps {
 }
 
 export function InfinityLoader({
-  title = "Loading Sig Signature...",
-  subtitle = "Preparing your workspace",
   fullScreen = true,
   size = "md",
   className = "",
 }: InfinityLoaderProps) {
   // Dimensions for ring and logo
   const dimensions = {
-    sm: { ring: "w-28 h-28", logoW: 56, logoH: 30, text: "text-sm", sub: "text-xs" },
-    md: { ring: "w-36 h-36", logoW: 80, logoH: 42, text: "text-base", sub: "text-xs sm:text-[13px]" },
-    lg: { ring: "w-44 h-44", logoW: 100, logoH: 52, text: "text-lg", sub: "text-sm" },
+    sm: { ring: "w-28 h-28", logoW: 56, logoH: 30 },
+    md: { ring: "w-36 h-36", logoW: 80, logoH: 42 },
+    lg: { ring: "w-44 h-44", logoW: 100, logoH: 52 },
   }[size];
 
   const content = (
     <div
       role="status"
       aria-live="polite"
-      aria-label={title}
+      aria-label="Loading"
       className={`flex flex-col items-center justify-center text-center select-none ${className}`}
     >
-      <div className={`relative ${dimensions.ring} flex items-center justify-center mb-5`}>
+      <div className={`relative ${dimensions.ring} flex items-center justify-center`}>
         {/* Soft Radial Glow Aura */}
         <div
           aria-hidden="true"
@@ -128,16 +117,6 @@ export function InfinityLoader({
         </div>
       </div>
 
-      {title && (
-        <h2 className={`font-heading font-semibold text-[#022977] tracking-tight ${dimensions.text} animate-[pulseText_2.4s_ease-in-out_infinite]`}>
-          {title}
-        </h2>
-      )}
-      {subtitle && (
-        <p className={`mt-1 font-body text-slate-400 font-normal ${dimensions.sub}`}>
-          {subtitle}
-        </p>
-      )}
     </div>
   );
 
