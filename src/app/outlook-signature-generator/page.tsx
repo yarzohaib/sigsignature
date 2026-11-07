@@ -178,7 +178,7 @@ export default function OutlookSignatureGeneratorPage() {
 
         {/* 2. CORE VALUE PROPS SECTION (3 Feature Cards) */}
         <section className="py-16 sm:py-20 bg-white border-y border-slate-200/80">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px] px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <h2
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
@@ -267,7 +267,7 @@ export default function OutlookSignatureGeneratorPage() {
 
         {/* 3. TEMPLATE SHOWCASE SECTION */}
         <section className="py-16 sm:py-20 lg:py-24 bg-[#FAFCFF]">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px] px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <h2
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
@@ -312,7 +312,7 @@ export default function OutlookSignatureGeneratorPage() {
 
         {/* 4. CREATION WORKFLOW (3-Step Overview) */}
         <section className="py-16 sm:py-20 bg-white border-y border-slate-200/80">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px] px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <h2
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
@@ -405,7 +405,7 @@ export default function OutlookSignatureGeneratorPage() {
 
         {/* 5. STEP-BY-STEP INSTALLATION GUIDE */}
         <section className="py-16 sm:py-20 lg:py-24 bg-[#FAFCFF]">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px] px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-10">
               <h2
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
@@ -427,7 +427,7 @@ export default function OutlookSignatureGeneratorPage() {
 
         {/* 6. FREQUENTLY ASKED QUESTIONS */}
         <section className="py-16 sm:py-20 bg-white border-t border-slate-200/80">
-          <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px] px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
