@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SignaturePreview from "./SignaturePreview";
 import Logo from "./Logo";
+import { LinkedInIcon, XIcon } from "./icons";
 
 type AuthShellProps = {
   children: React.ReactNode;
@@ -41,6 +42,26 @@ export default function AuthShell({ children }: AuthShellProps) {
             <h2 className="max-w-[543px] bg-linear-to-b from-brand to-brand-dark bg-clip-text font-heading text-[36px] font-semibold leading-[44px] text-transparent xl:text-[56px] xl:leading-[64px]">
               Your Professional Email Signature Starts Here.
             </h2>
+            <nav aria-label="Sig Signature social media" className="mt-6 flex items-center gap-3">
+              <a
+                href="https://www.linkedin.com/company/sig-signature/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sig Signature on LinkedIn"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand/20 bg-white/70 text-brand transition hover:bg-white"
+              >
+                <LinkedInIcon className="h-[18px] w-[18px]" />
+              </a>
+              <a
+                href="https://x.com/SigSignature_"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sig Signature on X"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand/20 bg-white/70 text-brand transition hover:bg-white"
+              >
+                <XIcon className="h-[17px] w-[17px]" />
+              </a>
+            </nav>
           </div>
         </div>
       </section>
