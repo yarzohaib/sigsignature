@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useSyncExternalStore } from "react";
+import React, { useSyncExternalStore, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import AppShell from "@/components/shell/AppShell";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -33,6 +34,35 @@ function getAuthServerSnapshot(): boolean {
   return false;
 }
 
+function AdaptivePricingLayoutInner({
+  children,
+  isAuthenticated,
+}: {
+  children: React.ReactNode;
+  isAuthenticated: boolean;
+}) {
+  const searchParams = useSearchParams();
+  const isSidebarNav = searchParams?.get("from") === "sidebar";
+
+  // Authenticated users navigating from within dashboard sidebar see AppShell (with sidebar).
+  // When navigating via public Navbar (or unauthenticated), render clean public layout (no sidebar).
+  if (isAuthenticated && isSidebarNav) {
+    return <AppShell>{children}</AppShell>;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] font-body text-slate-900">
+      <Navbar />
+      <div className="flex-1 w-full pt-16 md:pt-0">
+        {children}
+      </div>
+      {/* Full-width horizontal divider line above Footer */}
+      <div className="w-full border-t border-[#D7D7D7]" />
+      <Footer />
+    </div>
+  );
+}
+
 export default function AdaptivePricingShell({
   children,
 }: {
@@ -44,21 +74,22 @@ export default function AdaptivePricingShell({
     getAuthServerSnapshot
   );
 
-  // Authenticated Users: Render within the in-app Dashboard Shell (Sidebar + TopBar)
-  if (isAuthenticated) {
-    return <AppShell>{children}</AppShell>;
-  }
-
-  // Unauthenticated Guests: Render clean public layout (Navbar + Content + Horizontal Divider + Footer, NO sidebar)
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] font-body text-slate-900">
-      <Navbar />
-      <div className="flex-1 w-full pt-16 md:pt-0">
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col bg-[#F8FAFC] font-body text-slate-900">
+          <Navbar />
+          <div className="flex-1 w-full pt-16 md:pt-0">
+            {children}
+          </div>
+          <div className="w-full border-t border-[#D7D7D7]" />
+          <Footer />
+        </div>
+      }
+    >
+      <AdaptivePricingLayoutInner isAuthenticated={isAuthenticated}>
         {children}
-      </div>
-      {/* Full-width horizontal divider line above Footer */}
-      <div className="w-full border-t border-[#D7D7D7]" />
-      <Footer />
-    </div>
+      </AdaptivePricingLayoutInner>
+    </Suspense>
   );
 }

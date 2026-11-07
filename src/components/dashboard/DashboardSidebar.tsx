@@ -153,7 +153,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
     },
     {
       name: "Templates",
-      href: "/templates",
+      href: "/templates?from=sidebar",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -174,7 +174,7 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
     },
     {
       name: "Pricing & Billing",
-      href: "/pricing",
+      href: "/pricing?from=sidebar",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -318,15 +318,16 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
             aria-label="Sidebar Navigation"
           >
             {navItems.map((item) => {
+              const itemPath = item.href.split("?")[0];
               const isActive =
-                pathname === item.href ||
-                (item.href === "/signatures" && pathname.startsWith("/signatures")) ||
-                (item.href === "/team-signatures" && pathname.startsWith("/team-signatures")) ||
-                (item.href === "/templates" && pathname.startsWith("/templates")) ||
-                (item.href === "/pricing" && pathname.startsWith("/pricing")) ||
-                (item.href === "/design-studio" && pathname.startsWith("/design-studio")) ||
-                (item.href === "/help" && pathname.startsWith("/help")) ||
-                (item.href === "/settings" && pathname.startsWith("/settings"));
+                pathname === itemPath ||
+                (itemPath === "/signatures" && pathname.startsWith("/signatures")) ||
+                (itemPath === "/team-signatures" && pathname.startsWith("/team-signatures")) ||
+                (itemPath === "/templates" && pathname.startsWith("/templates")) ||
+                (itemPath === "/pricing" && pathname.startsWith("/pricing")) ||
+                (itemPath === "/design-studio" && pathname.startsWith("/design-studio")) ||
+                (itemPath === "/help" && pathname.startsWith("/help")) ||
+                (itemPath === "/settings" && pathname.startsWith("/settings"));
               return (
                 <div key={item.name} className="relative group">
                   <Link
@@ -378,8 +379,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
           {isCollapsed ? (
             <div className="relative group lg:flex hidden justify-center">
               <Link
-                href="/pricing"
-                onClick={(event) => handleLinkClick(event, "/pricing")}
+                href="/pricing?from=sidebar"
+                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs"
                 aria-label="Unlock Premium Features"
               >
@@ -416,8 +417,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                 Upgrade to premium and access powerful features and advanced customization.
               </p>
               <Link
-                href="/pricing"
-                onClick={(event) => handleLinkClick(event, "/pricing")}
+                href="/pricing?from=sidebar"
+                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
                 className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
@@ -433,8 +434,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
           {isCollapsed ? (
             <div className="relative group lg:flex hidden justify-center">
               <Link
-                href="/pricing"
-                onClick={(event) => handleLinkClick(event, "/pricing")}
+                href="/pricing?from=sidebar"
+                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
                 className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300 transition shadow-2xs"
                 aria-label={`Quota: ${signatureCount}/3`}
               >
@@ -487,8 +488,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
               <div className="mt-2 flex items-center justify-between">
                 <Link
-                  href="/pricing"
-                  onClick={(event) => handleLinkClick(event, "/pricing")}
+                  href="/pricing?from=sidebar"
+                  onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
                   className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >

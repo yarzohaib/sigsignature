@@ -128,7 +128,7 @@ export default function GettingStartedModal({ userId }: Props) {
         title: "Create a signature",
         done: `${signatureCount} saved ${signatureCount === 1 ? "signature" : "signatures"} in your library.`,
         todo: "Start from a template or design your own from scratch.",
-        cta: { label: "Create signature", href: "/templates" },
+        cta: { label: "Create signature", href: "/templates?from=sidebar" },
         complete: hasSignature,
         icon: Icons.create,
       },

@@ -73,7 +73,7 @@ export default function TeamSignaturesHeader({
         {/* Action Button */}
         {isLimitReached ? (
           <Link
-            href="/pricing"
+            href="/pricing?from=sidebar"
             className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:opacity-95"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >

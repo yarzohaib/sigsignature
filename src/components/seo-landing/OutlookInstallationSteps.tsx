@@ -85,28 +85,33 @@ export default function OutlookInstallationSteps() {
         </div>
       </div>
 
-      {/* 4 Installation Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* 4 Stacked Step Cards matching Gmail Installation Steps */}
+      <div className="space-y-4 max-w-4xl mx-auto">
         {currentSteps.map((step) => (
           <div
             key={step.num}
-            className="flex flex-col justify-start rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-2xs hover:border-slate-300 transition-all text-left"
+            className="flex items-start gap-5 sm:gap-6 rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-8 sm:px-9 shadow-2xs transition-all hover:border-slate-300 text-left"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] border border-[#245FD4]/20 text-[#245FD4] font-heading text-sm font-bold mb-5">
+            {/* Number Pill */}
+            <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-[#245FD4]/30 bg-[#EFF6FF] text-[#245FD4] font-heading font-bold text-sm sm:text-base">
               {step.num}
             </div>
-            <h3
-              className="font-heading text-base font-bold text-slate-900 leading-snug"
-              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-            >
-              {step.title}
-            </h3>
-            <p
-              className="mt-2.5 font-body text-xs text-slate-600 leading-relaxed max-w-[280px]"
-              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-            >
-              {step.desc}
-            </p>
+
+            {/* Content */}
+            <div className="min-w-0 flex-1 pt-0.5">
+              <h3
+                className="font-heading text-base sm:text-lg font-bold text-slate-900"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                {step.title}
+              </h3>
+              <p
+                className="mt-1.5 font-body text-xs sm:text-sm text-slate-600 leading-relaxed max-w-[660px]"
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              >
+                {step.desc}
+              </p>
+            </div>
           </div>
         ))}
       </div>

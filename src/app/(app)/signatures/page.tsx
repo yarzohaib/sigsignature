@@ -114,7 +114,7 @@ function MySignaturesContent() {
       setIsLimitModalOpen(true);
       return;
     }
-    router.push("/templates?new=true");
+    router.push("/templates?new=true&from=sidebar");
   };
 
   const handleEdit = (id: string) => {

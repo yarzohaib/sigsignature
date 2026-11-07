@@ -7,5 +7,5 @@ export function getSignatureKind(templateId: string): "template" | "studio" {
 export function getEditHref(sig: SavedSignature): string {
   return sig.kind === "studio"
     ? `/design-studio?edit=${encodeURIComponent(sig.id)}`
-    : `/templates?edit=${encodeURIComponent(sig.id)}`;
+    : `/templates?edit=${encodeURIComponent(sig.id)}&from=sidebar`;
 }

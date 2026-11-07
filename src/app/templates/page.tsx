@@ -40,6 +40,7 @@ function TemplatesContent() {
   const templateParam = searchParams.get("template");
   const modeParam = searchParams.get("mode");
   const isTeamMode = modeParam === "team";
+  const fromSidebar = searchParams.get("from") === "sidebar";
 
   // Category filtering & sorting state
   const [selectedCategory, setSelectedCategory] = useState<CategoryTab>("All");
@@ -219,19 +220,26 @@ function TemplatesContent() {
     setEditingSignatureId(undefined);
     setEditingSignatureData(undefined);
     setEditingTemplate(template);
-    router.push(`/templates?template=${encodeURIComponent(template.id)}`);
+    const targetUrl = fromSidebar
+      ? `/templates?template=${encodeURIComponent(template.id)}&from=sidebar`
+      : `/templates?template=${encodeURIComponent(template.id)}`;
+    router.push(targetUrl);
   };
+
+  const containerClasses = fromSidebar
+    ? "px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-10 2xl:px-12 w-full"
+    : "mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]";
 
   if (isLoadingEdit) {
     return (
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className={containerClasses}>
         <TemplatesGallerySkeleton />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 sm:py-7 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+    <div className={containerClasses}>
       <TemplatesPageJsonLd templates={AVAILABLE_TEMPLATES} />
       <BreadcrumbJsonLd
         items={[
@@ -267,7 +275,7 @@ function TemplatesContent() {
               onClick={() => {
                 setTemplateNotFound(false);
                 setEditingTemplate(null);
-                router.replace("/templates");
+                router.replace(fromSidebar ? "/templates?from=sidebar" : "/templates");
               }}
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#022977] to-[#245FD4] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:opacity-95 transition cursor-pointer"
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
@@ -292,7 +300,7 @@ function TemplatesContent() {
                 setEditingTemplate(null);
                 setEditingSignatureData(undefined);
                 setEditingSignatureId(undefined);
-                router.replace("/templates");
+                router.replace(fromSidebar ? "/templates?from=sidebar" : "/templates");
               }}
             />
           </motion.div>
@@ -425,7 +433,11 @@ function TemplatesContent() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+              <div
+                className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ${
+                  fromSidebar ? "col4:grid-cols-4" : "xl:grid-cols-3"
+                }`}
+              >
                 {filteredTemplates.map((template) => (
                   <TemplateGalleryCard
                     key={template.id}

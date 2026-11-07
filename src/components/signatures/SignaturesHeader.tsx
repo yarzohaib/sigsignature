@@ -43,7 +43,7 @@ export default function SignaturesHeader({
           </button>
         ) : (
           <Link
-            href="/pricing"
+            href="/pricing?from=sidebar"
             className="flex h-[46px] w-full sm:w-[275px] items-center justify-center rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-[15px] font-semibold text-white shadow-xs transition hover:opacity-95 active:scale-98 shrink-0"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >
@@ -52,7 +52,7 @@ export default function SignaturesHeader({
         )
       ) : (
         <Link
-          href="/templates"
+          href="/templates?from=sidebar"
           onClick={onCreateClick}
           className="flex h-[46px] w-full sm:w-[275px] items-center justify-center rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-[15px] font-medium text-white shadow-xs transition hover:opacity-95 active:scale-98 shrink-0"
           style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}

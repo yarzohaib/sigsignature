@@ -44,7 +44,7 @@ export default function EmptyTeamState({ onCreateSignature }: EmptyTeamStateProp
           </button>
 
           <Link
-            href="/templates?mode=team"
+            href="/templates?mode=team&from=sidebar"
             className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-6 py-3 text-sm sm:text-base font-semibold text-[#1E293B] hover:bg-slate-50 transition shadow-2xs"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
           >

@@ -221,7 +221,7 @@ export default function ChooseSignatureModal({
               </p>
               <div className="mt-5 flex items-center justify-center gap-3">
                 <Link
-                  href="/templates"
+                  href="/templates?from=sidebar"
                   className="rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2 text-xs font-semibold text-white transition hover:opacity-95"
                 >
                   Browse Templates

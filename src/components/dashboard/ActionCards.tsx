@@ -103,7 +103,7 @@ export default function ActionCards() {
               </button>
             ) : (
               <Link
-                href="/templates"
+                href="/templates?from=sidebar"
                 className="group flex h-10 xl:h-11 2xl:h-[48px] 3xl:h-[50px] w-full flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-transparent bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 text-center text-white shadow-xs transition hover:opacity-95 font-medium text-[14px] xl:text-[15px] 2xl:text-[15.5px] leading-tight"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import PricingSkeleton from "@/components/skeletons/PricingSkeleton";
 import { getStoredUser, getStoredToken } from "@/app/lib/auth";
@@ -30,6 +30,8 @@ function CheckCircleIcon() {
 
 function PricingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromSidebar = searchParams.get("from") === "sidebar";
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
@@ -88,7 +90,13 @@ function PricingContent() {
         </div>
       )}
 
-      <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-start gap-6 px-4 py-6 sm:px-6 sm:py-7 sm:gap-8 lg:px-8 lg:py-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <main
+        className={`flex w-full flex-1 flex-col justify-start gap-6 px-4 py-6 sm:px-6 sm:py-7 sm:gap-8 lg:px-8 lg:py-8 ${
+          fromSidebar
+            ? "xl:px-10 2xl:px-12 w-full"
+            : "mx-auto max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]"
+        }`}
+      >
         {/* Top Heading Section */}
         <div className="w-full text-left shrink-0 mb-2 sm:mb-4">
           <h1
@@ -108,10 +116,16 @@ function PricingContent() {
         </div>
 
         {/* Plans Container: Balanced 495px cards with harmonious width and spacing */}
-        <div className="grid w-full grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-[clamp(3rem,6vw,8rem)] max-w-[1080px] xl:mx-auto pt-1 items-stretch">
+        <div
+          className={`grid w-full grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-[clamp(3rem,6vw,8rem)] pt-1 items-stretch ${
+            fromSidebar ? "max-w-[1080px]" : "max-w-[1080px] xl:mx-auto"
+          }`}
+        >
               {/* Basic Plan Card */}
               <div
-                className="flex w-full max-w-[495px] flex-col justify-start rounded-[24px] border border-[#E2E8F0] bg-white mx-auto lg:mx-0 xl:mx-auto"
+                className={`flex w-full max-w-[495px] flex-col justify-start rounded-[24px] border border-[#E2E8F0] bg-white ${
+                  fromSidebar ? "mx-auto lg:mx-0" : "mx-auto lg:mx-0 xl:mx-auto"
+                }`}
                 style={{
                   width: "100%",
                   maxWidth: "495px",
@@ -203,7 +217,9 @@ function PricingContent() {
 
               {/* Professional Plan Card */}
               <div
-                className="relative flex w-full max-w-[495px] flex-col mx-auto lg:mx-0 xl:mx-auto"
+                className={`relative flex w-full max-w-[495px] flex-col ${
+                  fromSidebar ? "mx-auto lg:mx-0" : "mx-auto lg:mx-0 xl:mx-auto"
+                }`}
                 style={{
                   width: "100%",
                   maxWidth: "495px",
@@ -331,7 +347,12 @@ function PricingContent() {
             </div>
 
             {/* Questions, answered */}
-            <section className="w-full shrink-0 mt-6 sm:mt-8 lg:mt-10 mb-8 max-w-[1080px] xl:max-w-none" aria-labelledby="pricing-faq-heading">
+            <section
+              className={`w-full shrink-0 mt-6 sm:mt-8 lg:mt-10 mb-8 ${
+                fromSidebar ? "max-w-[1080px]" : "max-w-[1080px] xl:max-w-none"
+              }`}
+              aria-labelledby="pricing-faq-heading"
+            >
               <div className="mb-6">
                 <h2
                   id="pricing-faq-heading"

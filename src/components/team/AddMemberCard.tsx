@@ -38,7 +38,7 @@ export default function AddMemberCard({
           Upgrade your plan to add more team members.
         </p>
         <Link
-          href="/pricing"
+          href="/pricing?from=sidebar"
           className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#245FD4] hover:underline"
         >
           <span>Upgrade Plan</span>

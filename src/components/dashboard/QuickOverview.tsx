@@ -189,7 +189,7 @@ export default function QuickOverview() {
 
         {/* Card 2: Templates */}
         <Link
-          href="/templates"
+          href="/templates?from=sidebar"
           className="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs hover:shadow-md hover:border-[#CBD5E1] transition-all group"
         >
           <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">

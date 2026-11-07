@@ -123,7 +123,7 @@ export default function LimitOverwriteModal({
         {/* Action Buttons */}
         <div className="mt-6 flex flex-col gap-3">
           <Link
-            href="/pricing"
+            href="/pricing?from=sidebar"
             onClick={onClose}
             className="flex h-11 w-full items-center justify-center rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] px-6 text-center text-sm font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer"
             style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}

@@ -63,7 +63,7 @@ export default function PremiumLockedModal({
 
         <div className="mt-6 flex flex-col sm:flex-row items-center gap-2.5">
           <Link
-            href="/pricing"
+            href="/pricing?from=sidebar"
             onClick={onClose}
             className="w-full sm:flex-1 rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] py-2.5 px-4 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 text-center whitespace-nowrap"
             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}

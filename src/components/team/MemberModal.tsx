@@ -440,7 +440,7 @@ export default function MemberModal({
             <span>{globalError}</span>
             {isLimitError && (
               <Link
-                href="/pricing"
+                href="/pricing?from=sidebar"
                 className="ml-3 font-semibold text-[#245FD4] underline hover:text-[#1D4ED8] whitespace-nowrap"
               >
                 Upgrade Plan &rarr;
