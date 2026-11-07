@@ -610,7 +610,13 @@ export default function Navbar() {
         }`}
       >
 
-        <div className="mx-auto flex h-16 sm:h-18 max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+        <div
+          className={`mx-auto flex h-16 sm:h-18 items-center justify-between px-4 sm:px-6 lg:px-8 ${
+            pathname.startsWith("/blog")
+              ? "max-w-[1288px]"
+              : "max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]"
+          }`}
+        >
           {/* Brand Logo pointing back to landing page */}
           <Link
             href="/"
