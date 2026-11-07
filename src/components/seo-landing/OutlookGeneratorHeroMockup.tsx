@@ -13,7 +13,7 @@ export default function OutlookGeneratorHeroMockup() {
   const colors = ["#245FD4", "#1E293B", "#6366F1", "#0F172A"];
 
   return (
-    <div className="w-full max-w-[620px] mx-auto rounded-2xl border border-slate-200/90 bg-white shadow-xl overflow-hidden font-body text-slate-800">
+    <div className="w-full max-w-[620px] mx-auto lg:mr-0 lg:ml-auto rounded-2xl border border-slate-200/90 bg-white shadow-xl overflow-hidden font-body text-slate-800">
       {/* Browser chrome header */}
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-4 py-2.5">
         <div className="flex items-center gap-1.5">

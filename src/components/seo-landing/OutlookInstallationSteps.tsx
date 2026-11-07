@@ -90,7 +90,7 @@ export default function OutlookInstallationSteps() {
         {currentSteps.map((step) => (
           <div
             key={step.num}
-            className="flex flex-col justify-start rounded-2xl border border-slate-200/90 bg-white p-6 shadow-2xs hover:border-slate-300 transition-all text-left"
+            className="flex flex-col justify-start rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-2xs hover:border-slate-300 transition-all text-left"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] border border-[#245FD4]/20 text-[#245FD4] font-heading text-sm font-bold mb-5">
               {step.num}
@@ -102,7 +102,7 @@ export default function OutlookInstallationSteps() {
               {step.title}
             </h3>
             <p
-              className="mt-2.5 font-body text-xs text-slate-600 leading-relaxed"
+              className="mt-2.5 font-body text-xs text-slate-600 leading-relaxed max-w-[280px]"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
               {step.desc}

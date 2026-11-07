@@ -167,7 +167,7 @@ export default function GmailSignatureGeneratorPage() {
               </div>
 
               {/* Right Column: Hero Interactive Editor/Preview Mockup */}
-              <div className="lg:col-span-6 flex justify-center">
+              <div className="lg:col-span-6 flex justify-center lg:justify-end">
                 <GmailGeneratorHeroMockup />
               </div>
             </div>

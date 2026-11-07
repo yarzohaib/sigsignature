@@ -169,7 +169,7 @@ export default function OutlookSignatureGeneratorPage() {
               </div>
 
               {/* Right Column: Hero Interactive Editor/Preview Mockup */}
-              <div className="lg:col-span-6 flex justify-center">
+              <div className="lg:col-span-6 flex justify-center lg:justify-end">
                 <OutlookGeneratorHeroMockup />
               </div>
             </div>
