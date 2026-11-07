@@ -111,9 +111,9 @@ const isAuthenticated =
 
   return (
     <footer
-      className="bg-[#FCFCFC] pt-[15px] font-body text-slate-600"
+      className="bg-[#FCFCFC] pt-[35px] font-body text-slate-600"
       style={{
-        paddingBottom: "max(2px, env(safe-area-inset-bottom, 2px))",
+        paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))",
       }}
     >
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
@@ -320,7 +320,7 @@ const isAuthenticated =
       <div className="mt-10 sm:mt-12 w-full border-t border-[#D7D7D7]" />
 
       {/* Bottom Legal & Copyright Bar */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-3 pb-[2px] 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12 pt-3 2xl:max-w-[1536px] 3xl:max-w-[1720px]">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-xs sm:text-[13px] text-[#878787]">
           <p className="flex flex-wrap items-center justify-center sm:justify-start gap-1">
             <span>© 2026 Sig Signature. All rights reserved.</span>
