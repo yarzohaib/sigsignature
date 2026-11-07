@@ -125,8 +125,7 @@ export default function GmailSignatureGeneratorPage() {
                   className="font-heading text-4xl sm:text-5xl lg:text-[56px] font-semibold text-slate-900 tracking-tight leading-[1.12]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  Gmail <span className="text-[#245FD4]">Signature</span> <br />
-                  Generator
+                  Create HTML Signature for Gmail
                 </h1>
 
                 <p
