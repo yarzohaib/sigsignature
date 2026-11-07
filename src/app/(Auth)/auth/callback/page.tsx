@@ -181,8 +181,6 @@ function AuthCallbackContent() {
       <InfinityLoader
         fullScreen={false}
         size="md"
-        title="Signing you in"
-        subtitle="Please wait while we set up your session..."
       />
     </div>
   );
@@ -196,8 +194,6 @@ export default function AuthCallbackPage() {
           <InfinityLoader
             fullScreen={false}
             size="md"
-            title="Signing you in"
-            subtitle="Please wait while we set up your session..."
           />
         </div>
       }
