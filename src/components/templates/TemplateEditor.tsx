@@ -969,6 +969,7 @@ export default function TemplateEditor({
                       )}
                     </div>
                     <input
+                      name="fullName"
                       type="text"
                       value={formData.fullName}
                       maxLength={MAX_LENGTH.NAME}
@@ -995,6 +996,7 @@ export default function TemplateEditor({
                       </label>
                     </div>
                     <input
+                      name="jobTitle"
                       type="text"
                       value={formData.jobTitle}
                       maxLength={MAX_LENGTH.JOB_TITLE}
@@ -1021,6 +1023,7 @@ export default function TemplateEditor({
                         )}
                       </div>
                       <input
+                        name="companyName"
                         type="text"
                         value={formData.companyName}
                         maxLength={MAX_LENGTH.COMPANY}
@@ -1048,6 +1051,7 @@ export default function TemplateEditor({
                       </label>
                     </div>
                     <input
+                      name="email"
                       type="email"
                       value={formData.email}
                       maxLength={MAX_LENGTH.EMAIL}
@@ -1071,6 +1075,7 @@ export default function TemplateEditor({
                       </label>
                     </div>
                     <input
+                      name="phone"
                       type="text"
                       value={formData.phone}
                       maxLength={MAX_LENGTH.PHONE}
@@ -1094,6 +1099,7 @@ export default function TemplateEditor({
                       </label>
                     </div>
                     <input
+                      name="websiteUrl"
                       type="text"
                       value={formData.website}
                       maxLength={MAX_LENGTH.WEBSITE}

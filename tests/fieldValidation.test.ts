@@ -107,20 +107,20 @@ describe("Field Validation & Sanitization System", () => {
   });
 
   test("MAX_LENGTH constants are configured for all field types", () => {
-    assert.equal(MAX_LENGTH.NAME, 40);
+    assert.equal(MAX_LENGTH.NAME, 20);
     assert.equal(MAX_LENGTH.FIRST_NAME, 20);
     assert.equal(MAX_LENGTH.LAST_NAME, 20);
     assert.equal(MIN_LENGTH.FIRST_NAME, 2);
-    assert.equal(MAX_LENGTH.JOB_TITLE, 30);
-    assert.equal(MAX_LENGTH.COMPANY, 30);
-    assert.equal(MAX_LENGTH.EMAIL, 40);
+    assert.equal(MAX_LENGTH.JOB_TITLE, 24);
+    assert.equal(MAX_LENGTH.COMPANY, 24);
+    assert.equal(MAX_LENGTH.EMAIL, 30);
     assert.equal(MAX_LENGTH.PHONE, 25);
-    assert.equal(MAX_LENGTH.WEBSITE, 50);
+    assert.equal(MAX_LENGTH.WEBSITE, 40);
     assert.equal(MAX_LENGTH.TAGLINE, 50);
     assert.equal(MAX_LENGTH.ADDRESS, 60);
     assert.equal(MAX_LENGTH.DISCLAIMER, 300);
     assert.equal(MAX_LENGTH.SOCIAL_URL, 50);
-    assert.equal(MAX_LENGTH.URL, 50);
+    assert.equal(MAX_LENGTH.URL, 40);
     assert.equal(MAX_LENGTH.PASSWORD, 128);
     assert.equal(MAX_LENGTH.MESSAGE, 2000);
   });
