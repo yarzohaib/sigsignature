@@ -266,3 +266,50 @@ export function parseInstagramField(raw?: string): { handle: string; url: string
     url: `https://instagram.com/${username}`,
   };
 }
+
+/**
+ * Expected profile photo border-radius for each template design.
+ * Templates using 50% render circular avatars, while others render rounded squares/rectangles.
+ */
+export const TEMPLATE_PHOTO_BORDER_RADIUS: Record<string, string> = {
+  "big-name": "50%",
+  "boardroom-corporate": "4px",
+  "bold-block": "6px",
+  "bold-gradient": "10px",
+  "centered-minimal": "50%",
+  "clean-line": "50%",
+  "color-block": "10px",
+  "compact": "8px",
+  "horizontal": "50%",
+  "minimal-clean": "10px",
+  "modern-dark": "50%",
+  "pastel-creative": "50%",
+  "photo-pop": "50%",
+  "professional-minimal": "10px",
+  "ribbon": "8px",
+  "single": "50%",
+  "split-banner": "8px",
+  "two-column": "12px",
+};
+
+/**
+ * Returns the photo container mask shape and border-radius for a given template ID.
+ */
+export function getTemplatePhotoShape(templateId?: string): {
+  cropShape: "round" | "rect";
+  borderRadius?: string;
+  isCircular: boolean;
+} {
+  if (!templateId) {
+    return { cropShape: "round", borderRadius: "50%", isCircular: true };
+  }
+  const normalizedId = templateId.trim().toLowerCase().replace(/_/g, "-").replace(/^\d+[-_]?/, "");
+  const br = TEMPLATE_PHOTO_BORDER_RADIUS[normalizedId] || TEMPLATE_PHOTO_BORDER_RADIUS[templateId] || "50%";
+  const isCircular = br === "50%";
+  return {
+    cropShape: isCircular ? "round" : "rect",
+    borderRadius: br,
+    isCircular,
+  };
+}
+

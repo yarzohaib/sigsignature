@@ -14,6 +14,7 @@ export interface ImageCropModalProps {
   description?: string;
   aspect?: number;
   cropShape?: "rect" | "round";
+  cropAreaBorderRadius?: string;
 }
 
 export default function ImageCropModal({
@@ -23,9 +24,10 @@ export default function ImageCropModal({
   onClose,
   onApply,
   title = "Crop Profile Photo",
-  description = "Drag to reposition your photo and use the slider to scale your face into the circle.",
+  description,
   aspect = 1,
   cropShape = "round",
+  cropAreaBorderRadius,
 }: ImageCropModalProps) {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -34,6 +36,18 @@ export default function ImageCropModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const defaultDescription =
+    cropShape === "round"
+      ? "Drag to reposition your photo and use the slider to scale your face into the circle."
+      : "Drag to reposition your photo and use the slider to scale your photo into the frame.";
+  const modalDescription = description ?? defaultDescription;
+
+  // Custom style for cropArea to support exact template border-radius
+  const effectiveCropAreaStyle: React.CSSProperties | undefined =
+    cropAreaBorderRadius
+      ? { borderRadius: cropAreaBorderRadius }
+      : undefined;
 
   // Reset states whenever modal opens with a new image
   useEffect(() => {
@@ -128,7 +142,7 @@ export default function ImageCropModal({
               className="text-xs text-slate-500 mt-0.5 line-clamp-1"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              {description}
+              {modalDescription}
             </p>
           </div>
           <button
@@ -152,6 +166,8 @@ export default function ImageCropModal({
             zoom={zoom}
             aspect={aspect}
             cropShape={cropShape}
+            cropSize={undefined}
+            style={effectiveCropAreaStyle ? { cropAreaStyle: effectiveCropAreaStyle } : undefined}
             showGrid={false}
             onCropChange={setCrop}
             onZoomChange={setZoom}

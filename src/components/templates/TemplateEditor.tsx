@@ -24,6 +24,7 @@ import {
 import {
   VALID_TEMPLATE_FONTS,
   mapToValidTemplateFont,
+  getTemplatePhotoShape,
 } from "@/lib/templates/designs/shared";
 import SaveSuccessModal from "@/components/signatures/SaveSuccessModal";
 import LimitOverwriteModal from "@/components/signatures/LimitOverwriteModal";
@@ -107,6 +108,10 @@ export default function TemplateEditor({
   }, [template.id, initialData?.layout, template.defaultData.layout]);
 
   const supportsProfilePhoto = optionalCapabilities.supportsProfilePhoto;
+  const templatePhotoShape = useMemo(
+    () => getTemplatePhotoShape(template.id),
+    [template.id]
+  );
   const supportsCompanyLogo = optionalCapabilities.supportsCompanyLogo;
   const supportsCompanyName = optionalCapabilities.supportsCompanyName;
   const hasBrandingSection = supportsCompanyLogo || optionalCapabilities.supportsTagline;
@@ -887,7 +892,10 @@ export default function TemplateEditor({
                 {supportsProfilePhoto && (
                   <div className="rounded-xl border border-dashed border-slate-300 bg-[#F8FAFC] p-3 sm:p-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center shadow-xs">
+                    <div
+                      className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center shadow-xs"
+                      style={templatePhotoShape.isCircular ? { borderRadius: "50%" } : templatePhotoShape.borderRadius ? { borderRadius: templatePhotoShape.borderRadius } : undefined}
+                    >
                       {formData.avatarUrl ? (
                         <Image
                           src={formData.avatarUrl}
@@ -1502,6 +1510,8 @@ export default function TemplateEditor({
         isOpen={Boolean(avatarCropSrc)}
         imageSrc={avatarCropSrc}
         fileName={avatarCropFileName}
+        cropShape={templatePhotoShape.cropShape}
+        cropAreaBorderRadius={templatePhotoShape.borderRadius}
         onClose={handleCloseAvatarCrop}
         onApply={handleApplyAvatarCrop}
       />
