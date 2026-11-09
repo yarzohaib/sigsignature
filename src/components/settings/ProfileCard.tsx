@@ -90,7 +90,7 @@ export default function ProfileCard({
   };
 
   return (
-    <div className="rounded-2xl border border-[#E1E6EF] bg-white p-6 shadow-xs">
+    <div id="profile" className="scroll-mt-24 rounded-2xl border border-[#E1E6EF] bg-white p-6 shadow-xs">
       {/* Header */}
       <div className="flex items-start gap-3 pb-5 border-b border-[#F1F5F9]">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4]">
