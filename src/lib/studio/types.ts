@@ -551,7 +551,8 @@ export function studioReducer(
     case "ARRANGE_PRESET": {
       const currentElements = state.elements || [];
       const canvas = state.canvas || { width: 600, height: 200 };
-      const result = arrangeElements(action.payload.preset, currentElements, canvas.width);
+      const shape = state.design?.shape || "rounded";
+      const result = arrangeElements(action.payload.preset, currentElements, canvas.width, shape);
 
       return {
         ...state,

@@ -44,9 +44,9 @@ export type ThemePresetName = keyof typeof THEME_PRESETS;
 export function getSocialIconSize(elementWidth: number, iconCount?: number): number {
   if (typeof iconCount === "number" && iconCount > 0) {
     const divisor = iconCount + (iconCount - 1) * 0.3;
-    return Math.max(12, Math.min(48, Math.round(elementWidth / Math.max(1, divisor))));
+    return Math.max(12, Math.min(48, Math.floor(elementWidth / Math.max(1, divisor))));
   }
-  return Math.max(8, Math.min(48, Math.round(elementWidth / 7)));
+  return Math.max(8, Math.min(48, Math.floor(elementWidth / 7)));
 }
 
 export function getSocialElementHeight(elementWidth: number): number {

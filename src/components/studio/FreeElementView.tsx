@@ -517,7 +517,7 @@ export default function FreeElementView({
         }
 
         return (
-          <div className="w-full h-full flex items-center select-none overflow-hidden" style={{ gap: `${iconGap}px` }}>
+          <div className="w-full h-full flex items-center select-none" style={{ gap: `${iconGap}px` }}>
             {displayNetworks.map((n) => {
               const iconUrl =
                 getSocialIconSvgDataUrl(style, themeColor, n.network) ||

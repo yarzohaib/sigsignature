@@ -24,7 +24,7 @@ export default function BlogListSection() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <section id="journal" className="scroll-mt-24 pt-4 pb-16 sm:pt-6 sm:pb-20 lg:pt-8 lg:pb-24">
+    <section id="journal" className="scroll-mt-24 pt-4 sm:pt-6 lg:pt-8">
       <div className="mx-auto max-w-[1288px] px-4 sm:px-6 lg:px-8">
         {/* Section Header Row matching Figma: Title + Search */}
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -191,7 +191,7 @@ export default function BlogListSection() {
         )}
 
         {/* Integration Row matching Figma: "Your signature. At home in your inbox." */}
-        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-slate-200/80 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 text-left">
+        <div className="mt-12 sm:mt-16 py-10 sm:py-12 border-t border-slate-200/80 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 text-left">
           <div>
             <h3
               className="font-heading text-2xl sm:text-3xl lg:text-[34px] font-medium text-[#101B30] tracking-[-0.03em] leading-[1.3]"

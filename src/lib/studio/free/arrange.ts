@@ -13,7 +13,8 @@ export interface ArrangeResult {
 export function arrangeElements(
   preset: "single" | "two-column" | "compact",
   elements: FreeElement[],
-  canvasWidth = 600
+  canvasWidth = 600,
+  shape: "square" | "rounded" | "pill" = "rounded"
 ): ArrangeResult {
   if (elements.length === 0) {
     return { elements: [], canvasHeight: 200 };
@@ -26,37 +27,44 @@ export function arrangeElements(
   });
 
   if (preset === "single") {
-    return arrangeSingle(sorted, canvasWidth);
+    return arrangeSingle(sorted, canvasWidth, shape);
   } else if (preset === "two-column") {
-    return arrangeTwoColumn(sorted, canvasWidth);
+    return arrangeTwoColumn(sorted, canvasWidth, shape);
   } else {
-    return arrangeCompact(sorted, canvasWidth);
+    return arrangeCompact(sorted, canvasWidth, shape);
   }
 }
 
 /**
- * Single: Everything stacked vertically at x: 0 in order, 8px gaps, media keeps size.
+ * Single: Everything stacked vertically at x: 0 (or safe inset for pill) in order, 8px gaps, media keeps size.
  */
-function arrangeSingle(elements: FreeElement[], canvasWidth: number): ArrangeResult {
-  let currY = 8;
+function arrangeSingle(
+  elements: FreeElement[],
+  canvasWidth: number,
+  shape: "square" | "rounded" | "pill" = "rounded"
+): ArrangeResult {
+  // Pill shape requires horizontal inset to avoid corner curvature clipping
+  const insetX = shape === "pill" ? 54 : 0;
+  const usableWidth = canvasWidth - insetX * 2;
+  let currY = shape === "pill" ? 14 : 8;
   const result: FreeElement[] = [];
 
   for (const el of elements) {
     let w = el.w;
     let h = el.h;
-    const x = 0;
+    const x = insetX;
 
     if (el.type === "banner") {
-      w = canvasWidth;
+      w = usableWidth;
       h = Math.min(160, Math.max(40, el.h));
     } else if (el.type === "divider") {
-      w = canvasWidth;
+      w = usableWidth;
       h = Math.max(1, el.thickness || 1);
       (el as FreeDividerElement).orientation = "horizontal";
     } else if (el.type === "text") {
-      w = Math.min(canvasWidth, Math.max(el.w, 240));
+      w = Math.min(usableWidth, Math.max(el.w, 240));
     } else {
-      w = Math.min(canvasWidth, el.w);
+      w = Math.min(usableWidth, el.w);
     }
 
     result.push({
@@ -70,7 +78,7 @@ function arrangeSingle(elements: FreeElement[], canvasWidth: number): ArrangeRes
     currY += h + 8;
   }
 
-  const canvasHeight = Math.max(120, Math.min(480, snap(currY + 16, 8)));
+  const canvasHeight = Math.max(120, Math.min(480, snap(currY + (shape === "pill" ? 20 : 16), 8)));
   return { elements: result, canvasHeight };
 }
 
@@ -81,8 +89,14 @@ function arrangeSingle(elements: FreeElement[], canvasWidth: number): ArrangeRes
  * - A vertical divider (existing or auto inserted) at the column gap.
  * - All other elements in a right column starting at x = leftWidth + 20 with width = canvas width - x.
  */
-function arrangeTwoColumn(elements: FreeElement[], canvasWidth: number): ArrangeResult {
+function arrangeTwoColumn(
+  elements: FreeElement[],
+  canvasWidth: number,
+  shape: "square" | "rounded" | "pill" = "rounded"
+): ArrangeResult {
   const result: FreeElement[] = [];
+  const insetX = shape === "pill" ? 48 : 0;
+  const usableWidth = canvasWidth - insetX * 2;
 
   const banners = elements.filter((el) => el.type === "banner");
   const media = elements.filter((el) => el.type === "image" || el.type === "logo");
@@ -212,7 +226,11 @@ function arrangeTwoColumn(elements: FreeElement[], canvasWidth: number): Arrange
  * - Social, CTA and divider elements placed in one tidy row below.
  * - Margins reduced. Visibly differs from Two Column.
  */
-function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeResult {
+function arrangeCompact(
+  elements: FreeElement[],
+  canvasWidth: number,
+  shape: "square" | "rounded" | "pill" = "rounded"
+): ArrangeResult {
   const result: FreeElement[] = [];
 
   const banners = elements.filter((el) => el.type === "banner");
@@ -222,16 +240,19 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
   const socials = elements.filter((el) => el.type === "social");
   const dividers = elements.filter((el) => el.type === "divider");
 
-  let startY = 8;
+  // Pill shape requires horizontal inset to avoid corner curvature clipping
+  const insetX = shape === "pill" ? 54 : 0;
+  const usableWidth = canvasWidth - insetX * 2;
+  let startY = shape === "pill" ? 14 : 8;
 
   // Banners at top if any
   for (const banner of banners) {
     const bannerH = Math.min(100, Math.max(30, banner.h));
     result.push({
       ...banner,
-      x: 0,
+      x: insetX,
       y: startY,
-      w: canvasWidth,
+      w: usableWidth,
       h: bannerH,
     });
     startY += bannerH + 6;
@@ -240,8 +261,8 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
   const firstImg = images[0];
   const otherImgs = images.slice(1);
 
-  const textStartX = firstImg ? 54 : 0;
-  const textWidth = canvasWidth - textStartX;
+  const textStartX = insetX + (firstImg ? 54 : 0);
+  const textWidth = canvasWidth - textStartX - insetX;
   let textStackY = startY;
 
   // Format texts: first text md bold, rest sm
@@ -269,7 +290,7 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
     const imgY = Math.max(startY, startY + Math.round((Math.max(imgSize, textStackHeight) - imgSize) / 2));
     result.push({
       ...firstImg,
-      x: 0,
+      x: insetX,
       y: imgY,
       w: imgSize,
       h: imgSize,
@@ -288,21 +309,21 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
       type: "divider",
       orientation: "horizontal",
       thickness: 1,
-      x: 0,
+      x: insetX,
       y: bottomRowY,
-      w: canvasWidth,
+      w: usableWidth,
       h: 1,
     });
     bottomRowY += 6;
   }
 
   // Bottom row items in one tidy horizontal line
-  let rowX = 0;
+  let rowX = insetX;
 
   for (const soc of socials) {
     const w = 120;
     const h = 20;
-    if (rowX + w <= canvasWidth) {
+    if (rowX + w <= canvasWidth - insetX) {
       result.push({
         ...soc,
         x: rowX,
@@ -317,7 +338,7 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
   for (const cta of ctas) {
     const w = Math.min(120, cta.w);
     const h = 28;
-    if (rowX + w <= canvasWidth) {
+    if (rowX + w <= canvasWidth - insetX) {
       result.push({
         ...cta,
         x: rowX,
@@ -332,7 +353,7 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
   for (const img of otherImgs) {
     const w = Math.min(36, img.w);
     const h = Math.min(36, img.h);
-    if (rowX + w <= canvasWidth) {
+    if (rowX + w <= canvasWidth - insetX) {
       result.push({
         ...img,
         x: rowX,
@@ -345,6 +366,6 @@ function arrangeCompact(elements: FreeElement[], canvasWidth: number): ArrangeRe
   }
 
   const maxBottom = result.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-  const canvasHeight = Math.max(120, Math.min(480, snap(maxBottom + 16, 8)));
+  const canvasHeight = Math.max(120, Math.min(480, snap(maxBottom + (shape === "pill" ? 20 : 16), 8)));
   return { elements: result, canvasHeight };
 }
