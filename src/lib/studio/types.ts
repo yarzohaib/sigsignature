@@ -432,12 +432,9 @@ export function studioReducer(
       const nextElements = currentElements.map((el) =>
         el.id === action.payload.id ? finalEl : el
       );
-      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
 
       return {
         ...state,
-        canvas: { width: 600, height: nextHeight },
         elements: nextElements,
       };
     }
@@ -465,12 +462,9 @@ export function studioReducer(
       const nextElements = currentElements.map((el) =>
         el.id === action.payload.id ? finalEl : el
       );
-      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
 
       return {
         ...state,
-        canvas: { width: 600, height: nextHeight },
         elements: nextElements,
       };
     }
@@ -500,12 +494,9 @@ export function studioReducer(
       const nextElements = currentElements.map((el) =>
         el.id === action.payload.id ? finalEl : el
       );
-      const maxBottom = nextElements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-      const nextHeight = Math.max(canvas.height, Math.min(480, snap(maxBottom + 24, 8)));
 
       return {
         ...state,
-        canvas: { width: 600, height: nextHeight },
         elements: nextElements,
       };
     }

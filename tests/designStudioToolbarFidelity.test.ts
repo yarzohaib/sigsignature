@@ -66,4 +66,21 @@ test("Design Studio Floating Toolbar & Dropdown Fidelity", async (t) => {
       "Top badge must position inside element bounds (top-0.5) when element is positioned at y < 14"
     );
   });
+
+  await t.test("MOVE_ELEMENT preserves canvas height and does not glitch-expand canvas when dragged to bottom boundary", () => {
+    const typesFile = fs.readFileSync(
+      path.resolve(process.cwd(), "src/lib/studio/types.ts"),
+      "utf8"
+    );
+    // Ensure MOVE_ELEMENT does not recalculate nextHeight with maxBottom + 24
+    const moveElementBlock = typesFile.slice(
+      typesFile.indexOf('case "MOVE_ELEMENT":'),
+      typesFile.indexOf('case "RESIZE_ELEMENT":')
+    );
+    assert.doesNotMatch(
+      moveElementBlock,
+      /snap\(maxBottom \+ 24/,
+      "MOVE_ELEMENT should not auto-expand canvas height with snap(maxBottom + 24) on drop"
+    );
+  });
 });

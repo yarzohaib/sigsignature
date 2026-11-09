@@ -93,11 +93,11 @@ export default function FreeCanvas({
   const shape = data.design?.shape || "rounded";
   const cardRadius = getShapeBorderRadius(shape, "card", canvasHeight);
 
-  // Auto-grow canvas height if elements exceed bottom + 24
+  // Auto-grow canvas height if elements exceed canvas height (e.g. from text edit or adding elements)
   useEffect(() => {
     if (elements.length === 0) return;
     const lowestBottom = elements.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-    const requiredMin = Math.max(120, Math.min(480, lowestBottom + 24));
+    const requiredMin = Math.max(120, Math.min(480, lowestBottom));
     if (canvasHeight < requiredMin) {
       dispatch({ type: "SET_CANVAS_HEIGHT", payload: { height: requiredMin } });
     }
