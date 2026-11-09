@@ -97,7 +97,7 @@ export default function CategoryCards() {
               key={cat.slug}
               href={`/help/guides?category=${cat.slug}`}
               aria-current={isActive ? "page" : undefined}
-              className={`group flex h-full min-h-[220px] flex-col rounded-2xl border p-5 sm:p-6 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
+              className={`group flex h-full flex-col justify-between rounded-2xl border p-6 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#245FD4] ${
                 isActive
                   ? "border-blue-600 bg-[#EFF6FF] ring-2 ring-blue-600/20 shadow-sm"
                   : "border-[#E2E8F0] bg-white hover:border-[#245FD4]/40 hover:shadow-sm"
@@ -122,9 +122,9 @@ export default function CategoryCards() {
                   {cat.guideCount} guides
                 </span>
               </div>
-              <div className="flex flex-1 flex-col">
+              <div className="flex flex-col">
                 <h3
-                  className={`min-h-12 text-base font-bold leading-6 transition-colors ${
+                  className={`text-base font-bold leading-6 mb-1.5 transition-colors ${
                     isActive ? "text-[#245FD4]" : "text-[#1E293B] group-hover:text-[#245FD4]"
                   }`}
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
@@ -132,7 +132,7 @@ export default function CategoryCards() {
                   {cat.title}
                 </h3>
                 <p
-                  className="mt-1.5 min-h-10 text-xs leading-5 text-[#64748B] sm:text-[13px]"
+                  className="min-h-[38px] text-xs leading-5 text-[#64748B] sm:text-[13px]"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   {cat.description}
