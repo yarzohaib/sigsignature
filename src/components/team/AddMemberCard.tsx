@@ -69,7 +69,7 @@ export default function AddMemberCard({
         className="mt-3 text-[15px] font-bold text-[#0B1A3D] group-hover:text-[#245FD4] transition"
         style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
       >
-        Add Teammate
+        Add Team Member
       </h4>
       <p
         className="mt-1 text-xs text-[#64748B]"

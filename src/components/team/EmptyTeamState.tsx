@@ -100,7 +100,7 @@ export default function EmptyTeamState({ onCreateSignature }: EmptyTeamStateProp
               className="mt-1 text-xs sm:text-sm text-[#64748B]"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              Pick a template, add your teammate&apos;s details.
+              Pick a template, add your team member&apos;s details.
             </p>
           </div>
 
@@ -143,7 +143,7 @@ export default function EmptyTeamState({ onCreateSignature }: EmptyTeamStateProp
               className="mt-1 text-xs sm:text-sm text-[#64748B]"
               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              Your teammate gets it ready to paste into Gmail or Outlook.
+              Your team member gets it ready to paste into Gmail or Outlook.
             </p>
           </div>
 

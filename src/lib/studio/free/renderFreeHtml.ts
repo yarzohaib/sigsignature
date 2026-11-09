@@ -215,7 +215,7 @@ export function generateFreeHtml(
       <img src="${iconUrl}" width="16" height="16" alt="${escapeHtml(textEl.icon)}" style="display:block;border:0;outline:none;text-decoration:none;margin-top:1px;" />
     </td>
     <td valign="top" style="vertical-align:top;padding:0;">
-      <div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:break-word;white-space:pre-wrap;">
+      <div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${textWidth}px;max-width:${textWidth}px;margin:0;padding:0;word-break:normal;overflow-wrap:normal;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">
         ${contentHtml}
       </div>
     </td>
@@ -223,7 +223,13 @@ export function generateFreeHtml(
 </table>`;
       }
 
-      return `<div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;word-break:break-word;white-space:pre-wrap;">
+      // Check if text contains explicit manual line breaks
+      const isMultiLine = (textEl.text || "").includes("\n");
+      const wordBreakStyle = isMultiLine
+        ? "word-break:break-word;white-space:pre-wrap;"
+        : "word-break:normal;overflow-wrap:normal;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;";
+
+      return `<div style="font-family:${elFontStack};font-size:${fontSize}px;line-height:${lineHeight}px;font-weight:${fontWeight};color:${color};text-align:${align};width:${el.w}px;max-width:${el.w}px;margin:0;padding:0;${wordBreakStyle}">
   ${contentHtml}
 </div>`;
     }
