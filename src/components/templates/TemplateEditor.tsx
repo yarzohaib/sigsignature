@@ -1446,12 +1446,12 @@ export default function TemplateEditor({
       {toastMessage && (
         <div
           className={`fixed bottom-6 right-6 z-50 flex items-start gap-3 rounded-xl border bg-white p-4 shadow-xl animate-in slide-in-from-bottom-5 duration-200 ${
-            toastMessage.isError ? "border-red-200" : "border-emerald-100"
+            toastMessage.isError ? "border-red-200" : "border-[#BFDBFE]"
           }`}
         >
           <div
             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-              toastMessage.isError ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+              toastMessage.isError ? "bg-red-50 text-red-600" : "bg-blue-50 text-[#245FD4]"
             }`}
           >
             {toastMessage.isError ? (
