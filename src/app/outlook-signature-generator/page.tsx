@@ -184,7 +184,7 @@ export default function OutlookSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                More than a name at the end of an email.
+                More than a <span className="text-[#245FD4]">name</span> at the end of an email.
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -205,7 +205,7 @@ export default function OutlookSignatureGeneratorPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  className="font-heading text-lg sm:text-xl font-bold leading-tight text-slate-900 md:min-h-[3.5rem]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Templates & Blank-Canvas Creation
@@ -227,7 +227,7 @@ export default function OutlookSignatureGeneratorPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  className="font-heading text-lg sm:text-xl font-bold leading-tight text-slate-900 md:min-h-[3.5rem]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Live Preview as You Design
@@ -249,10 +249,10 @@ export default function OutlookSignatureGeneratorPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  className="font-heading text-lg sm:text-xl font-bold leading-tight text-slate-900 md:min-h-[3.5rem]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  Tested for Outlook & Microsoft 365
+                  Tested for Outlook & <span className="whitespace-nowrap">Microsoft 365</span>
                 </h3>
                 <p
                   className="mt-2.5 font-body text-xs sm:text-sm text-slate-600 leading-relaxed"
@@ -273,7 +273,7 @@ export default function OutlookSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Outlook signature templates, with room for your style.
+                <span className="text-[#245FD4]">Outlook signature templates</span>, with room for your style.
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -318,7 +318,7 @@ export default function OutlookSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Create a signature that is ready for business.
+                Create a signature that is <span className="text-[#245FD4]">ready for business.</span>
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -411,7 +411,7 @@ export default function OutlookSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                How to Add HTML Signature to Outlook
+                How to Add <span className="text-[#245FD4]">HTML Signature</span> to Outlook
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -433,7 +433,7 @@ export default function OutlookSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Frequently Asked Questions
+                Frequently Asked <span className="text-[#245FD4]">Questions</span>
               </h2>
               <p
                 className="mt-3 font-body text-sm sm:text-base text-slate-600"
@@ -461,7 +461,7 @@ export default function OutlookSignatureGeneratorPage() {
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               Your Outlook signature. <br />
-              Thoughtfully designed. Unmistakably you.
+              Thoughtfully designed. <span className="text-blue-200">Unmistakably you.</span>
             </h2>
             <p
               className="mt-4 font-body text-sm sm:text-base text-white/85 leading-relaxed max-w-xl mx-auto"

@@ -56,11 +56,17 @@ export default function GmailFaqAccordion({ items }: GmailFaqAccordionProps) {
                 </svg>
               </span>
             </button>
-            {isOpen && (
-              <div className="px-5 pb-5 sm:px-6 sm:pb-6 font-body text-xs sm:text-sm text-[#475569] leading-relaxed border-t border-slate-100 pt-4 bg-slate-50/20">
-                <p className="whitespace-pre-line">{item.answer}</p>
+            <div
+              className={`grid transition-all duration-300 ease-in-out ${
+                isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="px-5 pb-5 sm:px-6 sm:pb-6 font-body text-xs sm:text-sm text-[#475569] leading-relaxed border-t border-slate-100 pt-4 bg-slate-50/20">
+                  <p className="whitespace-pre-line">{item.answer}</p>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         );
       })}

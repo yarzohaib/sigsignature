@@ -121,11 +121,16 @@ export default function GmailSignatureGeneratorPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Left Column: Heading, intro copy, CTA buttons */}
               <div className="lg:col-span-6 text-left">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#245FD4]/20 bg-[#EFF6FF] px-3.5 py-1 text-xs font-semibold text-[#245FD4] shadow-2xs">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#245FD4]" />
+                  <span>Engineered for Gmail & Google Workspace</span>
+                </div>
                 <h1
                   className="font-heading text-4xl sm:text-5xl lg:text-[56px] font-semibold text-slate-900 tracking-tight leading-[1.12]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
-                  Create HTML Signature for Gmail
+                  Create HTML <br />
+                  <span className="text-[#245FD4]">Signature</span> for Gmail
                 </h1>
 
                 <p
@@ -181,7 +186,7 @@ export default function GmailSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                More than a name at the end of an email.
+                More than a <span className="text-[#245FD4]">name</span> at the end of an email.
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -202,7 +207,7 @@ export default function GmailSignatureGeneratorPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  className="font-heading text-lg sm:text-xl font-bold leading-tight text-slate-900 md:min-h-[3.5rem]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Templates & Blank-Canvas Creation
@@ -224,7 +229,7 @@ export default function GmailSignatureGeneratorPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  className="font-heading text-lg sm:text-xl font-bold leading-tight text-slate-900 md:min-h-[3.5rem]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Live Preview as You Design
@@ -246,7 +251,7 @@ export default function GmailSignatureGeneratorPage() {
                   </svg>
                 </div>
                 <h3
-                  className="font-heading text-lg sm:text-xl font-bold text-slate-900"
+                  className="font-heading text-lg sm:text-xl font-bold leading-tight text-slate-900 md:min-h-[3.5rem]"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   Tested for Gmail & Google Workspace
@@ -270,7 +275,7 @@ export default function GmailSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Gmail signature templates, with room for your style.
+                <span className="text-[#245FD4]">Gmail signature templates</span>, with room for your style.
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -303,7 +308,7 @@ export default function GmailSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Create a signature that is ready for business.
+                Create a signature that is <span className="text-[#245FD4]">ready for business.</span>
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -396,7 +401,7 @@ export default function GmailSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                How to Insert HTML Signature in Gmail
+                How to Insert <span className="text-[#245FD4]">HTML Signature</span> in Gmail
               </h2>
               <p
                 className="mt-3.5 font-body text-sm sm:text-base text-slate-600 leading-relaxed"
@@ -418,7 +423,7 @@ export default function GmailSignatureGeneratorPage() {
                 className="font-heading text-2xl sm:text-3xl lg:text-[42px] font-semibold text-slate-900 tracking-tight leading-[1.2]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Frequently Asked Questions
+                Frequently Asked <span className="text-[#245FD4]">Questions</span>
               </h2>
               <p
                 className="mt-3 font-body text-sm sm:text-base text-slate-600"
@@ -446,7 +451,7 @@ export default function GmailSignatureGeneratorPage() {
               style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
             >
               Your Gmail signature. <br />
-              Thoughtfully designed. Unmistakably you.
+              Thoughtfully designed. <span className="text-blue-200">Unmistakably you.</span>
             </h2>
             <p
               className="mt-4 font-body text-sm sm:text-base text-white/85 leading-relaxed max-w-xl mx-auto"
