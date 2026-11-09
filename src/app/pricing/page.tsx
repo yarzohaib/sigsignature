@@ -93,7 +93,7 @@ function PricingContent() {
       <main
         className={`flex w-full flex-1 flex-col justify-start gap-6 px-4 py-6 sm:px-6 sm:py-7 sm:gap-8 lg:px-8 lg:py-8 ${
           fromSidebar
-            ? "xl:px-10 2xl:px-12 w-full"
+            ? "w-full xl:px-10 2xl:px-12"
             : "mx-auto max-w-[1440px] xl:px-12 2xl:max-w-[1536px] 3xl:max-w-[1720px]"
         }`}
       >
@@ -115,17 +115,11 @@ function PricingContent() {
           </p>
         </div>
 
-        {/* Plans Container: Balanced 495px cards with harmonious width and spacing */}
-        <div
-          className={`grid w-full grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-[clamp(3rem,6vw,8rem)] pt-1 items-stretch ${
-            fromSidebar ? "max-w-[1080px]" : "max-w-[1080px] xl:mx-auto"
-          }`}
-        >
+        {/* Plans Container: Fixed-size cards centered on wide screens */}
+        <div className="mx-auto grid w-full max-w-[1080px] grid-cols-1 items-stretch gap-8 pt-1 lg:grid-cols-2 lg:gap-10 xl:gap-12">
               {/* Basic Plan Card */}
               <div
-                className={`flex w-full max-w-[495px] flex-col justify-start rounded-[24px] border border-[#E2E8F0] bg-white ${
-                  fromSidebar ? "mx-auto lg:mx-0" : "mx-auto lg:mx-0 xl:mx-auto"
-                }`}
+                className="mx-auto flex w-full max-w-[495px] flex-col justify-start rounded-[24px] border border-[#E2E8F0] bg-white"
                 style={{
                   width: "100%",
                   maxWidth: "495px",
@@ -217,9 +211,7 @@ function PricingContent() {
 
               {/* Professional Plan Card */}
               <div
-                className={`relative flex w-full max-w-[495px] flex-col ${
-                  fromSidebar ? "mx-auto lg:mx-0" : "mx-auto lg:mx-0 xl:mx-auto"
-                }`}
+                className="relative mx-auto flex w-full max-w-[495px] flex-col"
                 style={{
                   width: "100%",
                   maxWidth: "495px",
@@ -348,9 +340,7 @@ function PricingContent() {
 
             {/* Questions, answered */}
             <section
-              className={`w-full shrink-0 mt-6 sm:mt-8 lg:mt-10 mb-8 ${
-                fromSidebar ? "max-w-[1080px]" : "max-w-[1080px] xl:max-w-none"
-              }`}
+              className="w-full shrink-0 mt-6 sm:mt-8 lg:mt-10 mb-8"
               aria-labelledby="pricing-faq-heading"
             >
               <div className="mb-6">
