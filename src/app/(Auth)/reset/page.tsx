@@ -20,6 +20,7 @@ function ResetPasswordForm() {
   }>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [countdown, setCountdown] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
 
   // Immediately sanitize address bar & browser history so the raw token is completely wiped from view
@@ -28,6 +29,24 @@ function ResetPasswordForm() {
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, [token]);
+
+  // Handle 3-second redirect countdown to /login upon successful password reset
+  useEffect(() => {
+    if (!isSuccessModalOpen) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push("/login?reset=success");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isSuccessModalOpen, router]);
 
   function validate(): boolean {
     const nextErrors: typeof errors = {};
@@ -121,14 +140,24 @@ function ResetPasswordForm() {
       {/* Feedback Modal */}
       <AuthFeedbackModal
         isOpen={isSuccessModalOpen}
-        onClose={() => router.push("/login")}
+        onClose={() => router.push("/login?reset=success")}
+        showCloseButton={false}
         icon="check"
         badge="SUCCESS"
         title="Password Reset Complete!"
-        description="Your password has been successfully updated. You can now securely log in to your account with your new credentials."
+        description={
+          <div className="space-y-2">
+            <p>
+              Your password has been successfully updated. You can now securely log in to your account with your new credentials.
+            </p>
+            <p className="text-xs font-medium text-slate-500">
+              Redirecting to log in in {countdown} {countdown === 1 ? "second" : "seconds"}...
+            </p>
+          </div>
+        }
         primaryAction={{
           label: "Proceed to Log In",
-          onClick: () => router.push("/login"),
+          onClick: () => router.push("/login?reset=success"),
         }}
       />
 

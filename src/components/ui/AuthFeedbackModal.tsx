@@ -6,6 +6,7 @@ import Link from "next/link";
 export type AuthFeedbackModalProps = {
   isOpen: boolean;
   onClose?: () => void;
+  showCloseButton?: boolean;
   icon?: "mail" | "check" | "key";
   badge?: string;
   title: string;
@@ -25,6 +26,7 @@ export type AuthFeedbackModalProps = {
 export default function AuthFeedbackModal({
   isOpen,
   onClose,
+  showCloseButton = true,
   icon = "mail",
   badge,
   title,
@@ -79,7 +81,7 @@ export default function AuthFeedbackModal({
         <div className="pointer-events-none absolute -top-24 left-1/2 h-56 w-72 -translate-x-1/2 rounded-full bg-brand/10 blur-3xl" />
 
         {/* Close Button */}
-        {onClose && (
+        {onClose && showCloseButton && (
           <button
             type="button"
             onClick={onClose}
