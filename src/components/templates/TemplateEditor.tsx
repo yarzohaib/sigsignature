@@ -118,6 +118,15 @@ export default function TemplateEditor({
     "bold-gradient",
   ].includes(template.id);
 
+  // Available color swatches including template's bespoke default color if not already present
+  const activeColorSwatches = useMemo(() => {
+    const bespoke = template.defaultData.themeColor;
+    if (bespoke && !SIGNATURE_COLOR_SWATCHES.some((s) => s.toLowerCase() === bespoke.toLowerCase())) {
+      return [bespoke, ...SIGNATURE_COLOR_SWATCHES];
+    }
+    return [...SIGNATURE_COLOR_SWATCHES];
+  }, [template.defaultData.themeColor]);
+
   // Current signature ID being edited (persisted after first save)
   const [currentSignatureId, setCurrentSignatureId] = useState<string | undefined>(editingSignatureId);
   const isEditing = Boolean(currentSignatureId);
@@ -128,7 +137,8 @@ export default function TemplateEditor({
     const base = initialData || template.defaultData;
     let font = mapToValidTemplateFont(base.fontFamily);
 
-    let themeColor = base.themeColor;
+    // For new signatures, initialize directly with template's curated themeColor
+    let themeColor = base.themeColor || template.defaultData.themeColor || "#245FD4";
     let avatarUrl = supportsProfilePhoto ? base.avatarUrl : "";
     let fullName = base.fullName;
     let companyName = base.companyName;
@@ -139,14 +149,6 @@ export default function TemplateEditor({
       const storedSettings = getStoredSettings();
       const storedUser = getStoredUser();
       const storedAvatar = getStoredAvatarUrl();
-
-      // Only override font/themeColor if the user explicitly customized them away from default blue
-      if (storedSettings?.signatureFont) {
-        font = mapToValidTemplateFont(storedSettings.signatureFont);
-      }
-      if (storedSettings?.brandColor && storedSettings.brandColor !== "#245FD4") {
-        themeColor = storedSettings.brandColor;
-      }
 
       if (storedUser) {
         const userFullName = `${storedUser.firstName || ""} ${storedUser.lastName || ""}`.trim();
@@ -298,15 +300,9 @@ export default function TemplateEditor({
         nextAvatar = storedAvatar;
       }
 
+      // Retain the template's designated font and themeColor for curated design fidelity
       let nextFont = prev.fontFamily;
-      if (storedSettings?.signatureFont) {
-        nextFont = mapToValidTemplateFont(storedSettings.signatureFont);
-      }
-
       let nextThemeColor = prev.themeColor;
-      if (storedSettings?.brandColor) {
-        nextThemeColor = storedSettings.brandColor;
-      }
 
       let nextFullName = prev.fullName;
       let nextCompanyName = prev.companyName;
@@ -816,13 +812,13 @@ export default function TemplateEditor({
         <div className="flex items-center gap-2 border-r border-slate-200/80 pr-3.5">
           <span className="text-[12px] font-medium text-[#64748B]">Colors</span>
           <div className="flex items-center gap-1.5">
-            {SIGNATURE_COLOR_SWATCHES.map((color) => (
+            {activeColorSwatches.map((color) => (
               <button
                 key={color}
                 type="button"
                 onClick={() => handleInputChange("themeColor", color)}
                 className={`h-5 w-5 rounded-full border transition-all ${
-                  formData.themeColor === color ? "scale-110 ring-2 ring-blue-400 ring-offset-1" : "border-slate-300 hover:scale-105"
+                  formData.themeColor.toLowerCase() === color.toLowerCase() ? "scale-110 ring-2 ring-blue-400 ring-offset-1" : "border-slate-300 hover:scale-105"
                 }`}
                 style={{ backgroundColor: color }}
                 aria-label={`Select color ${color}`}

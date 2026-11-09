@@ -118,7 +118,13 @@ function TemplatesContent() {
         const targetTemplateParam = templateParam || storedSelected;
 
         if (targetTemplateParam && !isCancelled) {
-          const matched = AVAILABLE_TEMPLATES.find((t) => t.id === targetTemplateParam);
+          const raw = targetTemplateParam.trim().toLowerCase();
+          const normalized = raw.replace(/^0*[0-9]+_/, "").replace(/[_\s]+/g, "-");
+          const matched =
+            AVAILABLE_TEMPLATES.find((t) => t.id.toLowerCase() === raw) ||
+            AVAILABLE_TEMPLATES.find((t) => t.id.toLowerCase() === normalized) ||
+            AVAILABLE_TEMPLATES.find((t) => t.name.toLowerCase() === raw);
+
           if (matched) {
             try {
               localStorage.removeItem("sig_selected_template");

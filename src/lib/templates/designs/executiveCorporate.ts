@@ -178,23 +178,23 @@ export function render(data: TemplateSignatureData): string {
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
           <!-- Left Logo Card -->
-          <td rowspan="4" align="center" valign="top" width="220" height="205" bgcolor="#353A3D" class="logo-card-cell" style="width:220px;height:205px;background-color:#353A3D;background-image:linear-gradient(#353A3D,#353A3D);border-radius:8px;padding:3px;box-sizing:border-box;">
+          <td rowspan="4" align="center" valign="top" width="220" height="205" bgcolor="#353A3D" class="logo-card-cell" style="width:220px;min-width:220px;max-width:220px;height:205px;background-color:#353A3D;background-image:linear-gradient(#353A3D,#353A3D);border-radius:8px;padding:3px;box-sizing:border-box;">
             ${leftLogoContent}
           </td>
           <!-- Spacer 1 -->
-          <td rowspan="4" width="16" class="spacer-cell" style="width:16px;font-size:1px;line-height:1px;">&nbsp;</td>
+          <td rowspan="4" width="16" class="spacer-cell" style="width:16px;min-width:16px;font-size:1px;line-height:1px;">&nbsp;</td>
           <!-- Vertical Divider -->
-          <td valign="top" width="2" class="divider-cell" style="width:1.5px;padding-top:2px;">
-            <table cellpadding="0" cellspacing="0" border="0" width="2" style="width:1.5px;height:205px;">
+          <td valign="top" width="2" class="divider-cell" style="width:2px;min-width:2px;padding-top:2px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="2" style="width:2px;min-width:2px;height:205px;">
               <tr>
-                <td height="205" bgcolor="${themeColor}" style="font-size:1px;line-height:1px;height:205px;background-color:${themeColor};">&nbsp;</td>
+                <td height="205" bgcolor="${themeColor}" style="font-size:1px;line-height:1px;height:205px;width:2px;min-width:2px;background-color:${themeColor};">&nbsp;</td>
               </tr>
             </table>
           </td>
           <!-- Spacer 2 -->
-          <td width="16" class="spacer-cell" style="width:16px;font-size:1px;line-height:1px;">&nbsp;</td>
+          <td width="16" class="spacer-cell" style="width:16px;min-width:16px;font-size:1px;line-height:1px;">&nbsp;</td>
           <!-- Right Content Area -->
-          <td valign="top" width="299" class="content-cell" style="width:299px;padding-top:4px;box-sizing:border-box;">
+          <td valign="top" width="299" class="content-cell" style="width:299px;min-width:260px;padding-top:4px;box-sizing:border-box;">
             <table cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
               <!-- Name script / Name text -->
               <tr>
