@@ -151,12 +151,14 @@ export function emailIconUrl(
 export function getSocialIconSvgDataUrl(
   style: string,
   color: string,
-  network: SocialNetwork
+  network: SocialNetwork,
+  shape?: "square" | "rounded" | "pill"
 ): string {
   const svg = buildIconSvg(
     (style as IconStyle) || "filled",
     color || "#245FD4",
-    network
+    network,
+    shape
   );
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }

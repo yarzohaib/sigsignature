@@ -7,6 +7,7 @@ import {
   FreeImageElement,
   FreeLogoElement,
   FreeBannerElement,
+  FreeSocialElement,
 } from "@/types/studio";
 import {
   escapeHtml,
@@ -23,6 +24,7 @@ import {
   getShapeBorderRadius,
   getSocialIconSize,
   renderSocialLinksHtml,
+  renderSingleSocialLinkHtml,
 } from "../shared";
 
 export interface FreeRenderOptions {
@@ -312,6 +314,18 @@ export function generateFreeHtml(
     }
 
     if (el.type === "social") {
+      const socialEl = el as FreeSocialElement;
+      if (socialEl.platform) {
+        return renderSingleSocialLinkHtml(
+          socialEl.platform,
+          data,
+          themeColor,
+          fontStack,
+          options?.preview,
+          Math.min(el.w, el.h),
+          (el.shape || shape) as "square" | "rounded" | "pill"
+        );
+      }
       return renderSocialLinksHtml(
         data,
         themeColor,
@@ -320,7 +334,8 @@ export function generateFreeHtml(
         getSocialIconSize(
           el.w,
           (data.socials ? Object.values(data.socials).filter((v) => typeof v === "string" && v.trim()).length : 0) || 4
-        )
+        ),
+        (el.shape || shape) as "square" | "rounded" | "pill"
       );
     }
 
@@ -559,12 +574,21 @@ export function generateFreePlainText(data: StudioSignatureData): string {
         lines.push(`(${media.linkUrl.trim()})`);
       }
     } else if (el.type === "social") {
+      const socialEl = el as FreeSocialElement;
       const s = data.socials;
-      if (s?.linkedin?.trim()) lines.push(`LinkedIn: ${s.linkedin.trim()}`);
-      if (s?.twitter?.trim()) lines.push(`Twitter: ${s.twitter.trim()}`);
-      if (s?.facebook?.trim()) lines.push(`Facebook: ${s.facebook.trim()}`);
-      if (s?.instagram?.trim()) lines.push(`Instagram: ${s.instagram.trim()}`);
-      if (s?.github?.trim()) lines.push(`GitHub: ${s.github.trim()}`);
+      if (socialEl.platform) {
+        const val = s?.[socialEl.platform as keyof typeof s]?.trim();
+        if (val) {
+          const cap = socialEl.platform.charAt(0).toUpperCase() + socialEl.platform.slice(1);
+          lines.push(`${cap}: ${val}`);
+        }
+      } else {
+        if (s?.linkedin?.trim()) lines.push(`LinkedIn: ${s.linkedin.trim()}`);
+        if (s?.twitter?.trim()) lines.push(`Twitter: ${s.twitter.trim()}`);
+        if (s?.facebook?.trim()) lines.push(`Facebook: ${s.facebook.trim()}`);
+        if (s?.instagram?.trim()) lines.push(`Instagram: ${s.instagram.trim()}`);
+        if (s?.github?.trim()) lines.push(`GitHub: ${s.github.trim()}`);
+      }
     }
   }
 

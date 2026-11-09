@@ -140,6 +140,7 @@ function LoginForm() {
       }
 
       await startOAuth(provider, {
+        popup: true,
         onPopupClosed: () => {
           setOauthLoading(null);
           setIsLoading(false);

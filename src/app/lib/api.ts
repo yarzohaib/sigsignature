@@ -233,14 +233,15 @@ export function startOAuth(
 
   const origin = window.location.origin;
   const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}`;
+  const usePopup = options?.popup !== false; // Default to popup window for smooth OAuth UX
 
-  if (options?.popup) {
+  if (usePopup) {
     return new Promise<void>((resolve, reject) => {
       try {
-        const width = 600;
-        const height = 700;
+        const width = 500;
+        const height = 650;
         const left = window.screenX + Math.max(0, (window.outerWidth - width) / 2);
-        const top = window.screenY + Math.max(0, (window.outerHeight - height) / 2);
+        const top = window.screenY + Math.max(0, (window.outerHeight - height) / 2.5);
 
         const popup = window.open(
           targetUrl,
@@ -267,18 +268,24 @@ export function startOAuth(
 
         const messageHandler = (event: MessageEvent) => {
           if (event.origin !== window.location.origin) return;
-          if (event.data?.type === "SIG_OAUTH_SUCCESS") {
+          if (
+            event.data?.type === "SIG_OAUTH_SUCCESS" ||
+            event.data?.type === "GOOGLE_AUTH_SUCCESS"
+          ) {
             cleanup();
-            if (options.onSuccess) {
+            if (options?.onSuccess) {
               options.onSuccess(event.data.redirectTarget);
             }
             resolve();
-          } else if (event.data?.type === "SIG_OAUTH_ERROR") {
+          } else if (
+            event.data?.type === "SIG_OAUTH_ERROR" ||
+            event.data?.type === "GOOGLE_AUTH_ERROR"
+          ) {
             cleanup();
-            if (options.onError) {
+            if (options?.onError) {
               options.onError(event.data.error || "oauth_failed");
             }
-            if (options.onPopupClosed) {
+            if (options?.onPopupClosed) {
               options.onPopupClosed();
             }
             resolve();
@@ -289,14 +296,14 @@ export function startOAuth(
           try {
             if (popup.closed) {
               cleanup();
-              if (options.onPopupClosed) {
+              if (options?.onPopupClosed) {
                 options.onPopupClosed();
               }
               resolve();
             }
           } catch {
             cleanup();
-            if (options.onPopupClosed) {
+            if (options?.onPopupClosed) {
               options.onPopupClosed();
             }
             resolve();

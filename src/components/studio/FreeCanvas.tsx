@@ -358,9 +358,12 @@ export default function FreeCanvas({
           nextH = hCandidate;
         }
 
-        // Maintain aspect ratio for corner media handles
+        // Maintain aspect ratio for corner media handles (image, logo, social)
         if ((isMedia || el.type === "social") && (h === "nw" || h === "ne" || h === "se" || h === "sw")) {
           nextH = Math.max(8, Math.round(nextW / resizeState.aspectRatio));
+          if (h === "nw" || h === "ne") {
+            nextY = resizeState.origY + (resizeState.origH - nextH);
+          }
         }
 
         // Social icon groups keep their box height in step with width so the

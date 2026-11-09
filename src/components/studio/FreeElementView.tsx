@@ -10,6 +10,7 @@ import {
   FreeBannerElement,
   FreeDividerElement,
   FreeCtaElement,
+  FreeSocialElement,
   StudioSignatureData,
 } from "@/types/studio";
 import {
@@ -124,7 +125,15 @@ export default function FreeElementView({
 
   // Determine handles to show
   let activeHandles: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
-  if (element.type === "divider") {
+  const isIndividualSocial =
+    element.type === "social" &&
+    "platform" in element &&
+    Boolean((element as { platform?: string }).platform);
+
+  if (element.type === "image" || element.type === "logo" || isIndividualSocial) {
+    // For images, logos, and individual social icons, lock aspect ratio by exposing only corner anchors
+    activeHandles = ["nw", "ne", "se", "sw"];
+  } else if (element.type === "divider") {
     if (element.orientation === "vertical") {
       activeHandles = ["n", "s"];
     } else {
@@ -482,14 +491,56 @@ export default function FreeElementView({
       }
 
       case "social": {
-        const networks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork; platform: TeamMemberSocialPlatform }[] = [
+        const socialEl = element as FreeSocialElement;
+
+        const allNetworks: { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork; platform?: TeamMemberSocialPlatform }[] = [
           { key: "linkedin", label: "LinkedIn", network: "linkedin", platform: "linkedin" },
           { key: "twitter", label: "Twitter", network: "twitter", platform: "x" },
           { key: "facebook", label: "Facebook", network: "facebook", platform: "facebook" },
           { key: "instagram", label: "Instagram", network: "instagram", platform: "instagram" },
           { key: "github", label: "GitHub", network: "github", platform: "github" },
+          { key: "youtube", label: "YouTube", network: "youtube" },
+          { key: "website", label: "Website", network: "website" },
         ];
 
+        const socialShape = (element.shape || shape) as "square" | "rounded" | "pill";
+        const iconRadius = socialShape === "square" ? "0px" : socialShape === "pill" ? "999px" : "6px";
+        const style = data.socialIconsStyle || "filled";
+
+        // If this is an ungrouped individual social icon
+        if (socialEl.platform) {
+          const match = allNetworks.find((n) => n.key === socialEl.platform) || {
+            key: socialEl.platform,
+            label: socialEl.platform,
+            network: socialEl.platform as SocialNetwork,
+            platform: undefined,
+          };
+          const iconSize = Math.max(12, Math.min(element.w, element.h));
+          const iconUrl =
+            getSocialIconSvgDataUrl(style, themeColor, match.network, socialShape) ||
+            emailIconUrl(style, themeColor, match.network);
+
+          return (
+            <div className="w-full h-full flex items-center justify-center select-none overflow-hidden">
+              <Image
+                src={iconUrl}
+                alt={match.label}
+                width={iconSize}
+                height={iconSize}
+                className="shrink-0 block"
+                style={{
+                  width: `${iconSize}px`,
+                  height: `${iconSize}px`,
+                  borderRadius: iconRadius,
+                }}
+                unoptimized
+                draggable={false}
+              />
+            </div>
+          );
+        }
+
+        const networks = allNetworks.slice(0, 5) as { key: keyof StudioSignatureData["socials"]; label: string; network: SocialNetwork; platform: TeamMemberSocialPlatform }[];
         const hasAnySocial = networks.some((n) => Boolean(data.socials?.[n.key]?.trim()));
         const activeNetworks = networks.filter((n) => {
           const val = data.socials?.[n.key]?.trim();
@@ -504,7 +555,6 @@ export default function FreeElementView({
             : hasAnySocial
             ? []
             : networks;
-        const style = data.socialIconsStyle || "filled";
         const iconSize = getSocialIconSize(element.w, displayNetworks.length);
         const iconGap = Math.round(iconSize * 0.3);
 
@@ -520,7 +570,7 @@ export default function FreeElementView({
           <div className="w-full h-full flex items-center select-none" style={{ gap: `${iconGap}px` }}>
             {displayNetworks.map((n) => {
               const iconUrl =
-                getSocialIconSvgDataUrl(style, themeColor, n.network) ||
+                getSocialIconSvgDataUrl(style, themeColor, n.network, socialShape) ||
                 emailIconUrl(style, themeColor, n.network);
               return (
                 <Image
@@ -530,7 +580,11 @@ export default function FreeElementView({
                   width={iconSize}
                   height={iconSize}
                   className="shrink-0 block"
-                  style={{ width: `${iconSize}px`, height: `${iconSize}px` }}
+                  style={{
+                    width: `${iconSize}px`,
+                    height: `${iconSize}px`,
+                    borderRadius: iconRadius,
+                  }}
                   unoptimized
                   draggable={false}
                 />

@@ -78,7 +78,8 @@ export function renderSocialLinksHtml(
   themeColor: string,
   fontStack: string,
   isPreview = false,
-  iconSize = 20
+  iconSize = 20,
+  shapeOverride?: "square" | "rounded" | "pill"
 ): string {
   const networks: {
     key: string;
@@ -96,6 +97,8 @@ export function renderSocialLinksHtml(
   ];
 
   const style = data.socialIconsStyle || "filled";
+  const activeShape = shapeOverride || (data.design?.shape as "square" | "rounded" | "pill") || "rounded";
+  const iconBorderRadius = activeShape === "square" ? "0px" : activeShape === "pill" ? "999px" : "6px";
 
   const platformMap: Record<string, TeamMemberSocialPlatform> = {
     linkedin: "linkedin",
@@ -145,7 +148,7 @@ export function renderSocialLinksHtml(
     const paddingRight = isLast ? 0 : Math.round(iconSize * 0.3);
 
     const iconUrl = isPreview
-      ? getSocialIconSvgDataUrl(style, themeColor, network)
+      ? getSocialIconSvgDataUrl(style, themeColor, network, activeShape)
       : emailIconUrl(style, themeColor, network);
 
     if (iconUrl) {
@@ -153,7 +156,7 @@ export function renderSocialLinksHtml(
         <a href="${href}" target="_blank" style="display:inline-block;text-decoration:none;line-height:0;font-size:0;">
           <img src="${escapeHtml(
             iconUrl
-          )}" alt="${label}" width="${iconSize}" height="${iconSize}" style="display:block;border:0;outline:none;text-decoration:none;width:${iconSize}px;height:${iconSize}px;" />
+          )}" alt="${label}" width="${iconSize}" height="${iconSize}" style="display:block;border:0;outline:none;text-decoration:none;width:${iconSize}px;height:${iconSize}px;border-radius:${iconBorderRadius};" />
         </a>
       </td>`);
     } else {
@@ -168,6 +171,76 @@ export function renderSocialLinksHtml(
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-spacing:0;margin:0;padding:0;">
     <tr>
       ${cells.join("\n      ")}
+    </tr>
+  </table>`;
+}
+
+/**
+ * Renders a single social icon link HTML for individual/ungrouped social elements.
+ */
+export function renderSingleSocialLinkHtml(
+  platform: string,
+  data: StudioSignatureData,
+  themeColor: string,
+  fontStack: string,
+  isPreview?: boolean,
+  iconSize = 20,
+  shapeOverride?: "square" | "rounded" | "pill"
+): string {
+  const networks: Array<{
+    key: string;
+    label: string;
+    network: SocialNetwork;
+    defaultUrl: string;
+  }> = [
+    { key: "linkedin", label: "LinkedIn", network: "linkedin", defaultUrl: "https://www.linkedin.com" },
+    { key: "twitter", label: "X", network: "twitter", defaultUrl: "https://twitter.com" },
+    { key: "facebook", label: "Facebook", network: "facebook", defaultUrl: "https://www.facebook.com" },
+    { key: "instagram", label: "Instagram", network: "instagram", defaultUrl: "https://www.instagram.com" },
+    { key: "github", label: "GitHub", network: "github", defaultUrl: "https://github.com" },
+    { key: "youtube", label: "YouTube", network: "youtube", defaultUrl: "https://youtube.com" },
+    { key: "website", label: "Website", network: "website", defaultUrl: "https://website.com" },
+  ];
+
+  const match = networks.find((n) => n.key === platform) || {
+    key: platform,
+    label: platform,
+    network: platform as SocialNetwork,
+    defaultUrl: `https://${platform}.com`,
+  };
+
+  const style = data.socialIconsStyle || "filled";
+  const userUrl = (data.socials as Record<string, string | undefined>)?.[match.key]?.trim();
+  const rawUrl = userUrl || match.defaultUrl;
+  const href = safeUrl(normalizeWebsite(rawUrl));
+  if (!href) return "";
+
+  const activeShape = shapeOverride || (data.design?.shape as "square" | "rounded" | "pill") || "rounded";
+  const iconBorderRadius = activeShape === "square" ? "0px" : activeShape === "pill" ? "999px" : "6px";
+
+  const iconUrl = isPreview
+    ? getSocialIconSvgDataUrl(style, themeColor, match.network, activeShape)
+    : emailIconUrl(style, themeColor, match.network);
+
+  if (iconUrl) {
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-spacing:0;margin:0;padding:0;">
+      <tr>
+        <td style="padding:0;vertical-align:middle;line-height:0;font-size:0;mso-line-height-rule:exactly;">
+          <a href="${href}" target="_blank" style="display:inline-block;text-decoration:none;line-height:0;font-size:0;">
+            <img src="${escapeHtml(
+              iconUrl
+            )}" alt="${match.label}" width="${iconSize}" height="${iconSize}" style="display:block;border:0;outline:none;text-decoration:none;width:${iconSize}px;height:${iconSize}px;border-radius:${iconBorderRadius};" />
+          </a>
+        </td>
+      </tr>
+    </table>`;
+  }
+
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border-spacing:0;margin:0;padding:0;">
+    <tr>
+      <td style="padding:0;vertical-align:middle;">
+        <a href="${href}" target="_blank" style="display:inline-block;font-family:${fontStack};font-size:11px;color:${themeColor};text-decoration:underline;">${match.label}</a>
+      </td>
     </tr>
   </table>`;
 }

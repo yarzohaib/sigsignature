@@ -36,6 +36,8 @@ interface FloatingToolbarProps {
   onColorChange?: (color: string) => void;
   hasMultipleLines?: boolean;
   onSplitLines?: () => void;
+  canUngroupSocial?: boolean;
+  onUngroupSocial?: () => void;
   icon?: "phone" | "email" | "website" | "address" | null;
   onIconChange?: (icon: "phone" | "email" | "website" | "address" | null) => void;
   url?: string;
@@ -80,6 +82,8 @@ export default function FloatingToolbar({
   onColorChange,
   hasMultipleLines,
   onSplitLines,
+  canUngroupSocial,
+  onUngroupSocial,
   icon,
   onIconChange,
   url,
@@ -300,12 +304,21 @@ export default function FloatingToolbar({
     setInputUrl(url || "");
   }
 
+  // Link support: custom/unbound text, website text, image, logo, banner, cta.
+  // Not allowed on bound personal contact fields (name, jobTitle, email, phone, company) per QA ticket z8tvbhx51p.
+  const isBoundPersonalField =
+    elementType === "text" &&
+    bind !== null &&
+    bind !== undefined &&
+    bind !== "website";
+
   const hasLinkSupport =
-    elementType === "text" ||
-    elementType === "image" ||
-    elementType === "logo" ||
-    elementType === "banner" ||
-    elementType === "cta";
+    !isBoundPersonalField &&
+    (elementType === "text" ||
+      elementType === "image" ||
+      elementType === "logo" ||
+      elementType === "banner" ||
+      elementType === "cta");
 
   const hasValidLink =
     elementType === "cta" ? isValidWebUrl(url || "") : Boolean(url?.trim());
@@ -876,11 +889,12 @@ export default function FloatingToolbar({
               </>
             )}
 
-            {/* SHAPE SELECTOR (image, logo, banner, cta) */}
+            {/* SHAPE SELECTOR (image, logo, banner, cta, social) */}
             {(elementType === "image" ||
               elementType === "logo" ||
               elementType === "banner" ||
-              elementType === "cta") &&
+              elementType === "cta" ||
+              elementType === "social") &&
               onShapeChange && (
                 <>
                   <div className="relative">
@@ -958,6 +972,29 @@ export default function FloatingToolbar({
                   <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
                 </>
               )}
+
+            {/* UNGROUP SOCIAL ICONS (for multi-icon social container) */}
+            {canUngroupSocial && onUngroupSocial && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Ungroup social icons"
+                  title="Ungroup into individual movable icons"
+                  onClick={onUngroupSocial}
+                  className="flex h-7 px-2 items-center gap-1 rounded text-slate-200 hover:text-white hover:bg-slate-700/60 text-[11px] font-medium transition"
+                >
+                  <svg className="h-3.5 w-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                  </svg>
+                  <span>Ungroup</span>
+                </button>
+
+                <div className="h-3.5 w-[1px] bg-slate-700 mx-1 shrink-0" />
+              </>
+            )}
 
             {/* EDIT DETAILS (for text or social) */}
             {onEditDetails && (elementType === "text" || elementType === "social") && (

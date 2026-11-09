@@ -26,7 +26,8 @@ function normalizeHex(color: string): string {
 export function buildIconSvg(
   style: IconStyle,
   color: string,
-  network: SocialNetwork
+  network: SocialNetwork,
+  shape?: "square" | "rounded" | "pill"
 ): string {
   const glyph = ICON_GLYPHS[network];
   if (!glyph) {
@@ -39,12 +40,25 @@ export function buildIconSvg(
   let glyphColor = "#FFFFFF";
   let backgroundShape = "";
 
+  // Compute corner radius based on shape override if provided:
+  // square -> 0, pill -> 20 (circular for 40x40 icon), rounded -> 8
+  const rx = shape === "square" ? 0 : shape === "pill" ? 20 : 8;
+
   if (style === "filled") {
-    if (isWhite) {
-      backgroundShape = `<rect x="0.5" y="0.5" width="39" height="39" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" />`;
+    if (rx === 20) {
+      // Pill/circle mode
+      if (isWhite) {
+        backgroundShape = `<circle cx="20" cy="20" r="19.5" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" />`;
+        glyphColor = "#0F172A";
+      } else {
+        backgroundShape = `<circle cx="20" cy="20" r="20" fill="${hex}" />`;
+        glyphColor = "#FFFFFF";
+      }
+    } else if (isWhite) {
+      backgroundShape = `<rect x="0.5" y="0.5" width="39" height="39" rx="${rx}" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" />`;
       glyphColor = "#0F172A";
     } else {
-      backgroundShape = `<rect x="0" y="0" width="40" height="40" rx="8" fill="${hex}" />`;
+      backgroundShape = `<rect x="0" y="0" width="40" height="40" rx="${rx}" fill="${hex}" />`;
       glyphColor = "#FFFFFF";
     }
   } else if (style === "circle") {
@@ -58,7 +72,12 @@ export function buildIconSvg(
   } else if (style === "outline") {
     const strokeColor = isWhite ? "#0F172A" : hex;
     glyphColor = isWhite ? "#0F172A" : hex;
-    backgroundShape = `<rect x="1.5" y="1.5" width="37" height="37" rx="6.5" stroke="${strokeColor}" stroke-width="3" fill="none" />`;
+    const outlineRx = shape === "square" ? 0 : shape === "pill" ? 18.5 : 6.5;
+    if (shape === "pill") {
+      backgroundShape = `<circle cx="20" cy="20" r="18.5" stroke="${strokeColor}" stroke-width="3" fill="none" />`;
+    } else {
+      backgroundShape = `<rect x="1.5" y="1.5" width="37" height="37" rx="${outlineRx}" stroke="${strokeColor}" stroke-width="3" fill="none" />`;
+    }
   } else if (style === "minimal") {
     backgroundShape = "";
     glyphColor = isWhite ? "#0F172A" : hex;
