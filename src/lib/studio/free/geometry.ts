@@ -45,28 +45,34 @@ export function clampToCanvas(
   let maxX = rawMaxX;
 
   if (shape === "pill") {
-    // Radius of circular pill caps
-    const r = canvas.height / 2;
+    // Radius of circular pill caps, capped to min(canvas.height / 2, 100) to match card stadium border-radius
+    const r = Math.min(Math.round(canvas.height / 2), 100);
     if (r > 0) {
-      // Top and bottom y coordinates of element relative to circle center (r)
-      const dyTop = Math.abs(y - r);
-      const dyBottom = Math.abs(y + h - r);
-      const maxDy = Math.max(dyTop, dyBottom);
-      const safeInset = 20;
+      // Safe inset from the outer boundary
+      const safeInset = 16;
+      let dxTop = 0;
+      let dxBottom = 0;
 
-      if (maxDy < r) {
-        // Curve offset: dx = r - Math.sqrt(r^2 - dy^2) + safeInset
-        const dx = r - Math.sqrt(r * r - maxDy * maxDy) + safeInset;
+      // Check top edge of element against top curved cap (center at y = r)
+      if (y < r) {
+        const dy = r - y;
+        dxTop = r - Math.sqrt(Math.max(0, r * r - dy * dy)) + safeInset;
+      }
+
+      // Check bottom edge of element against bottom curved cap (center at y = canvas.height - r)
+      if (y + h > canvas.height - r) {
+        const dy = (y + h) - (canvas.height - r);
+        dxBottom = r - Math.sqrt(Math.max(0, r * r - dy * dy)) + safeInset;
+      }
+
+      const dx = Math.max(dxTop, dxBottom);
+      if (dx > 0) {
         minX = Math.ceil(dx);
-        maxX = Math.floor(canvas.width - dx - w);
-      } else {
-        // At the extreme top or bottom edge of the pill
-        minX = Math.ceil(r + safeInset);
-        maxX = Math.floor(canvas.width - (r + safeInset) - w);
+        maxX = Math.max(minX, Math.floor(canvas.width - dx - w));
       }
 
       if (minX > maxX) {
-        minX = Math.max(0, (canvas.width - w) / 2);
+        minX = Math.min(rawMaxX, Math.max(0, rect.x));
         maxX = minX;
       }
     }

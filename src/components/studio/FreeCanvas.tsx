@@ -91,7 +91,7 @@ export default function FreeCanvas({
   const themeKey = data.design?.theme || "corporate";
   const theme = THEME_PRESETS[themeKey] || THEME_PRESETS.corporate;
   const shape = data.design?.shape || "rounded";
-  const cardRadius = getShapeBorderRadius(shape, "card");
+  const cardRadius = getShapeBorderRadius(shape, "card", canvasHeight);
 
   // Auto-grow canvas height if elements exceed bottom + 24
   useEffect(() => {

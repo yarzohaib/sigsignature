@@ -105,16 +105,16 @@ function arrangeTwoColumn(
     (el) => el.type !== "banner" && el.type !== "image" && el.type !== "logo" && el.type !== "divider"
   );
 
-  let topY = 8;
+  let topY = shape === "pill" ? 14 : 8;
 
   // 1. Full width banners at top
   for (const banner of banners) {
     const bannerH = Math.min(140, Math.max(40, banner.h));
     result.push({
       ...banner,
-      x: 0,
+      x: insetX,
       y: topY,
-      w: canvasWidth,
+      w: usableWidth,
       h: bannerH,
     });
     topY += bannerH + 8;
@@ -128,7 +128,7 @@ function arrangeTwoColumn(
     const scale = item.w > leftColWidth ? leftColWidth / item.w : 1;
     const w = Math.round(item.w * scale);
     const h = Math.round(item.h * scale);
-    const x = Math.max(0, Math.round((leftColWidth - w) / 2));
+    const x = insetX + Math.max(0, Math.round((leftColWidth - w) / 2));
 
     result.push({
       ...item,
@@ -141,8 +141,8 @@ function arrangeTwoColumn(
   }
 
   // 3. Right column elements
-  const rightX = leftColWidth > 0 ? leftColWidth + 20 : 0;
-  const rightWidth = canvasWidth - rightX;
+  const rightX = insetX + (leftColWidth > 0 ? leftColWidth + 20 : 0);
+  const rightWidth = canvasWidth - rightX - insetX;
   let rightY = topY;
 
   for (const item of others) {
@@ -168,7 +168,7 @@ function arrangeTwoColumn(
 
   // 4. Vertical divider between columns
   const contentHeight = Math.max(leftY - topY, rightY - topY, 48);
-  const dividerX = leftColWidth > 0 ? leftColWidth + 10 : 0;
+  const dividerX = insetX + (leftColWidth > 0 ? leftColWidth + 10 : 0);
 
   if (leftColWidth > 0) {
     const dividerEl = dividers[0];
@@ -207,15 +207,15 @@ function arrangeTwoColumn(
       type: "divider",
       orientation: "horizontal",
       thickness: 1,
-      x: 0,
+      x: insetX,
       y,
-      w: canvasWidth,
+      w: usableWidth,
       h: 1,
     });
   }
 
   const maxBottom = result.reduce((max, el) => Math.max(max, el.y + el.h), 0);
-  const canvasHeight = Math.max(120, Math.min(480, snap(maxBottom + 20, 8)));
+  const canvasHeight = Math.max(120, Math.min(480, snap(maxBottom + (shape === "pill" ? 20 : 16), 8)));
   return { elements: result, canvasHeight };
 }
 

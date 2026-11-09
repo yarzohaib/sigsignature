@@ -172,7 +172,22 @@ export function studioReducer(
       const newShape = action.payload as StudioShape;
       const canvas = state.canvas || { width: 600, height: 200 };
 
-      // Clamping elements to keep within active shape bounds (e.g. pill curves)
+      // If user is currently using a quick-arrange preset, reflow the entire preset for the new shape
+      if (state.layout) {
+        const arranged = arrangeElements(state.layout, state.elements || [], canvas.width, newShape);
+        return {
+          ...state,
+          design: {
+            theme: state.design?.theme || "corporate",
+            buttonStyle: state.design?.buttonStyle || "solid",
+            shape: newShape,
+          },
+          canvas: { width: 600 as const, height: arranged.canvasHeight },
+          elements: arranged.elements,
+        };
+      }
+
+      // Otherwise, clamp freeform elements to keep within active shape bounds (e.g. pill curves)
       const adjustedElements = (state.elements || []).map((el) => {
         const clamped = clampToCanvas(el, canvas, newShape);
         return { ...el, ...clamped };
@@ -541,10 +556,19 @@ export function studioReducer(
         120,
         Math.min(480, Math.max(minFromElements, snap(action.payload.height, 8)))
       );
+      const currentShape = state.design?.shape || "rounded";
+      const newCanvas = { width: 600 as const, height };
+
+      // Ensure elements stay clamped within the active canvas shape (e.g. pill curves)
+      const adjustedElements = currentElements.map((el) => {
+        const clamped = clampToCanvas(el, newCanvas, currentShape);
+        return { ...el, ...clamped };
+      });
 
       return {
         ...state,
-        canvas: { width: 600, height },
+        canvas: newCanvas,
+        elements: adjustedElements,
       };
     }
 

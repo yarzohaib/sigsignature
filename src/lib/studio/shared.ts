@@ -55,10 +55,19 @@ export function getSocialElementHeight(elementWidth: number): number {
 
 export function getShapeBorderRadius(
   shape: StudioShape = "rounded",
-  type: "card" | "button" | "image" = "button"
+  type: "card" | "button" | "image" = "button",
+  canvasHeight?: number
 ): string {
   if (shape === "square") return "0px";
-  if (shape === "pill") return "999px";
+  if (shape === "pill") {
+    if (type === "card") {
+      // For signature card, cap the radius to min(height/2, 100px) or 100px
+      // to keep stadium/capsule shape and prevent egg distortion / corner clipping when height increases.
+      const radius = canvasHeight ? Math.min(Math.round(canvasHeight / 2), 100) : 100;
+      return `${radius}px`;
+    }
+    return "999px";
+  }
   if (type === "card") return "12px";
   if (type === "image") return "4px";
   return "6px";

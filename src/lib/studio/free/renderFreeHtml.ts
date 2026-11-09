@@ -106,7 +106,7 @@ export function generateFreeHtml(
   const shape = data.design?.shape || "rounded";
   const buttonStyle = data.design?.buttonStyle || "solid";
   const fontStack = resolveEmailFont(data.fontFamily || "Inter");
-  const cardRadius = getShapeBorderRadius(shape, "card");
+  const cardRadius = getShapeBorderRadius(shape, "card", canvasHeight);
   const borderCss =
     theme.border && theme.border !== "transparent"
       ? `border:1px solid ${theme.border};`
