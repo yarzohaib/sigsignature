@@ -111,7 +111,7 @@ const isAuthenticated =
 
   return (
     <footer
-      className="bg-[#FCFCFC] pt-[35px] font-body text-slate-600"
+      className="bg-[#FCFCFC] pt-10 font-body text-slate-600 sm:pt-12"
       style={{
         paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))",
       }}
