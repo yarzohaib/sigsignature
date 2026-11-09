@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SignaturePreview from "./SignaturePreview";
 import Logo from "./Logo";
-import { LinkedInIcon, XIcon } from "./icons";
+import { FacebookIcon, InstagramIcon, LinkedInIcon, XIcon } from "./icons";
 
 type AuthShellProps = {
   children: React.ReactNode;
@@ -60,6 +60,24 @@ export default function AuthShell({ children }: AuthShellProps) {
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-brand/20 bg-white/70 text-brand transition hover:bg-white"
               >
                 <XIcon className="h-[17px] w-[17px]" />
+              </a>
+              <a
+                href="https://www.instagram.com/sigsignature_com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sig Signature on Instagram"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand/20 bg-white/70 text-brand transition hover:bg-white"
+              >
+                <InstagramIcon className="h-[18px] w-[18px]" />
+              </a>
+              <a
+                href="https://www.facebook.com/profile.php?id=61595216736684"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sig Signature on Facebook"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-brand/20 bg-white/70 text-brand transition hover:bg-white"
+              >
+                <FacebookIcon className="h-[18px] w-[18px]" />
               </a>
             </nav>
           </div>
