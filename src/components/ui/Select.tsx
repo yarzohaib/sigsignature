@@ -216,7 +216,7 @@ export default function Select({
             id={listboxId}
             role="listbox"
             aria-label={ariaLabel}
-          className={`z-[45] overflow-y-auto rounded-xl border p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100 ${
+          className={`z-[70] overflow-y-auto rounded-xl border p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100 ${
             appearance === "dark"
               ? "border-slate-700 bg-[#0F172A] ring-1 ring-slate-950/30"
               : "border-slate-200 bg-white ring-1 ring-slate-950/5"

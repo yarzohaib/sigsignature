@@ -670,10 +670,14 @@ export default function FreeElementView({
           );
         const hasFormatError = isInvalidEmail || isInvalidPhone || isInvalidWebsite;
 
+        const isNearTopEdge = element.y < 14;
+
         return (
           <div
             data-team-field-badge={element.bind || "website"}
-            className={`absolute -top-3.5 left-0 z-30 flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none ${
+            className={`absolute left-0 z-30 flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white shadow-xs pointer-events-none leading-none select-none ${
+              isNearTopEdge ? "top-0.5" : "-top-3.5"
+            } ${
               hasFormatError ? "bg-rose-600" : "bg-[#449AFA]"
             }`}
           >

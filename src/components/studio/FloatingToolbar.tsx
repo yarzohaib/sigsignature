@@ -198,16 +198,13 @@ export default function FloatingToolbar({
       top = Math.max(minTopAllowed, viewportHeight - toolbarHeight - 8);
     }
 
-    // Left: Centered horizontally with element
+    // Left: Centered horizontally with element, strictly clamped inside visible canvas viewport area
     let left = rect.left + rect.width / 2 - toolbarWidth / 2;
 
-    const minViewportLeft = 8;
-    const maxViewportLeft = Math.max(8, viewportWidth - toolbarWidth - 8);
+    const minViewportLeft = toolsPanelRight > 0 ? toolsPanelRight + 8 : 8;
+    const maxViewportLeft = Math.max(minViewportLeft, viewportWidth - toolbarWidth - 8);
 
-    const effectiveMinLeft =
-      rect.left < toolsPanelRight ? toolsPanelRight + 8 : minViewportLeft;
-
-    left = Math.max(effectiveMinLeft, Math.min(left, maxViewportLeft));
+    left = Math.max(minViewportLeft, Math.min(left, maxViewportLeft));
 
     setCoords({
       top: Math.round(top),
@@ -390,7 +387,7 @@ export default function FloatingToolbar({
               opacity: coords.isVisible ? 1 : 0,
               pointerEvents: coords.isVisible ? "auto" : "none",
             }}
-            className="flex items-center bg-[#1E293B] text-white px-2 py-1 rounded-xl shadow-xl select-none border border-slate-700/60 max-w-[95vw] overflow-visible transition-opacity duration-75"
+            className="flex items-center bg-[#1E293B] text-white px-2 py-1 rounded-xl shadow-xl select-none border border-slate-700/60 max-w-[calc(100vw-16px)] overflow-x-auto studio-scrollbar transition-opacity duration-75"
             onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
@@ -432,15 +429,15 @@ export default function FloatingToolbar({
                   <button
                     type="button"
                     aria-label="Split lines into separate elements"
-                    title="Split multiline text into separate stacked elements so each line can be styled individually"
+                    title="Split lines to style individually"
                     onClick={onSplitLines}
-                    className="flex h-7 px-2.5 items-center gap-1.5 rounded bg-blue-600/40 border border-blue-400/50 text-white hover:bg-blue-600/60 text-[11px] font-semibold transition focus:outline-none focus:ring-1 focus:ring-blue-400 shadow-xs"
+                    className="flex h-7 px-2.5 items-center gap-1.5 rounded bg-blue-600/40 border border-blue-400/50 text-white hover:bg-blue-600/60 text-[11px] font-semibold transition focus:outline-none focus:ring-1 focus:ring-blue-400 shadow-xs shrink-0"
                   >
                     <svg className="w-3.5 h-3.5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M4 12h16" />
                       <path d="M12 4v16" />
                     </svg>
-                    <span>Split lines to style individually</span>
+                    <span>Split lines</span>
                   </button>
                 )}
 
