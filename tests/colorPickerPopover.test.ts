@@ -45,7 +45,6 @@ describe("ColorPickerPopover & In-Page Color Picker", () => {
         })
       );
 
-      assert.match(html, /role="dialog"/i === false ? /aria-haspopup="dialog"/ : /aria-haspopup="dialog"/);
       assert.match(html, /aria-haspopup="dialog"/);
       assert.match(html, /aria-expanded="false"/);
       assert.match(html, /background-color:#245FD4/i);

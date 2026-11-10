@@ -351,8 +351,7 @@ export default function ColorPickerPopover({
                         type="button"
                         onClick={() => {
                           onChange(normalizedSwatch);
-                          setDraftHex(normalizedSwatch);
-                          setInputError(false);
+                          setDraftHex(normalizedSwatch, false);
                         }}
                         title={normalizedSwatch}
                         aria-label={`Select ${normalizedSwatch}`}
