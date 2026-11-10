@@ -179,7 +179,7 @@ export default function GmailGeneratorHeroMockup() {
 
                   <div className="pt-2 flex items-center justify-between">
                     <span
-                      className="text-[10px] font-semibold cursor-pointer hover:underline"
+                      className="text-[10px] font-semibold cursor-default"
                       style={{ color: selectedColor }}
                     >
                       Explore our work →
