@@ -48,7 +48,7 @@ interface UseCasePreviewProps {
 
 function SocialLinks({ isDark }: { isDark: boolean }) {
   const linkClass = `inline-flex cursor-pointer items-center justify-center text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 ${
-    isDark ? "text-white/90 hover:text-white" : "text-slate-700 hover:text-slate-900"
+    isDark ? "text-blue-300 hover:text-blue-200" : "text-[#245FD4] hover:text-[#022977]"
   }`;
 
   return (
@@ -183,7 +183,7 @@ export default function UseCasePreview({
 
           <div className="mt-4 flex items-center gap-3">
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full bg-[#002B7F] px-3.5 py-1 text-xs font-semibold text-white shadow-2xs ${
+              className={`inline-flex items-center gap-1.5 rounded-full bg-cta-gradient px-3.5 py-1 text-xs font-semibold text-white shadow-2xs ${
                 isDark ? "border border-white/20" : ""
               }`}
             >
@@ -232,7 +232,7 @@ export default function UseCasePreview({
           <p className="mt-1 font-body text-xs text-blue-200/70">{currentPersona.website}</p>
 
           <div className="mt-4 flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#002B7F] border border-white/20 px-3.5 py-1 text-xs font-semibold text-white shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-cta-gradient border border-white/20 px-3.5 py-1 text-xs font-semibold text-white shadow-2xs">
               <span>{currentPersona.ctaText}</span>
               <svg className="h-2.5 w-2.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 3l14 9-14 9V3z" />
@@ -310,7 +310,7 @@ export default function UseCasePreview({
 
               <div className="mt-3 flex items-center gap-3">
                 <span
-                  className={`inline-flex items-center gap-1 rounded-full bg-[#002B7F] px-3 py-1 text-[11px] font-semibold text-white ${
+                  className={`inline-flex items-center gap-1 rounded-full bg-cta-gradient px-3 py-1 text-[11px] font-semibold text-white ${
                     isDark ? "border border-white/20" : ""
                   }`}
                 >
