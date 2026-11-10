@@ -50,6 +50,7 @@ export default function Navbar() {
   const [hidePill, setHidePill] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [authHydrated, setAuthHydrated] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const prevOpenRef = useRef(false);
@@ -84,6 +85,10 @@ export default function Navbar() {
     getAuthSnapshot,
     getAuthServerSnapshot
   );
+
+  useEffect(() => {
+    setAuthHydrated(true);
+  }, []);
 
   const { user, avatarUrl } = useMemo(() => {
     if (!authRaw) return { user: null, avatarUrl: null };
@@ -473,7 +478,9 @@ export default function Navbar() {
                   Templates
                 </Link>
 
-                {user ? (
+                {!authHydrated ? (
+                  <div aria-hidden="true" className="mt-2.5 h-12 border-t border-slate-200/80 pt-3" />
+                ) : user ? (
                   <div className="mt-2.5 flex flex-col gap-2 border-t border-slate-200/80 pt-3">
                     {/* User Credentials Card */}
                     <div className="flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100">
@@ -677,7 +684,9 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop Action Buttons / User Menu */}
-          {user ? (
+          {!authHydrated ? (
+            <div aria-hidden="true" className="h-11 w-[180px]" />
+          ) : user ? (
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
@@ -735,53 +744,16 @@ export default function Navbar() {
                     animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
                     exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 }}
                     transition={{ duration: 0.15, ease: "easeOut" }}
-                    className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-slate-200/90 bg-white/98 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.1),0_4px_12px_-2px_rgba(15,23,42,0.05)] backdrop-blur-md z-50 text-left overflow-hidden"
+                    className="absolute right-0 top-full mt-2 w-[min(288px,calc(100vw-2rem))] rounded-3xl border border-slate-200/90 bg-white/95 p-1.5 shadow-[0_18px_48px_-8px_rgba(15,23,42,0.16),0_4px_14px_-4px_rgba(15,23,42,0.08)] backdrop-blur-md z-50 text-left overflow-hidden"
                   >
-                    {/* Header: User Credentials (Photo, Name, Email) */}
-                    <div className="px-3.5 py-3 border-b border-slate-100 bg-slate-50/60">
-                      <div className="flex items-center gap-2.5">
-                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full ring-1 ring-slate-200/80 bg-white text-[11px] font-bold text-slate-700">
-                          {hasValidAvatar ? (
-                            <Image
-                              src={avatarUrl!}
-                              alt={displayName || "Profile photo"}
-                              width={32}
-                              height={32}
-                              unoptimized
-                              onError={() => avatarUrl && setFailedUrl(avatarUrl)}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <span aria-hidden="true">{userInitials}</span>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p
-                            className="font-heading text-xs font-bold text-slate-900 truncate leading-snug"
-                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                          >
-                            {displayName}
-                          </p>
-                          <p
-                            className="font-body text-[11px] text-slate-500 truncate mt-0.5 leading-snug"
-                            style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                            title={displayEmail}
-                          >
-                            {displayEmail}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Quick navigation links */}
-                    <div className="p-1.5 space-y-0.5">
+                    <div className="space-y-0.5">
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100/80 hover:text-brand"
+                        className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
                         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                       >
-                        <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg className="h-5 w-5 shrink-0 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="3" y="3" width="7" height="7" rx="1.5" />
                           <rect x="14" y="3" width="7" height="7" rx="1.5" />
                           <rect x="14" y="14" width="7" height="7" rx="1.5" />
@@ -789,39 +761,69 @@ export default function Navbar() {
                         </svg>
                         <span>Dashboard</span>
                       </Link>
-
                       <Link
-                        href="/settings"
+                        href="/settings#profile"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100/80 hover:text-brand"
+                        className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
                         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                       >
-                        <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-5 w-5 shrink-0 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                           <circle cx="12" cy="7" r="4" />
                         </svg>
-                        <span>My Profile</span>
+                        <span>Profile</span>
+                      </Link>
+
+                      <Link
+                        href="/pricing?from=sidebar"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
+                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                      >
+                        <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <rect x="2" y="5" width="20" height="14" rx="2" />
+                          <path d="M2 10h20" />
+                          <path d="M6 15h3" />
+                        </svg>
+                        <span className="flex-1">Subscription</span>
+                        <span className="inline-flex items-center gap-1 rounded-lg border-2 border-[#245FD4] bg-[#DBE7FF] px-2 py-1 text-xs font-semibold leading-none text-[#173B8F]">
+                          <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M13 2 4 14h6l-1 8 11-13h-7l1-7z" />
+                          </svg>
+                          PRO
+                        </span>
                       </Link>
                     </div>
 
-                    {/* Divider */}
-                    <div className="border-t border-slate-100" />
+                    <div className="my-2 border-t border-slate-200/80" />
 
-                    {/* Logout Button */}
-                    <div className="p-1.5">
+                    <div className="space-y-0.5">
+                      <Link
+                        href="/help"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
+                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                      >
+                        <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10" />
+                          <circle cx="12" cy="8" r=".8" fill="currentColor" />
+                          <path d="M12 11v5" />
+                        </svg>
+                        <span>Help center</span>
+                      </Link>
                       <button
                         type="button"
                         onClick={handleLogout}
                         disabled={isLoggingOut}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50/80 disabled:opacity-60 cursor-pointer text-left"
+                        className="flex min-h-10 w-full items-center gap-3 rounded-2xl px-3 text-left text-[15px] font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-60 cursor-pointer"
                         style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                       >
-                        <svg className="h-4 w-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                           <polyline points="16 17 21 12 16 7" />
                           <line x1="21" y1="12" x2="9" y2="12" />
                         </svg>
-                        <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
+                        <span>{isLoggingOut ? "Signing out..." : "Sign out"}</span>
                       </button>
                     </div>
                   </motion.div>

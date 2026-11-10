@@ -346,12 +346,12 @@ export default function DashboardTopBar({
 
           {/* Profile Dropdown Menu */}
           {profileDropdownOpen && (
-            <div className="absolute right-0 z-50 mt-3 w-[min(320px,calc(100vw-2rem))] overflow-hidden rounded-3xl border border-slate-200/90 bg-white/95 p-2 text-left shadow-[0_18px_48px_-8px_rgba(15,23,42,0.16),0_4px_14px_-4px_rgba(15,23,42,0.08)] backdrop-blur-md animate-in fade-in zoom-in-95">
-              <div className="space-y-1">
+            <div className="absolute right-0 z-50 mt-3 w-[min(288px,calc(100vw-2rem))] overflow-hidden rounded-3xl border border-slate-200/90 bg-white/95 p-1.5 text-left shadow-[0_18px_48px_-8px_rgba(15,23,42,0.16),0_4px_14px_-4px_rgba(15,23,42,0.08)] backdrop-blur-md animate-in fade-in zoom-in-95">
+              <div className="space-y-0.5">
                 <Link
                   href="/settings#profile"
                   onClick={() => setProfileDropdownOpen(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-2xl bg-slate-100/90 px-3 text-[15px] font-medium text-slate-900 transition hover:bg-slate-100"
+                  className="flex min-h-10 items-center gap-3 rounded-2xl bg-slate-100/90 px-3 text-[15px] font-medium text-slate-900 transition hover:bg-slate-100"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <svg
@@ -375,20 +375,20 @@ export default function DashboardTopBar({
                     setProfileDropdownOpen(false);
                     openOnboarding();
                   }}
-                  className="flex min-h-12 w-full items-center gap-3 rounded-2xl px-3 text-left text-[15px] font-medium text-slate-700 transition hover:bg-slate-100 cursor-pointer"
+                  className="flex min-h-10 w-full items-center gap-3 rounded-2xl px-3 text-left text-[15px] font-medium text-slate-700 transition hover:bg-slate-100 cursor-pointer"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10" />
                     <polygon points="10 8 16 12 10 16 10 8" />
                   </svg>
-                  <span>Step Guide</span>
+                  <span>Setup Guide</span>
                 </button>
 
                 <Link
-                  href="/pricing?from=profile-menu"
+                  href="/pricing?from=sidebar"
                   onClick={() => setProfileDropdownOpen(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
+                  className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -405,27 +405,15 @@ export default function DashboardTopBar({
                   </span>
                 </Link>
 
-                <Link
-                  href="/settings"
-                  onClick={() => setProfileDropdownOpen(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <rect x="3" y="7" width="18" height="10" rx="5" />
-                    <circle cx="8" cy="12" r="3" />
-                  </svg>
-                  <span>Settings</span>
-                </Link>
               </div>
 
-              <div className="my-2.5 border-t border-slate-200/80" />
+              <div className="my-2 border-t border-slate-200/80" />
 
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <Link
                   href="/help"
                   onClick={() => setProfileDropdownOpen(false)}
-                  className="flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
+                  className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -440,7 +428,7 @@ export default function DashboardTopBar({
                   type="button"
                   onClick={handleInternalLogout}
                   disabled={isLoggingOut || internalLoggingOut}
-                  className="flex min-h-12 w-full items-center gap-3 rounded-2xl px-3 text-left text-[15px] font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-60 cursor-pointer"
+                  className="flex min-h-10 w-full items-center gap-3 rounded-2xl px-3 text-left text-[15px] font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-60 cursor-pointer"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
                   <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
