@@ -85,7 +85,7 @@ export default function BlogPage() {
               <div className="mt-7 sm:mt-8 flex justify-center">
                 <a
                   href="#journal"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#0B2568] hover:bg-[#071948] px-7 py-3 text-xs sm:text-sm font-semibold text-white shadow-sm transition active:scale-98"
+                  className="inline-flex items-center gap-2 rounded-full bg-cta-gradient px-7 py-3 text-xs sm:text-sm font-semibold text-white shadow-sm transition hover:opacity-95 active:scale-98"
                   style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                 >
                   <span>Explore The Journal</span>
