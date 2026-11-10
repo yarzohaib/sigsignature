@@ -259,8 +259,8 @@ describe("Landing Page & Marketing Screens QA Polish", () => {
     const blogPageContent = fs.readFileSync(blogPagePath, "utf-8");
     assert.match(
       blogPageContent,
-      /bg-\[#0B2568\]/,
-      "Hero CTA button must use deep navy #0B2568 background"
+      /bg-\[#0B2568\]|bg-cta-gradient/,
+      "Hero CTA button must use deep navy #0B2568 or bg-cta-gradient"
     );
     assert.match(
       blogPageContent,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import SignaturePreviewFrame from "./SignaturePreviewFrame";
 import { StudioSignatureData } from "@/types/studio";
@@ -24,6 +24,12 @@ export default function PreviewSignatureModal({
 }: PreviewSignatureModalProps) {
   const [activeTab, setActiveTab] = useState<"email" | "canvas">("email");
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [signatureHeight, setSignatureHeight] = useState(200);
+  const [viewportHeight, setViewportHeight] = useState(0);
+
+  const handleSignatureSizeChange = useCallback((size: { width: number; height: number }) => {
+    setSignatureHeight((current) => (current === size.height ? current : size.height));
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -34,6 +40,30 @@ export default function PreviewSignatureModal({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const updateViewportHeight = () => setViewportHeight(window.innerHeight);
+    updateViewportHeight();
+    window.addEventListener("resize", updateViewportHeight);
+    return () => window.removeEventListener("resize", updateViewportHeight);
+  }, [isOpen]);
+
+  useEffect(() => {
+    setSignatureHeight(200);
+  }, [html]);
+
+  const modalChromeHeight = viewportHeight > 0 && viewportHeight < 700 ? 400 : 360;
+  const maxSignatureHeight = viewportHeight > 0
+    ? Math.max(120, Math.floor(viewportHeight * 0.9 - modalChromeHeight))
+    : 300;
+  const previewSignatureHeight = Math.max(
+    120,
+    Math.min(signatureHeight + 4, maxSignatureHeight)
+  );
+  const modalHeight = viewportHeight > 0
+    ? Math.min(previewSignatureHeight + modalChromeHeight, Math.floor(viewportHeight * 0.9))
+    : 520;
 
   const canvasWidth = data?.canvas?.width || 600;
   const canvasHeight = data?.canvas?.height || 200;
@@ -59,7 +89,8 @@ export default function PreviewSignatureModal({
         >
           <motion.div
             key="preview-signature-dialog"
-            className="flex h-[min(520px,90vh)] max-h-[90vh] w-full max-w-[850px] flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden"
+            className="flex max-h-[90vh] w-full max-w-[850px] flex-col rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden"
+            style={{ height: `${modalHeight}px` }}
             onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -168,10 +199,10 @@ export default function PreviewSignatureModal({
         </div>
 
         {/* Modal Body */}
-        <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 bg-[#F8FAFC] flex justify-center items-start">
+        <div className="min-h-0 flex-1 overflow-hidden p-3 sm:p-4 bg-[#F8FAFC] flex justify-center items-stretch">
           {activeTab === "email" ? (
             <div
-              className="my-auto flex h-[420px] w-full flex-col overflow-hidden rounded-xl border border-[#E2E8F0] bg-white shadow-xs transition-all duration-200"
+              className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-[#E2E8F0] bg-white shadow-xs transition-all duration-200"
               style={{
                 maxWidth: device === "desktop" ? "600px" : "360px",
               }}
@@ -189,7 +220,7 @@ export default function PreviewSignatureModal({
               </div>
 
               {/* Email Sample Text */}
-              <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 text-xs leading-relaxed text-[#475569]">
+              <div className="min-h-0 flex-1 overflow-hidden px-5 pt-5 text-xs leading-relaxed text-[#475569]">
                 <p>Hi there,</p>
                 <p className="mt-2">
                   Thank you for your time earlier today. Please find the attached details regarding our project timeline.
@@ -198,11 +229,16 @@ export default function PreviewSignatureModal({
                 <p className="mt-3">Best regards,</p>
 
                 {/* Rendered Signature HTML in iframe */}
-                <div className="mt-4 pt-4 border-t border-slate-100">
+                <div
+                  className="mt-4 border-t border-slate-100 pt-4 pb-4"
+                  style={{ minHeight: `${previewSignatureHeight + 24}px` }}
+                >
                   <SignaturePreviewFrame
                     html={html}
                     aspectRatio={false}
                     targetWidth={device === "mobile" ? 320 : undefined}
+                    targetHeight={previewSignatureHeight}
+                    onContentSizeChange={handleSignatureSizeChange}
                   />
                 </div>
               </div>

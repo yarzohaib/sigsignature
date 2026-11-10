@@ -1848,6 +1848,30 @@ function DesignStudioContent() {
 
               {openSections.fonts && (
                 <div className="mt-3.5">
+                  {selectedElement && (selectedElement.type === "text" || selectedElement.type === "cta") ? (
+                    <div className="mb-2.5 flex items-center justify-between gap-2 rounded-lg bg-slate-50 px-2.5 py-1.5 border border-slate-200">
+                      <span className="text-[11px] font-medium text-slate-600 truncate">
+                        Selected: <span className="font-semibold text-slate-800 capitalize">{selectedElement.type} Box</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentFont =
+                            (selectedElement as FreeTextElement | FreeCtaElement).fontFamily || state.fontFamily;
+                          dispatch({ type: "SET_FONT", payload: currentFont });
+                          showToast(`Applied ${currentFont} to entire signature`);
+                        }}
+                        className="text-[10px] font-semibold text-[#245FD4] hover:text-[#022977] hover:underline cursor-pointer shrink-0"
+                        title="Apply this font to all text boxes"
+                      >
+                        Apply to all text
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mb-2 text-[11px] text-slate-500 font-medium">
+                      Default font (applies to all text):
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2" role="radiogroup" aria-label="Font Selection">
                     {ALLOWED_STUDIO_FONTS.map((font) => {
                       const isElementScope =

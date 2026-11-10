@@ -142,6 +142,7 @@ export default function FreeElementView({
   }
 
   function handlePointerDown(e: React.PointerEvent) {
+    e.stopPropagation();
     if (isEditingText) return;
     onSelect(element.id, e);
     if (!element.locked) {
@@ -311,6 +312,8 @@ export default function FreeElementView({
                     onBlur={handleTextBlur}
                     onKeyDown={handleTextKeyDown}
                     onPaste={handleTextPaste}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
                     maxLength={elementMaxLength}
                     className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
                     style={{
@@ -359,6 +362,8 @@ export default function FreeElementView({
               onBlur={handleTextBlur}
               onKeyDown={handleTextKeyDown}
               onPaste={handleTextPaste}
+              onPointerDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
               maxLength={elementMaxLength}
               className="w-full h-full p-0 m-0 bg-transparent resize-none border-none outline-none overflow-hidden"
               style={{

@@ -33,6 +33,10 @@ export interface SignaturePreviewFrameProps {
    * Target container width when aspectRatio is false, used to auto-scale content down if it exceeds the viewport.
    */
   targetWidth?: number;
+  /** Target height when aspectRatio is false, used to scale tall content to fit its preview area. */
+  targetHeight?: number;
+  /** Called when the unscaled HTML content dimensions have been measured. */
+  onContentSizeChange?: (size: { width: number; height: number }) => void;
 }
 
 export interface SignaturePreviewFrameHandle {
@@ -53,6 +57,8 @@ export const SignaturePreviewFrame = forwardRef<
     allowUpscale = false,
     preferTableBounds = false,
     targetWidth,
+    targetHeight,
+    onContentSizeChange,
   },
   ref
 ) {
@@ -178,14 +184,16 @@ export const SignaturePreviewFrame = forwardRef<
       }
 
       if (w > 0 && h > 0) {
-        setContentSize({ width: Math.ceil(w), height: Math.ceil(h) });
-        setUnscaledHeight(Math.max(Math.ceil(h) + 4, minHeight));
+        const measuredSize = { width: Math.ceil(w), height: Math.ceil(h) };
+        setContentSize(measuredSize);
+        setUnscaledHeight(Math.max(measuredSize.height + 4, minHeight));
+        onContentSizeChange?.(measuredSize);
         setMeasured(true);
       }
     } catch {
       // Ignore cross-origin issues if any
     }
-  }, [minHeight, preferTableBounds]);
+  }, [minHeight, onContentSizeChange, preferTableBounds]);
 
   // Update the document body in place. Changing iframe srcDoc on every edit
   // navigates the iframe, reloading images/fonts and causing visible flicker.
@@ -322,7 +330,12 @@ export const SignaturePreviewFrame = forwardRef<
         : 0;
 
     const shouldScale = availableWidth > 0 && rawContentWidth > availableWidth;
-    const scale = shouldScale ? availableWidth / rawContentWidth : 1;
+    const widthScale = shouldScale ? availableWidth / rawContentWidth : 1;
+    const heightScale =
+      typeof targetHeight === "number" && targetHeight > 0
+        ? targetHeight / unscaledHeight
+        : 1;
+    const scale = Math.min(widthScale, heightScale, 1);
     const scaledHeight = Math.ceil(unscaledHeight * scale);
     const scaledWidth = Math.ceil(rawContentWidth * scale);
 
