@@ -199,7 +199,7 @@ export default function GmailGeneratorHeroMockup() {
           {/* Bottom Send Action Button */}
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-end select-none">
             <div
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#002B7F] px-4 py-1.5 text-xs font-semibold text-white shadow-xs pointer-events-none cursor-default"
+              className="inline-flex items-center gap-1.5 rounded-full bg-cta-gradient px-4 py-1.5 text-xs font-semibold text-white shadow-xs pointer-events-none cursor-default"
             >
               <span>SEND</span>
               <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24">
