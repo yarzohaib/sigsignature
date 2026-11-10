@@ -88,9 +88,12 @@ export default function SignatureCard({
   function handleToggleMenu() {
     if (!menuOpen && menuBtnRef.current) {
       const rect = menuBtnRef.current.getBoundingClientRect();
+      const menuWidth = 144;
+      const viewportLeft = window.scrollX + 10;
+      const viewportRight = window.scrollX + window.innerWidth - menuWidth - 10;
       setMenuPos({
         top: rect.bottom + window.scrollY + 4,
-        left: Math.max(10, rect.right + window.scrollX - 176),
+        left: Math.max(viewportLeft, Math.min(rect.right + window.scrollX - menuWidth, viewportRight)),
       });
       setMenuOpen(true);
     } else {
