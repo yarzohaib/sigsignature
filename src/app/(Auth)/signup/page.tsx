@@ -57,9 +57,11 @@ function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const errorCode = searchParams.get("error");
+  const urlRefCode = searchParams.get("ref") || searchParams.get("referral");
 
   const [form, setForm] = useState<SignupFormState>(initialForm);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [referralCode, setReferralCode] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(() =>
     getOAuthErrorMessage(errorCode)
   );
@@ -67,6 +69,24 @@ function SignupForm() {
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null);
+
+  // Capture and persist referral code from URL or existing storage
+  useEffect(() => {
+    try {
+      const activeRef =
+        (urlRefCode && urlRefCode.trim().toUpperCase()) ||
+        sessionStorage.getItem("sig_referral_code") ||
+        localStorage.getItem("sig_referral_code");
+
+      if (activeRef) {
+        setReferralCode(activeRef);
+        sessionStorage.setItem("sig_referral_code", activeRef);
+        localStorage.setItem("sig_referral_code", activeRef);
+      }
+    } catch {
+      // Ignore storage access errors
+    }
+  }, [urlRefCode]);
 
   // If error query param changes, adjust state directly during render (React pattern)
   const [prevErrorCode, setPrevErrorCode] = useState(errorCode);
@@ -234,6 +254,7 @@ function SignupForm() {
         lastName: form.lastName.trim() || undefined,
         email: targetEmail,
         password: form.password,
+        referralCode: referralCode || undefined,
       });
 
       setRegisteredEmail(targetEmail);

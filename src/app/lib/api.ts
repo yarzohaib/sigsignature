@@ -33,6 +33,10 @@ export interface UserProfile {
   onboardingSeenAt?: string | null;
   isActive?: boolean;
   isVerified?: boolean;
+  referralCode?: string | null;
+  proTrialUntil?: string | null;
+  isProTrialActive?: boolean;
+  referralCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -42,6 +46,7 @@ export interface SignupPayload {
   lastName?: string;
   email: string;
   password: string;
+  referralCode?: string;
 }
 
 export interface SignupResponse {
@@ -93,6 +98,7 @@ export async function signupUser(payload: SignupPayload): Promise<SignupResponse
         lastName: payload.lastName ? payload.lastName.trim() : undefined,
         email: payload.email.trim(),
         password: payload.password,
+        referralCode: payload.referralCode ? payload.referralCode.trim().toUpperCase() : undefined,
       }),
     });
   } catch (networkErr: unknown) {
@@ -232,7 +238,16 @@ export function startOAuth(
   }
 
   const origin = window.location.origin;
-  const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}`;
+  let refParam = "";
+  try {
+    const savedRef = sessionStorage.getItem("sig_referral_code") || localStorage.getItem("sig_referral_code");
+    if (savedRef && savedRef.trim()) {
+      refParam = `&ref=${encodeURIComponent(savedRef.trim().toUpperCase())}`;
+    }
+  } catch {
+    // Ignore storage errors
+  }
+  const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}${refParam}`;
   const usePopup = options?.popup !== false; // Default to popup window for smooth OAuth UX
 
   if (usePopup) {
@@ -1951,4 +1966,61 @@ export async function deleteUserAccount(payload: DeleteAccountPayload): Promise<
       0
     );
   }
+}
+
+export interface ReferralInfoResponse {
+  referralCode: string;
+  shareUrl: string;
+  referralCount: number;
+  proTrialUntil: string | null;
+  isProTrialActive: boolean;
+}
+
+export interface SendReferralInviteResponse {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Fetch referral details for the authenticated user (referralCode, shareUrl, referralCount, proTrial status)
+ */
+export async function getReferralInfo(): Promise<ReferralInfoResponse> {
+  const url = `${API_BASE_URL}/api/v1/referrals`;
+  const response = await apiFetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const result = await response.json().catch(() => null);
+  if (!response.ok || !result?.data) {
+    const message = result?.message || "Failed to load referral details.";
+    throw new ApiError(message, response.status, result?.code);
+  }
+
+  return result.data as ReferralInfoResponse;
+}
+
+/**
+ * Send a 1-click referral email invitation to a recipient
+ */
+export async function sendReferralInvite(email: string): Promise<SendReferralInviteResponse> {
+  const url = `${API_BASE_URL}/api/v1/referrals/invite`;
+  const response = await apiFetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ email: email.trim() }),
+  });
+
+  const result = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = result?.message || "Failed to send referral invitation.";
+    throw new ApiError(message, response.status, result?.code);
+  }
+
+  return result as SendReferralInviteResponse;
 }

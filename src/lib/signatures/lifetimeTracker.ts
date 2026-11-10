@@ -78,8 +78,26 @@ export function recordSignatureCreated(userId?: string): number {
 
 /**
  * Checks if the user has reached the strict 3-signature lifetime limit.
+ * Pro / Premium users (including active Pro trial) are exempt.
  */
 export function isSignatureLimitReached(activeCount: number = 0, userId?: string): boolean {
+  if (typeof window !== "undefined") {
+    try {
+      const rawUser = localStorage.getItem("sig_user");
+      if (rawUser) {
+        const u = JSON.parse(rawUser);
+        if (
+          u.isProTrialActive ||
+          (u.proTrialUntil && new Date(u.proTrialUntil).getTime() > Date.now())
+        ) {
+          return false;
+        }
+      }
+    } catch {
+      // fallback to standard check
+    }
+  }
+
   const lifetime = getLifetimeSignatureCount(userId);
   return Math.max(activeCount, lifetime) >= 3;
 }
