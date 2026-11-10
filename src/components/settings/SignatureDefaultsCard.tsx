@@ -2,6 +2,7 @@
 
 import type { SavedSignature } from "@/types/signature";
 import Select from "@/components/ui/Select";
+import ColorPickerPopover from "@/components/ui/ColorPickerPopover";
 
 export const EMAIL_SAFE_FONTS = [
   "Arimo",
@@ -156,21 +157,13 @@ export default function SignatureDefaultsCard({
             Brand color
           </label>
           <div className="relative flex items-center gap-2">
-            {/* Color swatch & native color input */}
-            <label
-              htmlFor="brand-color-picker"
-              className="relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-slate-200 shadow-2xs overflow-hidden transition hover:scale-105"
-              style={{ backgroundColor: brandColor || "#245FD4" }}
-              title="Pick a color"
-            >
-              <input
-                id="brand-color-picker"
-                type="color"
-                value={brandColor?.startsWith("#") && brandColor.length === 7 ? brandColor : "#245FD4"}
-                onChange={(e) => onBrandColorChange(e.target.value.toUpperCase())}
-                className="absolute inset-0 h-full w-full opacity-0 cursor-pointer"
-              />
-            </label>
+            {/* Color swatch & in-page popover */}
+            <ColorPickerPopover
+              value={brandColor || "#245FD4"}
+              onChange={(hex) => onBrandColorChange(hex)}
+              label="Brand color"
+              size="default"
+            />
 
             {/* Hex input */}
             <input

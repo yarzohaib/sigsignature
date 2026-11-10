@@ -3,6 +3,7 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Select from "@/components/ui/Select";
+import ColorPickerPopover from "@/components/ui/ColorPickerPopover";
 import {
   StudioSignatureData,
   FreeElement,
@@ -490,19 +491,19 @@ export default function EditDetailsModal({
                     Text Color
                   </label>
                   <div className="flex items-center gap-2 pt-1">
-                    <input
-                      type="color"
+                    <ColorPickerPopover
                       value={(selectedElement as FreeTextElement).color || "#1E293B"}
-                      onChange={(e) => {
+                      onChange={(color) => {
                         dispatch({
                           type: "UPDATE_ELEMENT",
                           payload: {
                             id: selectedElement.id,
-                            updates: { color: e.target.value },
+                            updates: { color },
                           },
                         });
                       }}
-                      className="h-8 w-8 rounded-lg border border-slate-300 cursor-pointer p-0.5"
+                      label="Text Color"
+                      size="compact"
                     />
                     <span className="text-xs text-slate-600 font-mono">
                       {(selectedElement as FreeTextElement).color || "Default"}
@@ -631,19 +632,19 @@ export default function EditDetailsModal({
                     Button Color
                   </label>
                   <div className="flex items-center gap-2 pt-1">
-                    <input
-                      type="color"
+                    <ColorPickerPopover
                       value={(selectedElement as FreeCtaElement).color || state.themeColor || "#245FD4"}
-                      onChange={(e) => {
+                      onChange={(color) => {
                         dispatch({
                           type: "UPDATE_ELEMENT",
                           payload: {
                             id: selectedElement.id,
-                            updates: { color: e.target.value },
+                            updates: { color },
                           },
                         });
                       }}
-                      className="h-8 w-8 rounded-lg border border-slate-300 cursor-pointer p-0.5"
+                      label="Button Color"
+                      size="compact"
                     />
                     <span className="text-xs text-slate-600 font-mono">
                       {(selectedElement as FreeCtaElement).color || "Theme color"}
