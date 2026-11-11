@@ -100,10 +100,19 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
 
   function handleShareWhatsapp() {
     if (!data?.shareUrl) return;
-    const text = encodeURIComponent(
-      `Hey! I use Sig Signature to create professional email signatures. Check it out here: ${data.shareUrl}`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank", "noopener,noreferrer");
+    const message = [
+      "*Create your professional email signature with Sig Signature.*",
+      "",
+      "I've been using Sig Signature to build clean, responsive email signatures that look great across Gmail, Outlook, and Apple Mail.",
+      "",
+      "Use my link to create yours for free:",
+      "",
+      `Here's my link 👇`,
+      data.shareUrl,
+    ].join("\n");
+
+    const encodedText = encodeURIComponent(message);
+    window.open(`https://api.whatsapp.com/send?text=${encodedText}`, "_blank", "noopener,noreferrer");
   }
 
   // Calculate formatted trial expiration
