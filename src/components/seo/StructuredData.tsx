@@ -40,11 +40,13 @@ export function WebSiteJsonLd() {
     "@type": "WebSite",
     "name": "Sig Signature",
     "alternateName": [
-      "Sig Signature",
+      "sigsignature",
+      "SigSignature",
+      "sig signature",
       "Sig Signature by The Nevon",
       "Sig Signature Email Signature Generator"
     ],
-    "url": "https://www.sigsignature.com",
+    "url": "https://www.sigsignature.com/",
     "description": "Free professional HTML email signature generator engineered for modern professionals and teams.",
     "publisher": {
       "@type": "Organization",

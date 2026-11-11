@@ -228,8 +228,8 @@ export interface StartOAuthOptions {
 }
 
 /**
- * Initiates OAuth login by redirecting the browser in the current tab to the backend OAuth provider endpoint,
- * or opening a centered popup window only if options.popup is explicitly true.
+ * Initiates OAuth login with the backend provider endpoint, opening a popup by default
+ * unless options.popup is explicitly false.
  */
 export function startOAuth(
   provider: OAuthProvider,
@@ -250,7 +250,7 @@ export function startOAuth(
     // Ignore storage errors
   }
   const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}${refParam}`;
-  const usePopup = Boolean(options?.popup); // Default to full in-tab redirect to avoid new tab issues
+  const usePopup = options?.popup !== false; // Default to popup window for smooth OAuth UX
 
   if (usePopup) {
     return new Promise<void>((resolve, reject) => {
