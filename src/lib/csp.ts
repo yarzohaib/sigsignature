@@ -261,7 +261,7 @@ export function getSecurityHeaders(isDev: boolean = process.env.NODE_ENV !== "pr
     },
     {
       key: "Cross-Origin-Opener-Policy",
-      value: "same-origin",
+      value: "same-origin-allow-popups",
     },
     {
       key: csp.key,
