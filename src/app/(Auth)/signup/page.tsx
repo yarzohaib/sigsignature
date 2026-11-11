@@ -133,11 +133,7 @@ function SignupForm() {
       }
 
       await startOAuth(provider, {
-        popup: true,
-        onPopupClosed: () => {
-          setOauthLoading(null);
-          setIsLoading(false);
-        },
+        popup: false,
         onError: (err) => {
           setServerError(getOAuthErrorMessage(err));
           setOauthLoading(null);
