@@ -10,7 +10,7 @@ interface ReferralModalProps {
 
 export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   const [data, setData] = useState<ReferralInfoResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [emailInput, setEmailInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -29,17 +29,15 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
 
   // Load referral details when modal opens
   useEffect(() => {
-    if (!isOpen) {
-      setStatusMessage(null);
-      setCopied(false);
-      return;
-    }
+    if (!isOpen) return;
 
     let isMounted = true;
-    setIsLoading(true);
     getReferralInfo()
       .then((res) => {
-        if (isMounted) setData(res);
+        if (isMounted) {
+          setData(res);
+          setStatusMessage(null);
+        }
       })
       .catch((err) => {
         if (isMounted) {
