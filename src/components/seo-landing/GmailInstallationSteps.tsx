@@ -9,22 +9,22 @@ export default function GmailInstallationSteps() {
     {
       num: "01",
       title: "Open Gmail Settings",
-      desc: "Log in to your Gmail account on your desktop browser. Click the Settings gear icon in the upper-right corner and select 'See all settings'.",
+      desc: 'Log in to your Gmail account on your desktop browser. Click the Settings gear icon in the upper-right corner and select "See all settings".',
     },
     {
       num: "02",
       title: "Go to the Signature Section",
-      desc: "Under the 'General' tab, scroll down until you reach the 'Signature' section. Click '+ Create new' and enter a name for your signature.",
+      desc: 'Under the "General" tab, scroll down until you reach the "Signature" section. Click "+ Create new" and enter a name for your signature.',
     },
     {
       num: "03",
       title: "Paste Your HTML Signature",
-      desc: "In Sig Signature, click 'Copy Signature'. Then return to Gmail, click inside the signature composition box, and press Ctrl+V (Cmd+V on Mac) to paste.",
+      desc: 'In Sig Signature, click "Copy Signature". Then return to Gmail, click inside the signature composition box, and press Ctrl+V (Cmd+V on Mac) to paste.',
     },
     {
       num: "04",
       title: "Set Defaults and Save",
-      desc: "Under 'Signature defaults', choose your new signature for new emails and replies. Scroll to the bottom of the page and click 'Save Changes'.",
+      desc: 'Under "Signature defaults", choose your new signature for new emails and replies. Scroll to the bottom of the page and click "Save Changes".',
     },
   ];
 
@@ -37,17 +37,17 @@ export default function GmailInstallationSteps() {
     {
       num: "02",
       title: "Open the Gmail Mobile App",
-      desc: "Open the Gmail app on your iOS or Android device. Tap the hamburger menu icon (☰) in the search bar and select 'Settings'.",
+      desc: 'Open the Gmail app on your iOS or Android device. Tap the hamburger menu icon (☰) in the search bar and select "Settings".',
     },
     {
       num: "03",
       title: "Select Your Email Account",
-      desc: "Tap your Google Workspace or personal email address, then locate the 'Signature settings' section.",
+      desc: 'Tap your Google Workspace or personal email address, then locate the "Signature settings" section.',
     },
     {
       num: "04",
       title: "Verify Auto-Sync Defaults",
-      desc: "Ensure 'Mobile Signature' is toggled off if you want Gmail to automatically attach your rich HTML desktop signature across all outgoing mobile emails.",
+      desc: 'Ensure "Mobile Signature" is toggled off if you want Gmail to automatically attach your rich HTML desktop signature across all outgoing mobile emails.',
     },
   ];
 
