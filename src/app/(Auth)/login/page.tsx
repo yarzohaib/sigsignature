@@ -383,16 +383,16 @@ function LoginForm() {
         {isPasswordReset && !serverError && (
           <div
             role="status"
-            className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 text-sm text-emerald-900 shadow-xs"
+            className="flex items-center gap-3 rounded-xl border border-[#245FD4]/20 bg-[#EFF6FF] p-4 text-sm text-[#173B8F] shadow-xs"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#245FD4] text-white">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
             </div>
             <div>
-              <p className="font-semibold text-emerald-950">Password reset successfully!</p>
-              <p className="text-xs text-emerald-800 mt-0.5">Please log in with your new password.</p>
+              <p className="font-semibold text-[#102A62]">Password reset successfully!</p>
+              <p className="text-xs text-[#31588F] mt-0.5">Please log in with your new password.</p>
             </div>
           </div>
         )}
