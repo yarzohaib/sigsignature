@@ -105,7 +105,11 @@ export default function DashboardTopBar({
   const isGuideAcknowledged = useSyncExternalStore(
     useCallback((onStoreChange) => {
       window.addEventListener(ONBOARDING_EVENT, onStoreChange);
-      return () => window.removeEventListener(ONBOARDING_EVENT, onStoreChange);
+      window.addEventListener("sig_count_update", onStoreChange);
+      return () => {
+        window.removeEventListener(ONBOARDING_EVENT, onStoreChange);
+        window.removeEventListener("sig_count_update", onStoreChange);
+      };
     }, []),
     useCallback(() => hasAcknowledgedOnboarding(guideUserId), [guideUserId]),
     useCallback(() => true, []),

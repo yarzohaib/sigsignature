@@ -3070,33 +3070,33 @@ function DesignStudioContent() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="studio-leave-title"
-            className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl"
+            className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-7 shadow-2xl sm:p-8"
           >
             <h2 id="studio-leave-title" className="text-lg font-bold text-[#1E293B]">
               Save your design before leaving?
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#64748B]">
+            <p className="mt-3 text-sm leading-6 text-[#64748B]">
               Keep this design as a draft to continue later, or delete the draft and leave with a blank canvas next time.
             </p>
-            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <div className="mt-7 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => setPendingSidebarHref(null)}
-                className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
                 Keep editing
               </button>
               <button
                 type="button"
                 onClick={() => resolveSidebarNavigation(false)}
-                className="rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-50"
+                className="rounded-xl border border-rose-200 px-5 py-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50"
               >
                 Delete draft
               </button>
               <button
                 type="button"
                 onClick={() => resolveSidebarNavigation(true)}
-                className="rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:opacity-95"
+                className="rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-5 py-3 text-sm font-semibold text-white shadow-xs transition hover:opacity-95"
               >
                 Save as draft
               </button>
