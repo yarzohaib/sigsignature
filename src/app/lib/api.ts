@@ -209,6 +209,8 @@ export type OAuthProvider = "google" | "github";
 export interface StartOAuthOptions {
   /**
    * If true, open OAuth in a centered popup window instead of full tab redirect.
+   * Defaults to false (in-tab navigation) to ensure reliable OAuth authentication
+   * without browser popup blocks or multi-tab divergence.
    */
   popup?: boolean;
   /**
@@ -226,8 +228,8 @@ export interface StartOAuthOptions {
 }
 
 /**
- * Initiates OAuth login by redirecting the browser to the backend OAuth provider endpoint,
- * or opening a centered popup window if options.popup is true.
+ * Initiates OAuth login by redirecting the browser in the current tab to the backend OAuth provider endpoint,
+ * or opening a centered popup window only if options.popup is explicitly true.
  */
 export function startOAuth(
   provider: OAuthProvider,
@@ -248,7 +250,7 @@ export function startOAuth(
     // Ignore storage errors
   }
   const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}${refParam}`;
-  const usePopup = options?.popup !== false; // Default to popup window for smooth OAuth UX
+  const usePopup = Boolean(options?.popup); // Default to full in-tab redirect to avoid new tab issues
 
   if (usePopup) {
     return new Promise<void>((resolve, reject) => {
