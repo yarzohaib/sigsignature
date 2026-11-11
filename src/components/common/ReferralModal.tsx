@@ -131,16 +131,12 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-[480px] rounded-3xl bg-white p-5 sm:p-7 shadow-2xl border border-slate-100 transition-all transform scale-100 animate-in zoom-in-95 duration-200 overflow-hidden"
+        className="relative isolate w-full max-w-[480px] rounded-[32px] bg-white p-5 sm:p-7 shadow-2xl border border-slate-100 transition-all transform scale-100 animate-in zoom-in-95 duration-200 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         style={{
           boxShadow: "0 25px 60px -15px rgba(2, 41, 119, 0.2)",
         }}
       >
-        {/* Subtle decorative background gradient accents */}
-        <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 rounded-full bg-blue-100/50 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-indigo-100/40 blur-3xl" />
-
         {/* Close Button */}
         <button
           type="button"
