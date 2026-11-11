@@ -14,6 +14,7 @@ import {
   getLifetimeSignatureCount,
   syncLifetimeSignatureCount,
 } from "@/lib/signatures/lifetimeTracker";
+import ReferralModal from "@/components/common/ReferralModal";
 
 type SidebarProps = {
   mobileOpen?: boolean;
@@ -52,6 +53,15 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
   const { isCollapsed, toggleSidebar, setCollapsed } = useSidebar();
   const [signatureCount, setSignatureCount] = useState<number>(() => getCachedSignatureCount());
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isReferralOpen, setIsReferralOpen] = useState(false);
+
+  // Check if user has availed or is actively on the free trial/referral reward
+  const user = optionalUser?.user || (typeof window !== "undefined" ? getStoredUser() : null);
+  const hasAvailedFreeTier = Boolean(
+    user?.isProTrialActive ||
+    user?.proTrialUntil ||
+    (user?.referralCount && user.referralCount > 0)
+  );
 
   function handleLinkClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
     const isRegularClick =
@@ -378,16 +388,16 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
           {/* Card 1: Unlock Premium Features */}
           {isCollapsed ? (
             <div className="relative group lg:flex hidden justify-center">
-              <Link
-                href="/pricing?from=sidebar"
-                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs"
+              <button
+                type="button"
+                onClick={() => setIsReferralOpen(true)}
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs cursor-pointer"
                 aria-label="Unlock Premium Features"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                 </svg>
-              </Link>
+              </button>
               <div
                 role="tooltip"
                 className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
@@ -408,25 +418,27 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
                 className="text-[13px] font-bold text-[#1E293B]"
                 style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
               >
-                Unlock Premium Features
+                {hasAvailedFreeTier ? "Unlock Premium Features" : "Unlock Premium Features for Free"}
               </h4>
               <p
                 className="mt-0.5 text-[11px] leading-[16px] text-[#64748B]"
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
-                Upgrade to premium and access powerful features and advanced customization.
+                {hasAvailedFreeTier
+                  ? "Upgrade to premium and access powerful features and advanced customization."
+                  : "Invite a colleague and unlock a full month of Pro features completely free."}
               </p>
-              <Link
-                href="/pricing?from=sidebar"
-                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
+              <button
+                type="button"
+                onClick={() => setIsReferralOpen(true)}
+                className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95 cursor-pointer"
                 style={{
                   fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
                   letterSpacing: "0%",
                 }}
               >
-                Upgrade Now
-              </Link>
+                {hasAvailedFreeTier ? "Upgrade Now" : "Unlock for Free"}
+              </button>
             </div>
           )}
 
@@ -567,6 +579,12 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
           </div>
         </div>
       </aside>
+
+      {/* Referral Modal */}
+      <ReferralModal
+        isOpen={isReferralOpen}
+        onClose={() => setIsReferralOpen(false)}
+      />
     </>
   );
 }

@@ -21,6 +21,7 @@ import {
   UpdateProfilePayload,
   UpdateSettingsPayload,
   UserProfile,
+  ApiError,
 } from "@/app/lib/api";
 import {
   getStoredUser,
@@ -193,8 +194,12 @@ function SettingsContent() {
         setStoredAvatarUrl(serverAvatar);
       } catch (err: unknown) {
         console.error("Failed to load account:", err);
-        // If unauthenticated, redirect to login
-        if (typeof window !== "undefined" && !cachedUser) {
+        // If unauthenticated (401 / Authentication required), clear stale session and redirect to login
+        if (
+          (err instanceof ApiError && err.statusCode === 401) ||
+          (err instanceof Error && /auth/i.test(err.message)) ||
+          !cachedUser
+        ) {
           clearAuthSession();
           router.replace("/login?redirect=/settings");
           return;

@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import PricingSkeleton from "@/components/skeletons/PricingSkeleton";
 import { getStoredUser, getStoredToken } from "@/app/lib/auth";
+import ReferralModal from "@/components/common/ReferralModal";
 
 function CheckCircleIcon() {
   return (
@@ -35,6 +36,7 @@ function PricingContent() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
+  const [isReferralOpen, setIsReferralOpen] = useState(false);
 
   useEffect(() => {
     function checkAuth() {
@@ -58,6 +60,19 @@ function PricingContent() {
       router.push("/signup?redirect=/pricing&plan=pro");
       return;
     }
+
+    // If user has not availed their one-time free Pro trial, open the referral modal directly
+    const hasAvailed = Boolean(
+      user?.isProTrialActive ||
+      user?.proTrialUntil ||
+      (user?.referralCount && user.referralCount > 0)
+    );
+
+    if (!hasAvailed) {
+      setIsReferralOpen(true);
+      return;
+    }
+
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
     setTimeout(() => {
       setPremiumToast(null);
@@ -113,6 +128,40 @@ function PricingContent() {
           >
             Choose a plan that fits your workflow for solo users or teams. Simple, flexible pricing with no hidden fees.
           </p>
+
+          {/* 1 Month Free Referral Callout Banner */}
+          <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-blue-200/90 bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-blue-50/90 p-3.5 sm:p-4 text-xs sm:text-sm text-slate-800 shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white shadow-2xs text-[#245FD4] shrink-0">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                </svg>
+              </span>
+              <div>
+                <span className="font-bold text-[#1E293B]">Get Premium Plan for Free</span>
+                <span className="text-[#64748B] ml-1.5 hidden sm:inline">Invite a colleague to join Sig Signature and unlock a full month of Pro without adding payment details.</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const user = getStoredUser();
+                const token = getStoredToken();
+                if (!user && !token) {
+                  router.push("/signup?redirect=/pricing");
+                  return;
+                }
+                setIsReferralOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer shrink-0 whitespace-nowrap"
+              style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+            >
+              <span>Get Pro Free</span>
+              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Plans Container: Fixed-size cards centered on wide screens */}
@@ -511,6 +560,12 @@ function PricingContent() {
               </div>
             </section>
           </main>
+
+      {/* Referral Modal */}
+      <ReferralModal
+        isOpen={isReferralOpen}
+        onClose={() => setIsReferralOpen(false)}
+      />
     </div>
   );
 }
