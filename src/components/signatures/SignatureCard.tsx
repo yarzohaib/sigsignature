@@ -43,6 +43,7 @@ interface SignatureCardProps {
   onDelete: (signature: SavedSignature) => void;
   onCopyToTeam?: (signature: SavedSignature) => void;
   onPreview?: (signature: SavedSignature) => void;
+  onPushToGmail?: (signature: SavedSignature) => void;
 }
 
 export default function SignatureCard({
@@ -53,6 +54,7 @@ export default function SignatureCard({
   onDelete,
   onCopyToTeam,
   onPreview,
+  onPushToGmail,
 }: SignatureCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
@@ -196,9 +198,26 @@ export default function SignatureCard({
                   left: `${menuPos.left}px`,
                   zIndex: 9999,
                 }}
-                className="w-36 rounded-xl border border-[#E2E8F0] bg-white p-1 shadow-xl animate-fade-in"
+                className="w-40 rounded-xl border border-[#E2E8F0] bg-white p-1 shadow-xl animate-fade-in"
                 role="menu"
               >
+                {onPushToGmail && (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onPushToGmail(signature);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-[#1E293B] hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    <svg className="h-3.5 w-3.5 text-[#64748B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="m22 7-10 6L2 7" />
+                    </svg>
+                    <span>Push to Gmail</span>
+                  </button>
+                )}
                 <button
                   type="button"
                   role="menuitem"

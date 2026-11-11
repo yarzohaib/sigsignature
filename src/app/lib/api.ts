@@ -2024,3 +2024,100 @@ export async function sendReferralInvite(email: string): Promise<SendReferralInv
 
   return result as SendReferralInviteResponse;
 }
+
+/* ------------------------------------------------------------------ */
+/* Gmail integration                                                   */
+/* ------------------------------------------------------------------ */
+
+export interface GmailConnectionInfo {
+  provider: string;
+  accountEmail: string;
+  lastPushedAt: string | null;
+  lastSignatureId: string | null;
+  connectedAt: string | null;
+}
+
+export interface GmailStatus {
+  configured: boolean;
+  connected: boolean;
+  connection: GmailConnectionInfo | null;
+}
+
+export interface GmailPushResult {
+  accountEmail: string;
+  lastPushedAt: string;
+  characters: number;
+}
+
+async function gmailRequest<T>(path: string, options: RequestInit, fallback: string): Promise<T> {
+  try {
+    const response = await apiFetch(`${API_BASE_URL}/api/v1/integrations/gmail${path}`, {
+      ...options,
+      headers: { Accept: "application/json", ...(options.headers || {}) },
+    });
+    return await handleSignatureApiResponse<T>(response, fallback);
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const detail = networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(`Unable to reach backend server (${detail}). Please check your connection.`, 0);
+  }
+}
+
+export function fetchGmailStatus(): Promise<GmailStatus> {
+  return gmailRequest<GmailStatus>("", { method: "GET" }, "Failed to load Gmail status");
+}
+
+/** Returns the Google consent URL. The caller should send the browser there. */
+export async function startGmailConnect(): Promise<string> {
+  const data = await gmailRequest<{ url: string }>(
+    "/connect",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ frontendOrigin: window.location.origin }),
+    },
+    "Failed to start Gmail connection"
+  );
+  return data.url;
+}
+
+export function pushSignatureToGmail(signatureId: string, html: string): Promise<GmailPushResult> {
+  return gmailRequest<GmailPushResult>(
+    "/push",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ signatureId, html }),
+    },
+    "Failed to update Gmail signature"
+  );
+}
+
+export async function disconnectGmail(): Promise<void> {
+  await gmailRequest<{ disconnected: boolean }>("", { method: "DELETE" }, "Failed to disconnect Gmail");
+}
+
+/** Friendly text for the error codes returned by the Gmail endpoints. */
+export function getGmailErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) {
+    switch (err.code) {
+      case "GMAIL_RECONNECT_REQUIRED":
+        return "Google access expired. Please reconnect Gmail in Settings.";
+      case "GMAIL_NOT_CONNECTED":
+        return "Connect your Gmail account in Settings first.";
+      case "GMAIL_EMBEDDED_IMAGE":
+        return "This signature has an embedded image. Re-upload your photo or logo so it has a public link, then try again.";
+      case "GMAIL_SIGNATURE_TOO_LARGE":
+        return "This signature is too large for Gmail (10,000 character limit). Try removing some elements.";
+      case "GMAIL_NOT_CONFIGURED":
+        return "Gmail integration is not available yet. Please try again later.";
+      default:
+        return err.message;
+    }
+  }
+  return err instanceof Error ? err.message : "Something went wrong. Please try again.";
+}
+
+export function isGmailReconnectError(err: unknown): boolean {
+  return err instanceof ApiError && (err.code === "GMAIL_RECONNECT_REQUIRED" || err.code === "GMAIL_NOT_CONNECTED");
+}

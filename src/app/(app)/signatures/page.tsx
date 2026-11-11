@@ -29,6 +29,7 @@ import { copySignatureRich, copyTextToClipboard } from "@/lib/clipboard";
 import { markOnboardingStep } from "@/lib/onboarding";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import { toast } from "@/lib/toast";
+import { fetchGmailStatus, pushSignatureToGmail, getGmailErrorMessage } from "@/app/lib/api";
 import PreviewSignatureModal from "@/components/studio/PreviewSignatureModal";
 import SignaturesListSkeleton from "@/components/skeletons/SignaturesListSkeleton";
 import { getCachedRouteData, setCachedRouteData } from "@/lib/cache/routeCache";
@@ -167,6 +168,20 @@ function MySignaturesContent() {
     }
   };
 
+  const handlePushToGmail = async (target: SavedSignature) => {
+    try {
+      const status = await fetchGmailStatus();
+      if (!status.connected) {
+        showToast("Connect Gmail in Settings first, then try again.");
+        return;
+      }
+      const result = await pushSignatureToGmail(target.id, renderSavedSignatureHtml(target));
+      showToast(`Updated the Gmail signature for ${result.accountEmail}.`);
+    } catch (err: unknown) {
+      showToast(getGmailErrorMessage(err));
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (!deletingSignature) return;
     const deletedName = deletingSignature.name;
@@ -301,6 +316,7 @@ function MySignaturesContent() {
                 onDelete={setDeletingSignature}
                 onCopyToTeam={handleOpenCopyToTeam}
                 onPreview={setPreviewingSignature}
+                onPushToGmail={handlePushToGmail}
               />
             ))}
           </div>
