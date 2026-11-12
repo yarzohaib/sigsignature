@@ -282,7 +282,7 @@ export default function FreeElementView({
         const fontWeight = textEl.bold ? 700 : 400;
         const align = textEl.align || "left";
         const elementFontStack = resolveEmailFont(textEl.fontFamily || data.fontFamily || "Inter");
-        const color = textEl.color || (textEl.bold ? theme.text : theme.muted);
+        const color = textEl.color || (themeKey === "dark" || textEl.bold ? theme.text : theme.muted);
 
         if (textEl.icon) {
           const iconSrc = getSocialIconSvgDataUrl("minimal", themeColor, textEl.icon);

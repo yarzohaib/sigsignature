@@ -110,7 +110,7 @@ function DesignStudioContent() {
   const [zoom, setZoom] = useState(100);
 
   // Hide Field Labels on Canvas
-  const [hideLabels, setHideLabels] = useState(false);
+  const [hideLabels, setHideLabels] = useState(true);
 
   // Autosave Status
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving">("saved");
@@ -2451,7 +2451,7 @@ function DesignStudioContent() {
                       <circle cx="12" cy="12" r="3" />
                     </svg>
                   )}
-                  <span>Hide Labels</span>
+                  <span>{hideLabels ? "Show Labels" : "Hide Labels"}</span>
                   <span
                     aria-hidden="true"
                     className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${
@@ -2928,7 +2928,7 @@ function DesignStudioContent() {
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               )}
-              <span className="hidden sm:inline">Hide Labels</span>
+              <span className="hidden sm:inline">{hideLabels ? "Show Labels" : "Hide Labels"}</span>
               <span
                 aria-hidden="true"
                 className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${

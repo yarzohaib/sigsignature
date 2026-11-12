@@ -661,16 +661,16 @@ export default function FreeCanvas({
 
           {/* Empty State */}
           {elements.length === 0 && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 select-none p-6 text-center pointer-events-none">
-              <svg className="w-8 h-8 text-slate-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <div className={`absolute inset-0 flex flex-col items-center justify-center select-none p-6 text-center pointer-events-none ${themeKey === "dark" ? "text-slate-200" : "text-slate-400"}`}>
+              <svg className="mb-2 h-8 w-8 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <path d="M12 8v8" />
                 <path d="M8 12h8" />
               </svg>
-              <p className="text-sm font-medium text-slate-500">
+              <p className={`text-sm font-medium ${themeKey === "dark" ? "text-white" : "text-slate-500"}`}>
                 Add elements from the left panel to start designing
               </p>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className={`mt-1 text-xs ${themeKey === "dark" ? "text-slate-200" : "text-slate-400"}`}>
                 Everything can be freely positioned and resized without overlapping
               </p>
             </div>
