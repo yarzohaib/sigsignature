@@ -911,7 +911,10 @@ export async function fetchSignatures(): Promise<BackendSavedSignature[]> {
 
     if (result?.meta?.lifetimeCreated !== undefined && typeof window !== "undefined") {
       try {
-        localStorage.setItem("sig_lifetime_signatures_count", String(result.meta.lifetimeCreated));
+        const currentUser = getStoredUser();
+        if (currentUser?.id) {
+          localStorage.setItem(`sig_lifetime_created_count_${currentUser.id}`, String(result.meta.lifetimeCreated));
+        }
       } catch {
         // ignore storage errors
       }

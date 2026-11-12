@@ -22,25 +22,30 @@ type SidebarProps = {
   onBeforeNavigate?: (href: string) => boolean;
 };
 
-const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count";
-let memoryCachedSignatureCount: number | null = null;
+const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count_";
+let memoryCachedSignatureCount: Record<string, number> = {};
 
-function getCachedSignatureCount(): number {
-  if (memoryCachedSignatureCount !== null) return memoryCachedSignatureCount;
+function getCachedSignatureCount(userId?: string): number {
+  const uid = userId || (typeof window !== "undefined" ? getStoredUser()?.id : undefined);
+  if (!uid) return 0;
+
+  if (memoryCachedSignatureCount[uid] !== undefined) return memoryCachedSignatureCount[uid];
   if (typeof window === "undefined") return 0;
 
   try {
-    const raw = localStorage.getItem(CACHED_SIGNATURE_COUNT_KEY);
+    const raw = localStorage.getItem(`${CACHED_SIGNATURE_COUNT_KEY}${uid}`);
     if (raw !== null) {
       const parsed = parseInt(raw, 10);
       if (!isNaN(parsed)) {
-        memoryCachedSignatureCount = Math.min(3, Math.max(0, parsed));
-        return memoryCachedSignatureCount;
+        const val = Math.min(3, Math.max(0, parsed));
+        memoryCachedSignatureCount[uid] = val;
+        return val;
       }
     }
-    const lifetime = getLifetimeSignatureCount();
-    memoryCachedSignatureCount = Math.min(3, Math.max(0, lifetime));
-    return memoryCachedSignatureCount;
+    const lifetime = getLifetimeSignatureCount(uid);
+    const val = Math.min(3, Math.max(0, lifetime));
+    memoryCachedSignatureCount[uid] = val;
+    return val;
   } catch {
     return 0;
   }
@@ -51,7 +56,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
   const router = useRouter();
   const optionalUser = useOptionalUser();
   const { isCollapsed, toggleSidebar, setCollapsed } = useSidebar();
-  const [signatureCount, setSignatureCount] = useState<number>(() => getCachedSignatureCount());
+  const currentUserId = optionalUser?.user?.id || (typeof window !== "undefined" ? getStoredUser()?.id : undefined);
+  const [signatureCount, setSignatureCount] = useState<number>(() => getCachedSignatureCount(currentUserId));
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isReferralOpen, setIsReferralOpen] = useState(false);
 
@@ -79,7 +85,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
   useEffect(() => {
     let isMounted = true;
-    const cached = getCachedSignatureCount();
+    const uid = optionalUser?.user?.id || (typeof window !== "undefined" ? getStoredUser()?.id : undefined);
+    const cached = getCachedSignatureCount(uid);
     if (cached > 0) {
       queueMicrotask(() => {
         if (isMounted) setSignatureCount(cached);
@@ -98,14 +105,19 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted) {
-          const lifetime = syncLifetimeSignatureCount(list.length, optionalUser?.user?.id);
+          const activeUid = user?.id;
+          const lifetime = syncLifetimeSignatureCount(list.length, activeUid);
           const count = Math.min(3, Math.max(list.length, lifetime));
-          memoryCachedSignatureCount = count;
+          if (activeUid) {
+            memoryCachedSignatureCount[activeUid] = count;
+          }
           setSignatureCount(count);
-          try {
-            localStorage.setItem(CACHED_SIGNATURE_COUNT_KEY, String(count));
-          } catch {
-            // Keep the live count even if browser storage is unavailable.
+          if (activeUid) {
+            try {
+              localStorage.setItem(`${CACHED_SIGNATURE_COUNT_KEY}${activeUid}`, String(count));
+            } catch {
+              // Keep the live count even if browser storage is unavailable.
+            }
           }
         }
       } catch {

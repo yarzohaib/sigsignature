@@ -8,15 +8,17 @@ import { getTeam } from "@/app/lib/api";
 import { getLifetimeSignatureCount, syncLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import { getStoredUser } from "@/app/lib/auth";
 
-const CACHE_SIG_KEY = "sig_cached_signatures_count";
-const CACHE_TEAMS_KEY = "sig_cached_teams_count";
+const CACHE_SIG_KEY = "sig_cached_signatures_count_";
+const CACHE_TEAMS_KEY = "sig_cached_teams_count_";
 
 export default function QuickOverview() {
-  // Initialize with cached numbers from localStorage to prevent flashing '0' on page load / refresh
+  const currentUid = typeof window !== "undefined" ? getStoredUser()?.id : undefined;
+
+  // Initialize with cached numbers from localStorage scoped to user to prevent flashing '0' on page load / refresh
   const [totalSignatures, setTotalSignatures] = useState<number>(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && currentUid) {
       try {
-        const cached = localStorage.getItem(CACHE_SIG_KEY);
+        const cached = localStorage.getItem(`${CACHE_SIG_KEY}${currentUid}`);
         if (cached !== null) {
           const parsed = parseInt(cached, 10);
           if (!isNaN(parsed)) return Math.min(3, Math.max(0, parsed));
@@ -25,7 +27,7 @@ export default function QuickOverview() {
         // ignore localStorage access error
       }
     }
-    return 1;
+    return 0;
   });
 
   const [personalTemplatesCount, setPersonalTemplatesCount] = useState<number>(
@@ -33,9 +35,9 @@ export default function QuickOverview() {
   );
 
   const [teamsCount, setTeamsCount] = useState<number>(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && currentUid) {
       try {
-        const cached = localStorage.getItem(CACHE_TEAMS_KEY);
+        const cached = localStorage.getItem(`${CACHE_TEAMS_KEY}${currentUid}`);
         if (cached !== null) {
           const parsed = parseInt(cached, 10);
           if (!isNaN(parsed)) return parsed;
@@ -61,10 +63,12 @@ export default function QuickOverview() {
           const user = getStoredUser();
           const effectiveCount = syncLifetimeSignatureCount(list.length, user?.id);
           setTotalSignatures(Math.min(3, effectiveCount));
-          try {
-            localStorage.setItem(CACHE_SIG_KEY, String(Math.min(3, effectiveCount)));
-          } catch {
-            // ignore localStorage quota/disabled errors
+          if (user?.id) {
+            try {
+              localStorage.setItem(`${CACHE_SIG_KEY}${user.id}`, String(Math.min(3, effectiveCount)));
+            } catch {
+              // ignore localStorage quota/disabled errors
+            }
           }
         }
       } catch {
@@ -82,10 +86,13 @@ export default function QuickOverview() {
         if (isMounted && currentRequest === requestVersion) {
           const count = teamData && teamData.members ? teamData.members.length : 0;
           setTeamsCount(count);
-          try {
-            localStorage.setItem(CACHE_TEAMS_KEY, count.toString());
-          } catch {
-            // ignore localStorage errors
+          const user = getStoredUser();
+          if (user?.id) {
+            try {
+              localStorage.setItem(`${CACHE_TEAMS_KEY}${user.id}`, count.toString());
+            } catch {
+              // ignore localStorage errors
+            }
           }
         }
       } catch {

@@ -104,11 +104,9 @@ export function hasAcknowledgedOnboarding(userId: string): boolean {
 
     // Creating a signature is only one step; keep the guide available until it
     // has also been exported and installed.
-    const lifetimeRaw = localStorage.getItem("sig_lifetime_signatures_count");
-    const countRaw = localStorage.getItem("sig_signatures_count");
+    const userLifetimeRaw = localStorage.getItem(`sig_lifetime_created_count_${userId}`);
     const hasCreatedSignature =
-      (lifetimeRaw !== null && Number.parseInt(lifetimeRaw, 10) > 0) ||
-      (countRaw !== null && Number.parseInt(countRaw, 10) > 0);
+      userLifetimeRaw !== null && Number.parseInt(userLifetimeRaw, 10) > 0;
     const flags = getOnboardingFlags();
     return hasCreatedSignature && flags.exported && flags.installed;
   } catch {
