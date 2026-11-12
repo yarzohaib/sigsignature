@@ -245,7 +245,7 @@ export default function PreviewSignatureModal({
             </div>
           ) : (
             /* Canvas View Tab */
-            <div className="w-full flex justify-center py-4 overflow-x-auto">
+            <div className="h-full min-h-0 w-full flex items-center justify-center py-4 overflow-auto">
               {data && data.elements && data.elements.length > 0 ? (
                 <div
                   style={{
