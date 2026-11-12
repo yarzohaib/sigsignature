@@ -362,7 +362,7 @@ function PricingContent() {
                       {isProTrialActive ? (
                         <div className="flex flex-col items-center gap-1.5">
                           <div
-                            className="w-full h-[46px] rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center shadow-xs"
+                            className="w-full h-[46px] rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center shadow-xs"
                             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
                           >
                             <span className="flex items-center gap-1.5">
@@ -374,7 +374,7 @@ function PricingContent() {
                           </div>
                           {formattedTrialExpiration && (
                             <span
-                              className="text-[11.5px] font-medium text-emerald-700"
+                              className="text-[11.5px] font-medium text-[#245FD4]"
                               style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                             >
                               Valid through {formattedTrialExpiration}
