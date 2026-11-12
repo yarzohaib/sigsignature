@@ -1705,16 +1705,45 @@ function DesignStudioContent() {
                         "linear-gradient(135deg, #F97316, #EF4444)",
                         "linear-gradient(135deg, #14B8A6, #22C55E)",
                         "linear-gradient(135deg, #A855F7, #EC4899)",
-                      ].map((grad, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          aria-label={`Premium gradient ${idx + 1}`}
-                          onClick={handlePremiumClick}
-                          className="h-6 w-6 rounded-full opacity-95 hover:opacity-100 transition transform hover:scale-105 cursor-pointer shadow-2xs"
-                          style={{ background: grad }}
-                        />
-                      ))}
+                      ].map((grad, idx) => {
+                        const isElementScope =
+                          selectedElement &&
+                          (selectedElement.type === "text" || selectedElement.type === "cta" || selectedElement.type === "divider");
+                        const activeColor = isElementScope
+                          ? (selectedElement.color || state.themeColor)
+                          : state.themeColor;
+                        const isSelected = activeColor === grad;
+
+                        const handleGradientClick = () => {
+                          if (!isPremium) {
+                            setPremiumModalOpen(true);
+                            return;
+                          }
+                          if (isElementScope) {
+                            dispatch({
+                              type: "UPDATE_ELEMENT",
+                              payload: { id: selectedElement.id, updates: { color: grad } },
+                            });
+                          } else {
+                            dispatch({ type: "SET_COLOR", payload: grad, isPremium: true });
+                          }
+                        };
+
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            aria-label={`Premium gradient ${idx + 1}`}
+                            onClick={handleGradientClick}
+                            className={`h-6 w-6 rounded-full transition transform hover:scale-110 cursor-pointer shadow-2xs focus:outline-none ${
+                              isSelected
+                                ? "ring-2 ring-offset-2 ring-[#245FD4] scale-110"
+                                : "opacity-95 hover:opacity-100 hover:ring-1 hover:ring-slate-300"
+                            }`}
+                            style={{ background: grad }}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -1943,33 +1972,67 @@ function DesignStudioContent() {
                     <span className="text-[10px] font-bold tracking-wider text-[#94A3B8] uppercase">
                       PREMIUM
                     </span>
-                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5">
+                    <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 mt-1.5" role="radiogroup" aria-label="Premium Font Selection">
                       {[
-                        { name: "Alata" },
-                        { name: "DM Serif" },
-                        { name: "Play Fair" },
-                        { name: "Duru Sans" },
-                      ].map((item) => (
-                        <div
-                          key={item.name}
-                          role="button"
-                          aria-disabled="true"
-                          tabIndex={0}
-                          onClick={handlePremiumClick}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handlePremiumClick();
-                            }
-                          }}
-                          className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-white p-2.5 cursor-pointer opacity-95 hover:opacity-100 transition select-none shadow-2xs"
-                        >
-                          <span className="text-xs font-medium text-slate-700">{item.name}</span>
-                          <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
-                            Premium
-                          </span>
-                        </div>
-                      ))}
+                        { name: "Alata", fontFam: "var(--font-alata), 'Alata', sans-serif" },
+                        { name: "DM Serif", fontFam: "var(--font-dmserif), 'DM Serif Display', serif" },
+                        { name: "Play Fair", fontFam: "var(--font-playfair), 'Playfair Display', serif" },
+                        { name: "Duru Sans", fontFam: "var(--font-durusans), 'Duru Sans', sans-serif" },
+                      ].map((item) => {
+                        const isElementScope =
+                          selectedElement &&
+                          (selectedElement.type === "text" || selectedElement.type === "cta");
+                        const activeFont = isElementScope
+                          ? ((selectedElement as FreeTextElement | FreeCtaElement).fontFamily || state.fontFamily)
+                          : state.fontFamily;
+                        const isSelected = activeFont === item.name;
+
+                        const handleSelect = () => {
+                          if (!isPremium) {
+                            setPremiumModalOpen(true);
+                            return;
+                          }
+                          if (isElementScope) {
+                            dispatch({
+                              type: "UPDATE_ELEMENT",
+                              payload: { id: selectedElement.id, updates: { fontFamily: item.name } },
+                            });
+                          } else {
+                            dispatch({ type: "SET_FONT", payload: item.name, isPremium: true });
+                          }
+                        };
+
+                        return (
+                          <div
+                            key={item.name}
+                            role="radio"
+                            aria-checked={isSelected}
+                            tabIndex={0}
+                            onClick={handleSelect}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                handleSelect();
+                              }
+                            }}
+                            className={`flex items-center justify-between rounded-[10px] border p-2.5 cursor-pointer transition select-none shadow-2xs ${
+                              isSelected
+                                ? "border-[1.5px] border-[#245FD4] bg-[#EFF6FF]/40 shadow-xs"
+                                : "border-[#E2E8F0] bg-white hover:border-slate-300"
+                            }`}
+                          >
+                            <span
+                              className="text-xs font-semibold text-[#1E293B]"
+                              style={{ fontFamily: item.fontFam }}
+                            >
+                              {item.name}
+                            </span>
+                            <span className="rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
+                              Premium
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 

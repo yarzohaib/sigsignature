@@ -26,6 +26,7 @@ export type {
   StudioSocialIconsStyle,
 };
 export type StudioFont = "Inter" | "Roboto" | "Georgia" | "DM Sans";
+export type StudioPremiumFont = "Alata" | "DM Serif" | "Play Fair" | "Duru Sans";
 export type StudioSocialStyle = StudioSocialIconsStyle;
 
 export const ALLOWED_STUDIO_FONTS: StudioFont[] = [
@@ -33,6 +34,13 @@ export const ALLOWED_STUDIO_FONTS: StudioFont[] = [
   "Roboto",
   "Georgia",
   "DM Sans",
+];
+
+export const ALLOWED_STUDIO_PREMIUM_FONTS: string[] = [
+  "Alata",
+  "DM Serif",
+  "Play Fair",
+  "Duru Sans",
 ];
 
 export const ALLOWED_STUDIO_SHAPES: StudioShape[] = [
