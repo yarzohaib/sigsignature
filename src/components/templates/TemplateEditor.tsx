@@ -244,11 +244,11 @@ export default function TemplateEditor({
     return null;
   }, [formData.email]);
 
-  // Validate phone number format
+  // Validate phone number format (optional, but if provided must be valid)
   const phoneError = useMemo(() => {
     const trimmed = formData.phone?.trim() || "";
     if (!trimmed) {
-      return "Phone number is required.";
+      return null;
     }
     if (!isValidPhone(trimmed)) {
       return "Please enter a valid phone number (at least 6 digits).";
@@ -1098,7 +1098,7 @@ export default function TemplateEditor({
                   <div>
                     <div className="flex h-5 items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#64748B]">
-                        Phone Number <span className="text-blue-600">*</span>
+                        Phone Number
                       </label>
                     </div>
                     <input
