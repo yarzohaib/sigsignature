@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getReferralInfo, sendReferralInvite, ReferralInfoResponse } from "@/app/lib/api";
+import { isValidEmail } from "@/lib/validation";
 
 interface ReferralModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   const [data, setData] = useState<ReferralInfoResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [emailInput, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -60,15 +62,27 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
 
   async function handleSendInvite(e: React.FormEvent) {
     e.preventDefault();
-    if (!emailInput.trim() || isSending) return;
+    if (isSending) return;
 
+    const trimmedEmail = emailInput.trim();
+    if (!trimmedEmail) {
+      setEmailError("Email address is required.");
+      return;
+    }
+    if (!isValidEmail(trimmedEmail)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+
+    setEmailError(null);
     setStatusMessage(null);
     setIsSending(true);
 
     try {
-      const res = await sendReferralInvite(emailInput.trim());
+      const res = await sendReferralInvite(trimmedEmail);
       setStatusMessage({ type: "success", text: res.message || "Invite sent successfully!" });
       setEmailInput("");
+      setEmailError(null);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Failed to send invitation. Please try again.";
@@ -194,7 +208,7 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
         </div>
 
         {/* 1-Click Email Invitation Form */}
-        <form onSubmit={handleSendInvite} className="relative mt-5 flex flex-col gap-1.5">
+        <form onSubmit={handleSendInvite} noValidate className="relative mt-5 flex flex-col gap-1.5">
           <label
             htmlFor="colleague-email"
             className="text-[11px] font-bold uppercase tracking-wider text-slate-500"
@@ -203,17 +217,25 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
             SEND DIRECT INVITE EMAIL
           </label>
           <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              id="colleague-email"
-              type="email"
-              required
-              placeholder="colleague@company.com"
-              value={emailInput}
-              onChange={(e) => setEmailInput(e.target.value)}
-              disabled={isSending || isLoading}
-              className="flex-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#245FD4] focus:outline-none focus:ring-2 focus:ring-[#245FD4]/20 transition disabled:opacity-60"
-              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-            />
+            <div className="relative flex-1">
+              <input
+                id="colleague-email"
+                type="email"
+                placeholder="colleague@company.com"
+                value={emailInput}
+                onChange={(e) => {
+                  setEmailInput(e.target.value);
+                  if (emailError) setEmailError(null);
+                }}
+                disabled={isSending || isLoading}
+                className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none transition disabled:opacity-60 ${
+                  emailError
+                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                    : "border-slate-200 focus:border-[#245FD4] focus:ring-2 focus:ring-[#245FD4]/20"
+                }`}
+                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+              />
+            </div>
             <button
               type="submit"
               disabled={isSending || isLoading || !emailInput.trim()}
@@ -233,6 +255,19 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
               )}
             </button>
           </div>
+
+          {/* Inline Email Error Message */}
+          {emailError && (
+            <p
+              className="text-[11.5px] font-medium text-red-600 mt-0.5 ml-0.5 flex items-center gap-1 animate-in fade-in duration-150"
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+            >
+              <svg className="h-3.5 w-3.5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <span>{emailError}</span>
+            </p>
+          )}
 
           {/* Feedback status */}
           {statusMessage && (
@@ -269,14 +304,14 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
             disabled={isLoading || !data?.shareUrl}
             className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-xs sm:text-[13px] font-semibold transition shadow-2xs border cursor-pointer ${
               copied
-                ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                ? "bg-[#EFF6FF] border-[#245FD4]/30 text-[#245FD4]"
                 : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900"
             }`}
             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
           >
             {copied ? (
               <>
-                <svg className="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="h-4 w-4 text-[#245FD4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
                 <span>Link Copied!</span>
@@ -297,11 +332,16 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
             type="button"
             onClick={handleShareWhatsapp}
             disabled={isLoading || !data?.shareUrl}
-            className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 py-2.5 px-4 text-xs sm:text-[13px] font-semibold text-[#128C7E] transition shadow-2xs hover:bg-[#25D366]/18 cursor-pointer disabled:opacity-50"
+            className="flex items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 hover:bg-[#25D366]/18 hover:border-[#25D366]/60 py-2.5 px-3 text-xs sm:text-[13px] font-semibold text-[#0E7A40] transition shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
           >
-            <svg className="h-4 w-4 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.585 1.761.88 2.796.88 3.183 0 5.768-2.586 5.768-5.766 0-3.18-2.585-5.767-5.768-5.767zm3.391 8.241c-.144.405-.837.774-1.17.824-.312.045-.634.079-1.801-.409-1.503-.628-2.482-2.148-2.559-2.25-.074-.103-.606-.807-.606-1.538 0-.732.383-1.092.519-1.241.136-.149.297-.186.396-.186.099 0 .198.001.284.006.09.005.212-.034.331.253.123.298.421 1.026.458 1.101.037.075.062.162.012.261-.049.099-.074.161-.148.248-.075.086-.157.192-.224.258-.074.074-.152.155-.065.304.086.149.385.635.827 1.028.568.506 1.047.663 1.196.737.149.074.235.062.322-.037.086-.099.371-.433.47-.582.099-.149.198-.124.334-.074.136.049.864.408 1.013.482.149.074.248.112.284.174.037.062.037.359-.107.764z" />
+            <svg
+              className="h-4.5 w-4.5 shrink-0 text-[#25D366]"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
             </svg>
             <span>Share via WhatsApp</span>
           </button>
