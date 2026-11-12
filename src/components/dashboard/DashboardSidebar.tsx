@@ -235,11 +235,11 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
       >
         <div className="flex flex-col shrink-0">
           {/* Logo Section & Collapse Toggle */}
-          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:justify-center" : "justify-between"}`}>
+          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:justify-center lg:w-full" : "justify-between"}`}>
             <Link
               href="/dashboard"
-              className={`group relative flex items-center gap-2.5 transition hover:opacity-90 ${
-                isCollapsed ? "lg:justify-center" : ""
+              className={`group relative flex items-center transition hover:opacity-90 ${
+                isCollapsed ? "gap-0 lg:justify-center lg:w-full" : "gap-2.5"
               }`}
               onClick={(event) => {
                 if (isCollapsed && window.matchMedia("(min-width: 1024px)").matches) {
@@ -252,14 +252,16 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
               title={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
               aria-label={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
             >
-              <Image
-                src="/logo.svg"
-                alt="Sig Signature"
-                width={36}
-                height={20}
-                className={`h-6 w-auto shrink-0 transition-opacity duration-200 ${isCollapsed ? "lg:group-hover:opacity-0" : ""}`}
-                priority
-              />
+              <div className={`flex items-center justify-center ${isCollapsed ? "lg:w-10 lg:h-10 lg:mx-auto" : ""}`}>
+                <Image
+                  src="/logo.svg"
+                  alt="Sig Signature"
+                  width={36}
+                  height={20}
+                  className={`h-6 w-auto shrink-0 transition-opacity duration-200 ${isCollapsed ? "lg:group-hover:opacity-0" : ""}`}
+                  priority
+                />
+              </div>
               {isCollapsed && (
                 <svg
                   className="pointer-events-none absolute left-1/2 top-1/2 hidden h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-[#022977] opacity-0 transition-opacity duration-200 lg:block lg:group-hover:opacity-100"

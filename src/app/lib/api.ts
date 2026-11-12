@@ -250,7 +250,7 @@ export function startOAuth(
     // Ignore storage errors
   }
   const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}${refParam}`;
-  const usePopup = options?.popup !== false; // Default to popup window for smooth OAuth UX
+  const usePopup = Boolean(options?.popup); // Default to full in-tab redirect to avoid new tab issues
 
   if (usePopup) {
     return new Promise<void>((resolve, reject) => {
