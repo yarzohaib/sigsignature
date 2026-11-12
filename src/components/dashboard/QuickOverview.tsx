@@ -12,7 +12,12 @@ const CACHE_SIG_KEY = "sig_cached_signatures_count_";
 const CACHE_TEAMS_KEY = "sig_cached_teams_count_";
 
 export default function QuickOverview() {
-  const currentUid = typeof window !== "undefined" ? getStoredUser()?.id : undefined;
+  const user = typeof window !== "undefined" ? getStoredUser() : null;
+  const isProTrial = Boolean(
+    user?.isProTrialActive ||
+    (user?.proTrialUntil && new Date(user.proTrialUntil).getTime() > Date.now())
+  );
+  const currentUid = user?.id;
 
   // Initialize with cached numbers from localStorage scoped to user to prevent flashing '0' on page load / refresh
   const [totalSignatures, setTotalSignatures] = useState<number>(() => {
@@ -21,7 +26,7 @@ export default function QuickOverview() {
         const cached = localStorage.getItem(`${CACHE_SIG_KEY}${currentUid}`);
         if (cached !== null) {
           const parsed = parseInt(cached, 10);
-          if (!isNaN(parsed)) return Math.min(3, Math.max(0, parsed));
+          if (!isNaN(parsed)) return isProTrial ? parsed : Math.min(3, Math.max(0, parsed));
         }
       } catch {
         // ignore localStorage access error
@@ -60,12 +65,17 @@ export default function QuickOverview() {
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted && currentRequest === requestVersion) {
-          const user = getStoredUser();
-          const effectiveCount = syncLifetimeSignatureCount(list.length, user?.id);
-          setTotalSignatures(Math.min(3, effectiveCount));
-          if (user?.id) {
+          const currentUser = getStoredUser();
+          const userIsPro = Boolean(
+            currentUser?.isProTrialActive ||
+            (currentUser?.proTrialUntil && new Date(currentUser.proTrialUntil).getTime() > Date.now())
+          );
+          const effectiveCount = syncLifetimeSignatureCount(list.length, currentUser?.id);
+          const displayCount = userIsPro ? list.length : Math.min(3, effectiveCount);
+          setTotalSignatures(displayCount);
+          if (currentUser?.id) {
             try {
-              localStorage.setItem(`${CACHE_SIG_KEY}${user.id}`, String(Math.min(3, effectiveCount)));
+              localStorage.setItem(`${CACHE_SIG_KEY}${currentUser.id}`, String(displayCount));
             } catch {
               // ignore localStorage quota/disabled errors
             }
@@ -174,7 +184,7 @@ export default function QuickOverview() {
                 className="mt-1 text-[#94A3B8] text-[11px] sm:text-[11.5px] leading-tight truncate"
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
-                of 3 on the Free plan
+                {isProTrial ? "Unlimited on Pro Trial" : "of 3 on the Free plan"}
               </span>
             </div>
           </div>

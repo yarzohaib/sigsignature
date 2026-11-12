@@ -36,13 +36,21 @@ function PricingContent() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
+  const [isProTrialActive, setIsProTrialActive] = useState(false);
+  const [proTrialUntilDate, setProTrialUntilDate] = useState<string | null>(null);
   const [isReferralOpen, setIsReferralOpen] = useState(false);
 
   useEffect(() => {
     function checkAuth() {
       const user = getStoredUser();
       const token = getStoredToken();
-      setIsFreePlanUser(Boolean(user || token));
+      const isPro = Boolean(
+        user?.isProTrialActive ||
+        (user?.proTrialUntil && new Date(user.proTrialUntil).getTime() > Date.now())
+      );
+      setIsProTrialActive(isPro);
+      setProTrialUntilDate(user?.proTrialUntil || null);
+      setIsFreePlanUser(Boolean((user || token) && !isPro));
     }
     checkAuth();
     window.addEventListener("sig_user_update", checkAuth);
@@ -58,6 +66,12 @@ function PricingContent() {
     const token = getStoredToken();
     if (!user && !token) {
       router.push("/signup?redirect=/pricing&plan=pro");
+      return;
+    }
+
+    if (isProTrialActive) {
+      setPremiumToast("Your 1-Month Pro Trial is currently active! Enjoy unlimited signatures.");
+      setTimeout(() => setPremiumToast(null), 4000);
       return;
     }
 
@@ -78,6 +92,17 @@ function PricingContent() {
       setPremiumToast(null);
     }, 4000);
   }
+
+  const formattedTrialExpiration = (() => {
+    if (!proTrialUntilDate) return null;
+    try {
+      const d = new Date(proTrialUntilDate);
+      if (isNaN(d.getTime())) return null;
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    } catch {
+      return null;
+    }
+  })();
 
   return (
     <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC]">
@@ -325,14 +350,38 @@ function PricingContent() {
 
                     {/* Button */}
                     <div className="mt-6">
-                      <button
-                        type="button"
-                        onClick={handleGoPremium}
-                        className="w-full h-[46px] rounded-full bg-[#245FD4] text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center cursor-pointer"
-                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                      >
-                        Start with Plus
-                      </button>
+                      {isProTrialActive ? (
+                        <div className="flex flex-col items-center gap-1.5">
+                          <div
+                            className="w-full h-[46px] rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center shadow-xs"
+                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              <span>Active Trial</span>
+                            </span>
+                          </div>
+                          {formattedTrialExpiration && (
+                            <span
+                              className="text-[11.5px] font-medium text-emerald-700"
+                              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                            >
+                              Valid through {formattedTrialExpiration}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleGoPremium}
+                          className="w-full h-[46px] rounded-full bg-[#245FD4] text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center cursor-pointer transition hover:opacity-95"
+                          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                        >
+                          Start with Plus
+                        </button>
+                      )}
                     </div>
 
                     {/* Horizontal Divider Line */}

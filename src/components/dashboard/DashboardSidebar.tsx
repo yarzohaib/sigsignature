@@ -63,11 +63,20 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
   // Check if user has availed or is actively on the free trial/referral reward
   const user = optionalUser?.user || (typeof window !== "undefined" ? getStoredUser() : null);
-  const hasAvailedFreeTier = Boolean(
+  const isProTrial = Boolean(
     user?.isProTrialActive ||
-    user?.proTrialUntil ||
+    (user?.proTrialUntil && new Date(user.proTrialUntil).getTime() > Date.now())
+  );
+  const hasAvailedFreeTier = Boolean(
+    isProTrial ||
     (user?.referralCount && user.referralCount > 0)
   );
+
+  const trialDaysRemaining = (() => {
+    if (!user?.proTrialUntil) return null;
+    const diffMs = new Date(user.proTrialUntil).getTime() - Date.now();
+    return Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  })();
 
   function handleLinkClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
     const isRegularClick =
@@ -456,24 +465,83 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
             </div>
           )}
 
-          {/* Card 2: Free Plan 0/3 Signatures */}
+          {/* Card 2: Plan Status (Pro Trial vs Free Plan) */}
           {isCollapsed ? (
             <div className="relative group lg:flex hidden justify-center">
               <Link
                 href="/pricing?from=sidebar"
                 onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300 transition shadow-2xs"
-                aria-label={`Quota: ${signatureCount}/3`}
+                className={`flex h-10 w-10 flex-col items-center justify-center rounded-xl border transition shadow-2xs ${
+                  isProTrial
+                    ? "border-[#245FD4]/30 bg-[#EFF6FF] text-[#245FD4] hover:border-[#245FD4]"
+                    : "border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300"
+                }`}
+                aria-label={isProTrial ? "Pro Plan Active" : `Quota: ${signatureCount}/3`}
               >
-                <span className="text-[11px] font-bold text-[#1E293B]">{signatureCount}/3</span>
+                {isProTrial ? (
+                  <span className="text-[10px] font-bold text-[#245FD4] uppercase tracking-wider">PRO</span>
+                ) : (
+                  <span className="text-[11px] font-bold text-[#1E293B]">{signatureCount}/3</span>
+                )}
               </Link>
               <div
                 role="tooltip"
                 className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
                 style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
               >
-                {signatureCount} / 3 Signatures used
+                {isProTrial
+                  ? `Pro Plan Trial • ${trialDaysRemaining ?? 30} days left`
+                  : `${signatureCount} / 3 Signatures used`}
                 <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+              </div>
+            </div>
+          ) : isProTrial ? (
+            <div className="rounded-xl border border-blue-200/90 bg-gradient-to-br from-[#EFF6FF] to-blue-50/60 p-3 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#245FD4] text-white shadow-2xs">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col">
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-wider text-[#245FD4]"
+                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                    >
+                      Pro Plan (Trial)
+                    </span>
+                    <span
+                      className="text-[12px] font-bold text-[#101828]"
+                      style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                    >
+                      Unlimited Signatures
+                    </span>
+                  </div>
+                </div>
+                <span className="inline-flex items-center rounded-md bg-blue-100/80 px-1.5 py-0.5 text-[10.5px] font-semibold text-[#1E40AF]">
+                  {trialDaysRemaining ?? 30}d left
+                </span>
+              </div>
+
+              <div className="mt-2.5 flex items-center justify-between border-t border-blue-200/60 pt-2">
+                <span
+                  className="text-[11px] font-medium text-[#475467]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  {signatureCount} Active Signature{signatureCount === 1 ? "" : "s"}
+                </span>
+                <Link
+                  href="/pricing?from=sidebar"
+                  onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
+                  className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  <span>View Plan</span>
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
               </div>
             </div>
           ) : (
