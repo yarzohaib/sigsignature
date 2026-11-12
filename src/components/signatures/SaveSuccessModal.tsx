@@ -967,10 +967,19 @@ export default function SaveSuccessModal({
       // Clipboard fallback
     }
 
-    const subject = encodeURIComponent("Testing Email Signature");
-    const bodyText = encodeURIComponent(
-      "This is a Test Email to test the email signature made by Sig Signature\n\n"
-    );
+    const subject = encodeURIComponent("Previewing My New Email Signature");
+    const testBodyLines = [
+      "Hi there,",
+      "",
+      "I'm sending this quick test email to preview and verify my new professional email signature across different email clients and devices.",
+      "",
+      "Please let me know how the formatting, colors, and layout look on your end.",
+      "",
+      "Best regards,",
+      "",
+      "",
+    ].join("\n");
+    const bodyText = encodeURIComponent(testBodyLines);
 
     if (client === "gmail") {
       window.open(
