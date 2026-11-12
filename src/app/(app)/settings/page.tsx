@@ -9,6 +9,7 @@ import SignatureDefaultsCard from "@/components/settings/SignatureDefaultsCard";
 import NotificationsCard from "@/components/settings/NotificationsCard";
 import PlanUsageCard from "@/components/settings/PlanUsageCard";
 import SecurityCard from "@/components/settings/SecurityCard";
+import GmailIntegrationCard from "@/components/settings/GmailIntegrationCard";
 import StartingPointCard from "@/components/settings/StartingPointCard";
 import DataPrivacyCard from "@/components/settings/DataPrivacyCard";
 import { getLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
@@ -641,6 +642,9 @@ function SettingsContent() {
                   providers={accountData?.providers ?? []}
                   onShowToast={showToast}
                 />
+
+                {/* Gmail Integration card */}
+                <GmailIntegrationCard onShowToast={showToast} />
 
                 {/* 6. Your starting point live mini-signature preview */}
                 <StartingPointCard
