@@ -600,18 +600,6 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
               )}
             </>
           )}
-                  onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                >
-                  <span>Upgrade Plan</span>
-                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-          )}
 
           {/* Logout Button */}
           <div className="relative group">
