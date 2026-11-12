@@ -118,8 +118,7 @@ export default function EditDetailsModal({
       if (!isValidEmail(trimmed)) return "Please enter a valid email address.";
     }
     if (textEl.bind === "phone") {
-      if (!trimmed) return "Phone number is required.";
-      if (!isValidPhone(trimmed))
+      if (trimmed && !isValidPhone(trimmed))
         return "Please enter a valid phone number (at least 6 digits).";
     }
     if (textEl.bind === "website" || textEl.icon === "website") {
