@@ -16,7 +16,25 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isSuccessDismissing, setIsSuccessDismissing] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Fade successful invite feedback near the end of its five-second display.
+  useEffect(() => {
+    if (statusMessage?.type !== "success") {
+      setIsSuccessDismissing(false);
+      return;
+    }
+
+    setIsSuccessDismissing(false);
+    const fadeTimer = window.setTimeout(() => setIsSuccessDismissing(true), 4800);
+    const dismissTimer = window.setTimeout(() => setStatusMessage(null), 5000);
+
+    return () => {
+      window.clearTimeout(fadeTimer);
+      window.clearTimeout(dismissTimer);
+    };
+  }, [statusMessage]);
 
   // Close on Escape key
   useEffect(() => {
@@ -272,11 +290,11 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
           {/* Feedback status */}
           {statusMessage && (
             <div
-              className={`mt-1 text-xs font-medium rounded-xl p-2.5 ${
+              className={`mt-1 text-xs font-medium rounded-xl p-2.5 transition-opacity duration-200 ${
                 statusMessage.type === "success"
                   ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
                   : "bg-red-50 text-red-600 border border-red-200"
-              }`}
+              } ${isSuccessDismissing ? "opacity-0" : "opacity-100"}`}
             >
               {statusMessage.text}
             </div>
