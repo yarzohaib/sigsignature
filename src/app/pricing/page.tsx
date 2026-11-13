@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import PricingSkeleton from "@/components/skeletons/PricingSkeleton";
 import { getStoredUser, getStoredToken } from "@/app/lib/auth";
+import ReferralModal from "@/components/common/ReferralModal";
 
 function CheckCircleIcon() {
   return (
@@ -35,12 +36,21 @@ function PricingContent() {
   const [premiumToast, setPremiumToast] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isFreePlanUser, setIsFreePlanUser] = useState(false);
+  const [isProTrialActive, setIsProTrialActive] = useState(false);
+  const [proTrialUntilDate, setProTrialUntilDate] = useState<string | null>(null);
+  const [isReferralOpen, setIsReferralOpen] = useState(false);
 
   useEffect(() => {
     function checkAuth() {
       const user = getStoredUser();
       const token = getStoredToken();
-      setIsFreePlanUser(Boolean(user || token));
+      const isPro = Boolean(
+        user?.isProTrialActive ||
+        (user?.proTrialUntil && new Date(user.proTrialUntil).getTime() > Date.now())
+      );
+      setIsProTrialActive(isPro);
+      setProTrialUntilDate(user?.proTrialUntil || null);
+      setIsFreePlanUser(Boolean((user || token) && !isPro));
     }
     checkAuth();
     window.addEventListener("sig_user_update", checkAuth);
@@ -58,11 +68,41 @@ function PricingContent() {
       router.push("/signup?redirect=/pricing&plan=pro");
       return;
     }
+
+    if (isProTrialActive) {
+      setPremiumToast("Your 1-Month Pro Trial is currently active! Enjoy unlimited signatures.");
+      setTimeout(() => setPremiumToast(null), 4000);
+      return;
+    }
+
+    // If user has not availed their one-time free Pro trial, open the referral modal directly
+    const hasAvailed = Boolean(
+      user?.isProTrialActive ||
+      user?.proTrialUntil ||
+      (user?.referralCount && user.referralCount > 0)
+    );
+
+    if (!hasAvailed) {
+      setIsReferralOpen(true);
+      return;
+    }
+
     setPremiumToast("Premium tier checkout is launching soon! Stay tuned.");
     setTimeout(() => {
       setPremiumToast(null);
     }, 4000);
   }
+
+  const formattedTrialExpiration = (() => {
+    if (!proTrialUntilDate) return null;
+    try {
+      const d = new Date(proTrialUntilDate);
+      if (isNaN(d.getTime())) return null;
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    } catch {
+      return null;
+    }
+  })();
 
   return (
     <div className="flex w-full flex-1 flex-col justify-start bg-[#F8FAFC]">
@@ -113,6 +153,42 @@ function PricingContent() {
           >
             Choose a plan that fits your workflow for solo users or teams. Simple, flexible pricing with no hidden fees.
           </p>
+
+          {/* 1 Month Free Referral Callout Banner */}
+          {!isProTrialActive && (
+            <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-blue-200/90 bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-blue-50/90 p-3.5 sm:p-4 text-xs sm:text-sm text-slate-800 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white shadow-2xs text-[#245FD4] shrink-0">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                  </svg>
+                </span>
+                <div>
+                  <span className="font-bold text-[#1E293B]">Get Premium Plan for Free</span>
+                  <span className="text-[#64748B] ml-1.5 hidden sm:inline">Invite a colleague to join Sig Signature and unlock a full month of Pro without adding payment details.</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const user = getStoredUser();
+                  const token = getStoredToken();
+                  if (!user && !token) {
+                    router.push("/signup?redirect=/pricing");
+                    return;
+                  }
+                  setIsReferralOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#245FD4] to-[#022977] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:opacity-95 cursor-pointer shrink-0 whitespace-nowrap"
+                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+              >
+                <span>Get Pro Free</span>
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Plans Container: Fixed-size cards centered on wide screens */}
@@ -163,7 +239,14 @@ function PricingContent() {
 
                   {/* Button */}
                   <div className="mt-6">
-                    {isFreePlanUser ? (
+                    {isProTrialActive ? (
+                      <div
+                        className="w-full h-[46px] rounded-full bg-[#F1F5F9] text-[#64748B] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center select-none cursor-default"
+                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                      >
+                        Included in Pro
+                      </div>
+                    ) : isFreePlanUser ? (
                       <Link
                         href="/dashboard"
                         className="w-full h-[46px] rounded-full bg-[#F1F5F9] text-[#101828] text-[14px] sm:text-[15px] font-semibold flex items-center justify-center transition-colors hover:bg-[#E2E8F0]"
@@ -276,14 +359,38 @@ function PricingContent() {
 
                     {/* Button */}
                     <div className="mt-6">
-                      <button
-                        type="button"
-                        onClick={handleGoPremium}
-                        className="w-full h-[46px] rounded-full bg-[#245FD4] text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center cursor-pointer"
-                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                      >
-                        Start with Plus
-                      </button>
+                      {isProTrialActive ? (
+                        <div className="flex flex-col items-center gap-1.5">
+                          <div
+                            className="w-full h-[46px] rounded-full bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center shadow-xs"
+                            style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              <span>Active Trial</span>
+                            </span>
+                          </div>
+                          {formattedTrialExpiration && (
+                            <span
+                              className="text-[11.5px] font-medium text-[#245FD4]"
+                              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                            >
+                              Valid through {formattedTrialExpiration}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleGoPremium}
+                          className="w-full h-[46px] rounded-full bg-[#245FD4] text-white text-[14px] sm:text-[15px] font-semibold flex items-center justify-center cursor-pointer transition hover:opacity-95"
+                          style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                        >
+                          Start with Plus
+                        </button>
+                      )}
                     </div>
 
                     {/* Horizontal Divider Line */}
@@ -511,6 +618,12 @@ function PricingContent() {
               </div>
             </section>
           </main>
+
+      {/* Referral Modal */}
+      <ReferralModal
+        isOpen={isReferralOpen}
+        onClose={() => setIsReferralOpen(false)}
+      />
     </div>
   );
 }

@@ -105,7 +105,11 @@ export default function DashboardTopBar({
   const isGuideAcknowledged = useSyncExternalStore(
     useCallback((onStoreChange) => {
       window.addEventListener(ONBOARDING_EVENT, onStoreChange);
-      return () => window.removeEventListener(ONBOARDING_EVENT, onStoreChange);
+      window.addEventListener("sig_count_update", onStoreChange);
+      return () => {
+        window.removeEventListener(ONBOARDING_EVENT, onStoreChange);
+        window.removeEventListener("sig_count_update", onStoreChange);
+      };
     }, []),
     useCallback(() => hasAcknowledgedOnboarding(guideUserId), [guideUserId]),
     useCallback(() => true, []),
@@ -416,10 +420,10 @@ export default function DashboardTopBar({
                   className="flex min-h-10 items-center gap-3 rounded-2xl px-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-100"
                   style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
                 >
-                  <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10" />
-                    <circle cx="12" cy="8" r=".8" fill="currentColor" />
-                    <path d="M12 11v5" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
                   </svg>
                   <span>Help center</span>
                 </Link>

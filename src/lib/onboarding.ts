@@ -96,25 +96,19 @@ export function markOnboardingSeen(userId: string) {
   }
 }
 
-/** True once the user has finished all steps and acknowledged completion */
+/** True once the user has completed every setup step. */
 export function hasAcknowledgedOnboarding(userId: string): boolean {
   if (typeof window === "undefined" || !userId) return false;
   try {
     if (localStorage.getItem(COMPLETED_PREFIX + userId) === "1") return true;
 
-    // Also hide if user has already created signatures or marked onboarding seen
-    const lifetimeRaw = localStorage.getItem("sig_lifetime_signatures_count");
-    if (lifetimeRaw && parseInt(lifetimeRaw, 10) > 0) return true;
-
-    const countRaw = localStorage.getItem("sig_signatures_count");
-    if (countRaw && parseInt(countRaw, 10) > 0) return true;
-
-    const user = getStoredUser();
-    if (user && user.id === userId && user.onboardingSeenAt) {
-      return true;
-    }
-
-    return false;
+    // Creating a signature is only one step; keep the guide available until it
+    // has also been exported and installed.
+    const userLifetimeRaw = localStorage.getItem(`sig_lifetime_created_count_${userId}`);
+    const hasCreatedSignature =
+      userLifetimeRaw !== null && Number.parseInt(userLifetimeRaw, 10) > 0;
+    const flags = getOnboardingFlags();
+    return hasCreatedSignature && flags.exported && flags.installed;
   } catch {
     return false;
   }

@@ -14,6 +14,7 @@ import {
   getLifetimeSignatureCount,
   syncLifetimeSignatureCount,
 } from "@/lib/signatures/lifetimeTracker";
+import ReferralModal from "@/components/common/ReferralModal";
 
 type SidebarProps = {
   mobileOpen?: boolean;
@@ -21,25 +22,30 @@ type SidebarProps = {
   onBeforeNavigate?: (href: string) => boolean;
 };
 
-const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count";
-let memoryCachedSignatureCount: number | null = null;
+const CACHED_SIGNATURE_COUNT_KEY = "sig_cached_signatures_count_";
+let memoryCachedSignatureCount: Record<string, number> = {};
 
-function getCachedSignatureCount(): number {
-  if (memoryCachedSignatureCount !== null) return memoryCachedSignatureCount;
+function getCachedSignatureCount(userId?: string): number {
+  const uid = userId || (typeof window !== "undefined" ? getStoredUser()?.id : undefined);
+  if (!uid) return 0;
+
+  if (memoryCachedSignatureCount[uid] !== undefined) return memoryCachedSignatureCount[uid];
   if (typeof window === "undefined") return 0;
 
   try {
-    const raw = localStorage.getItem(CACHED_SIGNATURE_COUNT_KEY);
+    const raw = localStorage.getItem(`${CACHED_SIGNATURE_COUNT_KEY}${uid}`);
     if (raw !== null) {
       const parsed = parseInt(raw, 10);
       if (!isNaN(parsed)) {
-        memoryCachedSignatureCount = Math.min(3, Math.max(0, parsed));
-        return memoryCachedSignatureCount;
+        const val = Math.min(3, Math.max(0, parsed));
+        memoryCachedSignatureCount[uid] = val;
+        return val;
       }
     }
-    const lifetime = getLifetimeSignatureCount();
-    memoryCachedSignatureCount = Math.min(3, Math.max(0, lifetime));
-    return memoryCachedSignatureCount;
+    const lifetime = getLifetimeSignatureCount(uid);
+    const val = Math.min(3, Math.max(0, lifetime));
+    memoryCachedSignatureCount[uid] = val;
+    return val;
   } catch {
     return 0;
   }
@@ -50,8 +56,27 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
   const router = useRouter();
   const optionalUser = useOptionalUser();
   const { isCollapsed, toggleSidebar, setCollapsed } = useSidebar();
-  const [signatureCount, setSignatureCount] = useState<number>(() => getCachedSignatureCount());
+  const currentUserId = optionalUser?.user?.id || (typeof window !== "undefined" ? getStoredUser()?.id : undefined);
+  const [signatureCount, setSignatureCount] = useState<number>(() => getCachedSignatureCount(currentUserId));
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isReferralOpen, setIsReferralOpen] = useState(false);
+
+  // Check if user has availed or is actively on the free trial/referral reward
+  const user = optionalUser?.user || (typeof window !== "undefined" ? getStoredUser() : null);
+  const isProTrial = Boolean(
+    user?.isProTrialActive ||
+    (user?.proTrialUntil && new Date(user.proTrialUntil).getTime() > Date.now())
+  );
+  const hasAvailedFreeTier = Boolean(
+    isProTrial ||
+    (user?.referralCount && user.referralCount > 0)
+  );
+
+  const trialDaysRemaining = (() => {
+    if (!user?.proTrialUntil) return null;
+    const diffMs = new Date(user.proTrialUntil).getTime() - Date.now();
+    return Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  })();
 
   function handleLinkClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
     const isRegularClick =
@@ -69,7 +94,8 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
   useEffect(() => {
     let isMounted = true;
-    const cached = getCachedSignatureCount();
+    const uid = optionalUser?.user?.id || (typeof window !== "undefined" ? getStoredUser()?.id : undefined);
+    const cached = getCachedSignatureCount(uid);
     if (cached > 0) {
       queueMicrotask(() => {
         if (isMounted) setSignatureCount(cached);
@@ -88,14 +114,19 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
         const repo = getSignatureRepository();
         const list = await repo.list();
         if (isMounted) {
-          const lifetime = syncLifetimeSignatureCount(list.length, optionalUser?.user?.id);
+          const activeUid = user?.id;
+          const lifetime = syncLifetimeSignatureCount(list.length, activeUid);
           const count = Math.min(3, Math.max(list.length, lifetime));
-          memoryCachedSignatureCount = count;
+          if (activeUid) {
+            memoryCachedSignatureCount[activeUid] = count;
+          }
           setSignatureCount(count);
-          try {
-            localStorage.setItem(CACHED_SIGNATURE_COUNT_KEY, String(count));
-          } catch {
-            // Keep the live count even if browser storage is unavailable.
+          if (activeUid) {
+            try {
+              localStorage.setItem(`${CACHED_SIGNATURE_COUNT_KEY}${activeUid}`, String(count));
+            } catch {
+              // Keep the live count even if browser storage is unavailable.
+            }
           }
         }
       } catch {
@@ -167,8 +198,11 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
       href: "/design-studio",
       icon: (
         <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          <circle cx="13.5" cy="6.5" r=".75" fill="currentColor" />
+          <circle cx="17.5" cy="10.5" r=".75" fill="currentColor" />
+          <circle cx="8.5" cy="7.5" r=".75" fill="currentColor" />
+          <circle cx="6.5" cy="12.5" r=".75" fill="currentColor" />
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C21.437 6.082 17.203 2 12 2z" />
         </svg>
       ),
     },
@@ -225,11 +259,11 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
       >
         <div className="flex flex-col shrink-0">
           {/* Logo Section & Collapse Toggle */}
-          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:justify-center" : "justify-between"}`}>
+          <div className={`flex items-center pb-3.5 ${isCollapsed ? "lg:justify-center lg:w-full" : "justify-between"}`}>
             <Link
               href="/dashboard"
-              className={`group relative flex items-center gap-2.5 transition hover:opacity-90 ${
-                isCollapsed ? "lg:justify-center" : ""
+              className={`group relative flex items-center transition hover:opacity-90 ${
+                isCollapsed ? "gap-0 lg:justify-center lg:w-full" : "gap-2.5"
               }`}
               onClick={(event) => {
                 if (isCollapsed && window.matchMedia("(min-width: 1024px)").matches) {
@@ -242,14 +276,16 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
               title={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
               aria-label={isCollapsed ? "Expand sidebar" : "Sig Signature Dashboard"}
             >
-              <Image
-                src="/logo.svg"
-                alt="Sig Signature"
-                width={36}
-                height={20}
-                className={`h-6 w-auto shrink-0 transition-opacity duration-200 ${isCollapsed ? "lg:group-hover:opacity-0" : ""}`}
-                priority
-              />
+              <div className={`flex items-center justify-center ${isCollapsed ? "lg:w-10 lg:h-10 lg:mx-auto" : ""}`}>
+                <Image
+                  src="/logo.svg"
+                  alt="Sig Signature"
+                  width={36}
+                  height={20}
+                  className={`h-6 w-auto shrink-0 transition-opacity duration-200 ${isCollapsed ? "lg:group-hover:opacity-0" : ""}`}
+                  priority
+                />
+              </div>
               {isCollapsed && (
                 <svg
                   className="pointer-events-none absolute left-1/2 top-1/2 hidden h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-[#022977] opacity-0 transition-opacity duration-200 lg:block lg:group-hover:opacity-100"
@@ -375,131 +411,197 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
 
         {/* Bottom Cards Section */}
         <div className="mt-auto flex flex-col gap-2.5 pt-3 shrink-0">
-          {/* Card 1: Unlock Premium Features */}
-          {isCollapsed ? (
-            <div className="relative group lg:flex hidden justify-center">
-              <Link
-                href="/pricing?from=sidebar"
-                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs"
-                aria-label="Unlock Premium Features"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
-                </svg>
-              </Link>
-              <div
-                role="tooltip"
-                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                Unlock Premium Features
-                <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl bg-[#EFF6FF] p-3.5 text-center">
-              <div className="mx-auto mb-2 flex h-6 w-6 items-center justify-center rounded-lg bg-[#245FD4] text-white shadow-xs">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
-                </svg>
-              </div>
-              <h4
-                className="text-[13px] font-bold text-[#1E293B]"
-                style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-              >
-                Unlock Premium Features
-              </h4>
-              <p
-                className="mt-0.5 text-[11px] leading-[16px] text-[#64748B]"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                Upgrade to premium and access powerful features and advanced customization.
-              </p>
-              <Link
-                href="/pricing?from=sidebar"
-                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95"
-                style={{
-                  fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
-                  letterSpacing: "0%",
-                }}
-              >
-                Upgrade Now
-              </Link>
-            </div>
-          )}
-
-          {/* Card 2: Free Plan 0/3 Signatures */}
-          {isCollapsed ? (
-            <div className="relative group lg:flex hidden justify-center">
-              <Link
-                href="/pricing?from=sidebar"
-                onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300 transition shadow-2xs"
-                aria-label={`Quota: ${signatureCount}/3`}
-              >
-                <span className="text-[11px] font-bold text-[#1E293B]">{signatureCount}/3</span>
-              </Link>
-              <div
-                role="tooltip"
-                className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
-                style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-              >
-                {signatureCount} / 3 Signatures used
-                <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-[#64748B]">
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div className="flex flex-col">
-                  <span
-                    className="text-[11px] font-normal text-[#64748B]"
-                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
-                  >
-                    Free Plan
-                  </span>
-                  <span
-                    className="text-[12px] font-bold text-[#1E293B]"
-                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
-                  >
-                    {signatureCount} / 3 Signatures
-                  </span>
-                </div>
-              </div>
-
-              {/* Plan progress bar */}
-              <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div
-                  className={`h-full rounded-full bg-[#245FD4] transition-all duration-300 ${
-                    signatureCount === 0 ? "w-0 opacity-0" : ""
-                  }`}
-                  style={{
-                    width: `${Math.min(100, Math.max(0, (signatureCount / 3) * 100))}%`,
-                  }}
-                />
-              </div>
-
-              <div className="mt-2 flex items-center justify-between">
+          {isProTrial ? (
+            /* Dedicated Pro Plan (Trial) Card (replaces Unlock Premium card) */
+            isCollapsed ? (
+              <div className="relative group lg:flex hidden justify-center">
                 <Link
                   href="/pricing?from=sidebar"
                   onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
-                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#245FD4]/30 bg-[#EFF6FF] text-[#245FD4] hover:border-[#245FD4] transition shadow-2xs"
+                  aria-label="Pro Plan Trial Active"
                 >
-                  <span>Upgrade Plan</span>
-                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                   </svg>
                 </Link>
+                <div
+                  role="tooltip"
+                  className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Pro Plan (Trial) • {trialDaysRemaining ?? 30}d left
+                  <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="rounded-2xl bg-[#EFF6FF] p-3.5 text-center">
+                <div className="mx-auto mb-2 flex h-6 w-6 items-center justify-center rounded-lg bg-[#245FD4] text-white shadow-xs">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                  </svg>
+                </div>
+                <div className="inline-flex items-center gap-1.5 justify-center">
+                  <h4
+                    className="text-[13px] font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    Pro Plan (Trial)
+                  </h4>
+                  <span className="rounded-md bg-blue-100/90 px-1.5 py-0.5 text-[10px] font-semibold text-[#1E40AF]">
+                    {trialDaysRemaining ?? 30}d left
+                  </span>
+                </div>
+                <p
+                  className="mt-0.5 text-[11px] leading-[16px] text-[#64748B]"
+                  style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                >
+                  Unlimited signatures &amp; premium features unlocked.
+                </p>
+                <Link
+                  href="/pricing?from=sidebar"
+                  onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
+                  className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95 cursor-pointer"
+                  style={{
+                    fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                    letterSpacing: "0%",
+                  }}
+                >
+                  View Plan
+                </Link>
+              </div>
+            )
+          ) : (
+            <>
+              {/* Card 1: Unlock Premium Features for Free */}
+              {isCollapsed ? (
+                <div className="relative group lg:flex hidden justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsReferralOpen(true)}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#245FD4] hover:bg-[#245FD4] hover:text-white transition shadow-2xs cursor-pointer"
+                    aria-label="Unlock Premium Features"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                    </svg>
+                  </button>
+                  <div
+                    role="tooltip"
+                    className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    Unlock Premium Features
+                    <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-[#EFF6FF] p-3.5 text-center">
+                  <div className="mx-auto mb-2 flex h-6 w-6 items-center justify-center rounded-lg bg-[#245FD4] text-white shadow-xs">
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                    </svg>
+                  </div>
+                  <h4
+                    className="text-[13px] font-bold text-[#1E293B]"
+                    style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                  >
+                    {hasAvailedFreeTier ? "Unlock Premium Features" : "Unlock Premium Features for Free"}
+                  </h4>
+                  <p
+                    className="mt-0.5 text-[11px] leading-[16px] text-[#64748B]"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    {hasAvailedFreeTier
+                      ? "Upgrade to premium and access powerful features and advanced customization."
+                      : "Invite a colleague and unlock a full month of Pro features completely free."}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsReferralOpen(true)}
+                    className="mt-2.5 block w-full rounded-xl bg-cta-gradient bg-gradient-to-r from-[#245FD4] to-[#022977] py-2 text-center text-[12px] font-medium text-white shadow-xs transition hover:opacity-95 cursor-pointer"
+                    style={{
+                      fontFamily: "var(--font-commissioner), Commissioner, sans-serif",
+                      letterSpacing: "0%",
+                    }}
+                  >
+                    {hasAvailedFreeTier ? "Upgrade Now" : "Unlock for Free"}
+                  </button>
+                </div>
+              )}
+
+              {/* Card 2: Free Plan Meter */}
+              {isCollapsed ? (
+                <div className="relative group lg:flex hidden justify-center">
+                  <Link
+                    href="/pricing?from=sidebar"
+                    onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
+                    className="flex h-10 w-10 flex-col items-center justify-center rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:border-slate-300 transition shadow-2xs"
+                    aria-label={`Quota: ${signatureCount}/3`}
+                  >
+                    <span className="text-[11px] font-bold text-[#1E293B]">{signatureCount}/3</span>
+                  </Link>
+                  <div
+                    role="tooltip"
+                    className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
+                    style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                  >
+                    {signatureCount} / 3 Signatures used
+                    <span className="absolute -left-1 top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-slate-900" />
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-[#E2E8F0] bg-white p-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-[#64748B]">
+                      <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div className="flex flex-col">
+                      <span
+                        className="text-[11px] font-normal text-[#64748B]"
+                        style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                      >
+                        Free Plan
+                      </span>
+                      <span
+                        className="text-[12px] font-bold text-[#1E293B]"
+                        style={{ fontFamily: "var(--font-montserrat), Montserrat, sans-serif" }}
+                      >
+                        {signatureCount} / 3 Signatures
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Plan progress bar */}
+                  <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full bg-[#245FD4] transition-all duration-300 ${
+                        signatureCount === 0 ? "w-0 opacity-0" : ""
+                      }`}
+                      style={{
+                        width: `${Math.min(100, Math.max(0, (signatureCount / 3) * 100))}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="mt-2 flex items-center justify-between">
+                    <Link
+                      href="/pricing?from=sidebar"
+                      onClick={(event) => handleLinkClick(event, "/pricing?from=sidebar")}
+                      className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-[#245FD4] transition hover:underline"
+                      style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
+                    >
+                      <span>Upgrade Plan</span>
+                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Logout Button */}
@@ -567,6 +669,12 @@ export default function DashboardSidebar({ mobileOpen = false, onCloseMobile, on
           </div>
         </div>
       </aside>
+
+      {/* Referral Modal */}
+      <ReferralModal
+        isOpen={isReferralOpen}
+        onClose={() => setIsReferralOpen(false)}
+      />
     </>
   );
 }

@@ -752,7 +752,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TemplateSignatureData } from "@/types/template";
 import { StudioSignatureData } from "@/types/studio";
 import { SavedSignature } from "@/types/signature";
@@ -781,6 +781,8 @@ import { buildDownloadDocument } from "@/lib/signatures/previewDocument";
 import SignatureCopiedAlert from "@/components/signatures/SignatureCopiedAlert";
 import SignaturePreviewFrame from "@/components/studio/SignaturePreviewFrame";
 import { toast } from "@/lib/toast";
+import { isSignatureLimitReached } from "@/lib/signatures/lifetimeTracker";
+import { getStoredUser } from "@/app/lib/auth";
 
 interface SaveSuccessModalProps {
   isOpen: boolean;
@@ -859,6 +861,14 @@ export default function SaveSuccessModal({
   const [copiedSignature, setCopiedSignature] = useState(false);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const [, setIsDownloadingImage] = useState(false);
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    const user = getStoredUser();
+    if (user && isSignatureLimitReached(0, user.id)) {
+      router.push("/signatures");
+    }
+  }, [onClose, router]);
 
   function getHtmlAndPlainText(): {
     html: string;
@@ -1023,14 +1033,14 @@ export default function SaveSuccessModal({
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleDismiss();
       }}
     >
       <div className="relative w-full max-w-[720px] max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-5 sm:p-7 md:p-8 shadow-2xl border border-slate-100 flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
         {/* Close 'X' Button */}
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleDismiss}
           className="absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
           aria-label="Close modal"
         >

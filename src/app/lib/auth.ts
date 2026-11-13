@@ -15,6 +15,13 @@ export function setAuthSession(tokens: AuthTokens, user: UserProfile) {
   if (typeof window === "undefined") return;
 
   try {
+    // Clear any previous user's non-scoped cached counts so a new login starts with a clean slate
+    localStorage.removeItem("sig_cached_signatures_count");
+    localStorage.removeItem("sig_cached_teams_count");
+    localStorage.removeItem("sig_lifetime_signatures_count");
+    localStorage.removeItem("sig_signatures_count");
+    localStorage.removeItem("sig_team_lifetime_members_count");
+
     localStorage.setItem(AUTH_TOKEN_KEY, tokens.accessToken);
     if (tokens.refreshToken) {
       localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
@@ -60,6 +67,11 @@ export function clearAuthSession() {
     localStorage.removeItem(AUTH_USER_KEY);
     localStorage.removeItem(AUTH_SETTINGS_KEY);
     localStorage.removeItem(AUTH_AVATAR_PREVIEW_KEY);
+    localStorage.removeItem("sig_cached_signatures_count");
+    localStorage.removeItem("sig_cached_teams_count");
+    localStorage.removeItem("sig_lifetime_signatures_count");
+    localStorage.removeItem("sig_signatures_count");
+    localStorage.removeItem("sig_team_lifetime_members_count");
     window.dispatchEvent(new CustomEvent("sig_avatar_update", { detail: null }));
 
     // Clear cookie

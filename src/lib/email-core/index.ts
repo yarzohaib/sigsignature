@@ -121,6 +121,17 @@ export function resolveEmailFont(name: string): string {
       return "var(--font-montserrat), 'Montserrat', Arial, Helvetica, sans-serif";
     case "commissioner":
       return "var(--font-commissioner), 'Commissioner', Arial, Helvetica, sans-serif";
+    case "alata":
+      return "var(--font-alata), 'Alata', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif";
+    case "dm serif":
+    case "dm serif display":
+      return "var(--font-dmserif), 'DM Serif Display', Georgia, Times, 'Times New Roman', serif";
+    case "playfair":
+    case "play fair":
+    case "playfair display":
+      return "var(--font-playfair), 'Playfair Display', Georgia, Times, 'Times New Roman', serif";
+    case "duru sans":
+      return "var(--font-durusans), 'Duru Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif";
     case "arial":
     default:
       return "Arial, Helvetica, sans-serif";

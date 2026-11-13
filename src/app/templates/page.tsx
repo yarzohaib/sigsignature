@@ -118,6 +118,13 @@ function TemplatesContent() {
         const targetTemplateParam = templateParam || storedSelected;
 
         if (targetTemplateParam && !isCancelled) {
+          const user = getStoredUser();
+          if (user && !isTeamMode && isSignatureLimitReached()) {
+            setIsLimitModalOpen(true);
+            setIsLoadingEdit(false);
+            return;
+          }
+
           const raw = targetTemplateParam.trim().toLowerCase();
           const normalized = raw.replace(/^0*[0-9]+_/, "").replace(/[_\s]+/g, "-");
           const matched =

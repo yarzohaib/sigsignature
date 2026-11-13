@@ -10,6 +10,8 @@ import NotificationsCard from "@/components/settings/NotificationsCard";
 import PlanUsageCard from "@/components/settings/PlanUsageCard";
 import SecurityCard from "@/components/settings/SecurityCard";
 import StartingPointCard from "@/components/settings/StartingPointCard";
+import GmailIntegrationCard from "@/components/settings/GmailIntegrationCard";
+import ZohoIntegrationCard from "@/components/settings/ZohoIntegrationCard";
 import DataPrivacyCard from "@/components/settings/DataPrivacyCard";
 import { getLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import {
@@ -21,6 +23,7 @@ import {
   UpdateProfilePayload,
   UpdateSettingsPayload,
   UserProfile,
+  ApiError,
 } from "@/app/lib/api";
 import {
   getStoredUser,
@@ -193,8 +196,12 @@ function SettingsContent() {
         setStoredAvatarUrl(serverAvatar);
       } catch (err: unknown) {
         console.error("Failed to load account:", err);
-        // If unauthenticated, redirect to login
-        if (typeof window !== "undefined" && !cachedUser) {
+        // If unauthenticated (401 / Authentication required), clear stale session and redirect to login
+        if (
+          (err instanceof ApiError && err.statusCode === 401) ||
+          (err instanceof Error && /auth/i.test(err.message)) ||
+          !cachedUser
+        ) {
           clearAuthSession();
           router.replace("/login?redirect=/settings");
           return;
@@ -636,6 +643,10 @@ function SettingsContent() {
                   providers={accountData?.providers ?? []}
                   onShowToast={showToast}
                 />
+
+                {/* Gmail integration */}
+                <GmailIntegrationCard onShowToast={showToast} />
+                <ZohoIntegrationCard onShowToast={showToast} />
 
                 {/* 6. Your starting point live mini-signature preview */}
                 <StartingPointCard

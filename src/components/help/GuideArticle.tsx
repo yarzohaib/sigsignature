@@ -1,6 +1,33 @@
-import React from "react";
+"use client";
+
+import React, { useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DetailedGuide } from "@/lib/guidesData";
+import { getStoredToken } from "@/app/lib/auth";
+
+function subscribeAuthEvents(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("sig_user_update", callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener("sig_user_update", callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getAuthSnapshot(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return Boolean(getStoredToken());
+  } catch {
+    return false;
+  }
+}
+
+function getAuthServerSnapshot(): boolean {
+  return false;
+}
 
 function cleanInlineText(str?: string): string {
   if (!str) return "";
@@ -47,6 +74,13 @@ interface GuideArticleProps {
 }
 
 export default function GuideArticle({ guide }: GuideArticleProps) {
+  const router = useRouter();
+  const isAuthenticated = useSyncExternalStore(
+    subscribeAuthEvents,
+    getAuthSnapshot,
+    getAuthServerSnapshot
+  );
+
   return (
     <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:px-10 2xl:px-12 w-full pb-16">
       <div className="w-full max-w-5xl mx-auto">
@@ -382,6 +416,13 @@ export default function GuideArticle({ guide }: GuideArticleProps) {
             Ready to design a clean, responsive sign-off? You can{" "}
             <Link
               href="https://www.sigsignature.com/"
+              onClick={(e) => {
+                if (isAuthenticated) {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                  e.preventDefault();
+                  router.push("/dashboard");
+                }
+              }}
               className="font-semibold text-brand underline underline-offset-2 hover:text-brand-dark transition"
             >
               create your signature with our free email signature generator

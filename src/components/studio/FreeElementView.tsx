@@ -52,6 +52,7 @@ interface FreeElementViewProps {
   showEditorOverlays?: boolean;
   hideLabels?: boolean;
   isEditingSavedSignature?: boolean;
+  isReadOnly?: boolean;
   onToast?: (msg: string, isError?: boolean) => void;
   onSplitLines?: (id: string, text?: string) => void;
 }
@@ -94,6 +95,7 @@ export default function FreeElementView({
   showEditorOverlays = true,
   hideLabels = false,
   isEditingSavedSignature = false,
+  isReadOnly = false,
   onToast,
   onSplitLines,
 }: FreeElementViewProps) {
@@ -142,6 +144,7 @@ export default function FreeElementView({
   }
 
   function handlePointerDown(e: React.PointerEvent) {
+    if (isReadOnly) return;
     e.stopPropagation();
     if (isEditingText) return;
     onSelect(element.id, e);
@@ -151,11 +154,13 @@ export default function FreeElementView({
   }
 
   function handleClick(e: React.MouseEvent) {
+    if (isReadOnly) return;
     e.stopPropagation();
     onSelect(element.id, e);
   }
 
   function handleDoubleClick(e: React.MouseEvent) {
+    if (isReadOnly) return;
     if (element.type === "text" && !element.locked) {
       if (
         isEditingSavedSignature &&
@@ -282,7 +287,7 @@ export default function FreeElementView({
         const fontWeight = textEl.bold ? 700 : 400;
         const align = textEl.align || "left";
         const elementFontStack = resolveEmailFont(textEl.fontFamily || data.fontFamily || "Inter");
-        const color = textEl.color || (textEl.bold ? theme.text : theme.muted);
+        const color = textEl.color || (themeKey === "dark" || textEl.bold ? theme.text : theme.muted);
 
         if (textEl.icon) {
           const iconSrc = getSocialIconSvgDataUrl("minimal", themeColor, textEl.icon);
@@ -626,18 +631,18 @@ export default function FreeElementView({
         top: `${element.y}px`,
         width: `${element.w}px`,
         height: `${element.h}px`,
-        touchAction: "none",
-        cursor: element.locked ? "default" : isEditingText ? "text" : "move",
-        outline: showCollision
+        touchAction: isReadOnly ? "auto" : "none",
+        cursor: isReadOnly || element.locked ? "default" : isEditingText ? "text" : "move",
+        outline: !isReadOnly && showCollision
           ? "2px solid #DC2626"
-          : isSelected
+          : !isReadOnly && isSelected
           ? "1.5px solid #245FD4"
           : "none",
         outlineOffset: "1px",
         zIndex: isSelected ? 20 : element.type === "banner" ? 0 : 1,
       }}
       className={`group select-none ${
-        !isSelected && !showCollision ? "hover:outline hover:outline-1 hover:outline-blue-300" : ""
+        !isReadOnly && !isSelected && !showCollision ? "hover:outline hover:outline-1 hover:outline-blue-300" : ""
       }`}
     >
       {/* Collision Tooltip */}
@@ -780,7 +785,7 @@ export default function FreeElementView({
       )}
 
       {/* Resize Handles (8 handles when selected and not locked) */}
-      {isSelected && !element.locked && !isEditingText && (
+      {!isReadOnly && isSelected && !element.locked && !isEditingText && (
         <>
           {activeHandles.map((h) => (
             <div

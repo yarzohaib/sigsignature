@@ -5,12 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import PasswordField from "@/components/ui/PasswordField";
 import AuthFeedbackModal from "@/components/ui/AuthFeedbackModal";
-import { resetPassword } from "@/app/lib/api";
+import { resetPassword, validateResetToken } from "@/app/lib/api";
 
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [token] = useState(() => searchParams.get("token")?.trim() || "");
+
+  const [isValidatingToken, setIsValidatingToken] = useState(() => Boolean(token));
+  const [tokenError, setTokenError] = useState<string | null>(null);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +26,32 @@ function ResetPasswordForm() {
   const [countdown, setCountdown] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Immediately sanitize address bar & browser history so the raw token is completely wiped from view
+  // Validate token on mount before displaying the form
+  useEffect(() => {
+    if (!token) return;
+
+    let isMounted = true;
+    validateResetToken(token)
+      .then(() => {
+        if (isMounted) {
+          setIsValidatingToken(false);
+        }
+      })
+      .catch((err: unknown) => {
+        if (isMounted) {
+          const message =
+            err instanceof Error ? err.message : "Invalid or expired reset token";
+          setTokenError(message);
+          setIsValidatingToken(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
+
+  // Sanitize address bar & browser history once validated or when an error occurs so raw token is wiped
   useEffect(() => {
     if (token && typeof window !== "undefined" && window.location.search) {
       window.history.replaceState(null, "", window.location.pathname);
@@ -127,6 +155,57 @@ function ResetPasswordForm() {
           className="bg-brand-gradient flex h-12 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-xs transition hover:opacity-95 sm:h-14 sm:text-lg mt-2"
         >
           Request Reset Link
+        </Link>
+        <Link href="/login" className="text-xs font-semibold text-brand hover:underline">
+          Return to Log In
+        </Link>
+      </div>
+    );
+  }
+
+  // Loading state while validating token on mount
+  if (isValidatingToken) {
+    return (
+      <div className="flex w-full max-w-[496px] flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-8 sm:p-12 text-center shadow-xs">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#245FD4]">
+          <svg className="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+        </div>
+        <p className="text-sm font-medium text-slate-600">
+          Validating reset link...
+        </p>
+      </div>
+    );
+  }
+
+  // If token is invalid or expired upfront, block active input fields and show expired error state
+  if (tokenError) {
+    return (
+      <div className="flex w-full max-w-[496px] flex-col items-center justify-center gap-5 rounded-2xl border border-red-200/80 bg-white p-8 sm:p-10 text-center shadow-xs">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+          <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <div className="space-y-1.5">
+          <h1 className="text-brand-gradient font-heading text-[24px] font-semibold sm:text-[28px]">
+            Invalid or Expired Link
+          </h1>
+          <p className="text-sm text-slate-600 max-w-sm">
+            {tokenError.includes("expired") || tokenError.includes("Invalid")
+              ? "This password reset link has expired or has already been used. For your security, reset links are single-use only."
+              : tokenError}
+          </p>
+        </div>
+        <Link
+          href="/forgot-password"
+          className="bg-brand-gradient flex h-12 w-full items-center justify-center rounded-xl font-body text-base font-semibold text-white shadow-xs transition hover:opacity-95 sm:h-14 sm:text-lg mt-2"
+        >
+          Request a new password reset link
         </Link>
         <Link href="/login" className="text-xs font-semibold text-brand hover:underline">
           Return to Log In

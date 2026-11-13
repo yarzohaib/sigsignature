@@ -33,6 +33,10 @@ export interface UserProfile {
   onboardingSeenAt?: string | null;
   isActive?: boolean;
   isVerified?: boolean;
+  referralCode?: string | null;
+  proTrialUntil?: string | null;
+  isProTrialActive?: boolean;
+  referralCount?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -42,6 +46,7 @@ export interface SignupPayload {
   lastName?: string;
   email: string;
   password: string;
+  referralCode?: string;
 }
 
 export interface SignupResponse {
@@ -93,6 +98,7 @@ export async function signupUser(payload: SignupPayload): Promise<SignupResponse
         lastName: payload.lastName ? payload.lastName.trim() : undefined,
         email: payload.email.trim(),
         password: payload.password,
+        referralCode: payload.referralCode ? payload.referralCode.trim().toUpperCase() : undefined,
       }),
     });
   } catch (networkErr: unknown) {
@@ -222,8 +228,8 @@ export interface StartOAuthOptions {
 }
 
 /**
- * Initiates OAuth login by redirecting the browser in the current tab to the backend OAuth provider endpoint,
- * or opening a centered popup window only if options.popup is explicitly true.
+ * Initiates OAuth login with the backend provider endpoint, opening a popup by default
+ * unless options.popup is explicitly false.
  */
 export function startOAuth(
   provider: OAuthProvider,
@@ -234,7 +240,16 @@ export function startOAuth(
   }
 
   const origin = window.location.origin;
-  const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}`;
+  let refParam = "";
+  try {
+    const savedRef = sessionStorage.getItem("sig_referral_code") || localStorage.getItem("sig_referral_code");
+    if (savedRef && savedRef.trim()) {
+      refParam = `&ref=${encodeURIComponent(savedRef.trim().toUpperCase())}`;
+    }
+  } catch {
+    // Ignore storage errors
+  }
+  const targetUrl = `${API_BASE_URL}/api/v1/auth/${provider}?frontend_url=${encodeURIComponent(origin)}${refParam}`;
   const usePopup = Boolean(options?.popup); // Default to full in-tab redirect to avoid new tab issues
 
   if (usePopup) {
@@ -601,6 +616,45 @@ export async function requestForgotPassword(email: string): Promise<ForgotPasswo
   return result as ForgotPasswordResponse;
 }
 
+export interface ValidateResetTokenResponse {
+  success: boolean;
+  valid: boolean;
+  message: string;
+}
+
+/**
+ * Validate password reset token on mount before displaying the reset form.
+ */
+export async function validateResetToken(token: string): Promise<ValidateResetTokenResponse> {
+  const url = `${API_BASE_URL}/api/v1/auth/validate-reset-token`;
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ token: token.trim() }),
+    });
+  } catch (networkErr: unknown) {
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new Error(`Unable to reach backend server (${errorDetail}).`);
+  }
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      result?.message ||
+      "Invalid or expired reset token";
+    throw new Error(message);
+  }
+
+  return result as ValidateResetTokenResponse;
+}
+
 /**
  * Reset password using reset token.
  */
@@ -896,7 +950,10 @@ export async function fetchSignatures(): Promise<BackendSavedSignature[]> {
 
     if (result?.meta?.lifetimeCreated !== undefined && typeof window !== "undefined") {
       try {
-        localStorage.setItem("sig_lifetime_signatures_count", String(result.meta.lifetimeCreated));
+        const currentUser = getStoredUser();
+        if (currentUser?.id) {
+          localStorage.setItem(`sig_lifetime_created_count_${currentUser.id}`, String(result.meta.lifetimeCreated));
+        }
       } catch {
         // ignore storage errors
       }
@@ -1953,4 +2010,236 @@ export async function deleteUserAccount(payload: DeleteAccountPayload): Promise<
       0
     );
   }
+}
+
+export interface ReferralInfoResponse {
+  referralCode: string;
+  shareUrl: string;
+  referralCount: number;
+  proTrialUntil: string | null;
+  isProTrialActive: boolean;
+}
+
+export interface SendReferralInviteResponse {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Fetch referral details for the authenticated user (referralCode, shareUrl, referralCount, proTrial status)
+ */
+export async function getReferralInfo(): Promise<ReferralInfoResponse> {
+  const url = `${API_BASE_URL}/api/v1/referrals`;
+  const response = await apiFetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const result = await response.json().catch(() => null);
+  if (!response.ok || !result?.data) {
+    const message = result?.message || "Failed to load referral details.";
+    throw new ApiError(message, response.status, result?.code);
+  }
+
+  return result.data as ReferralInfoResponse;
+}
+
+/**
+ * Send a 1-click referral email invitation to a recipient
+ */
+export async function sendReferralInvite(email: string): Promise<SendReferralInviteResponse> {
+  const url = `${API_BASE_URL}/api/v1/referrals/invite`;
+  const response = await apiFetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ email: email.trim() }),
+  });
+
+  const result = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = result?.message || "Failed to send referral invitation.";
+    throw new ApiError(message, response.status, result?.code);
+  }
+
+  return result as SendReferralInviteResponse;
+}
+
+/* ------------------------------------------------------------------ */
+/* Gmail integration                                                   */
+/* ------------------------------------------------------------------ */
+
+export interface GmailConnectionInfo {
+  provider: string;
+  accountEmail: string;
+  lastPushedAt: string | null;
+  lastSignatureId: string | null;
+  connectedAt: string | null;
+}
+
+export interface GmailStatus {
+  configured: boolean;
+  connected: boolean;
+  connection: GmailConnectionInfo | null;
+}
+
+export interface GmailPushResult {
+  accountEmail: string;
+  lastPushedAt: string;
+  characters: number;
+}
+
+async function gmailRequest<T>(path: string, options: RequestInit, fallback: string): Promise<T> {
+  try {
+    const response = await apiFetch(`${API_BASE_URL}/api/v1/integrations/gmail${path}`, {
+      ...options,
+      headers: { Accept: "application/json", ...(options.headers || {}) },
+    });
+    return await handleSignatureApiResponse<T>(response, fallback);
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const detail = networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(`Unable to reach backend server (${detail}). Please check your connection.`, 0);
+  }
+}
+
+export function fetchGmailStatus(): Promise<GmailStatus> {
+  return gmailRequest<GmailStatus>("", { method: "GET" }, "Failed to load Gmail status");
+}
+
+/** Returns the Google consent URL. The caller should send the browser there. */
+export async function startGmailConnect(): Promise<string> {
+  const data = await gmailRequest<{ url: string }>(
+    "/connect",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ frontendOrigin: window.location.origin }),
+    },
+    "Failed to start Gmail connection"
+  );
+  return data.url;
+}
+
+export function pushSignatureToGmail(signatureId: string, html: string): Promise<GmailPushResult> {
+  return gmailRequest<GmailPushResult>(
+    "/push",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ signatureId, html }),
+    },
+    "Failed to update Gmail signature"
+  );
+}
+
+export async function disconnectGmail(): Promise<void> {
+  await gmailRequest<{ disconnected: boolean }>("", { method: "DELETE" }, "Failed to disconnect Gmail");
+}
+
+/** Friendly text for the error codes returned by the Gmail endpoints. */
+export function getGmailErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) {
+    switch (err.code) {
+      case "GMAIL_RECONNECT_REQUIRED":
+        return "Google access expired. Please reconnect Gmail in Settings.";
+      case "GMAIL_NOT_CONNECTED":
+        return "Connect your Gmail account in Settings first.";
+      case "GMAIL_EMBEDDED_IMAGE":
+        return "This signature has an embedded image. Re-upload your photo or logo so it has a public link, then try again.";
+      case "GMAIL_SIGNATURE_TOO_LARGE":
+        return "This signature is too large for Gmail (10,000 character limit). Try removing some elements.";
+      case "GMAIL_NOT_CONFIGURED":
+        return "Gmail integration is not available yet. Please try again later.";
+      default:
+        return err.message;
+    }
+  }
+  return err instanceof Error ? err.message : "Something went wrong. Please try again.";
+}
+
+export function isGmailReconnectError(err: unknown): boolean {
+  return err instanceof ApiError && (err.code === "GMAIL_RECONNECT_REQUIRED" || err.code === "GMAIL_NOT_CONNECTED");
+}
+
+/* ------------------------------------------------------------------ */
+/* Zoho Mail integration                                               */
+/* ------------------------------------------------------------------ */
+
+async function zohoRequest<T>(path: string, options: RequestInit, fallback: string): Promise<T> {
+  try {
+    const response = await apiFetch(`${API_BASE_URL}/api/v1/integrations/zoho${path}`, {
+      ...options,
+      headers: { Accept: "application/json", ...(options.headers || {}) },
+    });
+    return await handleSignatureApiResponse<T>(response, fallback);
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const detail = networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(`Unable to reach backend server (${detail}). Please check your connection.`, 0);
+  }
+}
+
+export function fetchZohoStatus(): Promise<GmailStatus> {
+  return zohoRequest<GmailStatus>("", { method: "GET" }, "Failed to load Zoho Mail status");
+}
+
+/** Returns the Zoho consent URL. The caller should send the browser there. */
+export async function startZohoConnect(): Promise<string> {
+  const data = await zohoRequest<{ url: string }>(
+    "/connect",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ frontendOrigin: window.location.origin }),
+    },
+    "Failed to start Zoho Mail connection"
+  );
+  return data.url;
+}
+
+export function pushSignatureToZoho(signatureId: string, html: string): Promise<GmailPushResult> {
+  return zohoRequest<GmailPushResult>(
+    "/push",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ signatureId, html }),
+    },
+    "Failed to update Zoho Mail signature"
+  );
+}
+
+export async function disconnectZoho(): Promise<void> {
+  await zohoRequest<{ disconnected: boolean }>("", { method: "DELETE" }, "Failed to disconnect Zoho Mail");
+}
+
+export function getZohoErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) {
+    switch (err.code) {
+      case "ZOHO_RECONNECT_REQUIRED":
+        return "Zoho access expired. Please reconnect Zoho Mail in Settings.";
+      case "ZOHO_NOT_CONNECTED":
+        return "Connect your Zoho Mail account in Settings first.";
+      case "ZOHO_NOT_CONFIGURED":
+        return "Zoho Mail integration is not available yet. Please try again later.";
+      case "ZOHO_REJECTED_SIGNATURE":
+        return "Zoho rejected this signature. Try a simpler design, then push again.";
+      case "GMAIL_EMBEDDED_IMAGE":
+      case "GMAIL_SIGNATURE_TOO_LARGE":
+      case "GMAIL_EMPTY_SIGNATURE":
+        return getGmailErrorMessage(err);
+      default:
+        return err.message;
+    }
+  }
+  return err instanceof Error ? err.message : "Something went wrong. Please try again.";
+}
+
+export function isZohoReconnectError(err: unknown): boolean {
+  return err instanceof ApiError && (err.code === "ZOHO_RECONNECT_REQUIRED" || err.code === "ZOHO_NOT_CONNECTED");
 }

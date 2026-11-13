@@ -5,27 +5,24 @@ const GLOBAL_FALLBACK_KEY = "sig_lifetime_signatures_count";
 const CACHED_COUNT_KEY = "sig_cached_signatures_count";
 
 /**
- * Retrieves the lifetime signature creation count for a user.
- * This count tracks total signatures created and NEVER decreases when signatures are deleted.
+ * Retrieves the lifetime signature creation count for a specific user.
+ * Tracks total signatures created by this user and never decreases when signatures are deleted.
+ * Note: Scoped strictly per-user to prevent cross-account limit pollution on shared browsers.
  */
 export function getLifetimeSignatureCount(userId?: string): number {
   if (typeof window === "undefined") return 0;
 
-  const uid = userId || getStoredUser()?.id || "guest";
+  const currentStored = getStoredUser();
+  const uid = userId || currentStored?.id;
+  if (!uid) return 0;
+
   try {
     const rawUser = localStorage.getItem(`${LIFETIME_KEY_PREFIX}${uid}`);
-    const rawGlobal = localStorage.getItem(GLOBAL_FALLBACK_KEY);
-    const rawCached = localStorage.getItem(CACHED_COUNT_KEY);
-
-    const userVal = rawUser ? Number.parseInt(rawUser, 10) : 0;
-    const globalVal = rawGlobal ? Number.parseInt(rawGlobal, 10) : 0;
-    const cachedVal = rawCached ? Number.parseInt(rawCached, 10) : 0;
-
-    return Math.max(
-      Number.isFinite(userVal) ? userVal : 0,
-      Number.isFinite(globalVal) ? globalVal : 0,
-      Number.isFinite(cachedVal) ? cachedVal : 0
-    );
+    if (rawUser) {
+      const userVal = Number.parseInt(rawUser, 10);
+      return Number.isFinite(userVal) && userVal >= 0 ? userVal : 0;
+    }
+    return 0;
   } catch {
     return 0;
   }
@@ -42,13 +39,15 @@ export function syncLifetimeSignatureCount(
 ): number {
   if (typeof window === "undefined") return activeSignaturesCount;
 
-  const uid = userId || getStoredUser()?.id || "guest";
+  const currentStored = getStoredUser();
+  const uid = userId || currentStored?.id;
+  if (!uid) return activeSignaturesCount;
+
   const currentLifetime = getLifetimeSignatureCount(uid);
   const next = Math.max(currentLifetime, activeSignaturesCount, backendLifetime || 0);
 
   try {
     localStorage.setItem(`${LIFETIME_KEY_PREFIX}${uid}`, String(next));
-    localStorage.setItem(GLOBAL_FALLBACK_KEY, String(next));
   } catch {
     // Ignore storage quota or disabled storage errors
   }
@@ -57,18 +56,20 @@ export function syncLifetimeSignatureCount(
 }
 
 /**
- * Records that a new signature was created, incrementing the lifetime count.
+ * Records that a new signature was created, incrementing the user-scoped lifetime count.
  */
 export function recordSignatureCreated(userId?: string): number {
   if (typeof window === "undefined") return 1;
 
-  const uid = userId || getStoredUser()?.id || "guest";
+  const currentStored = getStoredUser();
+  const uid = userId || currentStored?.id;
+  if (!uid) return 1;
+
   const current = getLifetimeSignatureCount(uid);
   const next = current + 1;
 
   try {
     localStorage.setItem(`${LIFETIME_KEY_PREFIX}${uid}`, String(next));
-    localStorage.setItem(GLOBAL_FALLBACK_KEY, String(next));
   } catch {
     // Ignore storage quota or disabled storage errors
   }
@@ -78,8 +79,26 @@ export function recordSignatureCreated(userId?: string): number {
 
 /**
  * Checks if the user has reached the strict 3-signature lifetime limit.
+ * Pro / Premium users (including active Pro trial) are exempt.
  */
 export function isSignatureLimitReached(activeCount: number = 0, userId?: string): boolean {
+  if (typeof window !== "undefined") {
+    try {
+      const rawUser = localStorage.getItem("sig_user");
+      if (rawUser) {
+        const u = JSON.parse(rawUser);
+        if (
+          u.isProTrialActive ||
+          (u.proTrialUntil && new Date(u.proTrialUntil).getTime() > Date.now())
+        ) {
+          return false;
+        }
+      }
+    } catch {
+      // fallback to standard check
+    }
+  }
+
   const lifetime = getLifetimeSignatureCount(userId);
   return Math.max(activeCount, lifetime) >= 3;
 }
@@ -90,25 +109,25 @@ const TEAM_GLOBAL_FALLBACK_KEY = "sig_team_lifetime_members_count";
 /**
  * Retrieves the lifetime team member creation count for a team/user.
  * This count tracks total members created and NEVER decreases when members are deleted.
+ * Scoped strictly to teamId / userId to prevent cross-account pollution.
  */
 export function getTeamLifetimeMemberCount(teamId?: string, userId?: string): number {
   if (typeof window === "undefined") return 0;
 
-  const tid = teamId || "default";
-  const uid = userId || getStoredUser()?.id || "guest";
+  const tid = teamId && teamId !== "default" ? teamId : null;
+  const currentStored = getStoredUser();
+  const uid = userId || currentStored?.id;
+
   try {
-    const rawTeam = localStorage.getItem(`${TEAM_LIFETIME_PREFIX}${tid}`);
-    const rawUser = localStorage.getItem(`${TEAM_LIFETIME_PREFIX}${uid}`);
-    const rawGlobal = localStorage.getItem(TEAM_GLOBAL_FALLBACK_KEY);
+    const rawTeam = tid ? localStorage.getItem(`${TEAM_LIFETIME_PREFIX}${tid}`) : null;
+    const rawUser = uid ? localStorage.getItem(`${TEAM_LIFETIME_PREFIX}${uid}`) : null;
 
     const teamVal = rawTeam ? Number.parseInt(rawTeam, 10) : 0;
     const userVal = rawUser ? Number.parseInt(rawUser, 10) : 0;
-    const globalVal = rawGlobal ? Number.parseInt(rawGlobal, 10) : 0;
 
     return Math.max(
-      Number.isFinite(teamVal) ? teamVal : 0,
-      Number.isFinite(userVal) ? userVal : 0,
-      Number.isFinite(globalVal) ? globalVal : 0
+      Number.isFinite(teamVal) && teamVal >= 0 ? teamVal : 0,
+      Number.isFinite(userVal) && userVal >= 0 ? userVal : 0
     );
   } catch {
     return 0;
@@ -127,15 +146,15 @@ export function syncTeamLifetimeMemberCount(
 ): number {
   if (typeof window === "undefined") return activeMembersCount;
 
-  const tid = teamId || "default";
-  const uid = userId || getStoredUser()?.id || "guest";
-  const currentLifetime = getTeamLifetimeMemberCount(tid, uid);
+  const tid = teamId && teamId !== "default" ? teamId : null;
+  const currentStored = getStoredUser();
+  const uid = userId || currentStored?.id;
+  const currentLifetime = getTeamLifetimeMemberCount(tid || undefined, uid || undefined);
   const next = Math.max(currentLifetime, activeMembersCount, backendLifetime || 0);
 
   try {
-    localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${tid}`, String(next));
-    localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${uid}`, String(next));
-    localStorage.setItem(TEAM_GLOBAL_FALLBACK_KEY, String(next));
+    if (tid) localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${tid}`, String(next));
+    if (uid) localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${uid}`, String(next));
   } catch {
     // Ignore storage quota or disabled storage errors
   }
@@ -149,15 +168,15 @@ export function syncTeamLifetimeMemberCount(
 export function recordTeamMemberCreated(teamId?: string, userId?: string): number {
   if (typeof window === "undefined") return 1;
 
-  const tid = teamId || "default";
-  const uid = userId || getStoredUser()?.id || "guest";
-  const current = getTeamLifetimeMemberCount(tid, uid);
+  const tid = teamId && teamId !== "default" ? teamId : null;
+  const currentStored = getStoredUser();
+  const uid = userId || currentStored?.id;
+  const current = getTeamLifetimeMemberCount(tid || undefined, uid || undefined);
   const next = current + 1;
 
   try {
-    localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${tid}`, String(next));
-    localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${uid}`, String(next));
-    localStorage.setItem(TEAM_GLOBAL_FALLBACK_KEY, String(next));
+    if (tid) localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${tid}`, String(next));
+    if (uid) localStorage.setItem(`${TEAM_LIFETIME_PREFIX}${uid}`, String(next));
   } catch {
     // Ignore storage quota or disabled storage errors
   }

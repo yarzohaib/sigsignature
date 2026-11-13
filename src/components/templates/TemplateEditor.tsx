@@ -2,6 +2,7 @@
 
 import { useState, useRef, ChangeEvent, useMemo, useEffect, useCallback, useDeferredValue } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Select from "@/components/ui/Select";
 import { TemplateItem, TemplateSignatureData } from "@/types/template";
 import { getSignatureRepository } from "@/lib/signatures/repository";
@@ -96,6 +97,7 @@ export default function TemplateEditor({
   editingSignatureId,
   onBack,
 }: TemplateEditorProps) {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
@@ -1494,7 +1496,13 @@ export default function TemplateEditor({
       {/* Save Success Popup Modal */}
       <SaveSuccessModal
         isOpen={isSavedModalOpen}
-        onClose={() => setIsSavedModalOpen(false)}
+        onClose={() => {
+          setIsSavedModalOpen(false);
+          const user = getStoredUser();
+          if (user && isSignatureLimitReached(0, user.id)) {
+            router.push("/signatures");
+          }
+        }}
         signatureData={prepareDataForSave()}
         signatureName={formData.fullName || template.name}
       />
