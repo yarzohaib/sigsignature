@@ -616,6 +616,45 @@ export async function requestForgotPassword(email: string): Promise<ForgotPasswo
   return result as ForgotPasswordResponse;
 }
 
+export interface ValidateResetTokenResponse {
+  success: boolean;
+  valid: boolean;
+  message: string;
+}
+
+/**
+ * Validate password reset token on mount before displaying the reset form.
+ */
+export async function validateResetToken(token: string): Promise<ValidateResetTokenResponse> {
+  const url = `${API_BASE_URL}/api/v1/auth/validate-reset-token`;
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ token: token.trim() }),
+    });
+  } catch (networkErr: unknown) {
+    const errorDetail =
+      networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new Error(`Unable to reach backend server (${errorDetail}).`);
+  }
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      result?.message ||
+      "Invalid or expired reset token";
+    throw new Error(message);
+  }
+
+  return result as ValidateResetTokenResponse;
+}
+
 /**
  * Reset password using reset token.
  */
