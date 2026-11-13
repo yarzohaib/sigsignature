@@ -180,10 +180,10 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3.5 top-3.5 flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
+          className="absolute right-3.5 top-3.5 z-20 flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition cursor-pointer"
           aria-label="Close"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="h-5 w-5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -287,16 +287,33 @@ export default function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
             </p>
           )}
 
-          {/* Feedback status */}
+          {/* Feedback status toast */}
           {statusMessage && (
             <div
-              className={`mt-1 text-xs font-medium rounded-xl p-2.5 transition-opacity duration-200 ${
+              role="status"
+              aria-live="polite"
+              className={`mt-1.5 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-opacity duration-200 border shadow-2xs ${
                 statusMessage.type === "success"
-                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                  : "bg-red-50 text-red-600 border border-red-200"
+                  ? "bg-[#EFF6FF] text-[#1243A3] border-[#BFDBFE]"
+                  : "bg-red-50 text-red-700 border-red-200"
               } ${isSuccessDismissing ? "opacity-0" : "opacity-100"}`}
+              style={{ fontFamily: "var(--font-commissioner), Commissioner, sans-serif" }}
             >
-              {statusMessage.text}
+              {statusMessage.type === "success" ? (
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#245FD4] text-white">
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+              ) : (
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </div>
+              )}
+              <span className="flex-1 min-w-0 leading-snug">{statusMessage.text}</span>
             </div>
           )}
         </form>
