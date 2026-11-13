@@ -245,9 +245,10 @@ export default function PreviewSignatureModal({
             </div>
           ) : (
             /* Canvas View Tab */
-            <div className="h-full min-h-0 w-full flex items-center justify-center py-4 overflow-auto">
+            <div className="h-full min-h-0 w-full flex items-center justify-center py-4 overflow-auto select-none">
               {data && data.elements && data.elements.length > 0 ? (
                 <div
+                  className="pointer-events-none select-none"
                   style={{
                     width: `${canvasWidth}px`,
                     height: `${canvasHeight}px`,
@@ -257,6 +258,7 @@ export default function PreviewSignatureModal({
                     position: "relative",
                     overflow: "hidden",
                     boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                    userSelect: "none",
                   }}
                 >
                   {data.elements.map((el) => (
@@ -269,6 +271,7 @@ export default function PreviewSignatureModal({
                       isDragging={false}
                       isResizing={false}
                       showEditorOverlays={false}
+                      isReadOnly={true}
                       onSelect={() => {}}
                       onStartDrag={() => {}}
                       onStartResize={() => {}}
