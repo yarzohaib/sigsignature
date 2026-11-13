@@ -7,7 +7,7 @@ const steps: StepItem[] = [
     step: "1",
     title: "Create Your Free Account",
     description:
-      "Sign up or log in to SigSignature to access the free email signature generator. Create up to three professional email signatures and manage them from your dashboard.",
+      "Sign up or log in to Sig Signature to access the free email signature generator. Create up to three professional email signatures and manage them from your dashboard.",
   },
   {
     step: "2",

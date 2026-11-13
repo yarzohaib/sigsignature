@@ -614,7 +614,7 @@ export default function GmailSignatureGeneratorPage() {
                       <th>Feature</th>
                       <th>Generic</th>
                       <th className="bg-[#EFF6FF]/60 border-l border-blue-100">
-                        <span>SigSignature</span>
+                        <span>Sig Signature</span>
                         <span>Recommended</span>
                       </th>
                     </tr>
