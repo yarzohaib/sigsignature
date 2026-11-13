@@ -2121,3 +2121,81 @@ export function getGmailErrorMessage(err: unknown): string {
 export function isGmailReconnectError(err: unknown): boolean {
   return err instanceof ApiError && (err.code === "GMAIL_RECONNECT_REQUIRED" || err.code === "GMAIL_NOT_CONNECTED");
 }
+
+/* ------------------------------------------------------------------ */
+/* Zoho Mail integration                                               */
+/* ------------------------------------------------------------------ */
+
+async function zohoRequest<T>(path: string, options: RequestInit, fallback: string): Promise<T> {
+  try {
+    const response = await apiFetch(`${API_BASE_URL}/api/v1/integrations/zoho${path}`, {
+      ...options,
+      headers: { Accept: "application/json", ...(options.headers || {}) },
+    });
+    return await handleSignatureApiResponse<T>(response, fallback);
+  } catch (networkErr: unknown) {
+    if (networkErr instanceof ApiError) throw networkErr;
+    const detail = networkErr instanceof Error ? networkErr.message : "Network request failed";
+    throw new ApiError(`Unable to reach backend server (${detail}). Please check your connection.`, 0);
+  }
+}
+
+export function fetchZohoStatus(): Promise<GmailStatus> {
+  return zohoRequest<GmailStatus>("", { method: "GET" }, "Failed to load Zoho Mail status");
+}
+
+/** Returns the Zoho consent URL. The caller should send the browser there. */
+export async function startZohoConnect(): Promise<string> {
+  const data = await zohoRequest<{ url: string }>(
+    "/connect",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ frontendOrigin: window.location.origin }),
+    },
+    "Failed to start Zoho Mail connection"
+  );
+  return data.url;
+}
+
+export function pushSignatureToZoho(signatureId: string, html: string): Promise<GmailPushResult> {
+  return zohoRequest<GmailPushResult>(
+    "/push",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ signatureId, html }),
+    },
+    "Failed to update Zoho Mail signature"
+  );
+}
+
+export async function disconnectZoho(): Promise<void> {
+  await zohoRequest<{ disconnected: boolean }>("", { method: "DELETE" }, "Failed to disconnect Zoho Mail");
+}
+
+export function getZohoErrorMessage(err: unknown): string {
+  if (err instanceof ApiError) {
+    switch (err.code) {
+      case "ZOHO_RECONNECT_REQUIRED":
+        return "Zoho access expired. Please reconnect Zoho Mail in Settings.";
+      case "ZOHO_NOT_CONNECTED":
+        return "Connect your Zoho Mail account in Settings first.";
+      case "ZOHO_NOT_CONFIGURED":
+        return "Zoho Mail integration is not available yet. Please try again later.";
+      case "ZOHO_REJECTED_SIGNATURE":
+        return "Zoho rejected this signature. Try a simpler design, then push again.";
+      case "GMAIL_EMBEDDED_IMAGE":
+      case "GMAIL_SIGNATURE_TOO_LARGE":
+      case "GMAIL_EMPTY_SIGNATURE":
+        return getGmailErrorMessage(err);
+      default:
+        return err.message;
+    }
+  }
+  return err instanceof Error ? err.message : "Something went wrong. Please try again.";
+}
+
+export function isZohoReconnectError(err: unknown): boolean {
+  return err instanceof ApiError && (err.code === "ZOHO_RECONNECT_REQUIRED" || err.code === "ZOHO_NOT_CONNECTED");
+}

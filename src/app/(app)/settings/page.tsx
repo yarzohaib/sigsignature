@@ -9,8 +9,9 @@ import SignatureDefaultsCard from "@/components/settings/SignatureDefaultsCard";
 import NotificationsCard from "@/components/settings/NotificationsCard";
 import PlanUsageCard from "@/components/settings/PlanUsageCard";
 import SecurityCard from "@/components/settings/SecurityCard";
-import GmailIntegrationCard from "@/components/settings/GmailIntegrationCard";
 import StartingPointCard from "@/components/settings/StartingPointCard";
+import GmailIntegrationCard from "@/components/settings/GmailIntegrationCard";
+import ZohoIntegrationCard from "@/components/settings/ZohoIntegrationCard";
 import DataPrivacyCard from "@/components/settings/DataPrivacyCard";
 import { getLifetimeSignatureCount } from "@/lib/signatures/lifetimeTracker";
 import {
@@ -643,8 +644,9 @@ function SettingsContent() {
                   onShowToast={showToast}
                 />
 
-                {/* Gmail Integration card */}
+                {/* Gmail integration */}
                 <GmailIntegrationCard onShowToast={showToast} />
+                <ZohoIntegrationCard onShowToast={showToast} />
 
                 {/* 6. Your starting point live mini-signature preview */}
                 <StartingPointCard
